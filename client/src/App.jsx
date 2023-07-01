@@ -1,14 +1,20 @@
 import React from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import NavBar from './components/NavBar';
 import { useSelector } from "react-redux";
+import HomePage from './scenes/homePage';
 
-export default function App({ children }) {
+export default function App() {
   const isAuth = Boolean(useSelector((state) => state.token));
 
   return (
     <div className="min-h-screen bg-slate-600 ">
+      <BrowserRouter>
       <NavBar links={["test", "otherTest", `${isAuth}`]}/>
-      {children}
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+      </Routes>
+      </BrowserRouter>
     </div>
   );
 }
