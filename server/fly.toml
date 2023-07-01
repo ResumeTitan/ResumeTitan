@@ -1,20 +1,19 @@
-# fly.toml file generated for resumegpt-client on 2023-03-29T19:31:44-04:00
+# fly.toml file generated for resumegpt-server on 2023-03-29T19:31:09-04:00
 
-app = "resumegpt-client"
+app = "resumegpt-server"
 kill_signal = "SIGINT"
 kill_timeout = 5
 primary_region = "iad"
 processes = []
 
 [env]
-  PORT = "8080"
 
 [experimental]
   auto_rollback = true
 
 [[services]]
   http_checks = []
-  internal_port = 8043
+  internal_port = 8080
   processes = ["app"]
   protocol = "tcp"
   script_checks = []
