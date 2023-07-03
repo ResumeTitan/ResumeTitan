@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from "react-redux";
 import Spinner from '../../components/Spinner';
 
 import './index.css';
 
 function HomePage() {
   const nav = useNavigate();
+  const token = useSelector((state) => state.token)
+  const isAuth = Boolean(useSelector((state) => state.token));
 
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -50,13 +53,17 @@ function HomePage() {
 
       console.log(payload);
 
-      // if (user) {
-      //   const resumeOut = (await generateResume({...payload}));
-      //   nav.push(`/resume/${resumeOut.id}`, { resumeOut });
-      //   setWaitingForResume(false);
-      // } else {
-      //   alert('Please log in before submitting a resume');
-      // }
+      if (isAuth) {
+        const response = await fetch('/api/resume', {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${token}` },
+          body: payload,
+        });
+        nav.push(`/resume/${response.data.resume.id}`, { resume: response.data.resume });
+        setWaitingForResume(false);
+      } else {
+        alert('Please log in before submitting a resume');
+      }
     } catch (error) {
       alert('Something went wrong, please try again');
       console.error(error);

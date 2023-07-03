@@ -1,0 +1,133 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* reset styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.resume-container {
+    width: 8.5in;
+    height: 11in;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+  min-width: 8.5in;
+  min-height: 11in;
+  max-width: 8.5in;
+  max-height: 11in;
+  padding: 0.25in;
+  margin: auto;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  background-color: white;
+  font-size: 10pt;
+  line-height: 1.5;
+  font-family: "Times New Roman", Times, serif;
+}
+
+h2 {
+  font-size: 12pt;
+  font-weight: bold;
+}
+
+h3 {
+  font-size: 10pt;
+  font-weight: bold;
+}
+
+.resume {
+  font-family: 'Calibri', 'Arial';
+  line-height: 1.6rem;
+  text-align: justify;
+}
+
+a {
+  text-decoration: none;
+  color: initial;
+}
+
+p,
+ul {
+  font-weight: 200;
+}
+
+.h-full {
+  height: 100%;
+}
+
+.mx-auto {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.mx-1 {
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
+
+.ml-auto {
+  margin-left: auto;
+}
+
+.mt-half {
+  margin-top: 0.5rem;
+}
+
+.mt-1 {
+  margin-top: 1rem;
+}
+
+.ml-2 {
+  margin-left: 2rem;
+}
+
+.ml-3 {
+  margin-left: 3rem;
+}
+
+.p-3 {
+  padding: 3rem;
+}
+
+.border-solid {
+  border-style: solid;
+}
+
+.border-1 {
+  border-width: 1;
+}
+
+.shadow-md {
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+.flex {
+  display: flex;
+}
+
+.inline-block {
+  display: inline-block;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-muted {
+  color: #aaa;
+}
+
+@page {
+  size: letter;
+  margin: 0;
+}

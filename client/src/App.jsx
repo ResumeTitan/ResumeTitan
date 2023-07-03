@@ -13,6 +13,7 @@ export default function App() {
       <NavBar links={["test", "otherTest", `${isAuth}`]}/>
       <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/resume" element={<HomePage isAuth={isAuth}/>} />
       </Routes>
       </BrowserRouter>
     </div>
