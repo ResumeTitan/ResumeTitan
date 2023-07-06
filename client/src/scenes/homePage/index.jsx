@@ -6,13 +6,14 @@ import Spinner from '../../components/Spinner';
 import './index.css';
 
 function HomePage() {
-  const nav = useNavigate();
-  const token = useSelector((state) => state.token)
-  const isAuth = Boolean(useSelector((state) => state.token));
+  const navigate = useNavigate();
+  const token = useSelector((state) => state.token);
+  const user = useSelector((state) => state.user);
+  const isAuth = Boolean(useSelector((state) => state.token));  
 
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
+  const [firstName, setFirstName] = useState(user.firstName);
+  const [lastName, setLastName] = useState(user.lastName);
+  const [email, setEmail] = useState(user.email);
   const [phone, setPhone] = useState('');
   const [schools, setSchools] = useState([]);
   const [jobs, setJobs] = useState([]);
@@ -49,17 +50,23 @@ function HomePage() {
         phone,
         schools,
         jobs,
+        email,
+        password: user.password,
       }
 
-      console.log(payload);
-
       if (isAuth) {
-        const response = await fetch('/api/resume', {
+        const API_URL = process.env.REACT_APP_API_URL;
+        const response = await fetch(`${API_URL}/resume/create`, {
           method: 'POST',
-          headers: { Authorization: `Bearer ${token}` },
-          body: payload,
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}` 
+          },
+          body: JSON.stringify(payload),
         });
-        nav.push(`/resume/${response.data.resume.id}`, { resume: response.data.resume });
+        const data = await response.json();
+        console.log(data);
+        navigate(`/resume/${data.resume._id}`, { resume: data.resume });
         setWaitingForResume(false);
       } else {
         alert('Please log in before submitting a resume');

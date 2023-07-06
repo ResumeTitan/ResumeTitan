@@ -9,7 +9,6 @@ export const register = async (req, res) => {
       firstName,
       lastName,
       email,
-      username,
       password
     } = req.body;
 
@@ -20,7 +19,6 @@ export const register = async (req, res) => {
       firstName,
       lastName,
       email,
-      username,
       password: passwordHash,
     });
     const savedUser = await newUser.save();
