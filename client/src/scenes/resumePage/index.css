@@ -10,11 +10,16 @@
 }
 
 .resume-container {
-    width: 8.5in;
-    height: 11in;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  width: 8.5in;
+  height: 11in;
+  padding: 0.25in;
+  display: flex;
+  justify-content: center;
+  background-color: white;
+  margin: auto;
+  font-family: "Times New Roman", Times, serif;
+  line-height: 1.5;
+  font-size: 10pt;
 }
 
 .container {
@@ -26,7 +31,7 @@
   margin: auto;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   background-color: white;
-  font-size: 10pt;
+  font-size: 11pt;
   line-height: 1.5;
   font-family: "Times New Roman", Times, serif;
 }

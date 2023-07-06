@@ -12,6 +12,7 @@
   "author": "Mitchell Hay",
   "license": "ISC",
   "dependencies": {
-    "concurrently": "^8.2.0"
+    "concurrently": "^8.2.0",
+    "html2pdf.js": "^0.10.1"
   }
 }

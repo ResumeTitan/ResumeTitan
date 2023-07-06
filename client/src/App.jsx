@@ -4,7 +4,7 @@ import NavBar from './components/NavBar';
 import { useSelector } from "react-redux";
 import HomePage from './scenes/homePage';
 import LoginPage from './scenes/loginPage';
-// import ResumePage from './scenes/resumePage';
+import ResumePage from './scenes/resumePage';
 
 export default function App() {
   const isAuth = Boolean(useSelector((state) => state.token));
@@ -15,8 +15,8 @@ export default function App() {
       <NavBar links={["test", "otherTest", `${isAuth}`]}/>
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/resume/:id" element={<HomePage isAuth={isAuth}/>} />
-        <Route path="/login" element={<LoginPage/>} />
+        <Route path="/resume/:id" element={<ResumePage />} />
+        <Route path="/login" element={<LoginPage />} />
       </Routes>
       </BrowserRouter>
     </div>

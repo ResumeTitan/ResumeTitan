@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useSelector } from "react-redux";
 import html2pdf from "html2pdf.js";
-import Spinner from "../components/Spinner";
-import { ContactInfo, Summary, Jobs, Schools, Skills} from "../components";
+import Spinner from "../../components/Spinner";
+import { ContactInfo, Summary, Jobs, Schools, Skills} from "../../components";
 
-
-import '../styles/Resume.css';
+import 'index.css';
 
 const MED_SCREEN_WIDTH = 768;
 
@@ -14,15 +14,20 @@ const MED_SCREEN_WIDTH = 768;
  * @param id Resume ID to display
  * @returns Resume page content
  */
-export function ResumePage({ resume }) {
+function ResumePage() {
+  const location = useLocation();
+  const resume = location.state.resume;
+  const user = useSelector((state) => state.user);
   const resumeRef = React.useRef();
-  const token = useSelector((state) => state.token);
-  const jobs = resume.jobs;
-  const schools = resume.schools;
+  // const jobs = resume.jobs;
+  // const schools = resume.schools;
+  const jobs = [];
+  const schools = [];
 
   const [showAlert, setShowAlert] = useState(false);
   const [ackAlert, setAckAlert] = useState(false);
-  const [resumeData, setResumeData] = useState({ resume });
+  const [resumeData, setResumeData] = useState(resume);
+  console.log(resumeData);
 
   useEffect(() => {
     const handleResize = () => {
@@ -78,9 +83,9 @@ export function ResumePage({ resume }) {
           <div key="resume">
             <div>
               <ContactInfo 
-                firstName={resumeData.firstName} 
-                lastName={resumeData.lastName} 
-                email='{resume.email}'
+                firstName={user.firstName} 
+                lastName={user.lastName} 
+                email={user.email}
                 phone={resumeData.phone}/>
               <Summary summary={resumeData.objective || 'Fill summary here'}/>
               <Schools schools={schools}/>
@@ -99,3 +104,4 @@ export function ResumePage({ resume }) {
   );    
 }
   
+export default ResumePage;

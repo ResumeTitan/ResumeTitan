@@ -66,7 +66,7 @@ function HomePage() {
         });
         const data = await response.json();
         console.log(data);
-        navigate(`/resume/${data.resume._id}`, { resume: data.resume });
+        navigate(`/resume/${data.resume._id}`, { state: { resume: data.resume } });
         setWaitingForResume(false);
       } else {
         alert('Please log in before submitting a resume');
