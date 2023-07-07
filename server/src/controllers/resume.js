@@ -1,5 +1,5 @@
 import { ChatGPTAPI } from 'chatgpt';
-import User from "../models/User.js";
+import Resume from "../models/Resume.js";
 
 import dotenv from "dotenv";
 dotenv.config();
@@ -54,12 +54,26 @@ export const createResume = async (req, res) => {
     }
 
     const resumeOut = Object.assign(resume, resumeWithResponse);
-    resumeOut._id = 1;
-    // TODO write to mongo
+    resumeOut.userId = req.user.id;
+    
+    // Save resume to database
+    const newResume = new Resume(resumeOut);
+    await newResume.save();
 
-    res.status(200).json( { resume: resumeOut });
+    res.status(200).json( { resume: newResume });
   } catch (err) {
     console.log(err);
+    res.status(500).json({ error: err.message });
+  }
+};
+
+/* Get resumes */
+export const getResume = async (req, res) => {
+  const userId = req.query.userId;
+  try {
+    const resume = await Resume.findOne({ userId: userId });
+    res.status(200).json({ resume: resume });
+  } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };

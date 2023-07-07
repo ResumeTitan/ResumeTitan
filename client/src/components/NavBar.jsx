@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
+import { useSelector } from "react-redux";
 
-interface NavbarProps {
-  links: string[];
-}
-
-const NavBar: React.FC<NavbarProps> = ({ links }) => {
+const NavBar = ({ links }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const user = useSelector((state) => state.user)
 
   return (
     <nav className="flex items-center justify-between flex-wrap bg-teal-500 p-6">
@@ -38,15 +36,12 @@ const NavBar: React.FC<NavbarProps> = ({ links }) => {
         } w-full block flex-grow lg:flex lg:items-center lg:w-auto`}
       >
         <div className="text-sm lg:flex-grow">
-          {links.map((link, index) => (
-            <a
-              key={index}
-              href={`/${link}`}
-              className="block mt-4 lg:inline-block lg:mt-0 text-gray-300 hover:text-white mr-4"
-            >
-              {link}
-            </a>
-          ))}
+          <a
+            href={`/resume/${user.id}`}
+            className="block mt-4 lg:inline-block lg:mt-0 text-gray-300 hover:text-white mr-4"
+          >
+            My Resume
+          </a>
         </div>
         <div>
           <a

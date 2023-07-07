@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from "react-redux";
 import Spinner from '../../components/Spinner';
+import { createResume } from '../../api/resume.js';
 
 import './index.css';
 
@@ -52,21 +53,12 @@ function HomePage() {
         jobs,
         email,
         password: user.password,
+        userId: user._id,
       }
 
       if (isAuth) {
-        const API_URL = process.env.REACT_APP_API_URL;
-        const response = await fetch(`${API_URL}/resume/create`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}` 
-          },
-          body: JSON.stringify(payload),
-        });
-        const data = await response.json();
-        console.log(data);
-        navigate(`/resume/${data.resume._id}`, { state: { resume: data.resume } });
+        const response = await createResume(token, payload);
+        navigate(`/resume/${response.resume._id}`, { state: { resume: response.resume } });
         setWaitingForResume(false);
       } else {
         alert('Please log in before submitting a resume');

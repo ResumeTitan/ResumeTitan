@@ -136,3 +136,10 @@ ul {
   size: letter;
   margin: 0;
 }
+
+@media (max-width: 1050px) {
+  .paper {
+    width: 100%;
+    min-width: 800px;
+  }
+}

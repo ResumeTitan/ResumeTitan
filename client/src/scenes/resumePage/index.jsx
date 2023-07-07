@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
 import { useSelector } from "react-redux";
 import html2pdf from "html2pdf.js";
 import Spinner from "../../components/Spinner";
 import { ContactInfo, Summary, Jobs, Schools, Skills} from "../../components";
+import { getResume } from "../../api/resume";
 
 import 'index.css';
 
@@ -15,21 +15,27 @@ const MED_SCREEN_WIDTH = 768;
  * @returns Resume page content
  */
 function ResumePage() {
-  const location = useLocation();
-  const resume = location.state.resume;
   const user = useSelector((state) => state.user);
+  const token = useSelector((state) => state.token);
   const resumeRef = React.useRef();
-  // const jobs = resume.jobs;
-  // const schools = resume.schools;
-  const jobs = [];
-  const schools = [];
-
+  
   const [showAlert, setShowAlert] = useState(false);
   const [ackAlert, setAckAlert] = useState(false);
-  const [resumeData, setResumeData] = useState(resume);
-  console.log(resumeData);
+  const [resume, setResume] = useState();
 
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        console.log()
+        const response = await getResume(token, user._id);
+        setResume(response.resume);
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    };
+    fetchData();
+    console.log(resume);
+    
     const handleResize = () => {
       if (window.innerWidth < MED_SCREEN_WIDTH) {
         setShowAlert(true);
@@ -49,9 +55,9 @@ function ResumePage() {
       const opt = {
         margin: 0,
         filename: 'my_component.pdf',
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 4 },
-        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+        image: { type: 'jpeg', quality: 0.99 },
+        html2canvas: { scale: 1 },
+        // jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
       };
 
       html2pdf().set(opt).from(element).save();
@@ -69,7 +75,7 @@ function ResumePage() {
   }
 
   const handleEdit = (field, value) => {
-    setResumeData((prevState) => ({
+    setResume((prevState) => ({
       ...prevState,
       [field]: value,
     }));
@@ -79,18 +85,23 @@ function ResumePage() {
     <div className="m-2">
       <div className="resume-container" ref={resumeRef}>
         {false && <Spinner />}
-        {resumeData && jobs && schools && (
+
+        {/* <PDFViewer width="100%" height="100%">
+          <ResumePDF resume={resumeData} />
+        </PDFViewer> */}
+
+        {resume && (
           <div key="resume">
             <div>
               <ContactInfo 
                 firstName={user.firstName} 
                 lastName={user.lastName} 
                 email={user.email}
-                phone={resumeData.phone}/>
-              <Summary summary={resumeData.objective || 'Fill summary here'}/>
-              <Schools schools={schools}/>
-              <Jobs jobs={jobs} />
-              <Skills skills={resumeData.skills}/>
+                phone={resume.phone}/>
+              <Summary summary={resume.objective || 'Fill summary here'}/>
+              <Schools schools={resume.schools}/>
+              <Jobs jobs={resume.jobs} />
+              <Skills skills={resume.skills}/>
             </div>
           </div>
         )}

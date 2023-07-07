@@ -5,15 +5,22 @@ const ResumeSchema = new mongoose.Schema(
     jobs: {
       type: Array,
       required: true,
-      max: 10,
+      max: 5,
     },
     schools: {
-      type: String,
+      type: Array,
       required: true,
-      min: 5,
+      max: 5,
     },
     objective: {
       type: String
+    },
+    skills: {
+      type: Array
+    },
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
     }
   },
   { timestamps: true }
