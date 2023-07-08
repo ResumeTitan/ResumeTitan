@@ -18,7 +18,7 @@ export const ContactInfo = (props) => {
         {true && (
           <>
             <span className="mx-2">•</span>
-            <a href={`tel:${props.phone}`}>{props.phone}</a>
+            <a href={`tel:${props.phone}`}>{"123-456-7890"}</a>
           </>
         )}
 

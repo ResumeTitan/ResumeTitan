@@ -81,7 +81,7 @@ function ResumePage() {
 
   return (
     <div className="m-2">
-      <div className="font-serif aspect-[1/1.4142] border-2 h-[297mm] flex bg-white" ref={resumeRef}>
+      <div className="font-serif aspect-[1/1.4142] border-2 h-[297mm] flex bg-white p-2" ref={resumeRef}>
         {isLoading && <Spinner />}
         {resume && (
           <div>
