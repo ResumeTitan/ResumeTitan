@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from "react-redux";
-import html2pdf from "html2pdf.js";
 import Spinner from "../../components/Spinner";
-import { ContactInfo, Summary, Jobs, Schools, Skills} from "../../components";
+import { ContactInfo } from "./ContactInfo";
+import { Summary } from "./Summary";
+import { Jobs } from "./Jobs";
+import { Schools } from "./Schools";
+import { Skills}  from "./Skills";
 import { getResume } from "../../api/resume";
 
 import 'index.css';
@@ -22,6 +25,7 @@ function ResumePage() {
   const [showAlert, setShowAlert] = useState(false);
   const [ackAlert, setAckAlert] = useState(false);
   const [resume, setResume] = useState();
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -29,6 +33,7 @@ function ResumePage() {
         console.log()
         const response = await getResume(token, user._id);
         setResume(response.resume);
+        setIsLoading(false);
       } catch (error) {
         console.error('Error:', error);
       }
@@ -60,7 +65,7 @@ function ResumePage() {
         // jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
       };
 
-      html2pdf().set(opt).from(element).save();
+      // html2pdf().set(opt).from(element).save();
     }
   };
 
@@ -74,24 +79,12 @@ function ResumePage() {
     )
   }
 
-  const handleEdit = (field, value) => {
-    setResume((prevState) => ({
-      ...prevState,
-      [field]: value,
-    }));
-  };
-
   return (
     <div className="m-2">
-      <div className="resume-container" ref={resumeRef}>
-        {false && <Spinner />}
-
-        {/* <PDFViewer width="100%" height="100%">
-          <ResumePDF resume={resumeData} />
-        </PDFViewer> */}
-
+      <div className="font-serif aspect-[1/1.4142] border-2 h-[297mm] flex bg-white" ref={resumeRef}>
+        {isLoading && <Spinner />}
         {resume && (
-          <div key="resume">
+          <div>
             <div>
               <ContactInfo 
                 firstName={user.firstName} 

@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 
 const NavBar = ({ links }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const user = useSelector((state) => state.user)
+  const user = useSelector((state) => state.user);
 
   return (
     <nav className="flex items-center justify-between flex-wrap bg-teal-500 p-6">
@@ -35,7 +35,8 @@ const NavBar = ({ links }) => {
           isOpen ? 'block' : 'hidden'
         } w-full block flex-grow lg:flex lg:items-center lg:w-auto`}
       >
-        <div className="text-sm lg:flex-grow">
+        {user && (
+          <div className="text-sm lg:flex-grow">
           <a
             href={`/resume/${user.id}`}
             className="block mt-4 lg:inline-block lg:mt-0 text-gray-300 hover:text-white mr-4"
@@ -43,6 +44,7 @@ const NavBar = ({ links }) => {
             My Resume
           </a>
         </div>
+        )}
         <div>
           <a
             href="/login"

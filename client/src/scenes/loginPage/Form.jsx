@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { setLogin } from "state";
 import { useDispatch } from "react-redux";
 import { useNavigate } from 'react-router-dom';
+import Alert from '@mui/material/Alert';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://incorrect_url';
 
@@ -13,6 +14,8 @@ const Form = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isRegister, setIsRegister] = useState(false);
+  const [newUserRegistered, setNewUserRegistered] = useState(false);
+  const [loginFailed, setLoginFailed] = useState(false);
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
@@ -35,18 +38,25 @@ const Form = () => {
 
     // Perform login or register logic here
     if (isRegister) {
-      console.log('Register:');
-      console.log('Email:', email);
-      console.log('Password:', password);
+      const data = {
+        firstName,
+        lastName,
+        email,
+        password,
+      }
+      await register(data);
     } else {
       const data = {
         email,
         password,
+
       }
       await login(data);
     }
 
     // Reset form fields
+    setFirstName('');
+    setLastName('');
     setEmail('');
     setPassword('');
   };
@@ -57,26 +67,26 @@ const Form = () => {
 
   async function postRegister(values){
     // this allows us to send form info with image
-    const formData = new FormData();
-    for (let value in values) {
-      formData.append(value, values[value]);
-    }
-
+    console.log("Registering user");
+    console.log(values);
     const savedUserResponse = await fetch(
       `${API_URL}/auth/register`,
       {
         method: "POST",
-        body: formData,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(values),
       }
     );
     return savedUserResponse.json();
   }
 
-  const register = async (values, onSubmitProps) => {
+  const register = async (values) => {
     const savedUser = await postRegister(values);
-
     if (savedUser) {
       setIsRegister(false);
+      setNewUserRegistered(true);
     }
   };
   
@@ -91,27 +101,24 @@ const Form = () => {
   }
 
   const login = async (values) => {
-    const loggedIn = await postLogIn(values);
-    console.log(`Attempting to log in ${JSON.stringify(loggedIn["user"]["email"])}`);
-    if (loggedIn) {
-      dispatch(
-        setLogin({
-          user: loggedIn.user,
-          token: loggedIn.token,
-        })
-      );
-      navigate("/", { user: loggedIn.user });
+    try {
+      const loggedIn = await postLogIn(values);
+      console.log(`Attempting to log in ${JSON.stringify(loggedIn["user"]["email"])}`);
+      if (loggedIn) {
+        setLoginFailed(false);
+        dispatch(
+          setLogin({
+            user: loggedIn.user,
+            token: loggedIn.token,
+          })
+        );
+        navigate("/", { user: loggedIn.user });
+    }
+    } catch (e) {
+      console.log(e);
+      setLoginFailed(true);
     }
   };
-
-  const handleFormSubmit = async (values, onSubmitProps) => {
-    if (isRegister) {
-      await register(values, onSubmitProps);
-    } else {
-      await login(values, onSubmitProps);
-    }
-  };
-
 
   // -TODO- do when google oauth is setup
   // const googleLogin = useGoogleLogin({
@@ -161,6 +168,9 @@ const Form = () => {
 
   return (
     <div>
+      { newUserRegistered && (<Alert severity="success" onClose={() => {setNewUserRegistered(false)}}>This is a success alert — check it out!</Alert>)}
+      { loginFailed && (<Alert severity="error" onClose={() => {setLoginFailed(false)}}>Login Failed, please try again</Alert>)}
+  <div>
     <h2 className="text-2xl font-bold mb-4">
     {isRegister ? 'Register' : 'Login'}
   </h2>
@@ -249,6 +259,7 @@ const Form = () => {
       </button>
     </div>
   </form>
+  </div>
   </div>
   );
 }

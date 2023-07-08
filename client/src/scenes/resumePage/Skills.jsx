@@ -1,7 +1,7 @@
 import React from 'react';
 import { SectionWrapper } from './SectionWrapper';
 
-import "../scenes/resumePage/index.css";
+import "index.css";
 
 export const Skills = ({ skills }) => {
   return (

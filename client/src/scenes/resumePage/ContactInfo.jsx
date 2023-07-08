@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react';
-import "../scenes/resumePage/index.css";
+
+import "index.css";
 
 export const ContactInfo = (props) => {
   const cleanLink = useCallback((link) => {
@@ -8,7 +9,7 @@ export const ContactInfo = (props) => {
 
   return (
     <div className="text-center">
-      <h2 className="hover:border-blue-500 transition duration-300">{props.firstName} {props.lastName}</h2>
+      <h2 className="hover:border-blue-500 transition duration-300 font-bold">{props.firstName} {props.lastName}</h2>
 
       <h3>contactInfo.title</h3>
 

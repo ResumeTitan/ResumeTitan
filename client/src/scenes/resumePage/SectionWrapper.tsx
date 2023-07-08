@@ -1,6 +1,6 @@
 import React, { PropsWithChildren } from 'react';
 
-import "../scenes/resumePage/index.css";
+import "index.css";
 
 interface SectionWrapperProps extends PropsWithChildren<{
   title: string;
@@ -10,7 +10,7 @@ interface SectionWrapperProps extends PropsWithChildren<{
 
 export const SectionWrapper = ({ children, title }: SectionWrapperProps) => (
   <>
-    <h2 className="mt-1">{title}</h2>
+    <div className="border-y-2 mt-5 mb-3 py-1 font-extrabold text-2xl text-midnightBlue">{title}</div>
       <hr className="border-solid border-1" />
     <div className="mt-[0.0825rem]">{children}</div>
   </>

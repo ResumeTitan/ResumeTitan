@@ -1,19 +1,17 @@
 import React from 'react';
 import { SectionWrapper } from './SectionWrapper';
 
-import "../scenes/resumePage/index.css";
-
 export const Schools = ({ schools }) => {
   return (
-    <SectionWrapper title="Schools">
+    <SectionWrapper title="Education">
       <ul className="ml-1">
         {schools.map((school, i) => (
           <li key={school.name} className={i % 2 ? `mt-1` : `mt-half`}>
             <div className="flex">
-              <h2>
+              <div className="font-bold">
                 {school.name}
-              </h2>
-              <span className="ml-auto text-muted">{school.startDate}</span>
+              </div>
+              <span className="ml-auto text-muted">{"school.startDate"}</span>
             </div>
             <div className="flex">
               <h3>
@@ -32,3 +30,5 @@ export const Schools = ({ schools }) => {
     </SectionWrapper>
   );
 };
+
+export default Schools;

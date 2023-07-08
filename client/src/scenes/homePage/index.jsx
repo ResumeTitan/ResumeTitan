@@ -10,7 +10,7 @@ function HomePage() {
   const navigate = useNavigate();
   const token = useSelector((state) => state.token);
   const user = useSelector((state) => state.user);
-  const isAuth = Boolean(useSelector((state) => state.token));  
+  const isAuth = Boolean(useSelector((state) => state.token));
 
   const [firstName, setFirstName] = useState(user.firstName);
   const [lastName, setLastName] = useState(user.lastName);
