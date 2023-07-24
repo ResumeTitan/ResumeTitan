@@ -27,7 +27,7 @@ const getPrompt = (resume) => {
   In jobs, if a job title is recognized, use the full name of that job title in the value of the JSON output.
   In jobs, if a company is recognized, use the full name of that company in the value of the JSON output.
   In addition, based on the information provided, create an "objective" statement relating to the jobs and education given. Include this in the JSON response.
-  In addition, based on the information provided, create a "skills" array that includes the skills gained through the education and work experience provided. Include this in the JSON response.
+  In addition, based on the information provided, create a "skills" array that includes the skills gained through the education and work experience provided. There must be at least 6 skills. Include this in the JSON response.
   If the resume provided is blank, provide a generic JSON template based on the keys in the input.`
   ;
 
@@ -43,7 +43,6 @@ export const createResume = async (req, res) => {
     // Find the starting and ending positions of the JSON code
     const start = gptResponse.text.indexOf('{');
     const end = gptResponse.text.lastIndexOf('}');
-    console.log(gptResponse.text);
 
     let resumeWithResponse;
     if (start !== -1 && end !== -1) {

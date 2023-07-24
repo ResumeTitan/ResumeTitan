@@ -22,7 +22,5 @@ export const getResume = async (token, userId) => {
     }
   });
 
-  console.log("getResume response", response);
-
   return response.json();
 }

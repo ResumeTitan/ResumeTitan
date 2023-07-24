@@ -15,7 +15,7 @@ export default function App() {
       <NavBar links={["test", "otherTest", `${isAuth}`]}/>
       <Routes>
         <Route path="/" element={isAuth ? <HomePage /> : <Navigate to="/login" />} />
-        <Route path="/resume/:id" element={isAuth ? <ResumePage /> : <Navigate to="/login" />} />
+        <Route path="/resume" element={isAuth ? <ResumePage /> : <Navigate to="/login" />} />
         {/* <Route path="/resume/:id/view" element={<Resume />} /> */}
         <Route path="/login" element={<LoginPage />} />
       </Routes>

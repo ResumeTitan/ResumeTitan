@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useSelector } from "react-redux";
 
-const NavBar = ({ links }) => {
+const NavBar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const user = useSelector((state) => state.user);
 
@@ -38,7 +38,7 @@ const NavBar = ({ links }) => {
         {user && (
           <div className="text-sm lg:flex-grow">
           <a
-            href={`/resume/${user.id}`}
+            href={`/resume`}
             className="block mt-4 lg:inline-block lg:mt-0 text-gray-300 hover:text-white mr-4"
           >
             My Resume
