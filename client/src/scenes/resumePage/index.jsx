@@ -32,7 +32,6 @@ function ResumePage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        console.log()
         const response = await getResume(token, user._id);
         setResume(response.resume);
         setIsLoading(false);
@@ -41,8 +40,7 @@ function ResumePage() {
       }
     };
     fetchData();
-    console.log(resume);
-    
+
     const handleResize = () => {
       if (window.innerWidth < MED_SCREEN_WIDTH) {
         setShowAlert(true);

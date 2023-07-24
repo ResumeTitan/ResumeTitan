@@ -58,7 +58,7 @@ function HomePage() {
 
       if (isAuth) {
         const response = await createResume(token, payload);
-        navigate(`/resume/${response.resume._id}`, { state: { resume: response.resume } });
+        navigate(`/resume`, { state: { resume: response.resume } });
         setWaitingForResume(false);
       } else {
         alert('Please log in before submitting a resume');
