@@ -51,7 +51,7 @@ function ResumePage() {
     window.addEventListener("resize", handleResize);
     handleResize();
     return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  }, [token, user._id]);
 
   const generatePDF = useReactToPrint({
     content: () => resumeRef.current,

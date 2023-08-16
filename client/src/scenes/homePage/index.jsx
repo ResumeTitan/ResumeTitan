@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from "react-redux";
+import { DatePicker } from '@mui/x-date-pickers';
+import { TextField, InputLabel } from '@mui/material';
 import Spinner from '../../components/Spinner';
 import { createResume } from '../../api/resume.js';
 
@@ -249,16 +251,18 @@ function HomePage() {
                   required />
               </div> 
               <div className="mb-6">
-                <label htmlFor={`schoolmajor${index}`} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Major</label>
-                <input 
+              <TextField
+                  fullWidth
                   type="text"
                   id={`schoolmajor${index}`}
-                  className="formStyle"
-                  placeholder="Business Administration"
                   value={school.major}
+                  label="Major"
                   onChange={(event) => handleSchoolsChange(index, event)}
-                  required />
-              </div> 
+                  variant="filled"
+                  sx={{ marginBottom: '1rem', color: 'white', backgroundColor: '#374151', borderRadius: '10px', input: { color: 'white' } }}
+                />
+              </div>
+              <DatePicker label={'Graduation Date'} views={['month', 'year']}/>
               <div className="mb-6">
                 <label htmlFor={`schooldegree${index}`} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Degree Earned/Working Towards</label>
                 <select id={`schooldegree${index}`} className="formStyle" onChange={(event) => handleSchoolsChange(index, event)}>
@@ -298,7 +302,6 @@ function HomePage() {
                 type="text"
                 id={`jobtitle${index}`}
                 className="formStyle"
-                placeholder="System Administrator"
                 value={job.title}
                 onChange={(event) => handleJobsChange(index, event)}
                 required />
@@ -309,18 +312,16 @@ function HomePage() {
                 type="text" 
                 id={`jobcompany${index}`}
                 className="formStyle"
-                placeholder="JP Morgan Chase"
                 value={job.company}
                 onChange={(event) => handleJobsChange(index, event)}
                 required />
             </div>
             <div className="mb-6">
-              <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Location</label>
+              <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Location (City, State)</label>
               <input 
                 type="text" 
                 id={`joblocation${index}`}
                 className="formStyle" 
-                placeholder="Raleigh, NC"
                 value={job.location}
                 onChange={(event) => handleJobsChange(index, event)}
                 required />
