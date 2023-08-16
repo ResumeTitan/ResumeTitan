@@ -120,56 +120,10 @@ const Form = () => {
     }
   };
 
-  // -TODO- do when google oauth is setup
-  // const googleLogin = useGoogleLogin({
-  //   onSuccess: (codeResponse) => {getGoogleInfo(codeResponse)},
-  //   onError: (error) => console.log('Login Failed:', error)
-  // });
-  // const getGoogleInfo = async (user) => {
-  //   const response = await fetch(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${user.access_token}`,{mode: 'cors'}, {
-  //     method: "GET"
-  //   });
-  //   const data = await response.json();
-  //   const userData = {
-  //     email: data.email,
-  //     password: data.id,
-  //     firstName: data.given_name,
-  //     lastName: data.family_name,
-  //     location: "",
-  //     occupation: ""
-  //   };
-
-  //   const loggedIn = await postLogIn(userData);
-  //   console.log(`Attempting to log in ${JSON.stringify(loggedIn["user"]["email"])}`);
-  //   if (loggedIn.ok) {
-  //     dispatch(
-  //       setLogin({
-  //         user: loggedIn.user,
-  //         token: loggedIn.token,
-  //       })
-  //     );
-  //     navigate("/home");
-  //   }
-  //   else{
-  //     //REGISTER
-  //     const savedUser = await postRegister(userData);  
-  //     if (savedUser) {
-  //       const loggedIn = await postLogIn(userData);
-  //       dispatch(
-  //         setLogin({
-  //           user: loggedIn.user,
-  //           token: loggedIn.token,
-  //         })
-  //       );
-  //       navigate("/home");
-  //     }
-  //   }
-  // };
-
   return (
-    <div>
-      { newUserRegistered && (<Alert severity="success" onClose={() => {setNewUserRegistered(false)}}>This is a success alert — check it out!</Alert>)}
-      { loginFailed && (<Alert severity="error" onClose={() => {setLoginFailed(false)}}>Login Failed, please try again</Alert>)}
+  <div>
+    { newUserRegistered && (<Alert severity="success" onClose={() => {setNewUserRegistered(false)}}>Success! Registered new user, {firstName} {lastName}</Alert>)}
+    { loginFailed && (<Alert severity="error" onClose={() => {setLoginFailed(false)}}>Login Failed, please try again</Alert>)}
   <div>
     <h2 className="text-2xl font-bold mb-4">
     {isRegister ? 'Register' : 'Login'}
