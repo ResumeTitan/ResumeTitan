@@ -21,6 +21,10 @@ const ResumeSchema = new mongoose.Schema(
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
+    },
+    phone: {
+      type: String,
+      required: true,
     }
   },
   { timestamps: true }

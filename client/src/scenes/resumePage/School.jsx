@@ -7,7 +7,7 @@ export const School = ({ school, i }) => {
         <div className="font-bold">
           {school.name}
         </div>
-        <span className="ml-auto text-muted">{"school.startDate"}</span>
+        <span className="ml-auto text-muted">{school.graduationDate}</span>
       </div>
       <div className="flex">
         <h3>

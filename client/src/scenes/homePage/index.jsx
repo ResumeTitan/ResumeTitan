@@ -78,7 +78,8 @@ function HomePage() {
       notes: '',
       gpa: 0,
       major: '',
-      accomplishments: [], 
+      graduationDate: '',
+      accomplishments: [],
     }
     setSchools([...schools, newSchool]);
   }
@@ -108,6 +109,9 @@ function HomePage() {
         break;
       case 'major':
         data[index].major = event.target.value;
+        break;
+      case 'graduationDate':
+        data[index].graduationDate = event.target.value;
         break;
       case 'notes':
         data[index].notes = event.target.value;
@@ -268,6 +272,16 @@ function HomePage() {
                   <option>Masters Degree</option>
                   <option>Doctorate</option>
                 </select>
+              </div>
+              <div>
+                <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white placeholder-gray-400">Graduation Date</label>
+                <input
+                  type="date" 
+                  id={`schoolgraduationDate${index}`}
+                  className="formStyle"
+                  value={school.graduationDate}
+                  onChange={(event) => handleSchoolsChange(index, event)}
+                  required />
               </div>
               <div className="my-6">
                 <label htmlFor={`schoolnotes${index}`} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Notes</label>
