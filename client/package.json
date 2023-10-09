@@ -3,10 +3,11 @@
     "version": "0.1.0",
     "private": true,
     "dependencies": {
-        "@emotion/react": "^11.10.5",
-        "@emotion/styled": "^11.10.5",
+        "@emotion/react": "^11.11.1",
+        "@emotion/styled": "^11.11.0",
+        "@material-ui/core": "^4.12.4",
         "@mui/icons-material": "^5.10.9",
-        "@mui/material": "^5.10.11",
+        "@mui/material": "^5.14.10",
         "@react-pdf/renderer": "^3.1.12",
         "@reduxjs/toolkit": "^1.8.6",
         "@testing-library/jest-dom": "^5.16.5",
@@ -16,6 +17,7 @@
         "basscss-radium": "^3.0.0",
         "dotenv-webpack": "^8.0.1",
         "formik": "^2.2.9",
+        "hooks": "^0.3.2",
         "html2pdf": "^0.0.11",
         "html2pdf.js": "^0.10.1",
         "postcss": "^8.4.24",
@@ -40,7 +42,7 @@
         "build": "react-scripts build",
         "test": "react-scripts test",
         "eject": "react-scripts eject",
-        "deploy": "fly deploy"
+        "deploy": "flyctl deploy"
     },
     "eslintConfig": {
         "extends": [

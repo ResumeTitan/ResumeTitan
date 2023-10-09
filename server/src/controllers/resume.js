@@ -10,6 +10,7 @@ const getPrompt = (resume) => {
   const prompt = `
   Can you extract key information from my resume and return it in a structured format?
   Your reseponse can only by in JSON format, with no other characters or plain text (no notes).
+  The responses must be in the past tense.
   Here is the resume in JSON format: 
   ${JSON.stringify({
     jobs: resume.jobs,

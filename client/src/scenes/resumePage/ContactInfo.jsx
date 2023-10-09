@@ -39,7 +39,7 @@ export const ContactInfo = (props) => {
         {true && (
           <>
             <span className="mx-2">•</span>
-            <a href={`tel:${props.phone}`}>{formatPhoneNumber(props.phone)}</a>
+            <a className="font-sans" href={`tel:${props.phone}`}>{formatPhoneNumber(props.phone)}</a>
           </>
         )}
 

@@ -24,3 +24,23 @@ export const getResume = async (token, userId) => {
 
   return response.json();
 }
+
+export const postLogIn = async (email, password) => {
+  console.log(`Attempting to log in ${JSON.stringify(email)}`);
+  const response = await fetch(`${API_URL}/auth/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({email, password}),
+  });
+  return response;
+}
+
+export const postRegister = async (values) => {
+  console.log("Registering user", values);
+  const response = await fetch(`${API_URL}/auth/register`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(values),
+  });
+  return response;
+}

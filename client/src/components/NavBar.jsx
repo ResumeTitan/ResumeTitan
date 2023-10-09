@@ -1,58 +1,46 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useSelector } from "react-redux";
+import { setLogout } from 'state';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import WhiteLogo from '../assets/logo-white.png';
+import ShieldLogo from '../assets/shield-logo-white.png';
+import TextLogo from '../assets/text-logo-white.png';
+import '../index.css';
 
 const NavBar = () => {
-  const [isOpen, setIsOpen] = useState(false);
   const user = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleLoginLogout = () => {
+    if (user) {
+      dispatch(setLogout());
+      // TODO change to / when landing page is created
+      navigate('/login');
+    } else {
+      navigate('/login');
+    }
+  }
 
   return (
-    <nav className="flex items-center justify-between flex-wrap bg-teal-500 p-6">
-      <div className="flex items-center flex-shrink-0  mr-6">
-        <a href="/" className="font-bold text-xl tracking-tight text-white">
-          ResumeGPT
+    <nav className="flex justify-between bg-main-green py-2 px-8">
+      <div className="flex flex-cols items-center flex-shrink-0  mr-6">
+        <a href="/home" className="font-outline-2 flex items-center font-bold text-xl tracking-tight text-white">
+          <div className="flex flex-cols items-center">
+            <img width={64} height={64} src={ShieldLogo} alt="Logo" className="flex flex-cols items-center"/>
+            <img width={200}  src={TextLogo} alt="Logo" className="flex flex-cols items-center"/>
+          </div>
         </a>
       </div>
-      <div className="block lg:hidden">
+      <div className="flex items-center align-center">
         <button
-          onClick={() => setIsOpen(!isOpen)}
-          className="flex items-center px-3 py-2 border rounded text-white border-white hover:text-teal-500 hover:bg-white"
+          href="/login"
+          className="text-md px-2 py-2 font-bold leading-none border border-4 rounded text-white border-white hover:border-transparent hover:bg-white hover:text-teal-800 items-center transition duration-300 ease-in-out"
+          onClick={handleLoginLogout}
         >
-          <svg
-            className="fill-current h-3 w-3"
-            viewBox="0 0 20 20"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <title>Menu</title>
-            <path
-              fillRule="evenodd"
-              d="M2 5h16a1 1 0 110 2H2a1 1 0 110-2zm0 6h16a1 1 0 110 2H2a1 1 0 110-2zm0 6h16a1 1 0 110 2H2a1 1 0 110-2z"
-            />
-          </svg>
+          {user ? "Logout" : "Login"}
         </button>
-      </div>
-      <div
-        className={`${
-          isOpen ? 'block' : 'hidden'
-        } w-full block flex-grow lg:flex lg:items-center lg:w-auto`}
-      >
-        {user && (
-          <div className="text-sm lg:flex-grow">
-          <a
-            href={`/resume`}
-            className="block mt-4 lg:inline-block lg:mt-0 text-gray-300 hover:text-white mr-4"
-          >
-            My Resume
-          </a>
-        </div>
-        )}
-        <div>
-          <a
-            href="/login"
-            className="inline-block text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent hover:text-gray-800 hover:bg-white mt-4 lg:mt-0"
-          >
-            Login
-          </a>
-        </div>
       </div>
     </nav>
   );

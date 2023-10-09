@@ -4,7 +4,7 @@ const initialState = {
   mode: "dark",
   user: null,
   token: null,
-  posts: [],
+  schools: [],
 };
 
 export const authSlice = createSlice({
@@ -31,19 +31,33 @@ export const authSlice = createSlice({
         console.error("user friends non-existent :(");
       }
     },
-    setPosts: (state, action) => {
-      state.posts = action.payload.posts;
+    setSchools: (state, action) => {
+      state.schools = action.payload.schools;
     },
-    setPost: (state, action) => {
-      const updatedPosts = state.posts.map((post) => {
-        if (post._id === action.payload.post._id) return action.payload.post;
-        return post;
+    setSchool: (state, action) => {    
+      const updatedSchools = state.schools.map((school) => {
+        if (school.id === action.payload.school.id) {
+          return action.payload.school;
+        } else {
+          return school;
+        }
       });
-      state.posts = updatedPosts;
+
+      state.schools = updatedSchools;
     },
+    addSchool: (state, action) => {
+      state.schools.push(action.payload.school);
+    },
+    deleteSchool: (state, action) => {
+      console.log("deleting school", action.payload.school.id)
+      const updatedSchools = state.schools.filter(
+        (school) => school.id !== action.payload.school.id
+      );
+      state.schools = updatedSchools;
+    }
   },
 });
 
-export const { setMode, setLogin, setLogout, setFriends, setPosts, setPost } =
+export const { setMode, setLogin, setLogout, setFriends, setSchools, addSchool, setSchool, deleteSchool } =
   authSlice.actions;
 export default authSlice.reducer;

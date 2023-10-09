@@ -182,7 +182,7 @@ function HomePage() {
         <form onSubmit={handleSubmit} action="/">
 
         {/* Contact Box */}
-        <div className="w-96 max-w-md mx-auto md:max-w-2xl mb-6">
+        <div className="border-2 bg-background-dark rounded-md border-gray-500 p-5 w-96 max-w-md mx-auto md:max-w-2xl my-6">
           <label className="formLabel">Name</label>
           <input
             id="firstName"
@@ -223,7 +223,7 @@ function HomePage() {
         </div>
 
         {/* School Box */}
-        <div className="border rounded-md border-gray-500 p-5 w-96 mb-6">
+        <div className="border-2 bg-background-dark rounded-md border-gray-500 p-5 w-96 mb-6">
           <div className="whitespace-nowrap flex justify-between">
             <div className="formHeader">School Info</div>
             <button type="button" className="addButton bg-slate-800" onClick={addSchool}>Add School</button>
@@ -299,7 +299,7 @@ function HomePage() {
         </div>
 
         {/* Job Box */}
-        <div className="whitespace-nowrap border rounded-md border-gray-500 p-4 w-96">
+        <div className="whitespace-nowrap bg-background-dark border-2 rounded-md border-gray-500 p-4 w-96">
           <div className="flex justify-between">
             <div className="formHeader">Job Info</div>
             <button type="button" className="addButton bg-slate-800" onClick={addJob}>Add Job</button>

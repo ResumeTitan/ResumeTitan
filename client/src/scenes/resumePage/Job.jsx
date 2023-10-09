@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { getToAndFromDates } from 'utils';
 
 export const Job = ({ job, i }) => {
   const [title, setTitle] = useState(job.title);
@@ -12,12 +13,6 @@ export const Job = ({ job, i }) => {
 
   const [responsibilities, setResponsibilities] = useState(job.responsibilities);
   const [isEditingResponsibilities, setIsEditingResponsibilities] = useState(false);
-
-  const getToAndFromDates = (startDate, endDate) => {
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-    return `${start.getFullYear()} - ${end.getFullYear()}`;
-  }
 
   const [dateRange, setDateRange] = useState(getToAndFromDates(job.startDate, job.endDate));
   const [isEditingDateRange, setIsEditingDateRange] = useState(false);
@@ -55,7 +50,7 @@ export const Job = ({ job, i }) => {
       >
         {company}
       </div>
-      <span className={`ml-auto text-muted hover:border-gray-700 border-transparent border-2 ${isEditingDateRange ? 'bg-yellow-100' : ''}`}
+      <span className={`font-sans ml-auto text-muted hover:border-gray-700 border-transparent border-2 ${isEditingDateRange ? 'bg-yellow-100' : ''}`}
         onClick={() => setIsEditingDateRange(true)}
         onBlur={() => setIsEditingDateRange(false)}
         onInput={handleDateRangeChange}
