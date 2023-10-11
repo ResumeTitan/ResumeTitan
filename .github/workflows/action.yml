@@ -1,0 +1,21 @@
+name: Deploy to Fly.io
+on:
+  push:
+    branches:
+      - main  # Change this to the branch you want to deploy from
+jobs:
+  deploy:
+    runs-on: ubuntu-latest  # You can choose a different runner if needed
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2  # This step checks out your repository
+    - name: Install Fly CLI
+      run: |
+        curl -L https://fly.io/install.sh | sh
+      # This step installs the Fly CLI
+    - name: Login to Fly.io
+      run: flyctl auth login -t "${{ secrets.FLY_AUTH_TOKEN }}"
+      # You'll need to set the FLY_AUTH_TOKEN secret in your repository with your authentication token
+    - name: Deploy to Fly.io
+      run: flyctl deploy
+      # This step deploys your application to Fly.io using the Fly CLI
