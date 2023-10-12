@@ -83,12 +83,11 @@ const Form = () => {
       }
     } else if (response.status === 400) {
       const error = await response.json();
-      toggleRegister();
-      setErrorMessage(error.error);
+      setErrorMessage(error.msg);
       setLoginFailed(true);
     } else {
       const error = await response.json();
-      setErrorMessage("Something went wrong: ", error.error);
+      setErrorMessage("Something went wrong: ", error.msg);
       setLoginFailed(true);
     }
   };
@@ -109,6 +108,10 @@ const Form = () => {
           );
           navigate("/home", {state: {newUser: false }});
         }
+      } else if (response.status === 400) {
+        const error = await response.json();
+        setErrorMessage(error.msg);
+        setLoginFailed(true);
       }
     } catch (e) {
       setErrorMessage(e.message);

@@ -26,4 +26,3 @@ export const getScaleForResumeViewer = (screenWidth) => {
   const scale = (screenWidth / RESUME_BASE_WIDTH);
   return scale;
 }
-
