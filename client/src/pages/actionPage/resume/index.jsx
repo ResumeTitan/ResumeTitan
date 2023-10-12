@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useSelector } from "react-redux";
 import { useReactToPrint } from 'react-to-print';
 import Spinner from "../../../components/Spinner";
-import { ContactInfo } from "../../resumePage/ContactInfo";
-import { Summary } from "../../resumePage/Summary";
-import { Jobs } from "../../resumePage/Jobs";
-import { Schools } from "../../resumePage/Schools";
-import { Skills}  from "../../resumePage/Skills";
+import { ContactInfo } from "../../../scenes/resumePage/ContactInfo";
+import { Summary } from "../../../scenes/resumePage/Summary";
+import { Jobs } from "../../../scenes/resumePage/Jobs";
+import { Schools } from "../../../scenes/resumePage/Schools";
+import { Skills}  from "../../../scenes/resumePage/Skills";
 import { getResume } from "../../../api/resume";
 import { SchoolSection } from "./schoolSection";
 
@@ -28,7 +28,7 @@ function Resume({ resume, viewing, scale, show, onView }) {
       style={{display: showResume ? "flex" : "none"}}
     >
       <div>
-      <div ref={resumeRef} className={`${viewing ? "" : "cursor-zoom-in origin-top-left"}`} style={{ transform: `scale(${scale})` }} onClick={onView}>
+      <div ref={resumeRef} className={`${viewing ? "origin-center" : "cursor-zoom-in origin-top-left"} `} style={{ transform: `scale(${scale})` }} onClick={onView}>
         <div className="inline-flex">
           <div style={{
             height: "279.44mm",
@@ -50,7 +50,7 @@ function Resume({ resume, viewing, scale, show, onView }) {
               phone={"resume.phone"}
               editing={false}
             />
-              {schools && <SchoolSection schools={schools}/>}
+              {schools && <SchoolSection education={schools}/>}
           {/* <Summary summary={"resume.objective" || 'Fill summary here'} editing={editing}/>
           
           <Jobs jobs={"resume.jobs"} editing={editing}/>

@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import HomePage from './scenes/homePage';
 import LoginPage from './scenes/loginPage';
 import ResumePage from './scenes/resumePage';
-import ActionPage from './scenes/actionPage';
+import ActionPage from './pages/actionPage';
 import LandingPage from './scenes/landingPage';
 
 export default function App() {
@@ -15,6 +15,7 @@ export default function App() {
       <BrowserRouter>
       <NavBar/>
       <Routes>
+        <Route path="/" element={isAuth ? <HomePage /> : <Navigate to="/login" />} />
         <Route path="/home" element={isAuth ? <HomePage /> : <Navigate to="/login" />} />
         <Route path="/resume" element={isAuth ? <ResumePage /> : <Navigate to="/login" />} />
         {/* <Route path="/resume/:id/view" element={<Resume />} /> */}

@@ -67,13 +67,29 @@ const Form = () => {
 
   const register = async (values) => {
     const response = await postRegister(values);
-    if (response.status === 200) {
-      const savedUser = await response.json;
-      if (savedUser) {
+    if (response.status === 201) { // Registered user successfully
+      const registerResponse = await response.json();
+      console.log(`Registered new user ${registerResponse.user}`);
+      if (registerResponse) {
+        dispatch(
+          setLogin({
+            user: registerResponse.user,
+            token: registerResponse.token,
+          })
+        );
+        navigate("/home", {state: {newUser: true }});
         setIsRegister(false);
         setNewUserRegistered(true);
-        navigate("/home", { user: savedUser.user });
       }
+    } else if (response.status === 400) {
+      const error = await response.json();
+      toggleRegister();
+      setErrorMessage(error.error);
+      setLoginFailed(true);
+    } else {
+      const error = await response.json();
+      setErrorMessage("Something went wrong: ", error.error);
+      setLoginFailed(true);
     }
   };
 
@@ -91,7 +107,7 @@ const Form = () => {
               token: loggedIn.token,
             })
           );
-          navigate("/home", { user: loggedIn.user });
+          navigate("/home", {state: {newUser: false }});
         }
       }
     } catch (e) {

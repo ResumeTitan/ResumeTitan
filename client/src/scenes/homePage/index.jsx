@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useSelector } from "react-redux";
 import Spinner from '../../components/Spinner';
 import { createResume } from '../../api/resume.js';
+import Alert from '@mui/material/Alert';
 
 import './index.css';
 
 function HomePage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const token = useSelector((state) => state.token);
   const user = useSelector((state) => state.user);
   const isAuth = Boolean(useSelector((state) => state.token));
@@ -19,6 +21,7 @@ function HomePage() {
   const [schools, setSchools] = useState([]);
   const [jobs, setJobs] = useState([]);
   const [waitingForResume, setWaitingForResume] = useState(false);
+  const [showSuccessMsg, setShowSuccessMsg] = useState(location.state.newUser || false);
 
   const formatPhoneNumber = () => {
     // Remove all non-digit characters from the input
@@ -179,6 +182,8 @@ function HomePage() {
   } else {
     return (
       <div key="home" className="flex flex-col justify-center items-center">
+        { showSuccessMsg && (<Alert severity="success" onClose={() => {setShowSuccessMsg(false)}}>Success! Registered new user, {user.firstName} {user.lastName}</Alert>)}
+
         <form onSubmit={handleSubmit} action="/">
 
         {/* Contact Box */}

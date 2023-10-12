@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Button, TextField } from '@material-ui/core';
 import EditIcon from '@mui/icons-material/Edit';
+import { PrintToPdf } from 'components/Print';
 import '../index.css';
 
 function ResumeName() {
@@ -49,9 +49,7 @@ function ResumeName() {
             </div>
           )}
         </div>
-        <button className="submitButton">
-          {"Download"}
-        </button>
+        <PrintToPdf/>
       </div>
     </div>
   );

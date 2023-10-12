@@ -28,7 +28,7 @@ function ActionBar() {
 
   return (
     <div 
-      style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "600px", minWidth: "600px"}}
+      style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "600px", maxWidth: "600px"}}
       className="p-2"
     >
       <ResumeName />

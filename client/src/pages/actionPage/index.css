@@ -19,8 +19,7 @@
 }
 
 .formStyle {
-  @apply bg-gray-500 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400
-    dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-600 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500;
+  @apply bg-gray-500 border border-gray-300 text-light-text text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400;
 }
 
 .formLabel {
@@ -33,15 +32,12 @@
 
 .removeButton {
   @apply text-white bg-slate-800 text-center font-medium rounded-lg text-sm px-5 py-2.5 m-1
-    hover:bg-red-800 
-    dark:bg-slate-400 dark:hover:bg-red-700
-    transition ease-in-out duration-200;
+    hover:bg-red-800
 }
 
 .addButton {
   @apply text-white text-center bg-slate-700 border-2 border-slate-300 font-medium rounded-lg text-sm px-5 py-2.5 m-1
     hover:bg-teal-800 hover:cursor-pointer
-    dark:bg-slate-400 dark:hover:bg-teal-800 dark:hover:border-2
     transition ease-in-out duration-200;   
 }
 

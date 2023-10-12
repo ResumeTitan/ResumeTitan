@@ -23,7 +23,7 @@ export const formatDate = (date) => {
 const RESUME_BASE_WIDTH = 1056;
 
 export const getScaleForResumeViewer = (screenWidth) => {
-  const scale = screenWidth / RESUME_BASE_WIDTH;
+  const scale = (screenWidth / RESUME_BASE_WIDTH);
   return scale;
 }
 
