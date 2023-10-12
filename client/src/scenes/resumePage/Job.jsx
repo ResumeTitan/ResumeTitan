@@ -41,7 +41,7 @@ export const Job = ({ job, i }) => {
   return (
     <li key={job.company} className={i % 2 ? `mt-1` : `mt-half`}>
     <div className="flex">
-      <div className={`font-bold hover:border-gray-700 border-transparent border-2 ${isEditingCompany ? 'bg-yellow-100' : ''}`}
+      <div className={`font-bold hover:border-gray-700 border-transparent border-2`}
         onClick={() => setIsEditingCompany(true)}
         onBlur={() => setIsEditingCompany(false)}
         onInput={handleCompanyChange}

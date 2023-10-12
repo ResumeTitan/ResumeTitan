@@ -21,7 +21,7 @@ function HomePage() {
   const [schools, setSchools] = useState([]);
   const [jobs, setJobs] = useState([]);
   const [waitingForResume, setWaitingForResume] = useState(false);
-  const [showSuccessMsg, setShowSuccessMsg] = useState(location.state.newUser || false);
+  const [showSuccessMsg, setShowSuccessMsg] = useState(location.state?.newUser || false);
 
   const formatPhoneNumber = () => {
     // Remove all non-digit characters from the input
