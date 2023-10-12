@@ -9,7 +9,7 @@
     "server": "cd server && npm start",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "deploy-client": "cd client/ && flyctl deploy",
-    "deploy-server:": "cd server/ && flyctl deploy"
+    "deploy-server": "cd server/ && flyctl deploy"
   },
   "author": "Mitchell Hay",
   "license": "ISC",
