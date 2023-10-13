@@ -50,7 +50,7 @@ export const Job = ({ job, i }) => {
       >
         {company}
       </div>
-      <span className={`font-sans ml-auto text-muted hover:border-gray-700 border-transparent border-2 ${isEditingDateRange ? 'bg-yellow-100' : ''}`}
+      <span className={`ml-auto text-muted hover:border-gray-700 border-transparent border-2 ${isEditingDateRange ? 'bg-yellow-100' : ''}`}
         onClick={() => setIsEditingDateRange(true)}
         onBlur={() => setIsEditingDateRange(false)}
         onInput={handleDateRangeChange}
