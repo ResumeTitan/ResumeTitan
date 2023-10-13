@@ -91,7 +91,7 @@ function ResumePage() {
         </label>
       </div> */}
       <div className="flex justify-center items-center">
-      <div className={`font-serif aspect-[1/1.4142] h-[297mm] flex bg-white p-2`} ref={resumeRef}>
+      <div className={`font-[Times] aspect-[1/1.4142] h-[297mm] flex bg-white p-2`} ref={resumeRef}>
         {isLoading && <Spinner />}
         {resume && (
           <div>

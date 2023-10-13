@@ -32,14 +32,14 @@ export const ContactInfo = (props) => {
 
   return (
     <div className="text-center">
-      <h2 className="hover:border-blue-500 transition duration-300 font-bold mt-4">{props.firstName} {props.lastName}</h2>
+      <h2 className="hover:border-blue-500 text-lg transition duration-300 font-bold mt-4">{props.firstName} {props.lastName}</h2>
 
       <div className="resumeContent">
         <a href={`mailto:${props.email}`}>{props.email}</a>
         {true && (
           <>
             <span className="mx-2">•</span>
-            <a className="font-sans" href={`tel:${props.phone}`}>{formatPhoneNumber(props.phone)}</a>
+            <a href={`tel:${props.phone}`}>{formatPhoneNumber(props.phone)}</a>
           </>
         )}
 
