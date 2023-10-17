@@ -1,5 +1,7 @@
 import React from 'react';
 import { PersonalInfo } from './components/PersonalInfo';
+import { SectionTitle } from './elements/SectionTitle';
+import { WorkSection } from './components/WorkSection';
 
 const sampleData = {
   "basics": {
@@ -39,18 +41,12 @@ export default function HarvardResume() {
         phone={resumeData.basics.phone}
         image={resumeData.basics.image}
       />
-      {/* <div className="flex">
-        <div className="basis-[60%] p-3">
-          <SectionValidator value={resumeData.work}>
-            <WorkSection experience={resumeData.work} />
-          </SectionValidator>
-
-          <SectionValidator value={resumeData.awards}>
-            <AwardSection awardsReceived={resumeData.awards} />
-          </SectionValidator>
+      <div className="flex">
+        <div className="p-3 w-full">
+          <WorkSection />
         </div>
 
-        <div className="basis-[40%] p-3">
+        {/* <div className="basis-[40%] p-3">
           <SectionValidator value={resumeData.basics.objective}>
             <Objective objective={resumeData.basics.objective} />
           </SectionValidator>
@@ -78,8 +74,8 @@ export default function HarvardResume() {
           <SectionValidator value={resumeData.volunteer}>
             <VolunteerSection volunteer={resumeData.volunteer} />
           </SectionValidator>
-        </div>
-      </div> */}
+        </div> */}
+      </div>
     </div>
   );
 };

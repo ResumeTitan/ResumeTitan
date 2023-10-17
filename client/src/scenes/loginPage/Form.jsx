@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { setLogin } from "state";
 import { useDispatch } from "react-redux";
 import { useNavigate } from 'react-router-dom';
-import Alert from '@mui/material/Alert';
+import Alert from '../../components/Alert/Alert';
 import { postLogIn, postRegister } from "api/resume";
 
 const Form = () => {
@@ -121,8 +121,8 @@ const Form = () => {
 
   return (
   <div>
-    { newUserRegistered && (<Alert severity="success" onClose={() => {setNewUserRegistered(false)}}>Success! Registered new user, {firstName} {lastName}</Alert>)}
-    { loginFailed && (<Alert severity="error" onClose={() => {setLoginFailed(false)}}>{errorMessage}</Alert>)}
+    { newUserRegistered && (<Alert type="success" message={`Success! Registered new user, ${firstName} ${lastName}`} onClose={() => {setNewUserRegistered(false)}} />)}
+    { loginFailed && (<Alert type="error" message={errorMessage} onClose={() => {setLoginFailed(false)}} />)}
   <div>
     <h2 className="text-2xl font-bold mb-4 text-gray-200">
     {isRegister ? 'Register' : 'Login'}

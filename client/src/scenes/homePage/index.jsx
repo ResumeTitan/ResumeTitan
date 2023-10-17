@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useSelector } from "react-redux";
 import Spinner from '../../components/Spinner';
 import { createResume } from '../../api/resume.js';
-import Alert from '@mui/material/Alert';
+import Alert from '../../components/Alert/Alert';
 
 import './index.css';
 
@@ -182,7 +182,7 @@ function HomePage() {
   } else {
     return (
       <div key="home" className="flex flex-col justify-center items-center">
-        { showSuccessMsg && (<Alert severity="success" onClose={() => {setShowSuccessMsg(false)}}>Success! Registered new user, {user.firstName} {user.lastName}</Alert>)}
+        { showSuccessMsg && (<Alert type="success" message={`Success! Registered new user, ${user.firstName} ${user.lastName}`} onClose={() => {setShowSuccessMsg(false)}} />)}
 
         <form onSubmit={handleSubmit} action="/">
 

@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Popover } from '@material-ui/core';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import SchoolIcon from '@mui/icons-material/School';
 import WorkIcon from '@mui/icons-material/Work';
@@ -38,31 +37,27 @@ function ActionBar() {
         <AddCircleIcon />
         <div>{" Add Section "}</div>
       </button>
-      <Popover
-        open={isPopoverOpen}
-        anchorEl={document.getElementById('add-section-button')}
-        onClose={handlePopoverClose}
-        anchorOrigin={{
-          vertical: 'center',
-          horizontal: 'center',
-        }}
-        transformOrigin={{
-          vertical: 'center',
-          horizontal: 'center',
-        }}
-      >
-        <div className="flex flex-cols">
-          <button className="flex flex-cols items-center addButton" onClick={handleAddSchool}>
+      {isPopoverOpen && (
+        <div 
+          className="absolute bg-white border border-gray-300 p-2 mt-2"
+          style={{
+            left: "50%",
+            transform: "translateX(-50%)",
+          }}
+        >
+          <button 
+            className="flex items-center addButton mb-2"
+            onClick={handleAddSchool}
+          >
             <SchoolIcon />
             <div className="flex p-2">{"Education"}</div>
-            
           </button>
-          <button className="flex flex-cols items-center addButton">
+          <button className="flex items-center addButton">
             <WorkIcon className="flex"/>
             <div className="flex p-2">{"Work Experience"}</div>
           </button>
         </div>
-      </Popover>
+      )}
     </div>
   )
 }
