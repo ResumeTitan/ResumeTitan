@@ -14,6 +14,6 @@
   "author": "Mitchell Hay",
   "license": "ISC",
   "dependencies": {
-    "concurrently": "^8.2.0"
+    "concurrently": "^8.2.1"
   }
 }
