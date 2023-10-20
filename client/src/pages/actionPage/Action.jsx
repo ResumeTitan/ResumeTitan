@@ -1,25 +1,15 @@
 import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import SchoolIcon from '@mui/icons-material/School';
 import WorkIcon from '@mui/icons-material/Work';
 import ResumeName from './resumeName';
-import Schools from './schools';
+import Schools from './Schools';
+import Jobs from './Jobs';
 
 function ActionBar() {
-  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const [addingSchool, setAddingSchool] = useState(false);
-
-  const handleButtonClick = (event) => {
-    setIsPopoverOpen(true);
-  };
-
-  const handlePopoverClose = () => {
-    setIsPopoverOpen(false);
-  };
-
-  const handleAddSchool = () => {
-    setAddingSchool(true);
-  }
+  const [addingJob, setAddingJob] = useState(false);
 
   const handleSave = () => {
     setAddingSchool(false);
@@ -32,8 +22,9 @@ function ActionBar() {
     >
       <ResumeName />
       <Schools adding={addingSchool} onSave={handleSave}/>
+      <Jobs adding={addingJob} onSave={handleSave}/>
 
-      <button className="addButton" onClick={handleButtonClick}>
+      {/* <button className="addButton" onClick={handleButtonClick}>
         <AddCircleIcon />
         <div>{" Add Section "}</div>
       </button>
@@ -57,7 +48,7 @@ function ActionBar() {
             <div className="flex p-2">{"Work Experience"}</div>
           </button>
         </div>
-      )}
+      )} */}
     </div>
   )
 }

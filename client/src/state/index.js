@@ -5,6 +5,7 @@ const initialState = {
   user: null,
   token: null,
   schools: [],
+  jobs: [],
 };
 
 export const authSlice = createSlice({
@@ -54,10 +55,34 @@ export const authSlice = createSlice({
         (school) => school.id !== action.payload.school.id
       );
       state.schools = updatedSchools;
+    },
+    setJobs: (state, action) => {
+      state.jobs = action.payload.jobs;
+    },
+    setJob: (state, action) => {    
+      const updatedJobs = state.jobs.map((job) => {
+        if (job.id === action.payload.job.id) {
+          return action.payload.job;
+        } else {
+          return job;
+        }
+      });
+
+      state.jobs = updatedJobs;
+    },
+    addJob: (state, action) => {
+      state.jobs.push(action.payload.job);
+    },
+    deleteJob: (state, action) => {
+      console.log("deleting job", action.payload.job.id)
+      const updatedJobs = state.schools.filter(
+        (job) => job.id !== action.payload.job.id
+      );
+      state.jobs = updatedJobs;
     }
   },
 });
 
-export const { setMode, setLogin, setLogout, setFriends, setSchools, addSchool, setSchool, deleteSchool } =
+export const { setMode, setLogin, setLogout, setFriends, setSchools, addSchool, setSchool, deleteSchool, setJobs, setJob, addJob, deleteJob } =
   authSlice.actions;
 export default authSlice.reducer;
