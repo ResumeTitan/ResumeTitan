@@ -24,7 +24,6 @@ export const PersonalInfo = ({
     <div className="flex justify-center items-center p-2">
       <div>
         <PersonalName name={name} />
-        <SectionSubtitle label={label} />
         <div className="flex gap-3">
           <PersonalContact text={phone} />
           <PersonalContact text={email} />
@@ -36,7 +35,6 @@ export const PersonalInfo = ({
           )}
         </div>
       </div>
-      {/* <ProfileImage src={image} height="100px" width="100px" /> */}
     </div>
   );
 };

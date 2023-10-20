@@ -1,5 +1,8 @@
 import React from 'react';
 import { PersonalInfo } from './components/PersonalInfo';
+import { SectionTitle } from './elements/SectionTitle';
+import { WorkSection } from './components/WorkSection';
+import { SchoolSection } from './components/SchoolSection';
 
 const sampleData = {
   "basics": {
@@ -25,6 +28,30 @@ const sampleData = {
   },
 }
 
+const exampleEducation = [
+  {
+    "name": "College University",
+    "major": "Computer Science",
+    "degree": "Bachelor of Science",
+    "startDate": "2013",
+    "endDate": "2017",
+    "content": [
+      "Helped out with engineering camps",
+      "Tutored students in math"
+    ]
+  },
+  {
+    "name": "University State",
+    "major": "Accounting",
+    "degree": "Bachelor of Arts",
+    "startDate": "2015",
+    "endDate": "present",
+    "content": [
+      "Helped out with engineering camps",
+      "Tutored students in math"
+    ]
+  }
+]
 
 export default function HarvardResume() {
   const resumeData = sampleData;
@@ -39,18 +66,12 @@ export default function HarvardResume() {
         phone={resumeData.basics.phone}
         image={resumeData.basics.image}
       />
-      {/* <div className="flex">
-        <div className="basis-[60%] p-3">
-          <SectionValidator value={resumeData.work}>
-            <WorkSection experience={resumeData.work} />
-          </SectionValidator>
-
-          <SectionValidator value={resumeData.awards}>
-            <AwardSection awardsReceived={resumeData.awards} />
-          </SectionValidator>
+      <div className="flex">
+        <div className="p-3 w-full">
+          <SchoolSection education={exampleEducation} />
         </div>
 
-        <div className="basis-[40%] p-3">
+        {/* <div className="basis-[40%] p-3">
           <SectionValidator value={resumeData.basics.objective}>
             <Objective objective={resumeData.basics.objective} />
           </SectionValidator>
@@ -78,8 +99,8 @@ export default function HarvardResume() {
           <SectionValidator value={resumeData.volunteer}>
             <VolunteerSection volunteer={resumeData.volunteer} />
           </SectionValidator>
-        </div>
-      </div> */}
+        </div> */}
+      </div>
     </div>
   );
 };
