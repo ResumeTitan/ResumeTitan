@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import EditIcon from '@mui/icons-material/Edit';
 import { PrintToPdf } from 'components/Print';
-import '../index.css';
+import './index.css';
 
 function ResumeName() {
   const [isEditing, setIsEditing] = useState(false);

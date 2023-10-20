@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import ActionBar from './action';
+import ActionBar from './Action';
 import DocumentScannerIcon from '@mui/icons-material/DocumentScanner';
 import { getScaleForResumeViewer } from 'utils';
 import HarvardResume from 'templates/layouts/harvard/Harvard';

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import School from './school';
+import School from './School';
 import { addSchool, setSchool, deleteSchool } from 'state';
 import SchoolIcon from '@mui/icons-material/School';
-import '../index.css';
+import './index.css';
 
 function Schools({ adding, onSave }) {
   const [isEditing, setIsEditing] = useState(false);
@@ -85,9 +85,9 @@ function Schools({ adding, onSave }) {
               </div>
             </div>
           ))}
-          <div className={`p-4 flex flex-col items-center justify-center addButton`}>
+          <div className={`p-4 flex flex-col items-center justify-center addButton`} onClick={handleAddSchool}>
             <SchoolIcon fontSize="large"/>
-            <button type="button" onClick={handleAddSchool}>{"Add School"}</button>
+            <span>{"Add School"}</span>
           </div>
         </div>
       )}

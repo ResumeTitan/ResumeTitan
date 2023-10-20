@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from 'react-router-dom';
 import Alert from '../../components/Alert/Alert';
 import { postLogIn, postRegister } from "api/resume";
+import { TermsOfService } from "components/TermsOfService";
 
 const Form = () => {
   const navigate = useNavigate();
@@ -16,6 +17,8 @@ const Form = () => {
   const [newUserRegistered, setNewUserRegistered] = useState(false);
   const [loginFailed, setLoginFailed] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [showTermsOfService, setShowTermsOfService] = useState(false);
+  const [tosAccepted, setTosAccepted] = useState(false);
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
@@ -38,13 +41,8 @@ const Form = () => {
 
     // Perform login or register logic here
     if (isRegister) {
-      const data = {
-        firstName,
-        lastName,
-        email,
-        password,
-      }
-      await register(data);
+      // Ask user for TOS
+      setShowTermsOfService(true);
     } else {
       const data = {
         email,
@@ -60,6 +58,17 @@ const Form = () => {
     setEmail('');
     setPassword('');
   };
+
+  const handleAcceptTos = async () => {
+    setTosAccepted(true);
+    const data = {
+      firstName,
+      lastName,
+      email,
+      password,
+    }
+    await register(data);
+  }
 
   const toggleRegister = () => {
     setIsRegister(!isRegister);
@@ -213,6 +222,12 @@ const Form = () => {
     </div>
   </form>
   </div>
+  {showTermsOfService && (
+    <TermsOfService 
+      onAccept={handleAcceptTos} 
+      onDecline={() => setShowTermsOfService(false)}
+    />
+  )}
   </div>
   );
 }
