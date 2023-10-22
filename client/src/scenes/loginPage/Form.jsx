@@ -131,30 +131,14 @@ const Form = () => {
   };
 
   return (
-  <div>
-    { newUserRegistered && (<Alert type="success" message={`Success! Registered new user, ${firstName} ${lastName}`} onClose={() => {setNewUserRegistered(false)}} />)}
-    { loginFailed && (<Alert type="error" message={errorMessage} onClose={() => {setLoginFailed(false)}} />)}
-  <div>
-    <h2 className="text-2xl font-bold mb-4 text-gray-200">
-    {isRegister ? 'Register' : 'Login'}
-  </h2>
-  <form onSubmit={handleSubmit}>
-    {isRegister && (
-      <div>
-        <div className="mb-4">
-        <label
-          className="block text-gray-200 text-sm font-bold mb-2"
-          htmlFor="firstName"
-        >
-          {"First Name"}
-        </label>
-        <input
-          type="text"
-          id="firstName"
-          className="appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline"
-          value={firstName}
-          onChange={handleFirstNameChange}
-          required
+    <div>
+      {newUserRegistered && (
+        <Alert
+          type="success"
+          message={`Success! Registered new user, ${firstName} ${lastName}`}
+          onClose={() => {
+            setNewUserRegistered(false);
+          }}
         />
       )}
       {loginFailed && (
@@ -263,63 +247,6 @@ const Form = () => {
         />
       )}
     </div>
-    )}
-    <div className="mb-4">
-      <label
-        className="block text-gray-300 text-sm font-bold mb-2"
-        htmlFor="email"
-      >
-        Email
-      </label>
-      <input
-        type="email"
-        id="email"
-        className="appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline"
-        value={email}
-        onChange={handleEmailChange}
-        required
-      />
-    </div>
-    <div className="mb-4">
-      <label
-        className="block text-gray-300 text-sm font-bold mb-2"
-        htmlFor="password"
-      >
-        {"Password"}
-      </label>
-      <input
-        type="password"
-        id="password"
-        className="appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline"
-        value={password}
-        onChange={handlePasswordChange}
-        required
-      />
-    </div>
-    <div className="flex items-center justify-between mb-4">
-      <button
-        type="submit"
-        className="bg-accent-blue hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-      >
-        {isRegister ? 'Register' : 'Sign In'}
-      </button>
-      <button
-        type="button"
-        className="text-accent-blue hover:text-blue-700 text-sm"
-        onClick={toggleRegister}
-      >
-        {isRegister ? 'Sign In' : 'Register'}
-      </button>
-    </div>
-  </form>
-  </div>
-  {showTermsOfService && (
-    <TermsOfService 
-      onAccept={handleAcceptTos} 
-      onDecline={() => setShowTermsOfService(false)}
-    />
-  )}
-  </div>
   );
 };
 
