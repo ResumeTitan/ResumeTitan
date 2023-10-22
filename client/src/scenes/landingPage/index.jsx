@@ -1,11 +1,12 @@
-import React from 'react'
-import HeroSection from './heroSection'
+import Footer from 'components/Footer';
+import HeroSection from './heroSection';
 
 function LandingPage() {
   return (
     <div>
-        <HeroSection/>
-        {/* <Companies/>
+      <HeroSection />
+      <Footer />
+      {/* <Companies/>
         <Courses/>
         <Achievement/>
         <Categories/>
@@ -13,7 +14,7 @@ function LandingPage() {
         <CTA/>
         <Footer/> */}
     </div>
-  )
+  );
 }
 
-export default LandingPage
+export default LandingPage;
