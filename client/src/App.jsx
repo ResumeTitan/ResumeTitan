@@ -1,28 +1,34 @@
-import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import Footer from 'components/Footer';
+import { useSelector } from 'react-redux';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import NavBar from './components/NavBar';
-import { useSelector } from "react-redux";
+import ActionPage from './pages/actionPage';
 import HomePage from './scenes/homePage';
+import LandingPage from './scenes/landingPage';
 import LoginPage from './scenes/loginPage';
 import ResumePage from './scenes/resumePage';
-import ActionPage from './pages/actionPage';
-import LandingPage from './scenes/landingPage';
 
 export default function App() {
   const isAuth = Boolean(useSelector((state) => state.token));
   return (
-    <div className="min-h-screen bg-background-light">
+    <div className="min-h-screen bg-white">
       <BrowserRouter>
-      <NavBar/>
-      <Routes>
-        <Route path="/" element={isAuth ? <HomePage /> : <Navigate to="/login" />} />
-        <Route path="/home" element={isAuth ? <HomePage /> : <Navigate to="/login" />} />
-        <Route path="/resume" element={isAuth ? <ResumePage /> : <Navigate to="/login" />} />
-        {/* <Route path="/resume/:id/view" element={<Resume />} /> */}
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/test" element={<ActionPage />} />
-        <Route path="/landing" element={<LandingPage />} />
-      </Routes>
+        <NavBar />
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route
+            path="/home"
+            element={isAuth ? <HomePage /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/resume"
+            element={isAuth ? <ResumePage /> : <Navigate to="/login" />}
+          />
+          {/* <Route path="/resume/:id/view" element={<Resume />} /> */}
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/test" element={<ActionPage />} />
+        </Routes>
+        <Footer />
       </BrowserRouter>
     </div>
   );
