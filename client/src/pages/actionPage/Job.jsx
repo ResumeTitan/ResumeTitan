@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 function Job({ editingJob, onSave, onDelete, onCancel }) {
   const [jobForm, setJobForm] = useState(editingJob);
@@ -23,67 +23,111 @@ function Job({ editingJob, onSave, onDelete, onCancel }) {
     setJobForm({ ...jobForm, [id]: value });
   }
 
-  useEffect(() => {
-    console.log('jobForm', jobForm);
-  }, [jobForm]);
-
   return (
     <div className="mt-6">
       <div className="mb-6">
-        <label htmlFor={"name"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Job Name</label>
+        <label htmlFor={"title"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Job Title</label>
         <input 
           type="text"
-          id={"name"}
+          id={"title"}
           className="formStyle" 
-          placeholder="Harvard University"
+          placeholder="Enter job title..."
           onChange={handleJobChange}
-          value={jobForm.name || ''}
+          value={jobForm.title || ''}
           required />
       </div>
       <div className="mb-6">
-        <label htmlFor={"location"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Location</label>
+        <label htmlFor={"employer"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Employer</label>
         <input 
           type="text"
-          id={"location"}
+          id={"employer"}
           className="formStyle"
-          placeholder="Raleigh, NC"
-          value={jobForm.location || ''}
+          placeholder="Enter employer..."
+          value={jobForm.employer || ''}
           onChange={handleJobChange}
           required 
         />
       </div> 
-      <div className="mb-6">
-        <label htmlFor={"jobmajor"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Major</label>
+      <div className="mb-6 flex flex-cols justify-between">
+        <div className="w-full pr-2">
+        <label htmlFor={"city"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">City</label>
         <input 
           type="text"
-          id={"major"}
+          id={"city"}
           className="formStyle"
-          placeholder="Business Administration"
-          value={jobForm.major || ''}
+          placeholder="Enter city..."
+          value={jobForm.city || ''}
           onChange={handleJobChange}
           required />
-      </div> 
-      <div className="mb-6">
-        <label htmlFor={"degree"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Degree Earned/Working Towards</label>
-        <select id={"degree"} className="formStyle" onChange={handleJobChange}>
-          <option >High School Diploma</option>
-          <option>Bachelor of Science</option>
-          <option>Bachelor of Arts</option>
-          <option>Masters Degree</option>
-          <option>Doctorate</option>
-        </select>
-      </div>
-      <div>
-        <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white placeholder-gray-400">Graduation Date</label>
-        <input
-          type="date" 
-          id={"graduationDate"}
+        </div>
+        <div className="w-full pl-2">
+        <label htmlFor={"state"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">State</label>
+        <input 
+          type="text"
+          id={"state"}
           className="formStyle"
-          value={jobForm.graduationDate || ''}
+          placeholder="Enter state..."
+          value={jobForm.state || ''}
           onChange={handleJobChange}
-          required 
-        />
+          required />
+        </div>
       </div>
+
+      <div className="mb-6 flex flex-cols justify-between">
+        <div className="w-full pr-2">
+          <label htmlFor={"startDate"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Start Date</label>
+          <div className="flex flex-cols">
+            <div className="w-[75%] pr-1">
+              <input 
+                type="text"
+                id={"startDateMonth"}
+                className="formStyle"
+                placeholder="Enter month..."
+                value={jobForm.startDateMonth || ''}
+                onChange={handleJobChange}
+                required />
+            </div>
+            <div className="pl-1">
+              <input 
+                type="text"
+                id={"startDateYear"}
+                className="formStyle"
+                placeholder="Enter year..."
+                value={jobForm.startDateYear || ''}
+                onChange={handleJobChange}
+                required />
+            </div>
+          </div>
+        </div>
+        <div className="w-full pl-2">
+        <div className="w-full pr-2">
+          <label htmlFor={"endDate"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">End Date</label>
+          <div className="flex flex-cols">
+            <div className="w-[75%] pr-1">
+              <input 
+                type="text"
+                id={"endDateMonth"}
+                className="formStyle"
+                placeholder="Enter month..."
+                value={jobForm.endDateMonth || ''}
+                onChange={handleJobChange}
+                required />
+            </div>
+            <div className="pl-1">
+              <input 
+                type="text"
+                id={"endDateYear"}
+                className="formStyle"
+                placeholder="Enter year..."
+                value={jobForm.endDateYear || ''}
+                onChange={handleJobChange}
+                required />
+            </div>
+          </div>
+        </div>
+        </div>
+      </div>
+
       <div className="my-6">
         <label htmlFor={"notes"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Notes</label>
         <textarea 
@@ -97,13 +141,8 @@ function Job({ editingJob, onSave, onDelete, onCancel }) {
       </div>
       <div className="flex justify-between">
         <button
-          className="addButton bg-slate-800"
-          onClick={handleSaveJob}
-        >
-          {"Save"}
-        </button>
-        <button
-          className="removeButton bg-slate-800"
+          disabled={!jobForm.id}
+          className={`${jobForm.id ? "removeButton bg-slate-800" : "disabledButton"}`}
           onClick={handleDeleteJob}
         >
           {"Delete"}
@@ -113,6 +152,12 @@ function Job({ editingJob, onSave, onDelete, onCancel }) {
           onClick={handleCancel}
         >
           {"Cancel"}
+        </button>
+        <button
+          className="addButton bg-slate-800"
+          onClick={handleSaveJob}
+        >
+          {"Save"}
         </button>
       </div>
     </div>

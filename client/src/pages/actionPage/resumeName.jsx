@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import EditIcon from '@mui/icons-material/Edit';
 import { PrintToPdf } from 'components/Print';
-import './index.css';
+import './Action.css';
 
 function ResumeName() {
   const [isEditing, setIsEditing] = useState(false);
@@ -29,7 +29,7 @@ function ResumeName() {
           {isEditing ? (
             <div>
               <input
-                className="shadow appearance-none border rounded w-full px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                className="formStyle"
                 id="resumeName"
                 type="text"
                 placeholder="Enter Resume Name"

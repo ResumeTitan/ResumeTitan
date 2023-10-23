@@ -1,10 +1,10 @@
 import { postLogIn, postRegister } from 'api/resume';
-import { TermsOfService } from 'components/TermsOfService';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { setLogin } from 'state';
-import Alert from '../../components/Alert/Alert';
+import SuccessAlert from '../../components/Alert/SuccessAlert';
+import ErrorAlert from '../../components/Alert/ErrorAlert';
 
 const Form = () => {
   const navigate = useNavigate();
@@ -17,8 +17,6 @@ const Form = () => {
   const [newUserRegistered, setNewUserRegistered] = useState(false);
   const [loginFailed, setLoginFailed] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const [showTermsOfService, setShowTermsOfService] = useState(false);
-  const [tosAccepted, setTosAccepted] = useState(false);
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
@@ -41,8 +39,13 @@ const Form = () => {
 
     // Perform login or register logic here
     if (isRegister) {
-      // Ask user for TOS
-      setShowTermsOfService(true);
+      const data = {
+        firstName,
+        lastName,
+        email,
+        password,
+      };
+      await register(data);
     } else {
       const data = {
         email,
@@ -56,17 +59,6 @@ const Form = () => {
     setLastName('');
     setEmail('');
     setPassword('');
-  };
-
-  const handleAcceptTos = async () => {
-    setTosAccepted(true);
-    const data = {
-      firstName,
-      lastName,
-      email,
-      password,
-    };
-    await register(data);
   };
 
   const toggleRegister = () => {
@@ -133,8 +125,7 @@ const Form = () => {
   return (
     <div>
       {newUserRegistered && (
-        <Alert
-          type="success"
+        <SuccessAlert
           message={`Success! Registered new user, ${firstName} ${lastName}`}
           onClose={() => {
             setNewUserRegistered(false);
@@ -142,8 +133,7 @@ const Form = () => {
         />
       )}
       {loginFailed && (
-        <Alert
-          type="error"
+        <ErrorAlert
           message={errorMessage}
           onClose={() => {
             setLoginFailed(false);
@@ -240,12 +230,6 @@ const Form = () => {
           </div>
         </form>
       </div>
-      {showTermsOfService && (
-        <TermsOfService
-          onAccept={handleAcceptTos}
-          onDecline={() => setShowTermsOfService(false)}
-        />
-      )}
     </div>
   );
 };

@@ -71,7 +71,7 @@ function ResumePage() {
   }
 
   return (
-    <div className="m-2 content-center justify-center items-center">
+    <div className="p-2 content-center justify-center items-center bg-slate-500">
       {/* TODO add edit mode */}
       {/* <div className="flex justify-center items-center m-4">
         <label class="inline-flex relative items-center mr-5 cursor-pointer">
