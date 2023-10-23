@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useSelector } from "react-redux";
 import Spinner from '../../components/Spinner';
 import { createResume } from '../../api/resume.js';
-import Alert from '../../components/Alert/Alert';
+import SuccessAlert from '../../components/Alert/SuccessAlert';
 
 import './index.css';
 
@@ -181,8 +181,8 @@ function HomePage() {
     );
   } else {
     return (
-      <div key="home" className="flex flex-col justify-center items-center">
-        { showSuccessMsg && (<Alert type="success" message={`Success! Registered new user, ${user.firstName} ${user.lastName}`} onClose={() => {setShowSuccessMsg(false)}} />)}
+      <div key="home" className="flex flex-col items-center min-h-screen bg-slate-400">
+        { showSuccessMsg && (<SuccessAlert message={`Success! Registered new user, ${user.firstName} ${user.lastName}`} onClose={() => {setShowSuccessMsg(false)}} />)}
 
         <form onSubmit={handleSubmit} action="/">
 

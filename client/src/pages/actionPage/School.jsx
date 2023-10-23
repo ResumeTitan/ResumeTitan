@@ -35,55 +35,86 @@ function School({ editingSchool, onSave, onDelete, onCancel }) {
           type="text"
           id={"name"}
           className="formStyle" 
-          placeholder="Harvard University"
+          placeholder="Enter school name..."
           onChange={handleSchoolChange}
           value={schoolForm.name || ''}
           required />
       </div>
       <div className="mb-6">
-        <label htmlFor={"location"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Location</label>
-        <input 
-          type="text"
-          id={"location"}
-          className="formStyle"
-          placeholder="Raleigh, NC"
-          value={schoolForm.location || ''}
-          onChange={handleSchoolChange}
-          required 
-        />
-      </div> 
-      <div className="mb-6">
-        <label htmlFor={"schoolmajor"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Major</label>
+        <label htmlFor={"major"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Major</label>
         <input 
           type="text"
           id={"major"}
           className="formStyle"
-          placeholder="Business Administration"
+          placeholder="Enter major..."
           value={schoolForm.major || ''}
           onChange={handleSchoolChange}
+          required 
+        />
+      </div>
+
+
+      <div className="mb-6 flex flex-cols justify-between">
+        <div className="w-full pr-2">
+        <label htmlFor={"city"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">City</label>
+        <input 
+          type="text"
+          id={"city"}
+          className="formStyle"
+          placeholder="Enter city..."
+          value={schoolForm.city || ''}
+          onChange={handleSchoolChange}
           required />
-      </div> 
+        </div>
+        <div className="w-full pl-2">
+        <label htmlFor={"state"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">State</label>
+        <input 
+          type="text"
+          id={"state"}
+          className="formStyle"
+          placeholder="Enter state..."
+          value={schoolForm.state || ''}
+          onChange={handleSchoolChange}
+          required />
+        </div>
+      </div>
+
       <div className="mb-6">
         <label htmlFor={"degree"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Degree Earned/Working Towards</label>
-        <select id={"degree"} className="formStyle" onChange={handleSchoolChange}>
-          <option >High School Diploma</option>
+        <select id={"degree"} className="formStyle" defaultValue={""} onChange={handleSchoolChange}>
+          <option value="" disabled>Select a degree...</option>
+          <option>High School Diploma</option>
           <option>Bachelor of Science</option>
           <option>Bachelor of Arts</option>
           <option>Masters Degree</option>
           <option>Doctorate</option>
         </select>
       </div>
-      <div>
-        <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white placeholder-gray-400">Graduation Date</label>
-        <input
-          type="date" 
-          id={"graduationDate"}
-          className="formStyle"
-          value={schoolForm.graduationDate || ''}
-          onChange={handleSchoolChange}
-          required 
-        />
-      </div>
+      <div className="w-full pr-2">
+          <label htmlFor={"gradDate"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Graduation Date</label>
+          <div className="flex flex-cols">
+            <div className="w-[75%] pr-1">
+              <input 
+                type="text"
+                id={"gradDateMonth"}
+                className="formStyle"
+                placeholder="Enter month..."
+                value={schoolForm.startDateMonth || ''}
+                onChange={handleSchoolChange}
+                required />
+            </div>
+            <div className="pl-1">
+              <input 
+                type="text"
+                id={"gradDateYear"}
+                className="formStyle"
+                placeholder="Enter year..."
+                value={schoolForm.startDateYear || ''}
+                onChange={handleSchoolChange}
+                required />
+            </div>
+          </div>
+        </div>
       <div className="my-6">
         <label htmlFor={"notes"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Notes</label>
         <textarea 
@@ -97,13 +128,8 @@ function School({ editingSchool, onSave, onDelete, onCancel }) {
       </div>
       <div className="flex justify-between">
         <button
-          className="addButton bg-slate-800"
-          onClick={handleSaveSchool}
-        >
-          {"Save"}
-        </button>
-        <button
-          className="removeButton bg-slate-800"
+          disabled={!schoolForm.id}
+          className={`${schoolForm.id ? "removeButton bg-slate-800" : "disabledButton"}`}
           onClick={handleDeleteSchool}
         >
           {"Delete"}
@@ -113,6 +139,12 @@ function School({ editingSchool, onSave, onDelete, onCancel }) {
           onClick={handleCancel}
         >
           {"Cancel"}
+        </button>
+        <button
+          className="addButton bg-slate-800"
+          onClick={handleSaveSchool}
+        >
+          {"Save"}
         </button>
       </div>
     </div>

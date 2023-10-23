@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import Job from './Job';
 import { addJob, setJob, deleteJob } from 'state';
 import WorkIcon from '@mui/icons-material/Work';
-import './index.css';
+import './Action.css';
 
 function Jobs({ adding, onSave }) {
   const [isEditing, setIsEditing] = useState(false);
@@ -20,13 +20,13 @@ function Jobs({ adding, onSave }) {
       return;
     } else {
       jobForm.id = jobs.length + 1;
-      dispatch(addJob({ school: jobForm }));
+      dispatch(addJob({ job: jobForm }));
     }
   }
 
   const handleDeleteJob = (id) => {
     setIsEditing(false);
-    dispatch(deleteJob({ school: { id } }));
+    dispatch(deleteJob({ job: { id } }));
   }
 
   const handleCancel = () => {
@@ -34,10 +34,12 @@ function Jobs({ adding, onSave }) {
   }
 
   const handleEditJob = (index) => {
-    setIsEditing(true);
+    console.log('index', index);
+    console.log('jobs', jobs);
     const foundJob = jobs.find(obj => obj.id === index);
     console.log('index', foundJob);
     setEditingJob(foundJob);
+    setIsEditing(true);
   }
 
   const handleAddJob = () => {
@@ -60,10 +62,7 @@ function Jobs({ adding, onSave }) {
   }, [adding]);
 
   const editingForm = (
-    <div className="p-4">
-      <div className="whitespace-nowrap flex justify-between">
-        <div className="formHeader">Job Info</div>
-      </div>
+    <div className="px-4 pb-4">
       <Job editingJob={editingJob} onSave={handleSaveJob} onDelete={handleDeleteJob} onCancel={handleCancel}/>
     </div>
   );
@@ -75,13 +74,13 @@ function Jobs({ adding, onSave }) {
       {!isEditing && (
         <div>
           <div class="font-bold border-b border-black rounded-t p-4">{"Job Info"}</div>
-          {jobs.map((school) => (
-            <div className={`p-4 border-b border-black `} onClick={() => handleEditJob(school.id)}>
+          {jobs.map((job) => (
+            <div className="p-4 border-b border-black hover:bg-slate-500" onClick={() => handleEditJob(job.id)}>
               <div className="flex justify-between font-bold">
-                {school.name}
+                {job?.title}
               </div>
               <div className="flex justify-between">
-                {school.degree}
+                {job?.employer}
               </div>
             </div>
           ))}

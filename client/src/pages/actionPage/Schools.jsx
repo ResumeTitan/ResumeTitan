@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import School from './School';
 import { addSchool, setSchool, deleteSchool } from 'state';
 import SchoolIcon from '@mui/icons-material/School';
-import './index.css';
+import './Action.css';
 
 function Schools({ adding, onSave }) {
   const [isEditing, setIsEditing] = useState(false);
@@ -60,10 +60,7 @@ function Schools({ adding, onSave }) {
   }, [adding]);
 
   const editingForm = (
-    <div className="p-4">
-      <div className="whitespace-nowrap flex justify-between">
-        <div className="formHeader">School Info</div>
-      </div>
+    <div className="px-4 pb-4">
       <School editingSchool={editingSchool} onSave={handleSaveSchool} onDelete={handleDeleteSchool} onCancel={handleCancel}/>
     </div>
   );
@@ -74,9 +71,9 @@ function Schools({ adding, onSave }) {
 
       {!isEditing && (
         <div>
-          <div class="font-bold border-b border-black rounded-t p-4">{"School Info"}</div>
+          <div className="font-bold border-b border-black rounded-t p-4">{"School Info"}</div>
           {schools.map((school) => (
-            <div className={`p-4 border-b border-black `} onClick={() => handleEditSchool(school.id)}>
+            <div className="p-4 border-b border-black hover:bg-slate-500" onClick={() => handleEditSchool(school.id)}>
               <div className="flex justify-between font-bold">
                 {school.name}
               </div>

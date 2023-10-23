@@ -71,6 +71,7 @@ export const authSlice = createSlice({
       state.jobs = updatedJobs;
     },
     addJob: (state, action) => {
+      console.log("adding job", action.payload.job);
       state.jobs.push(action.payload.job);
     },
     deleteJob: (state, action) => {

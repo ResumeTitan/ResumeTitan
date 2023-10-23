@@ -3,6 +3,7 @@ import { PersonalInfo } from './components/PersonalInfo';
 import { SectionTitle } from './elements/SectionTitle';
 import { WorkSection } from './components/WorkSection';
 import { SchoolSection } from './components/SchoolSection';
+import { ISchoolType, IWorkType } from '../../../types/types';
 
 const sampleData = {
   "basics": {
@@ -53,7 +54,12 @@ const exampleEducation = [
   }
 ]
 
-export default function HarvardResume() {
+interface HarvardResumeProps {
+  education: ISchoolType[];
+  jobs: IWorkType[];
+}
+
+export default function HarvardResume({ education, jobs }: HarvardResumeProps) {
   const resumeData = sampleData;
   return (
     <div className="p-2">
@@ -68,7 +74,7 @@ export default function HarvardResume() {
       />
       <div className="flex">
         <div className="p-3 w-full">
-          <SchoolSection education={exampleEducation} />
+          <SchoolSection education={education} />
         </div>
 
         {/* <div className="basis-[40%] p-3">

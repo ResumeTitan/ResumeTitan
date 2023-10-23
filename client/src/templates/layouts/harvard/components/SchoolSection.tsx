@@ -16,7 +16,7 @@ export const SchoolSection = ({ education }: SchoolSectionProps) => {
     <div className="mb-3">
       <SectionHeading title="Education" />
 
-      {education.map((item: ISchoolType, index: number) => {
+      {education.length > 0 && education.map((item: ISchoolType, index: number) => {
         return (
           <div key={`school${index}`} className="py-2">
           <SectionTitle label={item.name} />
@@ -29,7 +29,7 @@ export const SchoolSection = ({ education }: SchoolSectionProps) => {
               </p>
             </div>
           </div>
-          <SectionList items={item.content} />
+          {/* <SectionList items={item.content} /> */}
         </div>
         )
       })}
