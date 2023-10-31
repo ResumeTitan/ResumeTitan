@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
+import { VerticalList } from '../../components/VerticalList';
 
 function School({ editingSchool, onSave, onDelete, onCancel }) {
   const [schoolForm, setSchoolForm] = useState(editingSchool);
@@ -23,9 +24,9 @@ function School({ editingSchool, onSave, onDelete, onCancel }) {
     setSchoolForm({ ...schoolForm, [id]: value });
   }
 
-  useEffect(() => {
-    console.log('schoolForm', schoolForm);
-  }, [schoolForm]);
+  const handleSchoolContentChange = (content) => {
+    setSchoolForm({ ...schoolForm, content: content.map((item) => item.content) });
+  }
 
   return (
     <div className="mt-6">
@@ -90,13 +91,15 @@ function School({ editingSchool, onSave, onDelete, onCancel }) {
           <option>Doctorate</option>
         </select>
       </div>
-      <div className="w-full pr-2">
-          <label htmlFor={"gradDate"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Graduation Date</label>
+
+      <div className="mb-6 flex flex-cols justify-between">
+        <div className="w-full pr-2">
+          <label htmlFor={"startDate"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Start Date</label>
           <div className="flex flex-cols">
             <div className="w-[75%] pr-1">
               <input 
                 type="text"
-                id={"gradDateMonth"}
+                id={"startDateMonth"}
                 className="formStyle"
                 placeholder="Enter month..."
                 value={schoolForm.startDateMonth || ''}
@@ -106,7 +109,7 @@ function School({ editingSchool, onSave, onDelete, onCancel }) {
             <div className="pl-1">
               <input 
                 type="text"
-                id={"gradDateYear"}
+                id={"startDateYear"}
                 className="formStyle"
                 placeholder="Enter year..."
                 value={schoolForm.startDateYear || ''}
@@ -115,17 +118,55 @@ function School({ editingSchool, onSave, onDelete, onCancel }) {
             </div>
           </div>
         </div>
+        <div className="w-full pl-2">
+        <div className="w-full pr-2">
+          <label htmlFor={"endDate"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">End Date</label>
+          <div className="flex flex-cols">
+            <div className="w-[75%] pr-1">
+              <input 
+                type="text"
+                id={"endDateMonth"}
+                className="formStyle"
+                placeholder="Enter month..."
+                value={schoolForm.endDateMonth || ''}
+                onChange={handleSchoolChange}
+                required />
+            </div>
+            <div className="pl-1">
+              <input 
+                type="text"
+                id={"endDateYear"}
+                className="formStyle"
+                placeholder="Enter year..."
+                value={schoolForm.endDateYear || ''}
+                onChange={handleSchoolChange}
+                required />
+            </div>
+          </div>
+      </div>
+        </div>
+      </div>
+
+
       <div className="my-6">
         <label htmlFor={"notes"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Notes</label>
         <textarea 
           id={"notes"}
           className="formStyle"
-          placeholder="Math club, passed organic chemistry, etc."
+          placeholder="Enter a description about your time at school..."
           value={schoolForm.notes || ''}
           onChange={handleSchoolChange}
           required 
         />
       </div>
+
+      {schoolForm.content && (
+        <div className="m-2">
+          <label htmlFor={"jobContent"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Content</label>
+          <VerticalList items={schoolForm.content.map((item, index) => ({ id: index + 1, content: item })) || []} onSave={handleSchoolContentChange} />
+        </div>
+      )}
+
       <div className="flex justify-between">
         <button
           disabled={!schoolForm.id}

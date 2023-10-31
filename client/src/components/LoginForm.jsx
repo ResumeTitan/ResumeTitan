@@ -3,10 +3,10 @@ import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { setLogin } from 'state';
-import SuccessAlert from '../../components/Alert/SuccessAlert';
-import ErrorAlert from '../../components/Alert/ErrorAlert';
+import SuccessAlert from './Alert/SuccessAlert';
+import ErrorAlert from './Alert/ErrorAlert';
 
-const Form = () => {
+export const LoginForm = ({ onCloseLogin }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [firstName, setFirstName] = useState('');
@@ -109,6 +109,7 @@ const Form = () => {
               token: loggedIn.token,
             }),
           );
+          onCloseLogin();
           navigate('/home', { state: { newUser: false } });
         }
       } else if (response.status === 400) {
@@ -123,7 +124,8 @@ const Form = () => {
   };
 
   return (
-    <div>
+  <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-black bg-opacity-50 z-10 p-4">
+    <div className="rounded-lg shadow-card w-full max-w-md bg-slate-700 p-8 pt-6">
       {newUserRegistered && (
         <SuccessAlert
           message={`Success! Registered new user, ${firstName} ${lastName}`}
@@ -141,9 +143,14 @@ const Form = () => {
         />
       )}
       <div>
-        <h2 className="text-2xl font-bold mb-4 text-gray-200">
-          {isRegister ? 'Register' : 'Login'}
-        </h2>
+        <div className="flex justify-between">
+          <h2 className="flex text-2xl font-bold mb-4 text-gray-200">
+            {isRegister ? 'Register' : 'Login'}
+          </h2>
+          <button className="flex text-gray-500 hover:text-black bg-gray-700" onClick={onCloseLogin}>
+            <p className="fas fa-times">X</p>
+          </button>
+        </div>
         <form onSubmit={handleSubmit}>
           {isRegister && (
             <div>
@@ -213,6 +220,17 @@ const Form = () => {
               required
             />
           </div>
+
+          {isRegister && (
+            <div className="text-sm text-white pb-4">
+              <p>
+                {'By creating an account, you agree to our '}
+                <a href="/terms" className="text-sm text-accent-blue hover:text-blue-700">Terms of Service</a>
+                {'. We do not sell your personal data. To learn more about how we collect, use, share and protect it please read our Privacy Policy'}
+              </p>
+            </div>
+          )}
+
           <div className="flex items-center justify-between mb-4">
             <button
               type="submit"
@@ -231,7 +249,6 @@ const Form = () => {
         </form>
       </div>
     </div>
+  </div>
   );
 };
-
-export default Form;

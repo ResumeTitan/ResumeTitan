@@ -1,7 +1,6 @@
 import React from "react";
 import { PersonalName } from "../elements/PersonalName";
 import { PersonalContact } from "../elements/PersonalContact";
-import { SectionSubtitle } from "../elements/SectionSubtitle";
 
 export const PersonalInfo = ({
   name,
@@ -14,10 +13,10 @@ export const PersonalInfo = ({
 }: {
   name: string;
   label: string;
-  url: string;
+  url?: string;
   email: string;
   phone: string;
-  city: string;
+  city?: string;
   image: string;
 }) => {
   return (
@@ -27,7 +26,9 @@ export const PersonalInfo = ({
         <div className="flex gap-3">
           <PersonalContact text={phone} />
           <PersonalContact text={email} />
-          <PersonalContact text={city} />
+          {city && (
+            <PersonalContact text={city} />
+          )}
           {url && (
             <div className="flex gap-2 ml-2 items-center">
               <PersonalContact text={url} />

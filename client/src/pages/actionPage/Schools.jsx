@@ -1,32 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import School from './School';
-import { addSchool, setSchool, deleteSchool } from 'state';
 import SchoolIcon from '@mui/icons-material/School';
 import './Action.css';
 
-function Schools({ adding, onSave }) {
+function Schools({ schools, onSave, onDelete }) {
   const [isEditing, setIsEditing] = useState(false);
   const [editingSchool, setEditingSchool] = useState({});
-  
-  const dispatch = useDispatch();
-  const schools = useSelector(state => state.schools);
 
   const handleSaveSchool = (schoolForm) => {
     setIsEditing(false);
-    onSave();
-    if (schoolForm.id) {
-      dispatch(setSchool({ school: schoolForm }));
-      return;
-    } else {
-      schoolForm.id = schools.length + 1;
-      dispatch(addSchool({ school: schoolForm }));
-    }
+    onSave(schoolForm);
   }
 
   const handleDeleteSchool = (id) => {
     setIsEditing(false);
-    dispatch(deleteSchool({ school: { id } }));
+    onDelete(id);
   }
 
   const handleCancel = () => {
@@ -48,16 +36,6 @@ function Schools({ adding, onSave }) {
   useEffect(() => {
     console.log('schools', schools);
   }, [schools]);
-
-  useEffect(() => {
-    if (adding) {
-      setIsEditing(true);
-      setEditingSchool({});
-    } else {
-      setIsEditing(false);
-      setEditingSchool({});
-    }
-  }, [adding]);
 
   const editingForm = (
     <div className="px-4 pb-4">
