@@ -2,49 +2,41 @@
 // import { HTMLRenderer } from 'src/helpers/common/components/HTMLRenderer';
 // import { IWorkIntrf } from 'src/stores/index.interface';
 import { SectionHeading } from '../elements/SectionHeading';
-// import { SectionList } from '../elements/SectionList';
+import { SectionList } from '../elements/SectionList';
 import { SectionSubtitle } from '../elements/SectionSubtitle';
 import { SectionTitle } from '../elements/SectionTitle';
+import { IWorkType } from '../../../../types/types';
 
-// export const WorkSection = ({ experience }: IWorkSection) => {
-export const WorkSection = () => {
+interface WorkSectionProps {
+  experience: IWorkType[]; 
+}
+
+export const WorkSection = ({ experience }: WorkSectionProps) => {
   return (
-    <div className="mb-3">
-      <SectionHeading title="Experience" />
+    <div>
+      <SectionHeading title="Professional Experience" />
 
-      <div className="py-2">
-        <SectionTitle label={"Harvard University"} />
-        <div className="flex justify-between items-center">
-          <SectionSubtitle label={"Bachelor's of Science"} />
-          <div>
-            <p className="text-s">
-              {"September 2018"} -{' '}
-              {true ? 'present' : "November 2020"}
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* {experience.map((item: IWorkIntrf, index: number) => {
+      {experience.length > 0 && experience.map((item: IWorkType, index: number) => {
         return (
-          <div key={index} className="py-2">
-            <SectionTitle label={item.name} />
+          <div key={index}>
+            <SectionTitle label={item.employer} />
             <div className="flex justify-between items-center">
-              <SectionSubtitle label={item.position} />
+              <SectionSubtitle label={item.title} />
               <div>
-                <p className="text-xs">
-                  {dateParser(item.startDate)} -{' '}
-                  {item.isWorkingHere ? 'present' : dateParser(item.endDate)}
+                <p className="text-s">
+                  {item.startDateYear} -{' '}
+                  {item.endDateYear === '-1' ? 'present' : item.endDateYear}
                 </p>
               </div>
             </div>
-
-            <SectionList>
-              <HTMLRenderer htmlString={item.summary} />
-            </SectionList>
+            <div className="flex justify-between items-center">
+            {item.content && item.content.length > 0 && (
+              <SectionList items={item.content} />
+            )}
+          </div>
           </div>
         );
-      })} */}
+      })}
     </div>
   );
 };

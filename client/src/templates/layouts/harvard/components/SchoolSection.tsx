@@ -13,23 +13,30 @@ interface SchoolSectionProps {
 
 export const SchoolSection = ({ education }: SchoolSectionProps) => {
   return (
-    <div className="mb-3">
+    <div>
       <SectionHeading title="Education" />
 
       {education.length > 0 && education.map((item: ISchoolType, index: number) => {
         return (
-          <div key={`school${index}`} className="py-2">
-          <SectionTitle label={item.name} />
-          <div className="flex justify-between items-center">
-            <SectionSubtitle label={`${item.degree}, ${item.major}`} />
+        <div>
+          <div key={`school${index}`} className="flex justify-between items-center">
             <div>
-              <p className="text-s">
-                {item.startDate} -{' '}
-                {item.endDate === 'present' ? 'present' : item.endDate}
+              <SectionTitle label={item.name} />
+              <SectionSubtitle label={`${item.degree}, ${item.major}`} />
+            </div>
+          <div>
+              <p className="text-s py-1">
+                {item.startDateYear} -{' '}
+                {item.endDateYear === '-1' ? 'present' : `${item.endDateYear}`}
               </p>
             </div>
           </div>
-          {/* <SectionList items={item.content} /> */}
+          <div className="flex justify-between items-center">
+            
+            {item.content && item.content.length > 0 && (
+              <SectionList items={item.content} />
+            )}
+          </div>
         </div>
         )
       })}

@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import EditIcon from '@mui/icons-material/Edit';
-import { PrintToPdf } from 'components/Print';
 import './Action.css';
 
-function ResumeName() {
+function ResumeName({ onPrint }) {
   const [isEditing, setIsEditing] = useState(false);
   const [resumeName, setResumeName] = useState("");
   const inputRef = useRef();
@@ -14,6 +13,10 @@ function ResumeName() {
 
   const handleBlur = () => {
     setIsEditing(false);
+  }
+
+  const handlePrint = () => {
+    onPrint();
   }
 
   useEffect(() => {
@@ -49,7 +52,11 @@ function ResumeName() {
             </div>
           )}
         </div>
-        <PrintToPdf/>
+        <div>
+          <button onClick={handlePrint} className="border-2 submitButton">
+            {"Print to PDF"}
+          </button>
+        </div>
       </div>
     </div>
   );

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { VerticalList } from '../../components/VerticalList';
 
 function Job({ editingJob, onSave, onDelete, onCancel }) {
   const [jobForm, setJobForm] = useState(editingJob);
@@ -21,6 +22,10 @@ function Job({ editingJob, onSave, onDelete, onCancel }) {
   const handleJobChange = (e) => {
     const { id, value } = e.target;
     setJobForm({ ...jobForm, [id]: value });
+  }
+
+  const handleJobContentChange = (content) => {
+    setJobForm({ ...jobForm, content: content.map((item) => item.content) });
   }
 
   return (
@@ -124,7 +129,7 @@ function Job({ editingJob, onSave, onDelete, onCancel }) {
                 required />
             </div>
           </div>
-        </div>
+      </div>
         </div>
       </div>
 
@@ -139,6 +144,14 @@ function Job({ editingJob, onSave, onDelete, onCancel }) {
           required 
         />
       </div>
+
+      {jobForm.content && (
+        <div className="m-2">
+          <label htmlFor={"jobContent"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Content</label>
+          <VerticalList items={jobForm.content.map((item, index) => ({ id: index + 1, content: item })) || []} onSave={handleJobContentChange} />
+        </div>
+      )}
+
       <div className="flex justify-between">
         <button
           disabled={!jobForm.id}

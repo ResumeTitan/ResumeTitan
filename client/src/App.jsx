@@ -4,9 +4,7 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import NavBar from './components/NavBar';
 import ActionPage from './pages/actionPage';
 import TermsPage from './pages/termsPage';
-import HomePage from './scenes/homePage';
 import LandingPage from './scenes/landingPage';
-import LoginPage from './pages/loginPage';
 import ResumePage from './scenes/resumePage';
 
 export default function App() {
@@ -19,15 +17,13 @@ export default function App() {
           <Route path="/" element={<LandingPage />} />
           <Route
             path="/home"
-            element={isAuth ? <HomePage /> : <Navigate to="/login" />}
+            element={isAuth ? <ActionPage /> : <Navigate to="/" />}
           />
           <Route
             path="/resume"
-            element={isAuth ? <ResumePage /> : <Navigate to="/login" />}
+            element={isAuth ? <ResumePage /> : <Navigate to="/" />}
           />
           {/* <Route path="/resume/:id/view" element={<Resume />} /> */}
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/test" element={<ActionPage />} />
           <Route path="/terms" element={<TermsPage />} />
         </Routes>
         <Footer />

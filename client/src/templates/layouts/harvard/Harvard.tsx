@@ -1,9 +1,9 @@
 import React from 'react';
 import { PersonalInfo } from './components/PersonalInfo';
-import { SectionTitle } from './elements/SectionTitle';
 import { WorkSection } from './components/WorkSection';
 import { SchoolSection } from './components/SchoolSection';
-import { ISchoolType, IWorkType } from '../../../types/types';
+import { SkillsSection } from './components/SkillsSection';
+import { ISchoolType, IWorkType, IProfileType } from '../../../types/types';
 
 const sampleData = {
   "basics": {
@@ -29,53 +29,41 @@ const sampleData = {
   },
 }
 
-const exampleEducation = [
-  {
-    "name": "College University",
-    "major": "Computer Science",
-    "degree": "Bachelor of Science",
-    "startDate": "2013",
-    "endDate": "2017",
-    "content": [
-      "Helped out with engineering camps",
-      "Tutored students in math"
-    ]
-  },
-  {
-    "name": "University State",
-    "major": "Accounting",
-    "degree": "Bachelor of Arts",
-    "startDate": "2015",
-    "endDate": "present",
-    "content": [
-      "Helped out with engineering camps",
-      "Tutored students in math"
-    ]
-  }
-]
-
 interface HarvardResumeProps {
+  personalInfo: IProfileType;
   education: ISchoolType[];
   jobs: IWorkType[];
+  skills: string[];
 }
 
-export default function HarvardResume({ education, jobs }: HarvardResumeProps) {
+export default function HarvardResume({ personalInfo, education, jobs, skills }: HarvardResumeProps) {
+  console.log(personalInfo);
   const resumeData = sampleData;
   return (
     <div className="p-2">
       <PersonalInfo
-        name={resumeData.basics.name}
+        name={personalInfo.name}
         label={resumeData.basics.label}
-        url={resumeData.basics.url}
-        email={resumeData.basics.email}
-        city={resumeData.basics.location.city}
-        phone={resumeData.basics.phone}
+        url={personalInfo.url}
+        email={personalInfo?.email || resumeData.basics.email}
+        city={personalInfo.city}
+        phone={personalInfo?.phone || resumeData.basics.phone}
         image={resumeData.basics.image}
       />
-      <div className="flex">
-        <div className="p-3 w-full">
+      <div className="">
+        <div className="pt-1 px-2 w-full">
           <SchoolSection education={education} />
         </div>
+
+        <div className="pt-1 px-2 w-full">
+          <WorkSection experience={jobs} />
+        </div>
+
+        {skills && skills.length > 0 && (
+          <div className="pt-1 px-2 w-full">
+            <SkillsSection skills={skills}/>
+          </div>
+        )}
 
         {/* <div className="basis-[40%] p-3">
           <SectionValidator value={resumeData.basics.objective}>

@@ -2,25 +2,30 @@ export interface ISchoolType {
   name: string;
   major: string;
   degree: string;
-  startDate: string;
-  endDate: string;
-  content: string[];
+  startDateMonth: string;
+  startDateYear: string;
+  endDateMonth: string;
+  endDateYear: string;
+  content?: string[];
 }
 
 export interface IWorkType {
-  name: string;
-  position: string;
-  startDate: string;
-  endDate: string;
-  content: string[];
+  title: string;
+  employer: string;
+  startDateMonth: string;
+  startDateYear: string;
+  endDateMonth: string;
+  endDateYear: string;
+  notes?: string;
+  content?: string[];
 }
 
 export interface IProfileType {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  location: string;
+  name: string;
+  email?: string;
+  phone?: string;
+  city?: string;
+  url?: string;
 }
 
 export interface IResumeType {
