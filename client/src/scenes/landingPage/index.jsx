@@ -39,7 +39,7 @@ function LandingPage() {
         <div className="max-w-sm rounded overflow-hidden shadow-lg m-4">
           <div className="px-6 py-4">
             <div className="font-bold text-xl mb-2">
-              Next-gen features are your finger tips
+              Next-gen features at your fingertips
             </div>
             <p className="text-gray-700 text-base">
               ResumeTitan allows for you to not only have professional-grade

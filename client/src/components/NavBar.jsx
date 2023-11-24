@@ -73,7 +73,7 @@ const NavBar = () => {
       </button>
 
       {isMobileMenuOpen && (
-        <div className="absolute top-16 right-0 bg-gray-800 py-2 px-4">
+        <div className="absolute top-16 rounded right-0 bg-gray-800 py-2 px-4">
           <button
             href="/login"
             onClick={handleLoginLogout}
