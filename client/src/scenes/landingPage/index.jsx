@@ -11,7 +11,7 @@ function LandingPage() {
 
   const handleActionButton = () => {
     if (user) {
-      navigate('/home');
+      navigate('/dashboard');
     } else {
       setIsLoginOpen(true);
     }

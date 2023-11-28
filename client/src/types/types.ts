@@ -21,7 +21,8 @@ export interface IWorkType {
 }
 
 export interface IProfileType {
-  name: string;
+  firstName: string;
+  lastName: string;
   email?: string;
   phone?: string;
   city?: string;
@@ -29,7 +30,8 @@ export interface IProfileType {
 }
 
 export interface IResumeType {
-  profile: IProfileType;
   schools: ISchoolType[];
-  works: IWorkType[];
+  jobs: IWorkType[];
+  skills?: string[];
+  objective?: string;
 }

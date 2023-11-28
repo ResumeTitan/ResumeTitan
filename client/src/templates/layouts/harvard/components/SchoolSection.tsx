@@ -8,15 +8,15 @@ import { SectionTitle } from '../elements/SectionTitle';
 import { ISchoolType } from '../../../../types/types';
 
 interface SchoolSectionProps {
-  education: ISchoolType[];
+  schools: ISchoolType[];
 }
 
-export const SchoolSection = ({ education }: SchoolSectionProps) => {
+export const SchoolSection = ({ schools }: SchoolSectionProps) => {
   return (
     <div>
       <SectionHeading title="Education" />
 
-      {education.length > 0 && education.map((item: ISchoolType, index: number) => {
+      {schools.length > 0 && schools.map((item: ISchoolType, index: number) => {
         return (
         <div>
           <div key={`school${index}`} className="flex justify-between items-center">

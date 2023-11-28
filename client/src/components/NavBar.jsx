@@ -11,11 +11,12 @@ const NavBar = () => {
   const user = useSelector((state) => state.user);
   const [mobileScreen, setMobileScreen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
-  const [isMobileMenuOpen, setisMobileMenuOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleLoginLogout = () => {
+    setIsMobileMenuOpen(false);
     if (user) {
       dispatch(setLogout());
       navigate('/');
@@ -25,7 +26,7 @@ const NavBar = () => {
   };
 
   const toggleMobileMenu = () => {
-    setisMobileMenuOpen(!isMobileMenuOpen);
+    setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
   useEffect(() => {
@@ -95,7 +96,7 @@ const NavBar = () => {
           }`}
         >
           <a
-            href="/"
+            href="/dashboard"
             className="font-outline-2 flex font-bold text-xl tracking-tight text-white"
           >
             {mobileScreen ? (

@@ -106,7 +106,13 @@ function Job({ editingJob, onSave, onDelete, onCancel }) {
         </div>
         <div className="w-full pl-2">
         <div className="w-full pr-2">
-          <label htmlFor={"endDate"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">End Date</label>
+          <div className="flex justify-between">
+            <label htmlFor={"endDate"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">End Date</label>
+            <div class="flex items-center">
+              <input type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-teal-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+              <label className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Checked state</label>
+            </div>
+          </div>
           <div className="flex flex-cols">
             <div className="w-[75%] pr-1">
               <input 

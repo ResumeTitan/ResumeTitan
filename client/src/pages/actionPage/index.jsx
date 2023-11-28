@@ -8,6 +8,8 @@ import HarvardResume from 'templates/layouts/harvard/Harvard';
 import ResumeContainer from 'templates/ResumeContainer';
 import { createResume } from '../../api/resume';
 import Spinner from 'components/Spinner';
+import { useParams } from 'react-router-dom';
+import { getResume } from '../../api/resume';
 import './Action.css';
 const MED_SCREEN_WIDTH = 1200;
 
@@ -16,12 +18,13 @@ const MED_SCREEN_WIDTH = 1200;
 const ResumeComponent = React.forwardRef((props, ref) => (
   <div ref={ref} className="print:!scale-100">
     <ResumeContainer>
-      <HarvardResume personalInfo={props.personalInfo} education={props.schools} jobs={props.jobs} skills={props.skills}/>
+      <HarvardResume personalInfo={props.personalInfo} schools={props.schools} jobs={props.jobs} skills={props.skills}/>
     </ResumeContainer>
   </div>
 ));
 
 function ActionPage() {
+  const resumeId = useParams().id;
   const token = useSelector((state) => state.token);
   const [scale, setScale] = useState(1);
   const [showResume, setShowResume] = useState(false);
@@ -29,13 +32,28 @@ function ActionPage() {
   const [schools, setSchools] = useState([]);
   const [jobs, setJobs] = useState([]);
   const [skills, setSkills] = useState([]);
-  const [profile, setProfile] = useState({
-    name: 'John Doe',
+  const currentUser = useSelector((state) => state.user);
+  const [profile, setProfile] = useState(currentUser ? currentUser :{
+    firstName: 'John',
+    lastName: 'Doe',
     phone: '(123)-456-7890',
     email: 'johndoe@example.com',
   });
   const [resumeLoading, setResumeLoading] = useState(false);
   const resumeRef = React.useRef();
+
+  const loadResume = async () => {
+    try {
+      const { resume } = await getResume(token, resumeId);
+      console.log('resume', resume);
+      setSchools(resume.schools);
+      setJobs(resume.jobs);
+      setSkills(resume.skills);
+    } catch (err) {
+      console.log(err);
+      throw err;
+    }
+  };
 
   const togglePopup = () => {
     setIsOpen(!isOpen);
@@ -44,6 +62,10 @@ function ActionPage() {
   const handleViewResume = () => {
     togglePopup();
   };
+
+  useEffect(() => {
+    loadResume();
+  }, [resumeId]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -62,7 +84,7 @@ function ActionPage() {
     window.addEventListener("resize", handleResize);
     handleResize();
     return () => window.removeEventListener("resize", handleResize);
-  }, [isOpen]);
+  }, []);
 
   const handleSaveToPdf = useReactToPrint({
     content: () => resumeRef.current,
@@ -102,6 +124,7 @@ function ActionPage() {
   }
 
   const handleSaveProfile = (profileIn) => {
+    console.log('handleSaveProfile', profileIn);
     setProfile(profileIn);
   }
 
@@ -138,7 +161,7 @@ function ActionPage() {
 
       {isOpen && (
         <div className="fixed bg-black bg-opacity-50 flex justify-center items-center w-full h-full overflow-auto top-0" onClick={togglePopup}>
-          <div className="pt-2 ease-linear	print:!scale-100" style={{transform: `scale(${scale})`}}>
+          <div className="pt-2 ease-linear transform -translate-y-96 print:!scale-100" style={{transform: `scale(${scale})`}}>
           <ResumeComponent 
             personalInfo={profile}
             schools={schools} 

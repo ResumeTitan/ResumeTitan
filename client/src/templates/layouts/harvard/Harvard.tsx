@@ -31,18 +31,17 @@ const sampleData = {
 
 interface HarvardResumeProps {
   personalInfo: IProfileType;
-  education: ISchoolType[];
+  schools: ISchoolType[];
   jobs: IWorkType[];
   skills: string[];
 }
 
-export default function HarvardResume({ personalInfo, education, jobs, skills }: HarvardResumeProps) {
-  console.log(personalInfo);
+export default function HarvardResume({ personalInfo, schools, jobs, skills }: HarvardResumeProps) {
   const resumeData = sampleData;
   return (
     <div className="p-2">
       <PersonalInfo
-        name={personalInfo.name}
+        name={`${personalInfo.firstName} ${personalInfo.lastName}`}
         label={resumeData.basics.label}
         url={personalInfo.url}
         email={personalInfo?.email || resumeData.basics.email}
@@ -52,7 +51,7 @@ export default function HarvardResume({ personalInfo, education, jobs, skills }:
       />
       <div className="">
         <div className="pt-1 px-2 w-full">
-          <SchoolSection education={education} />
+          <SchoolSection schools={schools} />
         </div>
 
         <div className="pt-1 px-2 w-full">
