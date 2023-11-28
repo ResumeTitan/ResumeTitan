@@ -20,17 +20,32 @@ function PersonalInfo ({ initialInfo, onUpdate }) {
 
       {isEditing ? (
         <div className="">
-          <div className="p-4">
-            <label htmlFor={"name"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Full Name</label>
+
+          <div className="p-4 flex flex-cols justify-between">
+            <div className="w-full pr-2">
+            <label htmlFor={"firstName"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">First Name</label>
             <input 
               type="text"
-              id={"name"}
-              className="formStyle" 
-              placeholder="Enter first and last name..."
+              id={"firstName"}
+              className="formStyle"
+              placeholder="Enter first name..."
+              value={infoForm.firstName || ''}
               onChange={handleInfoChange}
-              value={infoForm.name || ''}
               required />
+            </div>
+            <div className="w-full pl-2">
+            <label htmlFor={"lastName"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Last Name</label>
+            <input 
+              type="text"
+              id={"lastName"}
+              className="formStyle"
+              placeholder="Enter last name..."
+              value={infoForm.lastName || ''}
+              onChange={handleInfoChange}
+              required />
+            </div>
           </div>
+
           <div className="p-4">
             <label htmlFor={"phone"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Phone Number</label>
             <input 
@@ -43,6 +58,7 @@ function PersonalInfo ({ initialInfo, onUpdate }) {
               value={infoForm.phone || ''}
               required />
           </div>
+
           <div className="p-4">
             <label htmlFor={"email"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email Address</label>
             <input 

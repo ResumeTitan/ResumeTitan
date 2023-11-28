@@ -5,8 +5,7 @@ import NavBar from './components/NavBar';
 import ActionPage from './pages/actionPage';
 import TermsPage from './pages/termsPage';
 import LandingPage from './scenes/landingPage';
-import ResumePage from './scenes/resumePage';
-// import { Dashboard } from './pages/dashboard';
+import { Dashboard } from './pages/dashboard';
 
 export default function App() {
   const isAuth = Boolean(useSelector((state) => state.token));
@@ -17,15 +16,11 @@ export default function App() {
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route
-            path="/home"
+            path="/resume/:id"
             element={isAuth ? <ActionPage /> : <Navigate to="/" />}
           />
-          <Route
-            path="/resume"
-            element={isAuth ? <ResumePage /> : <Navigate to="/" />}
-          />
           <Route path="/terms" element={<TermsPage />} />
-          {/* <Route path="/dashboard" element={<Dashboard />} /> */}
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/login" element={<Navigate to="/" />} />
         </Routes>
         <Footer />

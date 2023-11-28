@@ -13,7 +13,10 @@ module.exports = {
         'dark-text': '#333333',
         'light-text': '#ffffff',
         'default-gray': '#bdbdbd',
-      }
+      },
+      scale: {
+        '25': '0.25',
+      },
     },
   },
   plugins: [],

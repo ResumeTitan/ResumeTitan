@@ -13,8 +13,21 @@ export const createResume = async (token, resume) => {
   return response.json();
 }
 
-export const getResume = async (token, userId) => {
-  const response = await fetch(`${API_URL}/resume?userId=${userId}`, {
+export const getResumes = async (token, userId) => {
+  console.log(`Getting resumes for user ${userId}`);
+  const response = await fetch(`${API_URL}/resume/user?userId=${userId}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`
+    }
+  });
+
+  return response.json();
+}
+
+export const getResume = async (token, resumeId) => {
+  const response = await fetch(`${API_URL}/resume?id=${resumeId}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',

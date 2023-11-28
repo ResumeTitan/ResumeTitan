@@ -3,6 +3,7 @@ import { VerticalList } from '../../components/VerticalList';
 
 function School({ editingSchool, onSave, onDelete, onCancel }) {
   const [schoolForm, setSchoolForm] = useState(editingSchool);
+  const [endDateChecked, setEndDateChecked] = useState(false);
 
   const handleSaveSchool = () => {
     onSave(schoolForm);
@@ -120,27 +121,42 @@ function School({ editingSchool, onSave, onDelete, onCancel }) {
         </div>
         <div className="w-full pl-2">
         <div className="w-full pr-2">
-          <label htmlFor={"endDate"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">End Date</label>
+          <div className="flex flex-cols justify-between">
+            <label htmlFor={"endDate"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">End Date</label>
+            <label htmlFor="endDateCheckbox" className="flex items-center">
+              <div className="text-xs pr-2">Present (Current)</div>
+            <input 
+              id="endDateCheckbox"
+              type="checkbox"
+              value=""
+              className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" 
+              onChange={() => setEndDateChecked(!endDateChecked)}
+              checked={endDateChecked}
+            />
+            </label>
+          </div>
           <div className="flex flex-cols">
             <div className="w-[75%] pr-1">
               <input 
                 type="text"
                 id={"endDateMonth"}
-                className="formStyle"
+                className={`formStyle ${endDateChecked ? '' : 'disabled'}`}
                 placeholder="Enter month..."
                 value={schoolForm.endDateMonth || ''}
                 onChange={handleSchoolChange}
-                required />
+                disabled={endDateChecked}
+              />
             </div>
             <div className="pl-1">
               <input 
                 type="text"
                 id={"endDateYear"}
-                className="formStyle"
+                className={`formStyle ${endDateChecked ? '' : 'disabled'}`}
                 placeholder="Enter year..."
                 value={schoolForm.endDateYear || ''}
                 onChange={handleSchoolChange}
-                required />
+                disabled={endDateChecked}
+              />
             </div>
           </div>
       </div>

@@ -78,7 +78,7 @@ export const LoginForm = ({ onCloseLogin }) => {
             token: registerResponse.token,
           }),
         );
-        navigate('/home', { state: { newUser: true } });
+        navigate('/dashboard', { state: { newUser: true } });
         setIsRegister(false);
         setNewUserRegistered(true);
       }
@@ -110,7 +110,7 @@ export const LoginForm = ({ onCloseLogin }) => {
             }),
           );
           onCloseLogin();
-          navigate('/home', { state: { newUser: false } });
+          navigate('/dashboard', { state: { newUser: false } });
         }
       } else if (response.status === 400) {
         const error = await response.json();

@@ -22,6 +22,10 @@
   @apply bg-gray-500 border border-gray-300 text-light-text text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400;
 }
 
+.formStyle:disabled {
+  @apply bg-gray-300 cursor-not-allowed opacity-50; /* Add styles for disabled state */
+}
+
 .formLabel {
   @apply text-gray-900 text-lg font-medium mb-1.5 block dark:text-white;
 }

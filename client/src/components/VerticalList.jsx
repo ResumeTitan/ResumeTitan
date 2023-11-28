@@ -18,7 +18,6 @@ const reorder = (list, startIndex, endIndex) => {
 };
 
 export function VerticalList({ items, onSave }) {
-  console.log('items', items);
   const onDragEnd = (result) => {
     const { source, destination } = result;
 

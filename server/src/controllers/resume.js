@@ -57,8 +57,13 @@ export const createResume = async (req, res) => {
     resumeOut.userId = req.user.id;
     
     // Save resume to database
-    const newResume = new Resume(resumeOut);
-    await newResume.save();
+    let newResume;
+    if (resumeOut._id) {
+      newResume = await Resume.findOneAndUpdate({ _id: resumeOut._id }, resumeOut);
+    } else {
+      newResume = new Resume(resumeOut);
+      await newResume.save();
+    }
 
     res.status(200).json( { resume: newResume });
   } catch (err) {
@@ -68,10 +73,21 @@ export const createResume = async (req, res) => {
 };
 
 /* Get resumes */
-export const getResume = async (req, res) => {
+export const getResumes = async (req, res) => {
   const userId = req.query.userId;
   try {
-    const resume = await Resume.findOne({ userId: userId }).sort({ createdAt: -1 });
+    const resumes = await Resume.find({ userId }).sort({ createdAt: -1 });
+    res.status(200).json({ resumes });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+/* Get resume by id */
+export const getResume = async (req, res) => {
+  const id = req.query.id;
+  try {
+    const resume = await Resume.findOne({ _id: id });
     res.status(200).json({ resume: resume });
   } catch (err) {
     res.status(500).json({ error: err.message });
