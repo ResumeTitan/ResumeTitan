@@ -3,6 +3,7 @@ import ResumeCard from './ResumeCard';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { getResumes } from '../../api/resume';
+import { setActiveResume } from '../../state';
 
 export const Dashboard = () => {
   const currentUser = useSelector((state) => state.user);
@@ -12,13 +13,18 @@ export const Dashboard = () => {
   const [numResumesShown, setNumResumesShown] = useState(3);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     const handleResize = () => {
-      if (window.innerWidth < 768) {
+      if (window.innerWidth < 512) {
+        setNumResumesShown(1);
+      } else if (window.innerWidth < 680) {
         setNumResumesShown(2);
-      } else if (window.innerWidth < 1024) {
+      } else if (window.innerWidth < 940) {
         setNumResumesShown(3);
-      } else {
+      } else if (window.innerWidth < 940) {
         setNumResumesShown(4);
+      } else {
+        setNumResumesShown(5);
       }
     };
 
@@ -29,16 +35,20 @@ export const Dashboard = () => {
     return () => {
       window.removeEventListener('resize', handleResize); // Clean up listener on component unmount
     };
-  }, []);
+  }, [])
 
   const loadResumes = async () => {
+    if (!currentUser) {
+      return;
+    }
     const data = await getResumes(token, currentUser._id);
     setResumes(data.resumes);
   };
 
   const handleClickResume = (resumeId) => {
     console.log("Clicked resume with id: " + resumeId);
-    navigate(`/resume/${resumeId}`);
+    setActiveResume(resumeId);
+    navigate(`/resume`);
   }
 
   useEffect(() => {
@@ -57,9 +67,10 @@ export const Dashboard = () => {
     ));
 
   return (
-    <div className="bg-slate-400 p-2">
-      <h1 className="text-3xl font-bold mb-8">Welcome, {currentUser?.firstName}!</h1>
-      <div className="text-3xl font-bold">My Resumes:</div>
+    <div className="bg-slate-400 text-white min-h-screen">
+      <h1 className="text-3xl font-bold bg-slate-700 p-2 w-full">Welcome {currentUser?.firstName}</h1>
+      <div className="text-3xl font-bold bg-slate-700 p-2">My Resumes:</div>
+      <button className="mx-4 mt-2 bg-slate-700 hover:bg-slate-600 text-white font-bold py-2 px-4" onClick={() => navigate('/resume')}>Add New</button>
       <div className="flex flex-cols lg:min-w-0 transform scale-25 w-1/2 h-auto -translate-y-96 -translate-x-32">
         {resumeWidgets}
       </div>

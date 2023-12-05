@@ -72,6 +72,26 @@ export const createResume = async (req, res) => {
   }
 };
 
+/* Update resume from input */
+export const updateResume = async (req, res) => {
+  try {
+    const resume = req.body;
+
+    let resumeOut;
+    if (!resume._id) {
+      const resumeModel = new Resume(resume);
+      resumeOut = await resumeModel.save();
+    } else {
+      resumeOut = await Resume.findOneAndUpdate({ _id: resume._id }, resume);
+    }
+
+    res.status(200).json( { resume: resumeOut });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: err.message });
+  }
+};
+
 /* Get resumes */
 export const getResumes = async (req, res) => {
   const userId = req.query.userId;

@@ -59,7 +59,10 @@ function LandingPage() {
         </div>
       </div>
       {isLoginOpen && (
-        <LoginForm onCloseLogin={() => setIsLoginOpen(false)} />
+        <LoginForm
+          registerOpen={false}
+          onCloseLogin={() => setIsLoginOpen(false)} 
+        />
       )}
     </div>
   );

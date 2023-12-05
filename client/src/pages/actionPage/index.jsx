@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { useReactToPrint } from 'react-to-print';
 import ActionBar from './Action';
 import DocumentScannerIcon from '@mui/icons-material/DocumentScanner';
 import { getScaleForResumeViewer } from 'utils';
 import HarvardResume from 'templates/layouts/harvard/Harvard';
 import ResumeContainer from 'templates/ResumeContainer';
-import { createResume } from '../../api/resume';
+import { createResume, updateResume } from '../../api/resume';
 import Spinner from 'components/Spinner';
-import { useParams } from 'react-router-dom';
+import { LoginForm } from 'components/LoginForm';
 import { getResume } from '../../api/resume';
+import { setActiveResume } from '../../state';
 import './Action.css';
 const MED_SCREEN_WIDTH = 1200;
 
@@ -24,7 +26,7 @@ const ResumeComponent = React.forwardRef((props, ref) => (
 ));
 
 function ActionPage() {
-  const resumeId = useParams().id;
+  const resumeId = useSelector((state) => state.activeResume);
   const token = useSelector((state) => state.token);
   const [scale, setScale] = useState(1);
   const [showResume, setShowResume] = useState(false);
@@ -33,6 +35,8 @@ function ActionPage() {
   const [jobs, setJobs] = useState([]);
   const [skills, setSkills] = useState([]);
   const currentUser = useSelector((state) => state.user);
+  const isAuth = Boolean(useSelector((state) => state.token));
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [profile, setProfile] = useState(currentUser ? currentUser :{
     firstName: 'John',
     lastName: 'Doe',
@@ -40,10 +44,14 @@ function ActionPage() {
     email: 'johndoe@example.com',
   });
   const [resumeLoading, setResumeLoading] = useState(false);
+  const navigate = useNavigate();
   const resumeRef = React.useRef();
 
   const loadResume = async () => {
     try {
+      if (!resumeId) {
+        return;
+      }
       const { resume } = await getResume(token, resumeId);
       console.log('resume', resume);
       setSchools(resume.schools);
@@ -105,7 +113,6 @@ function ActionPage() {
 
   const handleGenerateResume = async () => {
     const resume = {
-      name: "Resume",
       jobs: jobs,
       schools: schools,
     };
@@ -117,6 +124,33 @@ function ActionPage() {
       setJobs(generatedResume.resume.jobs);
       setSkills(generatedResume.resume.skills);
       setResumeLoading(false);
+    } catch (err) {
+      console.log(err);
+      throw err;
+    }
+  }
+
+  const handleSaveResume = async () => {
+    if (!isAuth) {
+      setIsLoginOpen(true);
+      return;
+    }
+    const resume = {
+      userId: currentUser._id,
+      jobs: jobs,
+      schools: schools,
+    };
+    console.log('handleSaveResume', resume);
+    setResumeLoading(true);
+    try {
+      const generatedResume = await updateResume(token, resume);
+      console.log('generatedResume', generatedResume);
+      setSchools(generatedResume.resume.schools);
+      setJobs(generatedResume.resume.jobs);
+      setSkills(generatedResume.resume.skills);
+      setResumeLoading(false);
+      setActiveResume(null);
+      navigate('/dashboard');
     } catch (err) {
       console.log(err);
       throw err;
@@ -142,6 +176,7 @@ function ActionPage() {
         onUpdateSchools={updateSchools}
         onUpdateProfile={handleSaveProfile}
         onGenerateResume={handleGenerateResume} 
+        onSave={handleSaveResume}
       />
       {!isOpen && showResume && (
         <div onClick={togglePopup} className="p-2 origin-top ease-linear" style={{transform: "scale(0.9)"}}>
@@ -170,6 +205,16 @@ function ActionPage() {
             ref={resumeRef}/>
           </div>
         </div>
+      )}
+
+      {isLoginOpen && (
+        <LoginForm
+          registerOpen={true}
+          onCloseLogin={() => {
+            console.log('Closing login');
+            setIsLoginOpen(false);
+          }}
+        />
       )}
     </div>
   );

@@ -35,9 +35,7 @@ function Jobs({ jobs, onSave, onDelete }) {
     setEditingJob({});
   }
 
-  useEffect(() => {
-    console.log('jobs', jobs);
-  }, [jobs]);
+  useEffect(() => {}, [jobs]);
 
   const editingForm = (
     <div className="px-4 pb-4">
@@ -46,7 +44,7 @@ function Jobs({ jobs, onSave, onDelete }) {
   );
 
   return (
-    <div className="border border-black border-2 rounded-lg w-full m-6 text-white bg-slate-700">
+    <div className="border border-black border-2 rounded-lg w-full my-4 text-white bg-slate-700">
       {isEditing && editingForm}
 
       {!isEditing && (

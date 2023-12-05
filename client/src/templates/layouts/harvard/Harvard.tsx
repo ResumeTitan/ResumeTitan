@@ -39,7 +39,7 @@ interface HarvardResumeProps {
 export default function HarvardResume({ personalInfo, schools, jobs, skills }: HarvardResumeProps) {
   const resumeData = sampleData;
   return (
-    <div className="p-2">
+    <div className="p-2 text-black">
       <PersonalInfo
         name={`${personalInfo.firstName} ${personalInfo.lastName}`}
         label={resumeData.basics.label}

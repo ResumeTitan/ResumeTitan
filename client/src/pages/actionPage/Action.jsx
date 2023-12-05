@@ -5,7 +5,17 @@ import Schools from './Schools';
 import Jobs from './Jobs';
 import './Action.css';
 
-function ActionBar({ profile, jobs, schools, onPrint, onUpdateJobs, onUpdateSchools, onUpdateProfile, onGenerateResume }) {
+function ActionBar({ 
+  profile, 
+  jobs, 
+  schools, 
+  onPrint, 
+  onUpdateJobs, 
+  onUpdateSchools, 
+  onUpdateProfile, 
+  onGenerateResume, 
+  onSave 
+}) {
 
   const handleSaveJob = (jobForm) => {
     if (jobForm.id) {
@@ -53,17 +63,19 @@ function ActionBar({ profile, jobs, schools, onPrint, onUpdateJobs, onUpdateScho
     onGenerateResume();
   }
 
+  const handleSave = () => {
+    onSave();
+  }
+
   return (
-    <div 
-      style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "600px", maxWidth: "600px"}}
-      className="p-2"
-    >
+    <div className="p-2 flex flex-col min-h-screen bg-slate-400">
       <ResumeName onPrint={ onPrint } />
       <PersonalInfo initialInfo={profile} onUpdate={onUpdateProfile} />
       <Schools schools={schools} onSave={handleSaveSchool} onDelete={handleDeleteSchool} />
       <Jobs jobs={jobs} onSave={handleSaveJob} onDelete={handleDeleteJob} />
-      <div className="w-full">
+      <div className="w-full flex flex-cols">
         <button onClick={handleGenerateResume} className="generateButton bg-slate-700">Generate Resume</button>
+        <button onClick={handleSave} className="saveButton bg-slate-700 hover:bg-green">Save Resume</button>
       </div>
     </div>
   )

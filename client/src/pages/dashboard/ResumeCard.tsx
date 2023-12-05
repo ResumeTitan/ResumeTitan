@@ -16,7 +16,6 @@ const ResumeCard: React.FC<ResumeCardProps> = ({
   jobs,
   skills,
 }) => {
-  console.log('personalInfo', personalInfo);
   return (
     <div className="mx-4 border border-2 border-black">
       <ResumeContainer>
