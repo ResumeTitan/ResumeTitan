@@ -20,7 +20,7 @@ const MED_SCREEN_WIDTH = 1200;
 const ResumeComponent = React.forwardRef((props, ref) => (
   <div ref={ref} className="print:!scale-100">
     <ResumeContainer>
-      <HarvardResume personalInfo={props.personalInfo} schools={props.schools} jobs={props.jobs} skills={props.skills}/>
+      <HarvardResume personalInfo={props.personalInfo} summary={props.objective} schools={props.schools} jobs={props.jobs} skills={props.skills}/>
     </ResumeContainer>
   </div>
 ));
@@ -34,6 +34,7 @@ function ActionPage() {
   const [schools, setSchools] = useState([]);
   const [jobs, setJobs] = useState([]);
   const [skills, setSkills] = useState([]);
+  const [objective, setObjective] = useState('');
   const currentUser = useSelector((state) => state.user);
   const isAuth = Boolean(useSelector((state) => state.token));
   const [isLoginOpen, setIsLoginOpen] = useState(false);
@@ -53,7 +54,8 @@ function ActionPage() {
         return;
       }
       const { resume } = await getResume(token, resumeId);
-      console.log('resume', resume);
+      console.log('loadResume', resume.objective );
+      setObjective(resume.objective);
       setSchools(resume.schools);
       setJobs(resume.jobs);
       setSkills(resume.skills);
@@ -111,6 +113,11 @@ function ActionPage() {
     setSchools(schoolsIn);
   }
 
+  const updateSkills = (skillsIn) => {
+    console.log('updateSkills', skillsIn);
+    setSkills(skillsIn);
+  }
+
   const handleGenerateResume = async () => {
     const resume = {
       jobs: jobs,
@@ -119,7 +126,7 @@ function ActionPage() {
     setResumeLoading(true);
     try {
       const generatedResume = await createResume(token, resume);
-      console.log('generatedResume', generatedResume);
+      setObjective(generatedResume.resume.objective);
       setSchools(generatedResume.resume.schools);
       setJobs(generatedResume.resume.jobs);
       setSkills(generatedResume.resume.skills);
@@ -136,6 +143,7 @@ function ActionPage() {
       return;
     }
     const resume = {
+      _id: resumeId,
       userId: currentUser._id,
       jobs: jobs,
       schools: schools,
@@ -144,7 +152,6 @@ function ActionPage() {
     setResumeLoading(true);
     try {
       const generatedResume = await updateResume(token, resume);
-      console.log('generatedResume', generatedResume);
       setSchools(generatedResume.resume.schools);
       setJobs(generatedResume.resume.jobs);
       setSkills(generatedResume.resume.skills);
@@ -158,12 +165,11 @@ function ActionPage() {
   }
 
   const handleSaveProfile = (profileIn) => {
-    console.log('handleSaveProfile', profileIn);
     setProfile(profileIn);
   }
 
   return (
-    <div className="flex flex-rows justify-center min-h-screen bg-slate-400">
+    <div className="flex flex-cols justify-center min-h-screen bg-slate-400">
       {resumeLoading && (
         <Spinner />
       )}
@@ -171,17 +177,20 @@ function ActionPage() {
         profile={profile}
         jobs={jobs}
         schools={schools}
+        skills={skills}
         onPrint={handleSaveToPdf}
         onUpdateJobs={updateJobs}
         onUpdateSchools={updateSchools}
+        onUpdateSkills={updateSkills}
         onUpdateProfile={handleSaveProfile}
         onGenerateResume={handleGenerateResume} 
         onSave={handleSaveResume}
       />
       {!isOpen && showResume && (
-        <div onClick={togglePopup} className="p-2 origin-top ease-linear" style={{transform: "scale(0.9)"}}>
+        <div className="p-2 origin-top ease-linear" style={{transform: "scale(0.9)"}}>
           <ResumeComponent 
             personalInfo={profile}
+            objective={objective}
             schools={schools}
             jobs={jobs}
             skills={skills}
@@ -199,6 +208,7 @@ function ActionPage() {
           <div className="pt-2 ease-linear transform -translate-y-96 print:!scale-100" style={{transform: `scale(${scale})`}}>
           <ResumeComponent 
             personalInfo={profile}
+            objective={objective}
             schools={schools} 
             jobs={jobs}
             skills={skills}

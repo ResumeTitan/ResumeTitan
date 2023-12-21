@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { VerticalList } from '../../components/VerticalList';
 
 function School({ editingSchool, onSave, onDelete, onCancel }) {
   const [schoolForm, setSchoolForm] = useState(editingSchool);
@@ -25,8 +24,23 @@ function School({ editingSchool, onSave, onDelete, onCancel }) {
     setSchoolForm({ ...schoolForm, [id]: value });
   }
 
-  const handleSchoolContentChange = (content) => {
-    setSchoolForm({ ...schoolForm, content: content.map((item) => item.content) });
+  const handleSchoolContentChange = (content, index) => {
+    const newForm = { ...schoolForm };
+    newForm.content[index] = content;
+    setSchoolForm(newForm);
+  }
+
+  const handleContentDelete = (index) => {
+    const newForm = { ...schoolForm };
+    newForm.content.splice(index, 1);
+    setSchoolForm(newForm);
+  }
+
+  const handleEndDateCurrent = () => {
+    setEndDateChecked(!endDateChecked);
+    if (endDateChecked) {
+      setSchoolForm({ ...schoolForm, endDateMonth: '', endDateYear: '' });
+    }
   }
 
   return (
@@ -124,13 +138,13 @@ function School({ editingSchool, onSave, onDelete, onCancel }) {
           <div className="flex flex-cols justify-between">
             <label htmlFor={"endDate"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">End Date</label>
             <label htmlFor="endDateCheckbox" className="flex items-center">
-              <div className="text-xs pr-2">Present (Current)</div>
+              <div className="text-xs pr-2">Current</div>
             <input 
               id="endDateCheckbox"
               type="checkbox"
               value=""
               className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" 
-              onChange={() => setEndDateChecked(!endDateChecked)}
+              onChange={handleEndDateCurrent}
               checked={endDateChecked}
             />
             </label>
@@ -178,8 +192,38 @@ function School({ editingSchool, onSave, onDelete, onCancel }) {
 
       {schoolForm.content && (
         <div className="m-2">
-          <label htmlFor={"jobContent"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Content</label>
-          <VerticalList items={schoolForm.content.map((item, index) => ({ id: index + 1, content: item })) || []} onSave={handleSchoolContentChange} />
+          <div className="flex flex-cols justify-between my-2">
+            <label htmlFor={"jobContent"} className="block text-sm font-medium text-gray-900 dark:text-white">Content</label>
+            <button
+              className="greenButton bg-slate-800"
+              onClick={() => setSchoolForm({ ...schoolForm, content: [...schoolForm.content, ""] })}
+            >
+              {"Add"}
+            </button>
+          </div>
+          {/* <VerticalList items={schoolForm.content.map((item, index) => ({ id: index + 1, content: item })) || []} onSave={handleSchoolContentChange} /> */}
+          {schoolForm.content.map((item, index) => (
+            <div className="flex flex-cols justify-between">
+              <div className="w-full pr-2">
+                <input 
+                  type="text"
+                  id={"jobContent"}
+                  className="formStyle flex-wrap"
+                  placeholder="Enter content..."
+                  value={item}
+                  onChange={(e) => handleSchoolContentChange(e.target.value, index)}
+                  required 
+                />
+              </div>
+              <button
+                className="redButton bg-slate-800"
+                onClick={() => handleContentDelete(index)}
+              >
+                {"X"}
+              </button>
+            </div>
+            )
+          )}
         </div>
       )}
 

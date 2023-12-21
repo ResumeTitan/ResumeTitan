@@ -25,7 +25,7 @@ export const WorkSection = ({ experience }: WorkSectionProps) => {
               <div>
                 <p className="text-s">
                   {item.startDateYear} -{' '}
-                  {item.endDateYear === '-1' ? 'present' : item.endDateYear}
+                  {item.endDateYear === '' ? 'present' : item.endDateYear}
                 </p>
               </div>
             </div>

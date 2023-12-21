@@ -1,16 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import ResumeCard from './ResumeCard';
 import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { getResumes } from '../../api/resume';
+import { getResumes, deleteResume } from '../../api/resume';
 import { setActiveResume } from '../../state';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import Popup from './Popup';
+import './dashboard.css';
 
 export const Dashboard = () => {
+  const dispatch = useDispatch();
   const currentUser = useSelector((state) => state.user);
   const token = useSelector((state) => state.token);
   const [resumes, setResumes] = useState([]);
   const navigate = useNavigate();
   const [numResumesShown, setNumResumesShown] = useState(3);
+  const [showPopup, setShowPopup] = useState(false);
+  const [deleteId, setDeleteId] = useState(0);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -47,8 +55,20 @@ export const Dashboard = () => {
 
   const handleClickResume = (resumeId) => {
     console.log("Clicked resume with id: " + resumeId);
-    setActiveResume(resumeId);
+    dispatch(setActiveResume(resumeId));
     navigate(`/resume`);
+  }
+
+  const handleClickedDelete = (resumeIndex) => {
+    setDeleteId(resumeIndex);
+    setShowPopup(true);
+  }
+
+  const handleDeleteResume = () => {
+    console.log("Clicked delete resume with id: " + deleteId);
+    deleteResume(token, deleteId);
+    setShowPopup(false);
+    loadResumes();
   }
 
   useEffect(() => {
@@ -57,12 +77,25 @@ export const Dashboard = () => {
 
     // Create an array of ResumeWidget components based on numWidgets
     const resumeWidgets = Array.from({ length: Math.min(resumes.length, numResumesShown) }, (_, index) => (
-      <div className="hover:cursor-pointer" onClick={() => handleClickResume(resumes[index]._id)}>
+      <div className="hover:cursor-pointer relative group">
         <ResumeCard
           personalInfo={currentUser}
+          summary={resumes[index].objective}
           schools={resumes[index].schools}
           jobs={resumes[index].jobs}
           skills={resumes[index].skills} />
+          
+        {/* Overlay */}
+        <div className="hidden absolute inset-0 bg-gray-800 bg-opacity-25 group-hover:flex group-hover:flex-rows items-center justify-center">
+          <button className="bg-green-700 bg-opacity-25 text-white w-full h-full hover:bg-opacity-75"
+            onClick={() => handleClickResume(resumes[index]._id)}>
+            <EditIcon style={{ fontSize: 256 }}/>
+          </button>
+          <button className="bg-red-700 bg-opacity-25 text-white w-full h-full hover:bg-opacity-75"
+            onClick={() => handleClickedDelete(resumes[index]._id)}>
+            <DeleteIcon style={{ fontSize: 256 }}/>
+          </button>
+        </div>
       </div>
     ));
 
@@ -74,6 +107,9 @@ export const Dashboard = () => {
       <div className="flex flex-cols lg:min-w-0 transform scale-25 w-1/2 h-auto -translate-y-96 -translate-x-32">
         {resumeWidgets}
       </div>
+
+      {/* Popup */}
+      {showPopup && <Popup message={`Are you sure you want to delete this resume?`} handleDelete={handleDeleteResume} handleCancel={() => setShowPopup(false)} />}
     </div>
   );
 };

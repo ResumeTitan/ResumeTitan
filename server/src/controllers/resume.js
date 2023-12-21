@@ -53,6 +53,26 @@ export const createResume = async (req, res) => {
       throw new Error('Could not parse JSON response');
     }
 
+    // Get rid of periods at the end of each sentence
+    resumeWithResponse.jobs.forEach((job) => {
+      job.content = job.content.map((sentence) => {
+        if (sentence[sentence.length - 1] === '.') {
+          return sentence.substring(0, sentence.length - 1);
+        } else {
+          return sentence;
+        }
+      });
+    });
+
+    resumeWithResponse.schools.forEach((school) => {
+      school.content = school.content.map((sentence) => {
+        if (sentence[sentence.length - 1] === '.') {
+          return sentence.substring(0, sentence.length - 1);
+        }
+      }
+    )}
+    );
+
     const resumeOut = Object.assign(resume, resumeWithResponse);
     resumeOut.userId = req.user.id;
     
@@ -108,6 +128,17 @@ export const getResume = async (req, res) => {
   const id = req.query.id;
   try {
     const resume = await Resume.findOne({ _id: id });
+    res.status(200).json({ resume: resume });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+/* Delete resume by id */
+export const deleteResume = async (req, res) => {
+  const id = req.query.id;
+  try {
+    const resume = await Resume.findOneAndDelete({ _id: id });
     res.status(200).json({ resume: resume });
   } catch (err) {
     res.status(500).json({ error: err.message });

@@ -25,6 +25,7 @@ export const authSlice = createSlice({
     setLogout: (state) => {
       state.user = null;
       state.token = null;
+      state.activeResume = null;
     },
     setFriends: (state, action) => {
       if (state.user) {
@@ -83,7 +84,7 @@ export const authSlice = createSlice({
       state.jobs = updatedJobs;
     },
     setActiveResume: (state, action) => {
-      state.activeResume = action.payload.resumeId;
+      state.activeResume = action.payload;
     },
   },
 });

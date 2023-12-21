@@ -70,3 +70,15 @@ export const postRegister = async (values) => {
   });
   return response;
 }
+
+export const deleteResume = async (token, resumeId) => {
+  const response = await fetch(`${API_URL}/resume/delete?id=${resumeId}`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`
+    }
+  });
+
+  return response.json();
+}
