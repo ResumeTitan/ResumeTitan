@@ -4,6 +4,8 @@ function School({ editingSchool, onSave, onDelete, onCancel }) {
   const [schoolForm, setSchoolForm] = useState(editingSchool);
   const [endDateChecked, setEndDateChecked] = useState(false);
 
+  console.log('editingSchool', schoolForm);
+
   const handleSaveSchool = () => {
     onSave(schoolForm);
     setSchoolForm({});
@@ -242,7 +244,7 @@ function School({ editingSchool, onSave, onDelete, onCancel }) {
           {"Cancel"}
         </button>
         <button
-          className="addButton bg-slate-800"
+          className="addButton p-1 bg-slate-800"
           onClick={handleSaveSchool}
         >
           {"Save"}

@@ -78,9 +78,12 @@ export const createResume = async (req, res) => {
     
     // Save resume to database
     let newResume;
+    console.log('resumeOut:', resumeOut);
     if (resumeOut._id) {
+      console.log('updating resume');
       newResume = await Resume.findOneAndUpdate({ _id: resumeOut._id }, resumeOut);
     } else {
+      console.log('creating resume');
       newResume = new Resume(resumeOut);
       await newResume.save();
     }

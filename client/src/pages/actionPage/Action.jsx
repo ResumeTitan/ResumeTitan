@@ -4,6 +4,7 @@ import PersonalInfo from './PersonalInfo';
 import Schools from './Schools';
 import Jobs from './Jobs';
 import Skills from './Skills';
+import Summary from './Summary';
 import './Action.css';
 
 function ActionBar({ 
@@ -11,11 +12,13 @@ function ActionBar({
   jobs, 
   schools, 
   skills,
+  summary,
   onPrint, 
   onUpdateJobs, 
   onUpdateSchools, 
   onUpdateProfile, 
   onUpdateSkills,
+  onUpdateSummary,
   onGenerateResume, 
   onSave 
 }) {
@@ -74,11 +77,10 @@ function ActionBar({
     <div className="p-2 flex flex-col min-h-screen w-5/12 bg-slate-400">
       <ResumeName onPrint={ onPrint } />
       <PersonalInfo initialInfo={profile} onUpdate={onUpdateProfile} />
+      <Summary initSummary={summary} onUpdate={onUpdateSummary} />
       <Schools schools={schools} onSave={handleSaveSchool} onDelete={handleDeleteSchool} />
       <Jobs jobs={jobs} onSave={handleSaveJob} onDelete={handleDeleteJob} />
-      {skills && (
-        <Skills initSkills={skills} onUpdate={onUpdateSkills}/>
-      )}
+      <Skills initSkills={skills} onUpdate={onUpdateSkills}/>
       <div className="w-full">
         <button onClick={handleGenerateResume} className="generateButton bg-slate-700">Generate Resume</button>
         <button onClick={handleSave} className="saveButton bg-slate-700 hover:bg-green">Save Resume</button>

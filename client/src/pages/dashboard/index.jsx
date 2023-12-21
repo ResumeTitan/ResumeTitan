@@ -73,6 +73,7 @@ export const Dashboard = () => {
 
   useEffect(() => {
     loadResumes();
+    dispatch(setActiveResume(null));
   }, []);
 
     // Create an array of ResumeWidget components based on numWidgets

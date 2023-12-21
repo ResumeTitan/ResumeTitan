@@ -120,6 +120,7 @@ function ActionPage() {
 
   const handleGenerateResume = async () => {
     const resume = {
+      _id: resumeId,
       jobs: jobs,
       schools: schools,
     };
@@ -178,10 +179,12 @@ function ActionPage() {
         jobs={jobs}
         schools={schools}
         skills={skills}
+        summary={objective}
         onPrint={handleSaveToPdf}
         onUpdateJobs={updateJobs}
         onUpdateSchools={updateSchools}
         onUpdateSkills={updateSkills}
+        onUpdateSummary={(obj) => setObjective(obj)}
         onUpdateProfile={handleSaveProfile}
         onGenerateResume={handleGenerateResume} 
         onSave={handleSaveResume}

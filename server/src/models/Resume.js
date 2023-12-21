@@ -54,6 +54,10 @@ const JobSchema = new mongoose.Schema(
       required: true,
       description: "User ID",
     },
+    id: {
+      type: Number,
+      description: "Job ID from the current resume",
+    }
   },
   { timestamps: true }
 );
@@ -112,6 +116,10 @@ const SchoolSchema = new mongoose.Schema(
       required: true,
       description: "User ID",
     },
+    id: {
+      type: Number,
+      description: "School ID from the current resume",
+    }
   },
   { timestamps: true }
 );
