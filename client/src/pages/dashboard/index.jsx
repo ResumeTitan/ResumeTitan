@@ -104,7 +104,7 @@ export const Dashboard = () => {
     <div className="bg-slate-400 text-white min-h-screen">
       <h1 className="text-3xl font-bold bg-slate-700 p-2 w-full">Welcome {currentUser?.firstName}</h1>
       <div className="text-3xl font-bold bg-slate-700 p-2">My Resumes:</div>
-      <button className="mx-4 mt-2 bg-slate-700 hover:bg-slate-600 text-white font-bold py-2 px-4" onClick={() => navigate('/resume')}>Add New</button>
+      <button className="mx-4 mt-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-white font-bold py-2 px-4" onClick={() => navigate('/resume')}>Add New</button>
       <div className="flex flex-cols lg:min-w-0 transform scale-25 w-1/2 h-auto -translate-y-96 -translate-x-32">
         {resumeWidgets}
       </div>

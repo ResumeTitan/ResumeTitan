@@ -2,9 +2,7 @@ import React, { useState } from 'react';
 
 function School({ editingSchool, onSave, onDelete, onCancel }) {
   const [schoolForm, setSchoolForm] = useState(editingSchool);
-  const [endDateChecked, setEndDateChecked] = useState(false);
-
-  console.log('editingSchool', schoolForm);
+  const [endDateChecked, setEndDateChecked] = useState(editingSchool.endDateCurrent || false);
 
   const handleSaveSchool = () => {
     onSave(schoolForm);
@@ -39,10 +37,9 @@ function School({ editingSchool, onSave, onDelete, onCancel }) {
   }
 
   const handleEndDateCurrent = () => {
-    setEndDateChecked(!endDateChecked);
-    if (endDateChecked) {
-      setSchoolForm({ ...schoolForm, endDateMonth: '', endDateYear: '' });
-    }
+    const endDateCurrent = !endDateChecked;
+    setSchoolForm({ ...schoolForm, endDateCurrent: endDateCurrent });
+    setEndDateChecked(endDateCurrent);
   }
 
   return (

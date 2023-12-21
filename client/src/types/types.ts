@@ -6,6 +6,7 @@ export interface ISchoolType {
   startDateYear: string;
   endDateMonth: string;
   endDateYear: string;
+  endDateCurrent: boolean;
   content?: string[];
 }
 
@@ -16,6 +17,7 @@ export interface IWorkType {
   startDateYear: string;
   endDateMonth: string;
   endDateYear: string;
+  endDateCurrent: boolean;
   notes?: string;
   content?: string[];
 }

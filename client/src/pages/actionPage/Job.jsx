@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 function Job({ editingJob, onSave, onDelete, onCancel }) {
   const [jobForm, setJobForm] = useState(editingJob);
-  const [endDateChecked, setEndDateChecked] = useState(false);
+  const [endDateChecked, setEndDateChecked] = useState(editingJob.endDateCurrent || false);
 
   const handleSaveJob = () => {
     onSave(jobForm);
@@ -37,10 +37,9 @@ function Job({ editingJob, onSave, onDelete, onCancel }) {
   }
 
   const handleEndDateCurrent = () => {
+    const endDateCurrent = !endDateChecked;
+    setJobForm({ ...jobForm, endDateCurrent: endDateCurrent });
     setEndDateChecked(!endDateChecked);
-    if (endDateChecked) {
-      setJobForm({ ...jobForm, endDateMonth: '', endDateYear: '' });
-    }
   }
 
   return (

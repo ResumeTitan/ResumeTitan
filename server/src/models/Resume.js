@@ -38,6 +38,11 @@ const JobSchema = new mongoose.Schema(
       type: String,
       description: "Year of end date",
     },
+    endDateCurrent: {
+      type: Boolean,
+      description: "Is this job the current job",
+      default: false
+    },
     notes: {
       type: String,
       description: "Notes about the job",
@@ -99,6 +104,11 @@ const SchoolSchema = new mongoose.Schema(
     endDateYear: {
       type: String,
       description: "Year of end date",
+    },
+    endDateCurrent: {
+      type: Boolean,
+      description: "Is this school the current school",
+      default: false
     },
     notes: {
       type: String,

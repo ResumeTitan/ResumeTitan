@@ -45,6 +45,7 @@ function ActionBar({
   }
 
   const handleSaveSchool = (schoolForm) => {
+    console.log('schoolForm', schoolForm);
     if (schoolForm.id) {
       const updatedSchools = schools.map((school) => {
         if (school.id === schoolForm.id) {

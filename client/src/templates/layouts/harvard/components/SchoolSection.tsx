@@ -24,7 +24,7 @@ export const SchoolSection = ({ schools }: SchoolSectionProps) => {
           <div>
               <p className="text-s py-1">
                 {item.startDateYear} -{' '}
-                {item.endDateYear === '' ? 'present' : `${item.endDateYear}`}
+                {item.endDateCurrent === true ? 'present' : `${item.endDateYear}`}
               </p>
             </div>
           </div>
