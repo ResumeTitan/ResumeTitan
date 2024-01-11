@@ -30,14 +30,14 @@ function Summary ({ initSummary, onUpdate }) {
             <textarea 
               type="text"
               id={"summary"}
-              className="formStyle"
+              className="formStyle w-full h-16"
               placeholder=""
               value={summary || ''}
               onChange={handleSummaryChange}
               required />
               <div className="pl-2">
                 <button
-                  className="greenButton bg-slate-800"
+                  className="greenButton bg-slate-800 p-2"
                   onClick={handleSaveSummary}
                 >
                   {"Save"}

@@ -10,8 +10,13 @@ export default function Footer() {
           </a>
         </li>
         <li>
-          <a href="/contact" className="text-gray-600">
+          <a href="/contact" className="text-gray-600 pr-4">
             Contact Us
+          </a>
+        </li>
+        <li>
+          <a href="/survey" className="text-gray-600">
+            Have Feedback?
           </a>
         </li>
         </ul>

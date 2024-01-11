@@ -69,10 +69,6 @@ function ActionPage() {
     setIsOpen(!isOpen);
   };
 
-  const handleViewResume = () => {
-    togglePopup();
-  };
-
   useEffect(() => {
     loadResume();
   }, [resumeId]);
@@ -149,7 +145,6 @@ function ActionPage() {
       jobs: jobs,
       schools: schools,
     };
-    console.log('handleSaveResume', resume);
     setResumeLoading(true);
     try {
       const generatedResume = await updateResume(token, resume);
@@ -174,6 +169,7 @@ function ActionPage() {
       {resumeLoading && (
         <Spinner />
       )}
+
       <ActionBar 
         profile={profile}
         jobs={jobs}
@@ -200,8 +196,9 @@ function ActionPage() {
             ref={resumeRef}/>
         </div>
       )}
+
       {!showResume && (
-        <div className="fixed bottom-24 right-4 hover:cursor-pointer" onClick={handleViewResume}>
+        <div className="fixed bottom-24 right-4 hover:cursor-pointer" onClick={togglePopup}>
           <DocumentScannerIcon className="text-white" style={{ fontSize: 70 }}/>
         </div>
       )}
@@ -224,7 +221,6 @@ function ActionPage() {
         <LoginForm
           registerOpen={true}
           onCloseLogin={() => {
-            console.log('Closing login');
             setIsLoginOpen(false);
           }}
         />

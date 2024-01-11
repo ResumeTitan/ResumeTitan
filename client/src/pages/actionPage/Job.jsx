@@ -188,7 +188,7 @@ function Job({ editingJob, onSave, onDelete, onCancel }) {
           {jobForm.content.map((item, index) => (
             <div className="flex flex-cols justify-between">
               <div className="w-full pr-2">
-                <input 
+                <textarea 
                   type="text"
                   id={"jobContent"}
                   className="formStyle flex-wrap"

@@ -1,6 +1,3 @@
-// import { dateParser } from 'src/helpers/utils';
-// import { HTMLRenderer } from 'src/helpers/common/components/HTMLRenderer';
-// import { IWorkIntrf } from 'src/stores/index.interface';
 import { SectionHeading } from '../elements/SectionHeading';
 import { SectionList } from '../elements/SectionList';
 import { SectionSubtitle } from '../elements/SectionSubtitle';

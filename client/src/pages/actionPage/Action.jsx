@@ -75,7 +75,7 @@ function ActionBar({
   }
 
   return (
-    <div className="p-2 flex flex-col min-h-screen w-5/12 bg-slate-400">
+    <div className="p-2 flex flex-col min-h-screen sm:w-full lg:w-7/12 bg-slate-400">
       <ResumeName onPrint={ onPrint } />
       <PersonalInfo initialInfo={profile} onUpdate={onUpdateProfile} />
       <Summary initSummary={summary} onUpdate={onUpdateSummary} />

@@ -41,7 +41,7 @@
 }
 
 .redButton {
-  @apply text-white text-center font-medium rounded-lg text-sm p-2
+  @apply text-white text-center font-medium rounded-lg text-sm
     hover:bg-red-800;
 }
 

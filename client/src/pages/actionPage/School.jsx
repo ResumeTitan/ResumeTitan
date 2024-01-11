@@ -194,7 +194,7 @@ function School({ editingSchool, onSave, onDelete, onCancel }) {
           <div className="flex flex-cols justify-between my-2">
             <label htmlFor={"jobContent"} className="block text-sm font-medium text-gray-900 dark:text-white">Content</label>
             <button
-              className="greenButton bg-slate-800"
+              className="greenButton bg-slate-800 p-2"
               onClick={() => setSchoolForm({ ...schoolForm, content: [...schoolForm.content, ""] })}
             >
               {"Add"}
@@ -204,7 +204,7 @@ function School({ editingSchool, onSave, onDelete, onCancel }) {
           {schoolForm.content.map((item, index) => (
             <div className="flex flex-cols justify-between">
               <div className="w-full pr-2">
-                <input 
+                <textarea 
                   type="text"
                   id={"jobContent"}
                   className="formStyle flex-wrap"
@@ -214,12 +214,14 @@ function School({ editingSchool, onSave, onDelete, onCancel }) {
                   required 
                 />
               </div>
-              <button
-                className="redButton bg-slate-800"
-                onClick={() => handleContentDelete(index)}
-              >
-                {"X"}
-              </button>
+              <div className="">
+                <button
+                  className="inline-block align-middle redButton bg-slate-800 p-2"
+                  onClick={() => handleContentDelete(index)}
+                >
+                  {"X"}
+                </button>
+              </div>
             </div>
             )
           )}
