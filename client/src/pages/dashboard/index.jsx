@@ -80,8 +80,8 @@ export const Dashboard = () => {
     const resumeWidgets = Array.from({ length: Math.min(resumes.length, numResumesShown) }, (_, index) => (
       <div className="hover:cursor-pointer relative group">
         <ResumeCard
-          personalInfo={currentUser}
-          summary={resumes[index].objective}
+          personalInfo={resumes[index].basics}
+          summary={resumes[index].summary}
           schools={resumes[index].schools}
           jobs={resumes[index].jobs}
           skills={resumes[index].skills} />

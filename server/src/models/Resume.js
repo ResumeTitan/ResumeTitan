@@ -148,11 +148,13 @@ const ResumeSchema = new mongoose.Schema(
         type: SchoolSchema
       },
     },
-    objective: {
-      type: String
+    summary: {
+      type: String,
+      default: ""
     },
     skills: {
-      type: Array
+      type: Array,
+      default: []
     },
     userId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -160,7 +162,13 @@ const ResumeSchema = new mongoose.Schema(
     },
     phone: {
       type: String,
-    }
+    },
+    basics: {
+      firstName: String,
+      lastName: String,
+      email: String,
+      phone: String,
+    },
   },
   { timestamps: true }
 );

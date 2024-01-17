@@ -103,7 +103,7 @@ function ResumePage() {
                 phone={resume.phone}
                 editing={editing}
               />
-              <Summary summary={resume.objective || 'Fill summary here'} editing={editing}/>
+              <Summary summary={resume.summary || 'Fill summary here'} editing={editing}/>
               <Schools schools={resume.schools} editing={editing}/>
               <Jobs jobs={resume.jobs} editing={editing}/>
               <Skills skills={resume.skills} editing={editing}/>

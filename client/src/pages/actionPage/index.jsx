@@ -20,7 +20,7 @@ const MED_SCREEN_WIDTH = 1200;
 const ResumeComponent = React.forwardRef((props, ref) => (
   <div ref={ref} className="print:!scale-100">
     <ResumeContainer>
-      <HarvardResume personalInfo={props.personalInfo} summary={props.objective} schools={props.schools} jobs={props.jobs} skills={props.skills}/>
+      <HarvardResume personalInfo={props.personalInfo} summary={props.summary} schools={props.schools} jobs={props.jobs} skills={props.skills}/>
     </ResumeContainer>
   </div>
 ));
@@ -34,15 +34,15 @@ function ActionPage() {
   const [schools, setSchools] = useState([]);
   const [jobs, setJobs] = useState([]);
   const [skills, setSkills] = useState([]);
-  const [objective, setObjective] = useState('');
+  const [summary, setSummary] = useState('');
   const currentUser = useSelector((state) => state.user);
   const isAuth = Boolean(useSelector((state) => state.token));
   const [isLoginOpen, setIsLoginOpen] = useState(false);
-  const [profile, setProfile] = useState(currentUser ? currentUser :{
-    firstName: 'John',
-    lastName: 'Doe',
+  const [profile, setProfile] = useState({
+    firstName: currentUser?.firstName || 'John',
+    lastName: currentUser?.lastName || 'Doe',
     phone: '(123)-456-7890',
-    email: 'johndoe@example.com',
+    email: currentUser?.email || 'johndoe@example.com',
   });
   const [resumeLoading, setResumeLoading] = useState(false);
   const navigate = useNavigate();
@@ -54,11 +54,11 @@ function ActionPage() {
         return;
       }
       const { resume } = await getResume(token, resumeId);
-      console.log('loadResume', resume.objective );
-      setObjective(resume.objective);
+      setSummary(resume.summary);
       setSchools(resume.schools);
       setJobs(resume.jobs);
       setSkills(resume.skills);
+      setProfile(resume.basics);
     } catch (err) {
       console.log(err);
       throw err;
@@ -76,6 +76,7 @@ function ActionPage() {
   }, [resumeId]);
 
   useEffect(() => {
+    loadResume();
     const handleResize = () => {
       if (isOpen) {
         // Mobile viewer is open, set scale based on window size
@@ -122,11 +123,12 @@ function ActionPage() {
       _id: resumeId,
       jobs: jobs,
       schools: schools,
+      basics: profile
     };
     setResumeLoading(true);
     try {
       const generatedResume = await createResume(token, resume);
-      setObjective(generatedResume.resume.objective);
+      setSummary(generatedResume.resume.summary);
       setSchools(generatedResume.resume.schools);
       setJobs(generatedResume.resume.jobs);
       setSkills(generatedResume.resume.skills);
@@ -147,6 +149,9 @@ function ActionPage() {
       userId: currentUser._id,
       jobs: jobs,
       schools: schools,
+      basics: profile,
+      summary: summary,
+      skills: skills
     };
     setResumeLoading(true);
     try {
@@ -178,12 +183,12 @@ function ActionPage() {
         jobs={jobs}
         schools={schools}
         skills={skills}
-        summary={objective}
+        summary={summary}
         onPrint={handleSaveToPdf}
         onUpdateJobs={updateJobs}
         onUpdateSchools={updateSchools}
         onUpdateSkills={updateSkills}
-        onUpdateSummary={(obj) => setObjective(obj)}
+        onUpdateSummary={(sum) => setSummary(sum)}
         onUpdateProfile={handleSaveProfile}
         onGenerateResume={handleGenerateResume} 
         onSave={handleSaveResume}
@@ -192,7 +197,7 @@ function ActionPage() {
         <div className="p-2 origin-top ease-linear" style={{transform: "scale(0.9)"}}>
           <ResumeComponent 
             personalInfo={profile}
-            objective={objective}
+            summary={summary}
             schools={schools}
             jobs={jobs}
             skills={skills}
@@ -211,7 +216,7 @@ function ActionPage() {
           <div className="pt-2 ease-linear transform -translate-y-96 print:!scale-100" style={{transform: `scale(${scale})`}}>
           <ResumeComponent 
             personalInfo={profile}
-            objective={objective}
+            summary={summary}
             schools={schools} 
             jobs={jobs}
             skills={skills}
