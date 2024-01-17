@@ -61,16 +61,17 @@ export const createResume = async (req, res) => {
         } else {
           return sentence;
         }
-      });
-    });
+      })}
+    );
 
     resumeWithResponse.schools.forEach((school) => {
       school.content = school.content.map((sentence) => {
         if (sentence[sentence.length - 1] === '.') {
           return sentence.substring(0, sentence.length - 1);
+        } else {
+          return sentence;
         }
-      }
-    )}
+      })}
     );
 
     const resumeOut = Object.assign(resume, resumeWithResponse);

@@ -21,8 +21,8 @@ export const WorkSection = ({ experience }: WorkSectionProps) => {
               <SectionSubtitle label={item.title} />
               <div>
                 <p className="text-s">
-                  {item.startDateYear} -{' '}
-                  {item.endDateCurrent === true ? 'present' : item.endDateYear}
+                  {item.startDateMonth} {item.startDateYear} -{' '}
+                  {item.endDateCurrent === true ? 'present' : `${item.endDateYear} ${item.endDateYear}`}
                 </p>
               </div>
             </div>

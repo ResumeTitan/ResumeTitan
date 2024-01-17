@@ -127,12 +127,9 @@ function ActionPage() {
     };
     setResumeLoading(true);
     try {
-      const generatedResume = await createResume(token, resume);
-      setSummary(generatedResume.resume.summary);
-      setSchools(generatedResume.resume.schools);
-      setJobs(generatedResume.resume.jobs);
-      setSkills(generatedResume.resume.skills);
+      await createResume(token, resume);
       setResumeLoading(false);
+      loadResume();
     } catch (err) {
       console.log(err);
       throw err;
