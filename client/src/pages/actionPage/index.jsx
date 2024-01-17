@@ -119,6 +119,10 @@ function ActionPage() {
   }
 
   const handleGenerateResume = async () => {
+    if (!isAuth) {
+      setIsLoginOpen(true);
+      return;
+    }
     const resume = {
       _id: resumeId,
       jobs: jobs,
