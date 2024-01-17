@@ -66,6 +66,8 @@ function ActionPage() {
   };
 
   const togglePopup = () => {
+    const newScale = getScaleForResumeViewer(window.innerWidth + 100)
+    setScale(newScale > 0.85 ? 0.85 : newScale);
     setIsOpen(!isOpen);
   };
 
@@ -76,6 +78,7 @@ function ActionPage() {
   useEffect(() => {
     const handleResize = () => {
       if (isOpen) {
+        // Mobile viewer is open, set scale based on window size
         const newScale = getScaleForResumeViewer(window.innerWidth + 100)
         setScale(newScale > 0.85 ? 0.85 : newScale);
       } else {
@@ -198,7 +201,7 @@ function ActionPage() {
       )}
 
       {!showResume && (
-        <div className="fixed bottom-24 right-4 hover:cursor-pointer" onClick={togglePopup}>
+        <div className="fixed bottom-8 right-8 hover:cursor-pointer" onClick={togglePopup}>
           <DocumentScannerIcon className="text-white" style={{ fontSize: 70 }}/>
         </div>
       )}
