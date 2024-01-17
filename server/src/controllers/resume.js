@@ -53,19 +53,62 @@ export const createResume = async (req, res) => {
       throw new Error('Could not parse JSON response');
     }
 
+    // Get rid of periods at the end of each sentence
+    resumeWithResponse.jobs.forEach((job) => {
+      job.content = job.content.map((sentence) => {
+        if (sentence[sentence.length - 1] === '.') {
+          return sentence.substring(0, sentence.length - 1);
+        } else {
+          return sentence;
+        }
+      });
+    });
+
+    resumeWithResponse.schools.forEach((school) => {
+      school.content = school.content.map((sentence) => {
+        if (sentence[sentence.length - 1] === '.') {
+          return sentence.substring(0, sentence.length - 1);
+        }
+      }
+    )}
+    );
+
     const resumeOut = Object.assign(resume, resumeWithResponse);
     resumeOut.userId = req.user.id;
     
     // Save resume to database
     let newResume;
+    console.log('resumeOut:', resumeOut);
     if (resumeOut._id) {
+      console.log('updating resume');
       newResume = await Resume.findOneAndUpdate({ _id: resumeOut._id }, resumeOut);
     } else {
+      console.log('creating resume');
       newResume = new Resume(resumeOut);
       await newResume.save();
     }
 
     res.status(200).json( { resume: newResume });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: err.message });
+  }
+};
+
+/* Update resume from input */
+export const updateResume = async (req, res) => {
+  try {
+    const resume = req.body;
+
+    let resumeOut;
+    if (!resume._id) {
+      const resumeModel = new Resume(resume);
+      resumeOut = await resumeModel.save();
+    } else {
+      resumeOut = await Resume.findOneAndUpdate({ _id: resume._id }, resume);
+    }
+
+    res.status(200).json( { resume: resumeOut });
   } catch (err) {
     console.log(err);
     res.status(500).json({ error: err.message });
@@ -88,6 +131,17 @@ export const getResume = async (req, res) => {
   const id = req.query.id;
   try {
     const resume = await Resume.findOne({ _id: id });
+    res.status(200).json({ resume: resume });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+/* Delete resume by id */
+export const deleteResume = async (req, res) => {
+  const id = req.query.id;
+  try {
+    const resume = await Resume.findOneAndDelete({ _id: id });
     res.status(200).json({ resume: resume });
   } catch (err) {
     res.status(500).json({ error: err.message });

@@ -6,14 +6,14 @@ import { setLogin } from 'state';
 import SuccessAlert from './Alert/SuccessAlert';
 import ErrorAlert from './Alert/ErrorAlert';
 
-export const LoginForm = ({ onCloseLogin }) => {
+export const LoginForm = ({ onCloseLogin, registerOpen }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isRegister, setIsRegister] = useState(false);
+  const [isRegister, setIsRegister] = useState(registerOpen);
   const [newUserRegistered, setNewUserRegistered] = useState(false);
   const [loginFailed, setLoginFailed] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -78,6 +78,7 @@ export const LoginForm = ({ onCloseLogin }) => {
             token: registerResponse.token,
           }),
         );
+        onCloseLogin();
         navigate('/dashboard', { state: { newUser: true } });
         setIsRegister(false);
         setNewUserRegistered(true);

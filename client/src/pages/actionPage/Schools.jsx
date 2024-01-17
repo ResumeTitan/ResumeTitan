@@ -24,7 +24,6 @@ function Schools({ schools, onSave, onDelete }) {
   const handleEditSchool = (index) => {
     setIsEditing(true);
     const foundSchool = schools.find(obj => obj.id === index);
-    console.log('index', foundSchool);
     setEditingSchool(foundSchool);
   }
 
@@ -33,9 +32,7 @@ function Schools({ schools, onSave, onDelete }) {
     setEditingSchool({});
   }
 
-  useEffect(() => {
-    console.log('schools', schools);
-  }, [schools]);
+  useEffect(() => {}, [schools]);
 
   const editingForm = (
     <div className="px-4 pb-4">
@@ -44,7 +41,7 @@ function Schools({ schools, onSave, onDelete }) {
   );
 
   return (
-    <div className="border border-black border-2 rounded-lg w-full m-6 text-white bg-slate-700">
+    <div className="border border-black border-2 rounded-lg w-full my-4 text-white bg-slate-700">
       {isEditing && editingForm}
 
       {!isEditing && (

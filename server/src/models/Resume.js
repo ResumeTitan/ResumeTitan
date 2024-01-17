@@ -38,6 +38,11 @@ const JobSchema = new mongoose.Schema(
       type: String,
       description: "Year of end date",
     },
+    endDateCurrent: {
+      type: Boolean,
+      description: "Is this job the current job",
+      default: false
+    },
     notes: {
       type: String,
       description: "Notes about the job",
@@ -54,6 +59,10 @@ const JobSchema = new mongoose.Schema(
       required: true,
       description: "User ID",
     },
+    id: {
+      type: Number,
+      description: "Job ID from the current resume",
+    }
   },
   { timestamps: true }
 );
@@ -96,6 +105,11 @@ const SchoolSchema = new mongoose.Schema(
       type: String,
       description: "Year of end date",
     },
+    endDateCurrent: {
+      type: Boolean,
+      description: "Is this school the current school",
+      default: false
+    },
     notes: {
       type: String,
       description: "Notes about the users time at school, should be comma separated",
@@ -112,6 +126,10 @@ const SchoolSchema = new mongoose.Schema(
       required: true,
       description: "User ID",
     },
+    id: {
+      type: Number,
+      description: "School ID from the current resume",
+    }
   },
   { timestamps: true }
 );

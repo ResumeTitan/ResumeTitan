@@ -13,6 +13,19 @@ export const createResume = async (token, resume) => {
   return response.json();
 }
 
+export const updateResume = async (token, resume) => {
+  const response = await fetch(`${API_URL}/resume/update`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`
+    },
+    body: JSON.stringify(resume),
+  });
+
+  return response.json();
+}
+
 export const getResumes = async (token, userId) => {
   console.log(`Getting resumes for user ${userId}`);
   const response = await fetch(`${API_URL}/resume/user?userId=${userId}`, {
@@ -56,4 +69,16 @@ export const postRegister = async (values) => {
     body: JSON.stringify(values),
   });
   return response;
+}
+
+export const deleteResume = async (token, resumeId) => {
+  const response = await fetch(`${API_URL}/resume/delete?id=${resumeId}`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`
+    }
+  });
+
+  return response.json();
 }

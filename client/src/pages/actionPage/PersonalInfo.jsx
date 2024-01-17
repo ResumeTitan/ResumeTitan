@@ -15,7 +15,7 @@ function PersonalInfo ({ initialInfo, onUpdate }) {
   }
 
   return (
-    <div className="border border-black border-2 rounded-lg w-full m-6 text-white bg-slate-700">
+    <div className="border border-black border-2 rounded-lg w-full my-4 text-white bg-slate-700">
     <div className="font-bold border-b border-black rounded-t p-4">{"Personal Info"}</div>
 
       {isEditing ? (
@@ -82,7 +82,10 @@ function PersonalInfo ({ initialInfo, onUpdate }) {
       ) : (
         <div className="p-4 border-b border-black hover:bg-slate-500" onClick={() => {setIsEditing(true)}}>
           <div className="flex justify-between font-bold">
-            {infoForm.name}
+            {infoForm.firstName} {infoForm.lastName}
+          </div>
+          <div className="pt-2 flex justify-between">
+            {infoForm.phone}
           </div>
           <div className="flex justify-between">
             {infoForm.email}

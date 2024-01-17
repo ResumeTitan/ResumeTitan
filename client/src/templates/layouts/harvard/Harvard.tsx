@@ -3,6 +3,7 @@ import { PersonalInfo } from './components/PersonalInfo';
 import { WorkSection } from './components/WorkSection';
 import { SchoolSection } from './components/SchoolSection';
 import { SkillsSection } from './components/SkillsSection';
+import { Summary } from './components/Summary';
 import { ISchoolType, IWorkType, IProfileType } from '../../../types/types';
 
 const sampleData = {
@@ -31,15 +32,16 @@ const sampleData = {
 
 interface HarvardResumeProps {
   personalInfo: IProfileType;
+  summary: string;
   schools: ISchoolType[];
   jobs: IWorkType[];
   skills: string[];
 }
 
-export default function HarvardResume({ personalInfo, schools, jobs, skills }: HarvardResumeProps) {
+export default function HarvardResume({ personalInfo, summary, schools, jobs, skills }: HarvardResumeProps) {
   const resumeData = sampleData;
   return (
-    <div className="p-2">
+    <div className="p-2 text-black">
       <PersonalInfo
         name={`${personalInfo.firstName} ${personalInfo.lastName}`}
         label={resumeData.basics.label}
@@ -50,6 +52,10 @@ export default function HarvardResume({ personalInfo, schools, jobs, skills }: H
         image={resumeData.basics.image}
       />
       <div className="">
+        <div className="pt-1 px-2 w-full">
+          <Summary summary={summary}/>
+        </div>
+        
         <div className="pt-1 px-2 w-full">
           <SchoolSection schools={schools} />
         </div>

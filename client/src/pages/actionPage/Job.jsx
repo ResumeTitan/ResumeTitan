@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { VerticalList } from '../../components/VerticalList';
 
 function Job({ editingJob, onSave, onDelete, onCancel }) {
   const [jobForm, setJobForm] = useState(editingJob);
+  const [endDateChecked, setEndDateChecked] = useState(editingJob.endDateCurrent || false);
 
   const handleSaveJob = () => {
     onSave(jobForm);
@@ -24,8 +24,22 @@ function Job({ editingJob, onSave, onDelete, onCancel }) {
     setJobForm({ ...jobForm, [id]: value });
   }
 
-  const handleJobContentChange = (content) => {
-    setJobForm({ ...jobForm, content: content.map((item) => item.content) });
+  const handleJobContentChange = (content, index) => {
+    const newForm = { ...jobForm };
+    newForm.content[index] = content;
+    setJobForm(newForm);
+  }
+
+  const handleContentDelete = (index) => {
+    const newForm = { ...jobForm };
+    newForm.content.splice(index, 1);
+    setJobForm(newForm);
+  }
+
+  const handleEndDateCurrent = () => {
+    const endDateCurrent = !endDateChecked;
+    setJobForm({ ...jobForm, endDateCurrent: endDateCurrent });
+    setEndDateChecked(!endDateChecked);
   }
 
   return (
@@ -106,12 +120,19 @@ function Job({ editingJob, onSave, onDelete, onCancel }) {
         </div>
         <div className="w-full pl-2">
         <div className="w-full pr-2">
-          <div className="flex justify-between">
+          <div className="flex flex-cols justify-between">
             <label htmlFor={"endDate"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">End Date</label>
-            <div class="flex items-center">
-              <input type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-teal-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
-              <label className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Checked state</label>
-            </div>
+            <label htmlFor="endDateCheckbox" className="flex items-center">
+              <div className="text-xs pr-2">Current</div>
+            <input 
+              id="endDateCheckbox"
+              type="checkbox"
+              value=""
+              className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" 
+              onChange={handleEndDateCurrent}
+              checked={endDateChecked}
+            />
+            </label>
           </div>
           <div className="flex flex-cols">
             <div className="w-[75%] pr-1">
@@ -122,6 +143,7 @@ function Job({ editingJob, onSave, onDelete, onCancel }) {
                 placeholder="Enter month..."
                 value={jobForm.endDateMonth || ''}
                 onChange={handleJobChange}
+                disabled={endDateChecked}
                 required />
             </div>
             <div className="pl-1">
@@ -132,6 +154,7 @@ function Job({ editingJob, onSave, onDelete, onCancel }) {
                 placeholder="Enter year..."
                 value={jobForm.endDateYear || ''}
                 onChange={handleJobChange}
+                disabled={endDateChecked}
                 required />
             </div>
           </div>
@@ -153,8 +176,37 @@ function Job({ editingJob, onSave, onDelete, onCancel }) {
 
       {jobForm.content && (
         <div className="m-2">
-          <label htmlFor={"jobContent"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Content</label>
-          <VerticalList items={jobForm.content.map((item, index) => ({ id: index + 1, content: item })) || []} onSave={handleJobContentChange} />
+          <div className="flex flex-cols justify-between my-2">
+            <label htmlFor={"jobContent"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Content</label>
+            <button
+              className="greenButton p-1 bg-slate-800"
+              onClick={() => setJobForm({ ...jobForm, content: [...jobForm.content, ""] })}
+            >
+              {"Add"}
+            </button>
+          </div>
+          {jobForm.content.map((item, index) => (
+            <div className="flex flex-cols justify-between">
+              <div className="w-full pr-2">
+                <textarea 
+                  type="text"
+                  id={"jobContent"}
+                  className="formStyle flex-wrap"
+                  placeholder="Enter content..."
+                  value={item}
+                  onChange={(e) => handleJobContentChange(e.target.value, index)}
+                  required 
+                />
+              </div>
+              <button
+                className="redButton bg-slate-800"
+                onClick={() => handleContentDelete(index)}
+              >
+                {"X"}
+              </button>
+            </div>
+            )
+          )}
         </div>
       )}
 

@@ -5,6 +5,7 @@ import { IProfileType, ISchoolType, IWorkType } from '../../types/types';
 
 interface ResumeCardProps {
   personalInfo: IProfileType;
+  summary: string;
   schools: ISchoolType[];
   jobs: IWorkType[];
   skills: string[];
@@ -12,15 +13,15 @@ interface ResumeCardProps {
 
 const ResumeCard: React.FC<ResumeCardProps> = ({
   personalInfo,
+  summary,
   schools,
   jobs,
   skills,
 }) => {
-  console.log('personalInfo', personalInfo);
   return (
     <div className="mx-4 border border-2 border-black">
       <ResumeContainer>
-        <HarvardResume personalInfo={personalInfo} schools={schools} jobs={jobs} skills={skills}/>
+        <HarvardResume personalInfo={personalInfo} summary={summary} schools={schools} jobs={jobs} skills={skills}/>
       </ResumeContainer>
     </div>
   );

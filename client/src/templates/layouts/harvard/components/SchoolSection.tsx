@@ -1,6 +1,3 @@
-// import { dateParser } from 'src/helpers/utils';
-// import { HTMLRenderer } from 'src/helpers/common/components/HTMLRenderer';
-// import { IWorkIntrf } from 'src/stores/index.interface';
 import { SectionHeading } from '../elements/SectionHeading';
 import { SectionList } from '../elements/SectionList';
 import { SectionSubtitle } from '../elements/SectionSubtitle';
@@ -27,7 +24,7 @@ export const SchoolSection = ({ schools }: SchoolSectionProps) => {
           <div>
               <p className="text-s py-1">
                 {item.startDateYear} -{' '}
-                {item.endDateYear === '-1' ? 'present' : `${item.endDateYear}`}
+                {item.endDateCurrent === true ? 'present' : `${item.endDateYear}`}
               </p>
             </div>
           </div>

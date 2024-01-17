@@ -6,6 +6,7 @@ const initialState = {
   token: null,
   schools: [],
   jobs: [],
+  activeResume: null,
 };
 
 export const authSlice = createSlice({
@@ -24,6 +25,7 @@ export const authSlice = createSlice({
     setLogout: (state) => {
       state.user = null;
       state.token = null;
+      state.activeResume = null;
     },
     setFriends: (state, action) => {
       if (state.user) {
@@ -80,10 +82,27 @@ export const authSlice = createSlice({
         (job) => job.id !== action.payload.job.id
       );
       state.jobs = updatedJobs;
-    }
+    },
+    setActiveResume: (state, action) => {
+      state.activeResume = action.payload;
+    },
   },
 });
 
-export const { setMode, setLogin, setLogout, setFriends, setSchools, addSchool, setSchool, deleteSchool, setJobs, setJob, addJob, deleteJob } =
+export const { 
+  setMode, 
+  setLogin, 
+  setLogout, 
+  setFriends, 
+  setSchools, 
+  addSchool, 
+  setSchool, 
+  deleteSchool, 
+  setJobs, 
+  setJob, 
+  addJob, 
+  deleteJob, 
+  setActiveResume 
+} =
   authSlice.actions;
 export default authSlice.reducer;
