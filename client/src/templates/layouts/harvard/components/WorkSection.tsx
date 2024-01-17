@@ -22,7 +22,7 @@ export const WorkSection = ({ experience }: WorkSectionProps) => {
               <div>
                 <p className="text-s">
                   {item.startDateMonth} {item.startDateYear} -{' '}
-                  {item.endDateCurrent === true ? 'present' : `${item.endDateYear} ${item.endDateYear}`}
+                  {item.endDateCurrent === true ? 'present' : `${item.endDateMonth} ${item.endDateYear}`}
                 </p>
               </div>
             </div>
