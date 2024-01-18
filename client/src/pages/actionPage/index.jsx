@@ -185,7 +185,9 @@ function ActionPage() {
         schools={schools}
         skills={skills}
         summary={summary}
-        onPrint={handleSaveToPdf}
+        onPrint={() => {
+          handleSaveToPdf();
+        }}
         onUpdateJobs={updateJobs}
         onUpdateSchools={updateSchools}
         onUpdateSkills={updateSkills}
@@ -212,19 +214,18 @@ function ActionPage() {
         </div>
       )}
 
-      {isOpen && (
-        <div className="fixed bg-black bg-opacity-50 flex justify-center items-center w-full h-full overflow-auto top-0" onClick={togglePopup}>
-          <div className="pt-2 ease-linear transform -translate-y-96 print:!scale-100" style={{transform: `scale(${scale})`}}>
-          <ResumeComponent 
-            personalInfo={profile}
-            summary={summary}
-            schools={schools} 
-            jobs={jobs}
-            skills={skills}
-            ref={resumeRef}/>
-          </div>
+
+      <div className={`${isOpen ? "fixed": "hidden"} bg-black bg-opacity-50 flex justify-center items-center w-full h-full overflow-auto top-0`} onClick={togglePopup}>
+        <div className="pt-2 ease-linear transform -translate-y-96 print:!scale-100" style={{transform: `scale(${scale})`}}>
+        <ResumeComponent 
+          personalInfo={profile}
+          summary={summary}
+          schools={schools} 
+          jobs={jobs}
+          skills={skills}
+          ref={resumeRef}/>
         </div>
-      )}
+      </div>
 
       {isLoginOpen && (
         <LoginForm
