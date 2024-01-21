@@ -6,6 +6,14 @@ dotenv.config();
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 const gpt = new ChatGPTAPI({apiKey: OPENAI_API_KEY});
 
+const educationPrompt = `
+  Create a list of highlights that would show up on a resume for the education section based on the notes provided.
+  There should be a list of highlights for each school.
+  Your reseponse shall be in the following JSON format: [{highlights: ["highlight 1", "highlight 2", "highlight 3"]}, {highlights: ["highlight 1", "highlight 2", "highlight 3"]}]
+  The responses must be in the past tense.
+  Here is the information about the education in JSON format:`;
+
+/* Get prompt for GPT */
 const getPrompt = (resume) => {
   const prompt = `
   Can you extract key information from my resume and return it in a structured format?
@@ -13,21 +21,21 @@ const getPrompt = (resume) => {
   The responses must be in the past tense.
   Here is the resume in JSON format: 
   ${JSON.stringify({
-    jobs: resume.jobs,
-    schools: resume.schools,
+    work: resume.work,
+    education: resume.education,
   })}
   
   \n
-  In schools, using the notes, create a content field in the JSON response.
-  In schools, the content field shall contain 2 full sentences in an array format, each with accomplishments/skills given by the student. If no accomplishments/skills are found, create some that would be associated with the major entered
-  In schools, if a school name is recognized, use the full name of that school in the value of the JSON output.
-  In schools, if a major is recognized, use the full name of that major in the value of the JSON output.
+  In education, using the notes, create a content field in the JSON response.
+  In education, the content field shall contain 2 full sentences in an array format, each with accomplishments/skills given by the student. If no accomplishments/skills are found, create some that would be associated with the major entered
+  In education, if a school name is recognized, use the full name of that school in the value of the JSON output.
+  In education, if a major is recognized, use the full name of that major in the value of the JSON output.
 
-  In jobs, using the notes, create an content field in the JSON response.
-  In jobs, the content field shall contain 4 full sentences in an array format, each with responsibilities/skills an employee might have.
-  In jobs, if a job title is recognized, use the full name of that job title in the value of the JSON output.
-  In jobs, if a company is recognized, use the full name of that company in the value of the JSON output.
-  In addition, based on the information provided, create an "summary" statement relating to the jobs and education given. Include this in the JSON response.
+  In work, using the notes, create an content field in the JSON response.
+  In work, the content field shall contain 4 full sentences in an array format, each with responsibilities/skills an employee might have.
+  In work, if a job title is recognized, use the full name of that job title in the value of the JSON output.
+  In work, if a company is recognized, use the full name of that company in the value of the JSON output.
+  In addition, based on the information provided, create an "summary" statement relating to the work and education given. Include this in the JSON response.
   In addition, based on the information provided, create a "skills" array that includes the skills gained through the education and work experience provided. There must be at least 6 skills. Include this in the JSON response.
   If the resume provided is blank, provide a generic JSON template based on the keys in the input.`
   ;

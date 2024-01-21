@@ -102,9 +102,15 @@ export const Dashboard = () => {
 
   return (
     <div className="bg-slate-400 text-white min-h-screen">
-      <h1 className="text-3xl font-bold bg-slate-700 p-2 w-full">Welcome {currentUser?.firstName}</h1>
-      <div className="text-3xl font-bold bg-slate-700 p-2">My Resumes:</div>
-      <button className="mx-4 mt-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-white font-bold py-2 px-4" onClick={() => navigate('/resume')}>Add New</button>
+      <div className="rounded-b-sm text-3xl font-bold bg-slate-700 p-4 text-center">
+        <h1 className="w-full">Welcome{currentUser ? `, ${currentUser.firstName}` : ""}</h1>
+      </div>
+
+      <div className="flex flex-cols bg-slate-300 p-2">
+        <div className="text-black  font-bold text-2xl p-2">My Resumes:</div>
+        <button className="mx-4 mt-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-white font-bold py-2 px-4" onClick={() => navigate('/resume')}>Add New</button>
+        <button className="mx-4 mt-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-white font-bold py-2 px-4" onClick={() => navigate('/resume')}>Add from LinkedIn</button>
+      </div>
       <div className="flex flex-cols lg:min-w-0 w-1/2 h-auto items-start p-2">
           <div className="transform scale-25 flex flex-cols origin-top-left">
             {resumeWidgets}

@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const JobSchema = new mongoose.Schema(
+const WorkSchema = new mongoose.Schema(
   {
     id: {
       type: Number,
@@ -59,15 +59,11 @@ const JobSchema = new mongoose.Schema(
       required: true,
       description: "User ID",
     },
-    id: {
-      type: Number,
-      description: "Job ID from the current resume",
-    }
   },
   { timestamps: true }
 );
 
-const SchoolSchema = new mongoose.Schema(
+const EducationSchema = new mongoose.Schema(
   {
     id: {
       type: Number,
@@ -89,21 +85,13 @@ const SchoolSchema = new mongoose.Schema(
       type: String,
       description: "State of school",
     },
-    startDateMonth: {
+    startDate: {
       type: String,
-      description: "Month of start date",
+      description: "Start date in YYYY-MM-DD format",
     },
-    startDateYear: {
+    endDate: {
       type: String,
-      description: "Year of start date",
-    },
-    endDateMonth: {
-      type: String,
-      description: "Month of end date",
-    },
-    endDateYear: {
-      type: String,
-      description: "Year of end date",
+      description: "End date in YYYY-MM-DD format",
     },
     endDateCurrent: {
       type: Boolean,
@@ -114,38 +102,29 @@ const SchoolSchema = new mongoose.Schema(
       type: String,
       description: "Notes about the users time at school, should be comma separated",
     },
-    content: {
+    highlights: {
       type: Array,
       items: {
         type: String
       },
       description: "AI generated content"
     },
-    userId: {
-      type: mongoose.Schema.Types.ObjectId,
-      required: true,
-      description: "User ID",
-    },
-    id: {
-      type: Number,
-      description: "School ID from the current resume",
-    }
   },
   { timestamps: true }
 );
 
 const ResumeSchema = new mongoose.Schema(
   {
-    jobs: {
+    work: {
       type: Array,
       items: {
-        type: JobSchema
+        type: WorkSchema
       },
     },
-    schools: {
+    education: {
       type: Array,
       items: {
-        type: SchoolSchema
+        type: EducationSchema
       },
     },
     summary: {
