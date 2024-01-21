@@ -15,8 +15,8 @@ export const SchoolSection = ({ schools }: SchoolSectionProps) => {
 
       {schools.length > 0 && schools.map((item: ISchoolType, index: number) => {
         return (
-        <div>
-          <div key={`school${index}`} className="flex justify-between items-center">
+        <div key={`resume-school${index}`}>
+          <div className="flex justify-between items-center">
             <div>
               <SectionTitle label={item.name} />
               <SectionSubtitle label={`${item.degree}, ${item.major}`} />

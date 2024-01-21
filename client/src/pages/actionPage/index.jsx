@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useReactToPrint } from 'react-to-print';
 import ActionBar from './Action';
 import DocumentScannerIcon from '@mui/icons-material/DocumentScanner';
@@ -26,8 +26,9 @@ const ResumeComponent = React.forwardRef((props, ref) => (
 ));
 
 function ActionPage() {
-  const resumeId = useSelector((state) => state.activeResume);
+  const location = useLocation();
   const token = useSelector((state) => state.token);
+  const [resumeId, setResumeId] = useState(null);
   const [scale, setScale] = useState(1);
   const [showResume, setShowResume] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -48,12 +49,12 @@ function ActionPage() {
   const navigate = useNavigate();
   const resumeRef = React.useRef();
 
-  const loadResume = async () => {
+  const loadResume = async (id) => {
     try {
-      if (!resumeId) {
+      if (!id) {
         return;
       }
-      const { resume } = await getResume(token, resumeId);
+      const { resume } = await getResume(token, id);
       setSummary(resume.summary);
       setSchools(resume.schools);
       setJobs(resume.jobs);
@@ -72,11 +73,6 @@ function ActionPage() {
   };
 
   useEffect(() => {
-    loadResume();
-  }, [resumeId]);
-
-  useEffect(() => {
-    loadResume();
     const handleResize = () => {
       if (isOpen) {
         // Mobile viewer is open, set scale based on window size
@@ -96,25 +92,44 @@ function ActionPage() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  useEffect(() => {
+    const loadResumeChange = async () => {
+      if (location.state) {
+        setResumeId(location.state.resumeId);
+        await loadResume(location.state.resumeId);
+      }
+    }
+    loadResumeChange().catch((err) => {
+      console.log(err);
+      throw err;
+    });
+  }, [location.state]);
+
   const handleSaveToPdf = useReactToPrint({
+    onBeforePrint: () => {
+      if (window.innerWidth <= MED_SCREEN_WIDTH) {
+        setIsOpen(true);
+      }
+    },
     content: () => resumeRef.current,
     documentTitle: 'Resume',
     pageStyle: '@page { size: A4; margin: 0mm; } @media print { body { -webkit-print-color-adjust: exact; } }',
-    onAfterPrint: () => {console.log('printed')}
+    onAfterPrint: () => {
+      if (window.innerWidth <= MED_SCREEN_WIDTH) {
+        setIsOpen(false);
+      }
+    }
   });
 
   const updateJobs = (jobsIn) => {
-    console.log('updateJobs', jobsIn);
     setJobs(jobsIn);
   }
 
   const updateSchools = (schoolsIn) => {
-    console.log('updateSchools', schoolsIn);
     setSchools(schoolsIn);
   }
 
   const updateSkills = (skillsIn) => {
-    console.log('updateSkills', skillsIn);
     setSkills(skillsIn);
   }
 
@@ -131,9 +146,10 @@ function ActionPage() {
     };
     setResumeLoading(true);
     try {
-      await createResume(token, resume);
+      const newResume = await createResume(token, resume);
       setResumeLoading(false);
-      loadResume();
+      setResumeId(newResume.resume._id);
+      await loadResume(newResume.resume._id);
     } catch (err) {
       console.log(err);
       throw err;
@@ -156,10 +172,11 @@ function ActionPage() {
     };
     setResumeLoading(true);
     try {
-      const generatedResume = await updateResume(token, resume);
-      setSchools(generatedResume.resume.schools);
-      setJobs(generatedResume.resume.jobs);
-      setSkills(generatedResume.resume.skills);
+      const savedResume = await updateResume(token, resume);
+
+      setSchools(savedResume.resume.schools);
+      setJobs(savedResume.resume.jobs);
+      setSkills(savedResume.resume.skills);
       setResumeLoading(false);
       setActiveResume(null);
       navigate('/dashboard');

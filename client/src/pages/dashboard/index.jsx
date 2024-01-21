@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { getResumes, deleteResume } from '../../api/resume';
 import { setActiveResume } from '../../state';
+import { Tabs } from './Tabs';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import Popup from './Popup';
@@ -50,13 +51,13 @@ export const Dashboard = () => {
       return;
     }
     const data = await getResumes(token, currentUser._id);
+    console.log(data);
     setResumes(data.resumes);
   };
 
   const handleClickResume = (resumeId) => {
-    console.log("Clicked resume with id: " + resumeId);
     dispatch(setActiveResume(resumeId));
-    navigate(`/resume`);
+    navigate(`/resume`, {state: {resumeId: resumeId}});
   }
 
   const handleClickedDelete = (resumeIndex) => {
@@ -64,11 +65,10 @@ export const Dashboard = () => {
     setShowPopup(true);
   }
 
-  const handleDeleteResume = () => {
-    console.log("Clicked delete resume with id: " + deleteId);
-    deleteResume(token, deleteId);
+  const handleDeleteResume = async () => {
+    await deleteResume(token, deleteId);
     setShowPopup(false);
-    loadResumes();
+    await loadResumes();
   }
 
   useEffect(() => {
@@ -103,13 +103,16 @@ export const Dashboard = () => {
   return (
     <div className="bg-slate-400 text-white min-h-screen">
       <h1 className="text-3xl font-bold bg-slate-700 p-2 w-full">Welcome {currentUser?.firstName}</h1>
+
       <div className="text-3xl font-bold bg-slate-700 p-2">My Resumes:</div>
       <button className="mx-4 mt-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-white font-bold py-2 px-4" onClick={() => navigate('/resume')}>Add New</button>
-      <div className="flex flex-cols lg:min-w-0 w-1/2 h-auto items-start p-2">
-          <div className="transform scale-25 flex flex-cols origin-top-left">
-            {resumeWidgets}
-          </div>  
+      <div className="flex flex-cols lg:min-w-0 w-1/2 h-2 items-start p-2">
+        <div className="transform scale-25 flex flex-cols origin-top-left">
+          {resumeWidgets}
+        </div>
       </div>
+
+      {/* <Tabs onTabClick={() => {}}/> */}
 
       {/* Popup */}
       {showPopup && <Popup message={`Are you sure you want to delete this resume?`} handleDelete={handleDeleteResume} handleCancel={() => setShowPopup(false)} />}
