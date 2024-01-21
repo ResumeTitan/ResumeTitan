@@ -16,7 +16,6 @@ function Summary ({ initSummary, onUpdate }) {
   }
 
   useEffect(() => {
-    console.log('initSummary', initSummary);
     setSummary(initSummary);
   }, [initSummary]);
 

@@ -5,6 +5,8 @@ import Schools from './Schools';
 import Jobs from './Jobs';
 import Skills from './Skills';
 import Summary from './Summary';
+import Popup from './Popup';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import './Action.css';
 
 function ActionBar({ 
@@ -22,6 +24,7 @@ function ActionBar({
   onGenerateResume, 
   onSave 
 }) {
+  const [popupOpen, setPopupOpen] = React.useState(false);
 
   const handleSaveJob = (jobForm) => {
     if (jobForm.id) {
@@ -78,14 +81,27 @@ function ActionBar({
     <div className="p-2 flex flex-col min-h-screen sm:w-full lg:w-7/12 bg-slate-400">
       <ResumeName onPrint={ onPrint } />
       <PersonalInfo initialInfo={profile} onUpdate={onUpdateProfile} />
-      <Summary initSummary={summary} onUpdate={onUpdateSummary} />
+      
       <Schools schools={schools} onSave={handleSaveSchool} onDelete={handleDeleteSchool} />
       <Jobs jobs={jobs} onSave={handleSaveJob} onDelete={handleDeleteJob} />
+
+      
+      <div className="flex flex-cols w-full">
+        <div className="font-bold pr-2">Optional:</div>
+        <button onClick={() => setPopupOpen(true)}>
+          <HelpOutlineIcon/>
+        </button>
+      </div>
+      
+      <Summary initSummary={summary} onUpdate={onUpdateSummary} />
       <Skills initSkills={skills} onUpdate={onUpdateSkills}/>
       <div className="w-full">
         <button onClick={handleGenerateResume} className="generateButton bg-slate-700">Generate Resume</button>
         <button onClick={handleSave} className="saveButton bg-slate-700 hover:bg-green">Save Resume</button>
       </div>
+
+       {/* Popup */}
+       {popupOpen && <Popup message={`These fields will be filled in when clicking "Generate Resume"`} handleOk={() => setPopupOpen(false)} />}
     </div>
   )
 }

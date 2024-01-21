@@ -50,8 +50,8 @@ function Jobs({ jobs, onSave, onDelete }) {
       {!isEditing && (
         <div>
           <div className="font-bold border-b border-black rounded-t p-4">{"Job Info"}</div>
-          {jobs.map((job) => (
-            <div className="p-4 border-b border-black hover:bg-slate-500" onClick={() => handleEditJob(job.id)}>
+          {jobs.map((job, index) => (
+            <div key={`job-${index}`} className="p-4 border-b border-black hover:bg-slate-500" onClick={() => handleEditJob(job.id)}>
               <div className="flex justify-between font-bold">
                 {job?.title}
               </div>

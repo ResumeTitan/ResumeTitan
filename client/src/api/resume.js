@@ -10,7 +10,8 @@ export const createResume = async (token, resume) => {
     body: JSON.stringify(resume),
   });
 
-  return response.json();
+  const data = await response.json();
+  return data;
 }
 
 export const updateResume = async (token, resume) => {

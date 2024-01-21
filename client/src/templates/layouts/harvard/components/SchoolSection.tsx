@@ -15,16 +15,16 @@ export const SchoolSection = ({ schools }: SchoolSectionProps) => {
 
       {schools.length > 0 && schools.map((item: ISchoolType, index: number) => {
         return (
-        <div>
-          <div key={`school${index}`} className="flex justify-between items-center">
+        <div key={`resume-school${index}`}>
+          <div className="flex justify-between items-center">
             <div>
               <SectionTitle label={item.name} />
               <SectionSubtitle label={`${item.degree}, ${item.major}`} />
             </div>
           <div>
               <p className="text-s py-1">
-                {item.startDateYear} -{' '}
-                {item.endDateCurrent === true ? 'present' : `${item.endDateYear}`}
+                {item.startDateMonth} {item.startDateYear} -{' '}
+                {item.endDateCurrent === true ? 'present' : `${item.endDateMonth} ${item.endDateYear}`}
               </p>
             </div>
           </div>

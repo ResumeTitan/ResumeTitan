@@ -19,7 +19,7 @@ const getPrompt = (resume) => {
   
   \n
   In schools, using the notes, create a content field in the JSON response.
-  In schools, the content field shall contain 2 full sentences in an array format, each with accomplishments/skills given by the student.
+  In schools, the content field shall contain 2 full sentences in an array format, each with accomplishments/skills given by the student. If no accomplishments/skills are found, create some that would be associated with the major entered
   In schools, if a school name is recognized, use the full name of that school in the value of the JSON output.
   In schools, if a major is recognized, use the full name of that major in the value of the JSON output.
 
@@ -27,7 +27,7 @@ const getPrompt = (resume) => {
   In jobs, the content field shall contain 4 full sentences in an array format, each with responsibilities/skills an employee might have.
   In jobs, if a job title is recognized, use the full name of that job title in the value of the JSON output.
   In jobs, if a company is recognized, use the full name of that company in the value of the JSON output.
-  In addition, based on the information provided, create an "objective" statement relating to the jobs and education given. Include this in the JSON response.
+  In addition, based on the information provided, create an "summary" statement relating to the jobs and education given. Include this in the JSON response.
   In addition, based on the information provided, create a "skills" array that includes the skills gained through the education and work experience provided. There must be at least 6 skills. Include this in the JSON response.
   If the resume provided is blank, provide a generic JSON template based on the keys in the input.`
   ;
@@ -61,16 +61,17 @@ export const createResume = async (req, res) => {
         } else {
           return sentence;
         }
-      });
-    });
+      })}
+    );
 
     resumeWithResponse.schools.forEach((school) => {
       school.content = school.content.map((sentence) => {
         if (sentence[sentence.length - 1] === '.') {
           return sentence.substring(0, sentence.length - 1);
+        } else {
+          return sentence;
         }
-      }
-    )}
+      })}
     );
 
     const resumeOut = Object.assign(resume, resumeWithResponse);
@@ -78,11 +79,11 @@ export const createResume = async (req, res) => {
     
     // Save resume to database
     let newResume;
-    console.log('resumeOut:', resumeOut);
     if (resumeOut._id) {
       console.log('updating resume');
       newResume = await Resume.findOneAndUpdate({ _id: resumeOut._id }, resumeOut);
     } else {
+      delete resumeOut._id;
       console.log('creating resume');
       newResume = new Resume(resumeOut);
       await newResume.save();

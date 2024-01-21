@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 function PersonalInfo ({ initialInfo, onUpdate }) {
   const [infoForm, setInfoForm] = useState(initialInfo);
@@ -13,6 +13,10 @@ function PersonalInfo ({ initialInfo, onUpdate }) {
     setIsEditing(false);
     onUpdate(infoForm);
   }
+
+  useEffect (() => {
+    setInfoForm(initialInfo);
+  }, [initialInfo]);
 
   return (
     <div className="border border-black border-2 rounded-lg w-full my-4 text-white bg-slate-700">

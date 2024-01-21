@@ -47,8 +47,8 @@ function Schools({ schools, onSave, onDelete }) {
       {!isEditing && (
         <div>
           <div className="font-bold border-b border-black rounded-t p-4">{"School Info"}</div>
-          {schools.map((school) => (
-            <div className="p-4 border-b border-black hover:bg-slate-500" onClick={() => handleEditSchool(school.id)}>
+          {schools.map((school, index) => (
+            <div key={`school-${index}`} className="p-4 border-b border-black hover:bg-slate-500" onClick={() => handleEditSchool(school.id)}>
               <div className="flex justify-between font-bold">
                 {school.name}
               </div>

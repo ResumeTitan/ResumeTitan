@@ -8,6 +8,8 @@ interface WorkSectionProps {
   experience: IWorkType[]; 
 }
 
+const sectionStyling = "flex justify-between items-center";
+
 export const WorkSection = ({ experience }: WorkSectionProps) => {
   return (
     <div>
@@ -17,16 +19,16 @@ export const WorkSection = ({ experience }: WorkSectionProps) => {
         return (
           <div key={index}>
             <SectionTitle label={item.employer} />
-            <div className="flex justify-between items-center">
+            <div className={sectionStyling}>
               <SectionSubtitle label={item.title} />
               <div>
                 <p className="text-s">
-                  {item.startDateYear} -{' '}
-                  {item.endDateCurrent === true ? 'present' : item.endDateYear}
+                  {item.startDateMonth} {item.startDateYear} -{' '}
+                  {item.endDateCurrent === true ? 'present' : `${item.endDateMonth} ${item.endDateYear}`}
                 </p>
               </div>
             </div>
-            <div className="flex justify-between items-center">
+            <div className={sectionStyling}>
             {item.content && item.content.length > 0 && (
               <SectionList items={item.content} />
             )}

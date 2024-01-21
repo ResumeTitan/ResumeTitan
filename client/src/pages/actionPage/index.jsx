@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useReactToPrint } from 'react-to-print';
 import ActionBar from './Action';
 import DocumentScannerIcon from '@mui/icons-material/DocumentScanner';
@@ -20,45 +20,46 @@ const MED_SCREEN_WIDTH = 1200;
 const ResumeComponent = React.forwardRef((props, ref) => (
   <div ref={ref} className="print:!scale-100">
     <ResumeContainer>
-      <HarvardResume personalInfo={props.personalInfo} summary={props.objective} schools={props.schools} jobs={props.jobs} skills={props.skills}/>
+      <HarvardResume personalInfo={props.personalInfo} summary={props.summary} schools={props.schools} jobs={props.jobs} skills={props.skills}/>
     </ResumeContainer>
   </div>
 ));
 
 function ActionPage() {
-  const resumeId = useSelector((state) => state.activeResume);
+  const location = useLocation();
   const token = useSelector((state) => state.token);
+  const [resumeId, setResumeId] = useState(null);
   const [scale, setScale] = useState(1);
   const [showResume, setShowResume] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [schools, setSchools] = useState([]);
   const [jobs, setJobs] = useState([]);
   const [skills, setSkills] = useState([]);
-  const [objective, setObjective] = useState('');
+  const [summary, setSummary] = useState('');
   const currentUser = useSelector((state) => state.user);
   const isAuth = Boolean(useSelector((state) => state.token));
   const [isLoginOpen, setIsLoginOpen] = useState(false);
-  const [profile, setProfile] = useState(currentUser ? currentUser :{
-    firstName: 'John',
-    lastName: 'Doe',
+  const [profile, setProfile] = useState({
+    firstName: currentUser?.firstName || 'John',
+    lastName: currentUser?.lastName || 'Doe',
     phone: '(123)-456-7890',
-    email: 'johndoe@example.com',
+    email: currentUser?.email || 'johndoe@example.com',
   });
   const [resumeLoading, setResumeLoading] = useState(false);
   const navigate = useNavigate();
   const resumeRef = React.useRef();
 
-  const loadResume = async () => {
+  const loadResume = async (id) => {
     try {
-      if (!resumeId) {
+      if (!id) {
         return;
       }
-      const { resume } = await getResume(token, resumeId);
-      console.log('loadResume', resume.objective );
-      setObjective(resume.objective);
+      const { resume } = await getResume(token, id);
+      setSummary(resume.summary);
       setSchools(resume.schools);
       setJobs(resume.jobs);
       setSkills(resume.skills);
+      setProfile(resume.basics);
     } catch (err) {
       console.log(err);
       throw err;
@@ -70,10 +71,6 @@ function ActionPage() {
     setScale(newScale > 0.85 ? 0.85 : newScale);
     setIsOpen(!isOpen);
   };
-
-  useEffect(() => {
-    loadResume();
-  }, [resumeId]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -95,42 +92,64 @@ function ActionPage() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  useEffect(() => {
+    const loadResumeChange = async () => {
+      if (location.state) {
+        setResumeId(location.state.resumeId);
+        await loadResume(location.state.resumeId);
+      }
+    }
+    loadResumeChange().catch((err) => {
+      console.log(err);
+      throw err;
+    });
+  }, [location.state]);
+
   const handleSaveToPdf = useReactToPrint({
+    onBeforePrint: () => {
+      if (window.innerWidth <= MED_SCREEN_WIDTH) {
+        setIsOpen(true);
+      }
+    },
     content: () => resumeRef.current,
     documentTitle: 'Resume',
     pageStyle: '@page { size: A4; margin: 0mm; } @media print { body { -webkit-print-color-adjust: exact; } }',
-    onAfterPrint: () => {console.log('printed')}
+    onAfterPrint: () => {
+      if (window.innerWidth <= MED_SCREEN_WIDTH) {
+        setIsOpen(false);
+      }
+    }
   });
 
   const updateJobs = (jobsIn) => {
-    console.log('updateJobs', jobsIn);
     setJobs(jobsIn);
   }
 
   const updateSchools = (schoolsIn) => {
-    console.log('updateSchools', schoolsIn);
     setSchools(schoolsIn);
   }
 
   const updateSkills = (skillsIn) => {
-    console.log('updateSkills', skillsIn);
     setSkills(skillsIn);
   }
 
   const handleGenerateResume = async () => {
+    if (!isAuth) {
+      setIsLoginOpen(true);
+      return;
+    }
     const resume = {
       _id: resumeId,
       jobs: jobs,
       schools: schools,
+      basics: profile
     };
     setResumeLoading(true);
     try {
-      const generatedResume = await createResume(token, resume);
-      setObjective(generatedResume.resume.objective);
-      setSchools(generatedResume.resume.schools);
-      setJobs(generatedResume.resume.jobs);
-      setSkills(generatedResume.resume.skills);
+      const newResume = await createResume(token, resume);
       setResumeLoading(false);
+      setResumeId(newResume.resume._id);
+      await loadResume(newResume.resume._id);
     } catch (err) {
       console.log(err);
       throw err;
@@ -147,13 +166,17 @@ function ActionPage() {
       userId: currentUser._id,
       jobs: jobs,
       schools: schools,
+      basics: profile,
+      summary: summary,
+      skills: skills
     };
     setResumeLoading(true);
     try {
-      const generatedResume = await updateResume(token, resume);
-      setSchools(generatedResume.resume.schools);
-      setJobs(generatedResume.resume.jobs);
-      setSkills(generatedResume.resume.skills);
+      const savedResume = await updateResume(token, resume);
+
+      setSchools(savedResume.resume.schools);
+      setJobs(savedResume.resume.jobs);
+      setSkills(savedResume.resume.skills);
       setResumeLoading(false);
       setActiveResume(null);
       navigate('/dashboard');
@@ -178,12 +201,14 @@ function ActionPage() {
         jobs={jobs}
         schools={schools}
         skills={skills}
-        summary={objective}
-        onPrint={handleSaveToPdf}
+        summary={summary}
+        onPrint={() => {
+          handleSaveToPdf();
+        }}
         onUpdateJobs={updateJobs}
         onUpdateSchools={updateSchools}
         onUpdateSkills={updateSkills}
-        onUpdateSummary={(obj) => setObjective(obj)}
+        onUpdateSummary={(sum) => setSummary(sum)}
         onUpdateProfile={handleSaveProfile}
         onGenerateResume={handleGenerateResume} 
         onSave={handleSaveResume}
@@ -192,7 +217,7 @@ function ActionPage() {
         <div className="p-2 origin-top ease-linear" style={{transform: "scale(0.9)"}}>
           <ResumeComponent 
             personalInfo={profile}
-            objective={objective}
+            summary={summary}
             schools={schools}
             jobs={jobs}
             skills={skills}
@@ -206,19 +231,18 @@ function ActionPage() {
         </div>
       )}
 
-      {isOpen && (
-        <div className="fixed bg-black bg-opacity-50 flex justify-center items-center w-full h-full overflow-auto top-0" onClick={togglePopup}>
-          <div className="pt-2 ease-linear transform -translate-y-96 print:!scale-100" style={{transform: `scale(${scale})`}}>
-          <ResumeComponent 
-            personalInfo={profile}
-            objective={objective}
-            schools={schools} 
-            jobs={jobs}
-            skills={skills}
-            ref={resumeRef}/>
-          </div>
+
+      <div className={`${isOpen ? "fixed": "hidden"} bg-black bg-opacity-50 flex justify-center items-center w-full h-full overflow-auto top-0`} onClick={togglePopup}>
+        <div className="pt-2 ease-linear transform -translate-y-96 print:!scale-100" style={{transform: `scale(${scale})`}}>
+        <ResumeComponent 
+          personalInfo={profile}
+          summary={summary}
+          schools={schools} 
+          jobs={jobs}
+          skills={skills}
+          ref={resumeRef}/>
         </div>
-      )}
+      </div>
 
       {isLoginOpen && (
         <LoginForm

@@ -35,5 +35,5 @@ export interface IResumeType {
   schools: ISchoolType[];
   jobs: IWorkType[];
   skills?: string[];
-  objective?: string;
+  summary?: string;
 }
