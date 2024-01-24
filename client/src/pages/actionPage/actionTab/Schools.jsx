@@ -53,7 +53,7 @@ function Schools({ schools, onSave, onDelete }) {
                 {school.name}
               </div>
               <div className="flex justify-between">
-                {school.degree}
+                {school.major}
               </div>
             </div>
           ))}

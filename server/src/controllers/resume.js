@@ -39,7 +39,6 @@ const getPrompt = (resume) => {
 export const createResume = async (req, res) => {
   try {
     const resume = req.body;
-    console.log(resume);
     const gptResponse = await gpt.sendMessage(getPrompt(resume));
 
     // Find the starting and ending positions of the JSON code
@@ -55,7 +54,8 @@ export const createResume = async (req, res) => {
     }
 
     // Get rid of periods at the end of each sentence
-    resumeWithResponse.jobs.forEach((job) => {
+    resumeWithResponse.jobs.forEach((job, index) => {
+      job.id = index + 1;
       job.content = job.content.map((sentence) => {
         if (sentence[sentence.length - 1] === '.') {
           return sentence.substring(0, sentence.length - 1);
@@ -65,7 +65,8 @@ export const createResume = async (req, res) => {
       })}
     );
 
-    resumeWithResponse.schools.forEach((school) => {
+    resumeWithResponse.schools.forEach((school, index) => {
+      school.id = index + 1;
       school.content = school.content.map((sentence) => {
         if (sentence[sentence.length - 1] === '.') {
           return sentence.substring(0, sentence.length - 1);

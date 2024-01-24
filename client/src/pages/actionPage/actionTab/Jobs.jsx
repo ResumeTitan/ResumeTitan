@@ -24,6 +24,7 @@ function Jobs({ jobs, onSave, onDelete, onSwap }) {
   }
 
   const handleEditJob = (index) => {
+    console.log("found job", index);
     const foundJob = jobs.find(obj => obj.id === index);
     setEditingJob(foundJob);
     setIsEditing(true);
