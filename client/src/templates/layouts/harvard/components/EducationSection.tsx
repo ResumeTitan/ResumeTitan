@@ -19,12 +19,12 @@ export const EducationSection = ({ education }: EducationSectionProps) => {
           <div className="flex justify-between items-center">
             <div>
               <SectionTitle label={item.name} />
-              <SectionSubtitle label={`${item.degree}, ${item.major}`} />
+              <SectionSubtitle label={`${item?.degree || ''}, ${item?.major || ''}`} />
             </div>
           <div>
               <p className="text-s py-1">
                 {item.startDateMonth} {item.startDateYear} -{' '}
-                {item.endDateCurrent === true ? 'Present' : `${item.endDateMonth} ${item.endDateYear}`}
+                {item.endDateCurrent === true ? 'Present' : `${item?.endDateMonth || ''} ${item?.endDateYear || ''}`}
               </p>
             </div>
           </div>

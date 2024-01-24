@@ -91,6 +91,10 @@
   @apply border border-black border-2 rounded-lg w-full my-4 text-white bg-slate-700
 }
 
+.form-label-text {
+  @apply block mb-2 text-sm font-medium text-white
+}
+
 @media print {
   body {
     width: 8.5in;

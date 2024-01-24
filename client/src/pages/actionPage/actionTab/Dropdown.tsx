@@ -5,7 +5,7 @@ interface Props {
   onSelect: (selected: string) => void;
 }
 
-const MyComponent: React.FC<Props> = ({ options, onSelect }) => {
+const Dropdown: React.FC<Props> = ({ options, onSelect }) => {
   const [selected, setSelected] = useState("");
   return (
     <div className="relative w-full lg:max-w-sm">
@@ -26,4 +26,4 @@ const MyComponent: React.FC<Props> = ({ options, onSelect }) => {
   );
 };
 
-export default MyComponent;
+export default Dropdown;

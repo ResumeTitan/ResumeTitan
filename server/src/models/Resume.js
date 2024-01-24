@@ -4,6 +4,7 @@ const JobSchema = new mongoose.Schema(
   {
     id: {
       type: Number,
+      default: 0,
       description: "Job ID from the current resume",
     },
     title: {

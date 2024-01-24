@@ -215,7 +215,7 @@ function School({ editingSchool, onSave, onDelete, onCancel }) {
                   required 
                 />
               </div>
-              <div className="">
+              <div>
                 <button
                   className="remove-content-button"
                   onClick={() => handleContentDelete(index)}

@@ -39,6 +39,7 @@ const getPrompt = (resume) => {
 export const createResume = async (req, res) => {
   try {
     const resume = req.body;
+    console.log(resume);
     const gptResponse = await gpt.sendMessage(getPrompt(resume));
 
     // Find the starting and ending positions of the JSON code

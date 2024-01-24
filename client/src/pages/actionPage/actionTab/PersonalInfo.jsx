@@ -27,7 +27,7 @@ function PersonalInfo ({ initialInfo, onUpdate }) {
 
           <div className="p-4 left-right-spacing">
             <div className="w-full pr-2">
-            <label htmlFor={"firstName"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">First Name</label>
+            <label htmlFor={"firstName"} className="form-label-text">First Name</label>
             <input 
               type="text"
               id={"firstName"}
@@ -38,7 +38,7 @@ function PersonalInfo ({ initialInfo, onUpdate }) {
               required />
             </div>
             <div className="w-full pl-2">
-            <label htmlFor={"lastName"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Last Name</label>
+            <label htmlFor={"lastName"} className="form-label-text">Last Name</label>
             <input 
               type="text"
               id={"lastName"}

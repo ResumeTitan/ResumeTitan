@@ -46,7 +46,7 @@ function Job({ editingJob, onSave, onDelete, onCancel }) {
   return (
     <div className="mt-6">
       <div className="mb-6">
-        <label htmlFor={"title"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Job Title</label>
+        <label htmlFor={"title"} className="form-label-text">Job Title</label>
         <input 
           type="text"
           id={"title"}
@@ -57,7 +57,7 @@ function Job({ editingJob, onSave, onDelete, onCancel }) {
           required />
       </div>
       <div className="mb-6">
-        <label htmlFor={"employer"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Employer</label>
+        <label htmlFor={"employer"} className="form-label-text">Employer</label>
         <input 
           type="text"
           id={"employer"}
@@ -70,7 +70,7 @@ function Job({ editingJob, onSave, onDelete, onCancel }) {
       </div> 
       <div className="mb-6 left-right-spacing">
         <div className="w-full pr-2">
-        <label htmlFor={"city"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">City</label>
+        <label htmlFor={"city"} className="form-label-text">City</label>
         <input 
           type="text"
           id={"city"}
@@ -81,7 +81,7 @@ function Job({ editingJob, onSave, onDelete, onCancel }) {
           required />
         </div>
         <div className="w-full pl-2">
-        <label htmlFor={"state"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">State</label>
+        <label htmlFor={"state"} className="form-label-text">State</label>
         <input 
           type="text"
           id={"state"}
@@ -95,7 +95,7 @@ function Job({ editingJob, onSave, onDelete, onCancel }) {
 
       <div className="mb-6 flex justify-between">
         <div className="w-full pr-2">
-          <label htmlFor={"startDate"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Start Date</label>
+          <label htmlFor={"startDate"} className="form-label-text">Start Date</label>
           <div className="flex">
             <div className="w-[75%] pr-1">
               <input 
@@ -122,7 +122,7 @@ function Job({ editingJob, onSave, onDelete, onCancel }) {
         <div className="w-full pl-2">
         <div className="w-full pr-2">
           <div className="left-right-spacing">
-            <label htmlFor={"endDate"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">End Date</label>
+            <label htmlFor={"endDate"} className="form-label-text">End Date</label>
             <label htmlFor="endDateCheckbox" className="flex items-center">
               <div className="text-xs pr-2">Current</div>
             <input 
@@ -159,12 +159,12 @@ function Job({ editingJob, onSave, onDelete, onCancel }) {
                 required />
             </div>
           </div>
-      </div>
+        </div>
         </div>
       </div>
 
       <div className="my-6">
-        <label htmlFor={"notes"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Notes</label>
+        <label htmlFor={"notes"} className="form-label-text">Notes</label>
         <textarea 
           id={"notes"}
           className="formStyle"
@@ -178,7 +178,7 @@ function Job({ editingJob, onSave, onDelete, onCancel }) {
       {jobForm.content && (
         <div className="m-2">
           <div className="left-right-spacing my-2">
-            <label htmlFor={"jobContent"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Content</label>
+            <label htmlFor={"jobContent"} className="form-label-text">Content</label>
             <button
               className="greenButton p-1 bg-slate-800"
               onClick={() => setJobForm({ ...jobForm, content: [...jobForm.content, ""] })}
@@ -199,12 +199,14 @@ function Job({ editingJob, onSave, onDelete, onCancel }) {
                   required 
                 />
               </div>
-              <button
-                className="remove-content-button"
-                onClick={() => handleContentDelete(index)}
-              >
-                {"X"}
-              </button>
+              <div>
+                <button
+                  className="remove-content-button"
+                  onClick={() => handleContentDelete(index)}
+                >
+                  {"X"}
+                </button>
+              </div>
             </div>
             )
           )}
