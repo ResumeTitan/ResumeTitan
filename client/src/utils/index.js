@@ -19,10 +19,8 @@ export const formatDate = (date) => {
   return formattedDate;
 };
 
-// Base width of the resume is 1056px
-const RESUME_BASE_WIDTH = 1056;
-
-export const getScaleForResumeViewer = (screenWidth) => {
-  const scale = (screenWidth / RESUME_BASE_WIDTH);
-  return scale;
+export const swapArrayElements = (array, index1, index2) => {
+  let tempEl = array[index1];
+  array[index1] = array[index2]
+  array[index2] = tempEl;
 }

@@ -28,7 +28,7 @@ const getPrompt = (resume) => {
   In jobs, if a job title is recognized, use the full name of that job title in the value of the JSON output.
   In jobs, if a company is recognized, use the full name of that company in the value of the JSON output.
   In addition, based on the information provided, create an "summary" statement relating to the jobs and education given. Include this in the JSON response.
-  In addition, based on the information provided, create a "skills" array that includes the skills gained through the education and work experience provided. There must be at least 6 skills. Include this in the JSON response.
+  In addition, based on the information provided, create a "skills" array that includes the skills gained through the education and work experience provided. Create 6 skills. Include this in the JSON response.
   If the resume provided is blank, provide a generic JSON template based on the keys in the input.`
   ;
 

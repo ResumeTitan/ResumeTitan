@@ -82,6 +82,18 @@ const NavBar = () => {
           >
             {user ? 'Logout' : 'Login'}
           </button>
+          {user && (
+            <button
+              href="/dashboard"
+              className="block text-white py-2"
+              onClick={() => {
+                toggleMobileMenu();
+                navigate('/dashboard')
+              }}
+            >
+              {'Dashboard'}
+            </button>
+          )}
         </div>
       )}
     </div>

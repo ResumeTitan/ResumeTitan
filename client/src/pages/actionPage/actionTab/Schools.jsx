@@ -41,7 +41,7 @@ function Schools({ schools, onSave, onDelete }) {
   );
 
   return (
-    <div className="border border-black border-2 rounded-lg w-full my-4 text-white bg-slate-700">
+    <div className="form-container">
       {isEditing && editingForm}
 
       {!isEditing && (

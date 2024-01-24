@@ -1,4 +1,4 @@
-export interface ISchoolType {
+export interface IEducationType {
   name: string;
   major: string;
   degree: string;
@@ -22,18 +22,21 @@ export interface IWorkType {
   content?: string[];
 }
 
-export interface IProfileType {
-  firstName: string;
-  lastName: string;
+export interface IBasicsType {
+  firstName?: string;
+  lastName?: string;
+  label?: string;
   email?: string;
   phone?: string;
   city?: string;
   url?: string;
+  summary?: string;
 }
 
 export interface IResumeType {
-  schools: ISchoolType[];
-  jobs: IWorkType[];
+  basics: IBasicsType;
+  schools?: IEducationType[];
+  jobs?: IWorkType[];
   skills?: string[];
   summary?: string;
 }

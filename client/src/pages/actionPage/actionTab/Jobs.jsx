@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import Job from './Job';
 import WorkIcon from '@mui/icons-material/Work';
+import ArrowCircleUpIcon from '@mui/icons-material/ArrowCircleUp';
+import ArrowCircleDownIcon from '@mui/icons-material/ArrowCircleDown';
 import './Action.css';
 
-function Jobs({ jobs, onSave, onDelete }) {
+function Jobs({ jobs, onSave, onDelete, onSwap }) {
   const [isEditing, setIsEditing] = useState(false);
   const [editingJob, setEditingJob] = useState({});
 
@@ -22,10 +24,7 @@ function Jobs({ jobs, onSave, onDelete }) {
   }
 
   const handleEditJob = (index) => {
-    console.log('index', index);
-    console.log('jobs', jobs);
     const foundJob = jobs.find(obj => obj.id === index);
-    console.log('index', foundJob);
     setEditingJob(foundJob);
     setIsEditing(true);
   }
@@ -35,8 +34,6 @@ function Jobs({ jobs, onSave, onDelete }) {
     setEditingJob({});
   }
 
-  useEffect(() => {}, [jobs]);
-
   const editingForm = (
     <div className="px-4 pb-4">
       <Job editingJob={editingJob} onSave={handleSaveJob} onDelete={handleDeleteJob} onCancel={handleCancel}/>
@@ -44,20 +41,36 @@ function Jobs({ jobs, onSave, onDelete }) {
   );
 
   return (
-    <div className="border border-black border-2 rounded-lg w-full my-4 text-white bg-slate-700">
+    <div className="form-container">
       {isEditing && editingForm}
 
       {!isEditing && (
         <div>
           <div className="font-bold border-b border-black rounded-t p-4">{"Job Info"}</div>
           {jobs.map((job, index) => (
-            <div key={`job-${index}`} className="p-4 border-b border-black hover:bg-slate-500" onClick={() => handleEditJob(job.id)}>
-              <div className="flex justify-between font-bold">
-                {job?.title}
+            <div key={`job-${index}`} className="left-right-spacing p-4 border-b border-black hover:bg-slate-500">
+              <div className="w-full hover:cursor-pointer" onClick={() => handleEditJob(job.id)}>
+                <div className="font-bold">
+                  {job?.title}
+                </div>
+                <div>
+                  {job?.employer}
+                </div>
               </div>
-              <div className="flex justify-between">
-                {job?.employer}
-              </div>
+              {/* <div className="flex">
+                {index > 0 && <ArrowCircleUpIcon 
+                  className="hover:cursor-pointer" 
+                  sx={{ "&:hover": { color: "blue" } }} 
+                  fontSize='medium'
+                  onClick={() => {onSwap(true, index)}}
+                />}
+                {index + 1 < jobs.length && <ArrowCircleDownIcon 
+                  fontSize='medium'
+                  className="hover:cursor-pointer" 
+                  sx={{ "&:hover": { color: "blue" } }} 
+                  onClick={() => {onSwap(false, index)}}
+                />}
+              </div> */}
             </div>
           ))}
           <div className={`p-4 flex flex-col items-center justify-center addButton`} onClick={handleAddJob}>

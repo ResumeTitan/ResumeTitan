@@ -19,13 +19,13 @@ function PersonalInfo ({ initialInfo, onUpdate }) {
   }, [initialInfo]);
 
   return (
-    <div className="border border-black border-2 rounded-lg w-full my-4 text-white bg-slate-700">
+    <div className="form-container">
     <div className="font-bold border-b border-black rounded-t p-4">{"Personal Info"}</div>
 
       {isEditing ? (
         <div className="">
 
-          <div className="p-4 flex flex-cols justify-between">
+          <div className="p-4 left-right-spacing">
             <div className="w-full pr-2">
             <label htmlFor={"firstName"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">First Name</label>
             <input 

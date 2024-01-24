@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Tooltip from 'components/Tooltip';
+import './Action.css';
 
 function Summary ({ initSummary, onUpdate }) {
   const [summary, setSummary] = useState([]);
@@ -20,14 +21,12 @@ function Summary ({ initSummary, onUpdate }) {
   }, [initSummary]);
 
   return (
-    <div className="border border-black border-2 rounded-lg w-full my-4 text-white bg-slate-700">
-      
+    <div className="form-container">
         <div className="font-bold border-b border-black rounded-t p-4 hover:bg-slate-500" onClick={() => {setIsEditing(true)}}>
           <Tooltip message={"Note: this will be automatically generated when clicking \"Generate Resume\""}>
             <div>{"Summary"}</div>
           </Tooltip>
         </div>
-      
 
       {isEditing && (
         <div className="p-4 ">
