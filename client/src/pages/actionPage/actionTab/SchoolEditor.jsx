@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './Action.css';
 
-function School({ editingSchool, onSave, onDelete, onCancel }) {
+function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
   const [schoolForm, setSchoolForm] = useState(editingSchool);
   const [endDateChecked, setEndDateChecked] = useState(editingSchool.endDateCurrent || false);
 
@@ -254,4 +254,4 @@ function School({ editingSchool, onSave, onDelete, onCancel }) {
   );
 }
 
-export default School;
+export default SchoolEditor;

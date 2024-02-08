@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './Action.css';
 
-function Job({ editingJob, onSave, onDelete, onCancel }) {
+function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
   const [jobForm, setJobForm] = useState(editingJob);
   const [endDateChecked, setEndDateChecked] = useState(editingJob.endDateCurrent || false);
 
@@ -238,4 +238,4 @@ function Job({ editingJob, onSave, onDelete, onCancel }) {
   );
 }
 
-export default Job;
+export default JobEditor;

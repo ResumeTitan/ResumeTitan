@@ -4,6 +4,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useReactToPrint } from 'react-to-print';
 import DocumentScannerIcon from '@mui/icons-material/DocumentScanner';
 import ActionTab from './actionTab/Action';
+import CustomizeTab from './customizeTab';
+import Tabs from './Tabs';
 import HarvardResume from 'templates/layouts/harvard/Harvard';
 import ResumeContainer from 'templates/ResumeContainer';
 import { createResume, updateResume } from 'api/resume';
@@ -206,6 +208,9 @@ function ActionPage() {
         <Spinner />
       )}
 
+      <div className="px-2 md:px-4 lg:px-8 w-full flex flex-col">
+      <Tabs></Tabs>
+
       <ActionTab 
         profile={profile}
         jobs={jobs}
@@ -223,6 +228,7 @@ function ActionPage() {
         onGenerateResume={handleGenerateResume} 
         onSave={handleSaveResume}
       />
+      </div>
       {showResume && (
         <div className="p-2 origin-top ease-linear transform lg:scale-90">
           <ResumeComponent 

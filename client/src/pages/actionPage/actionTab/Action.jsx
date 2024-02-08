@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import ResumeName from './ResumeName';
 import PersonalInfo from './PersonalInfo';
 import Schools from './Schools';
@@ -89,10 +89,10 @@ function ActionTab({
   }
 
   return (
-    <div className="p-4 flex flex-col min-h-screen w-full lg:w-7/12 bg-slate-400">
+    <div>
       <ResumeName onPrint={ onPrint } />
-      <PersonalInfo initialInfo={profile} onUpdate={onUpdateProfile} />
-      
+      <PersonalInfo initialInfo={profile} key={profile} onUpdate={onUpdateProfile} />
+
       <Schools schools={schools} onSave={handleSaveSchool} onDelete={handleDeleteSchool} />
       <Jobs jobs={jobs} onSave={handleSaveJob} onDelete={handleDeleteJob} onSwap={handleSwapJobs}/>
       
@@ -107,7 +107,7 @@ function ActionTab({
       <Skills initSkills={skills} onUpdate={onUpdateSkills}/>
       <div className="w-full">
         <button onClick={handleGenerateResume} className="generateButton bg-slate-700">Generate Resume</button>
-        <button onClick={handleSave} className="saveButton bg-slate-700 hover:bg-green">Save Resume</button>
+        <button onClick={handleSave} className="saveButton bg-slate-700 hover:bg-green">Save and Exit</button>
       </div>
 
        {/* Popup */}

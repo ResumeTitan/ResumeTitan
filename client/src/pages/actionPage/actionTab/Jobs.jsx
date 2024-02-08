@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import Job from './Job';
+import React, { useState } from 'react';
+import JobEditor from './JobEditor';
 import WorkIcon from '@mui/icons-material/Work';
 import ArrowCircleUpIcon from '@mui/icons-material/ArrowCircleUp';
 import ArrowCircleDownIcon from '@mui/icons-material/ArrowCircleDown';
@@ -37,7 +37,7 @@ function Jobs({ jobs, onSave, onDelete, onSwap }) {
 
   const editingForm = (
     <div className="px-4 pb-4">
-      <Job editingJob={editingJob} onSave={handleSaveJob} onDelete={handleDeleteJob} onCancel={handleCancel}/>
+      <JobEditor editingJob={editingJob} onSave={handleSaveJob} onDelete={handleDeleteJob} onCancel={handleCancel}/>
     </div>
   );
 

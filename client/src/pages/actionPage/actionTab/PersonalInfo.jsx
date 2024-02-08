@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 function PersonalInfo ({ initialInfo, onUpdate }) {
   const [infoForm, setInfoForm] = useState(initialInfo);
@@ -14,9 +14,8 @@ function PersonalInfo ({ initialInfo, onUpdate }) {
     onUpdate(infoForm);
   }
 
-  useEffect (() => {
-    setInfoForm(initialInfo);
-  }, [initialInfo]);
+  // TODO slow, remove
+  useEffect(() => {}, [initialInfo])
 
   return (
     <div className="form-container">

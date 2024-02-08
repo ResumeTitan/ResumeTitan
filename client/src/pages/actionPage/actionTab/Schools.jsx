@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import School from './School';
+import SchoolEditor from './SchoolEditor';
 import SchoolIcon from '@mui/icons-material/School';
 import './Action.css';
 
@@ -36,7 +36,7 @@ function Schools({ schools, onSave, onDelete }) {
 
   const editingForm = (
     <div className="px-4 pb-4">
-      <School editingSchool={editingSchool} onSave={handleSaveSchool} onDelete={handleDeleteSchool} onCancel={handleCancel}/>
+      <SchoolEditor editingSchool={editingSchool} onSave={handleSaveSchool} onDelete={handleDeleteSchool} onCancel={handleCancel}/>
     </div>
   );
 
