@@ -80,9 +80,9 @@ export const Dashboard = () => {
     const resumeWidgets = Array.from({ length: Math.min(resumes.length, numResumesShown) }, (_, index) => (
       <div className="hover:cursor-pointer relative group">
         <ResumeCard
-          personalInfo={resumes[index].basics}
+          basics={resumes[index].basics}
           summary={resumes[index].summary}
-          schools={resumes[index].schools}
+          education={resumes[index].schools}
           jobs={resumes[index].jobs}
           skills={resumes[index].skills} />
           
@@ -106,8 +106,8 @@ export const Dashboard = () => {
 
       <div className="text-3xl font-bold bg-slate-700 p-2">My Resumes:</div>
       <button className="mx-4 mt-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-white font-bold py-2 px-4" onClick={() => navigate('/resume')}>Add New</button>
-      <div className="flex flex-cols lg:min-w-0 w-1/2 h-2 items-start p-2">
-        <div className="transform scale-25 flex flex-cols origin-top-left">
+      <div className="flex lg:min-w-0 w-1/2 h-2 items-start p-2">
+        <div className="transform scale-25 flex origin-top-left">
           {resumeWidgets}
         </div>
       </div>

@@ -2,25 +2,26 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useReactToPrint } from 'react-to-print';
-import ActionBar from './Action';
 import DocumentScannerIcon from '@mui/icons-material/DocumentScanner';
-import { getScaleForResumeViewer } from 'utils';
+import ActionTab from './actionTab/Action';
+import CustomizeTab from './customizeTab';
+import Tabs from './Tabs';
 import HarvardResume from 'templates/layouts/harvard/Harvard';
 import ResumeContainer from 'templates/ResumeContainer';
-import { createResume, updateResume } from '../../api/resume';
+import { createResume, updateResume } from 'api/resume';
 import Spinner from 'components/Spinner';
 import { LoginForm } from 'components/LoginForm';
-import { getResume } from '../../api/resume';
-import { setActiveResume } from '../../state';
-import './Action.css';
-const MED_SCREEN_WIDTH = 1200;
+import { getResume } from 'api/resume';
+import './index.css';
+const LG_SCREEN_WIDTH = 1024;
 
 // This page should do all loading, other pages do rendering
 
+// The resume reference
 const ResumeComponent = React.forwardRef((props, ref) => (
   <div ref={ref} className="print:!scale-100">
     <ResumeContainer>
-      <HarvardResume personalInfo={props.personalInfo} summary={props.summary} schools={props.schools} jobs={props.jobs} skills={props.skills}/>
+      <HarvardResume basics={props.personalInfo} summary={props.summary} education={props.schools} jobs={props.jobs} skills={props.skills}/>
     </ResumeContainer>
   </div>
 ));
@@ -29,7 +30,6 @@ function ActionPage() {
   const location = useLocation();
   const token = useSelector((state) => state.token);
   const [resumeId, setResumeId] = useState(null);
-  const [scale, setScale] = useState(1);
   const [showResume, setShowResume] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [schools, setSchools] = useState([]);
@@ -49,6 +49,12 @@ function ActionPage() {
   const navigate = useNavigate();
   const resumeRef = React.useRef();
 
+  /**
+   * loadResume
+   * @description Fetch updated resume from mongodb and update states 
+   * @param {string} id The resume id to load
+   * @returns 
+   */
   const loadResume = async (id) => {
     try {
       if (!id) {
@@ -66,25 +72,25 @@ function ActionPage() {
     }
   };
 
+  /**
+   * togglePopup
+   * @description Called by mobile viewer icon (DocumentScanner)
+   *    
+   */
   const togglePopup = () => {
-    const newScale = getScaleForResumeViewer(window.innerWidth + 100)
-    setScale(newScale > 0.85 ? 0.85 : newScale);
     setIsOpen(!isOpen);
   };
 
+  /**
+   * useEffect
+   * @description hook called when resizing page, show resume preview if screen large enough
+   */
   useEffect(() => {
     const handleResize = () => {
-      if (isOpen) {
-        // Mobile viewer is open, set scale based on window size
-        const newScale = getScaleForResumeViewer(window.innerWidth + 100)
-        setScale(newScale > 0.85 ? 0.85 : newScale);
+      if (window.innerWidth > LG_SCREEN_WIDTH) {
+        setShowResume(true);
       } else {
-        if (window.innerWidth > MED_SCREEN_WIDTH) {
-          setShowResume(true);
-        } else {
-          setShowResume(false);
-        }
-        setScale(getScaleForResumeViewer(window.innerWidth - 384));
+        setShowResume(false);
       }
     };
     window.addEventListener("resize", handleResize);
@@ -92,6 +98,10 @@ function ActionPage() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  /**
+   * useEffect
+   * @description hook for if resumeId changes (refresh)
+   */
   useEffect(() => {
     const loadResumeChange = async () => {
       if (location.state) {
@@ -105,9 +115,14 @@ function ActionPage() {
     });
   }, [location.state]);
 
+  /**
+   * handleSaveToPdf
+   * @description Called when clicking Print to PDF button, calls react-to-print library
+   * @todo Fix printing for mobile, gets too many notifications, generate on backend
+   */
   const handleSaveToPdf = useReactToPrint({
     onBeforePrint: () => {
-      if (window.innerWidth <= MED_SCREEN_WIDTH) {
+      if (window.innerWidth <= LG_SCREEN_WIDTH) {
         setIsOpen(true);
       }
     },
@@ -115,24 +130,18 @@ function ActionPage() {
     documentTitle: 'Resume',
     pageStyle: '@page { size: A4; margin: 0mm; } @media print { body { -webkit-print-color-adjust: exact; } }',
     onAfterPrint: () => {
-      if (window.innerWidth <= MED_SCREEN_WIDTH) {
+      if (window.innerWidth <= LG_SCREEN_WIDTH) {
         setIsOpen(false);
       }
     }
   });
 
-  const updateJobs = (jobsIn) => {
-    setJobs(jobsIn);
-  }
-
-  const updateSchools = (schoolsIn) => {
-    setSchools(schoolsIn);
-  }
-
-  const updateSkills = (skillsIn) => {
-    setSkills(skillsIn);
-  }
-
+  /**
+   * handleGenerateResume
+   * @description Calls backend when clicking Generate Resume
+   *    Check Auth first, if not logged in prompt login
+   *    Start loading spinner
+   */
   const handleGenerateResume = async () => {
     if (!isAuth) {
       setIsLoginOpen(true);
@@ -156,6 +165,11 @@ function ActionPage() {
     }
   }
 
+  /**
+   * handleSaveResume
+   * @description Save current state of resume, only works if logged in
+   *    Redirect to dashboard
+   */
   const handleSaveResume = async () => {
     if (!isAuth) {
       setIsLoginOpen(true);
@@ -178,7 +192,6 @@ function ActionPage() {
       setJobs(savedResume.resume.jobs);
       setSkills(savedResume.resume.skills);
       setResumeLoading(false);
-      setActiveResume(null);
       navigate('/dashboard');
     } catch (err) {
       console.log(err);
@@ -186,17 +199,19 @@ function ActionPage() {
     }
   }
 
-  const handleSaveProfile = (profileIn) => {
-    setProfile(profileIn);
-  }
-
+  /**
+   * render function
+   */
   return (
-    <div className="flex flex-cols justify-center min-h-screen bg-slate-400">
+    <div className="flex justify-center min-h-screen bg-slate-400">
       {resumeLoading && (
         <Spinner />
       )}
 
-      <ActionBar 
+      <div className="px-2 md:px-4 lg:px-8 w-full flex flex-col">
+      <Tabs></Tabs>
+
+      <ActionTab 
         profile={profile}
         jobs={jobs}
         schools={schools}
@@ -205,16 +220,17 @@ function ActionPage() {
         onPrint={() => {
           handleSaveToPdf();
         }}
-        onUpdateJobs={updateJobs}
-        onUpdateSchools={updateSchools}
-        onUpdateSkills={updateSkills}
+        onUpdateJobs={(jobsIn) => setJobs(jobsIn)}
+        onUpdateSchools={(schoolsIn) => setSchools(schoolsIn)}
+        onUpdateSkills={(skillsIn) => setSkills(skillsIn)}
         onUpdateSummary={(sum) => setSummary(sum)}
-        onUpdateProfile={handleSaveProfile}
+        onUpdateProfile={(profileIn) => setProfile(profileIn)}
         onGenerateResume={handleGenerateResume} 
         onSave={handleSaveResume}
       />
-      {!isOpen && showResume && (
-        <div className="p-2 origin-top ease-linear" style={{transform: "scale(0.9)"}}>
+      </div>
+      {showResume && (
+        <div className="p-2 origin-top ease-linear transform lg:scale-90">
           <ResumeComponent 
             personalInfo={profile}
             summary={summary}
@@ -233,7 +249,7 @@ function ActionPage() {
 
 
       <div className={`${isOpen ? "fixed": "hidden"} bg-black bg-opacity-50 flex justify-center items-center w-full h-full overflow-auto top-0`} onClick={togglePopup}>
-        <div className="pt-2 ease-linear transform -translate-y-96 print:!scale-100" style={{transform: `scale(${scale})`}}>
+        <div className="pt-4 transform translate-12 md:translate-y-36 scale-50 sm:scale-60 lg:scale-75 origin-top print:!scale-100">
         <ResumeComponent 
           personalInfo={profile}
           summary={summary}

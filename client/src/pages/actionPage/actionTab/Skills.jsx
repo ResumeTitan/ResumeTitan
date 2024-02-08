@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import './Action.css';
 
 function Skills ({ initSkills, onUpdate }) {
   const [skills, setSkills] = useState([]);
@@ -31,7 +32,7 @@ function Skills ({ initSkills, onUpdate }) {
   }, [initSkills]);
 
   return (
-    <div className="border border-black border-2 rounded-lg w-full my-4 text-white bg-slate-700">
+    <div className="form-container">
       <div className="font-bold border-b border-black rounded-t p-4 hover:bg-slate-500" onClick={() => {setIsEditing(true)}}>{"Skills"}</div>
 
       {isEditing && (
@@ -49,7 +50,7 @@ function Skills ({ initSkills, onUpdate }) {
               required />
               <div className="pl-2">
                 <button
-                  className="redButton bg-slate-800"
+                  className="remove-content-button"
                   onClick={() => handleSkillsDelete(index)}
                 >
                   {"X"}

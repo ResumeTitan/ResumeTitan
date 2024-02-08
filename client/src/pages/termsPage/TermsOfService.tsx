@@ -9,7 +9,7 @@ export const TermsOfService = () => {
             Welcome to ResumeTitan!
           </p>
           <p className="text-base leading-relaxed">
-            These Terms of Service ("Terms") govern your use of ResumeTitan operated by ResumeTitanLLC. By accessing or using ResumeTitan, you agree to be bound by these Terms. If you do not agree with any part of these Terms, you may not use ResumeTitan.
+            These Terms of Service ("Terms") govern your use of ResumeTitan operated by ResumeTitan, LLC. By accessing or using ResumeTitan, you agree to be bound by these Terms. If you do not agree with any part of these Terms, you may not use ResumeTitan.
           </p>
 
           <p className="text-base font-bold leading-relaxed">
@@ -60,28 +60,37 @@ export const TermsOfService = () => {
             (a) We are not liable for any damages or losses resulting from your use of the Website.
           </p>
           <p className="text-base font-bold leading-relaxed">
-          6. Termination
+          6. Personal Information
+          </p>
+          <p className="text-base leading-relaxed">
+            (a) Your submission of personal information through the store is governed by our Privacy Policy. To view our Privacy Policy, please see our <a className="underline" href="/privacy">Privacy Policy</a>.
+          </p>
+          <p className="text-base font-bold leading-relaxed">
+          7. Termination
           </p>
           <p className="text-base leading-relaxed">
             (a) We may terminate or suspend your access to the Website at any time without notice for any reason.
           </p>
           <p className="text-base font-bold leading-relaxed">
-          7. Changes to Terms
+          8. Changes to Terms
           </p>
           <p className="text-base leading-relaxed">
             (a) We reserve the right to modify these Terms at any time. The updated version will be effective upon posting on the Website.
           </p>
           <p className="text-base font-bold leading-relaxed">
-          8. Governing Law
+          9. Governing Law
           </p>
           <p className="text-base leading-relaxed">
             (a) These Terms are governed by the laws of the United States of America.
           </p>
           <p className="text-base font-bold leading-relaxed">
-          9. Contact Us
+          10. Contact Us
           </p>
           <p className="text-base leading-relaxed">
             (a) If you have any questions or concerns about these Terms, please contact us at info@resumetitan.com.
+          </p>
+          <p className="text-base font-bold leading-relaxed">
+
           </p>
         </div>
       </div>

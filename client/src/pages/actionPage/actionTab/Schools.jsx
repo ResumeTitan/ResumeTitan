@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import School from './School';
+import SchoolEditor from './SchoolEditor';
 import SchoolIcon from '@mui/icons-material/School';
 import './Action.css';
 
@@ -36,12 +36,12 @@ function Schools({ schools, onSave, onDelete }) {
 
   const editingForm = (
     <div className="px-4 pb-4">
-      <School editingSchool={editingSchool} onSave={handleSaveSchool} onDelete={handleDeleteSchool} onCancel={handleCancel}/>
+      <SchoolEditor editingSchool={editingSchool} onSave={handleSaveSchool} onDelete={handleDeleteSchool} onCancel={handleCancel}/>
     </div>
   );
 
   return (
-    <div className="border border-black border-2 rounded-lg w-full my-4 text-white bg-slate-700">
+    <div className="form-container">
       {isEditing && editingForm}
 
       {!isEditing && (
@@ -53,7 +53,7 @@ function Schools({ schools, onSave, onDelete }) {
                 {school.name}
               </div>
               <div className="flex justify-between">
-                {school.degree}
+                {school.major}
               </div>
             </div>
           ))}

@@ -1,15 +1,16 @@
 import React from 'react';
-import ResumeName from './resumeName';
+import ResumeName from './ResumeName';
 import PersonalInfo from './PersonalInfo';
 import Schools from './Schools';
 import Jobs from './Jobs';
 import Skills from './Skills';
 import Summary from './Summary';
-import Popup from './Popup';
+import Popup from '../Popup';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import { swapArrayElements } from 'utils';
 import './Action.css';
 
-function ActionBar({ 
+function ActionTab({
   profile, 
   jobs, 
   schools, 
@@ -31,7 +32,7 @@ function ActionBar({
       const updatedJobs = jobs.map((job) => {
         if (job.id === jobForm.id) {
           return jobForm;
-        } else {
+        } else { 
           return job;
         }
       });
@@ -48,7 +49,6 @@ function ActionBar({
   }
 
   const handleSaveSchool = (schoolForm) => {
-    console.log('schoolForm', schoolForm);
     if (schoolForm.id) {
       const updatedSchools = schools.map((school) => {
         if (school.id === schoolForm.id) {
@@ -76,17 +76,27 @@ function ActionBar({
   const handleSave = () => {
     onSave();
   }
+ 
+  const handleSwapJobs = (up, index) => {
+    const tempJobs = jobs;
+    if (up) {
+      swapArrayElements(tempJobs, index, index - 1);
+    } else {
+      swapArrayElements(tempJobs, index, index + 1);
+    }
+    console.log('handing swap jobs', tempJobs);
+    onUpdateJobs(tempJobs);
+  }
 
   return (
-    <div className="p-2 flex flex-col min-h-screen sm:w-full lg:w-7/12 bg-slate-400">
+    <div>
       <ResumeName onPrint={ onPrint } />
-      <PersonalInfo initialInfo={profile} onUpdate={onUpdateProfile} />
-      
-      <Schools schools={schools} onSave={handleSaveSchool} onDelete={handleDeleteSchool} />
-      <Jobs jobs={jobs} onSave={handleSaveJob} onDelete={handleDeleteJob} />
+      <PersonalInfo initialInfo={profile} key={profile} onUpdate={onUpdateProfile} />
 
+      <Schools schools={schools} onSave={handleSaveSchool} onDelete={handleDeleteSchool} />
+      <Jobs jobs={jobs} onSave={handleSaveJob} onDelete={handleDeleteJob} onSwap={handleSwapJobs}/>
       
-      <div className="flex flex-cols w-full">
+      <div className="flex w-full">
         <div className="font-bold pr-2">Optional:</div>
         <button onClick={() => setPopupOpen(true)}>
           <HelpOutlineIcon/>
@@ -97,7 +107,7 @@ function ActionBar({
       <Skills initSkills={skills} onUpdate={onUpdateSkills}/>
       <div className="w-full">
         <button onClick={handleGenerateResume} className="generateButton bg-slate-700">Generate Resume</button>
-        <button onClick={handleSave} className="saveButton bg-slate-700 hover:bg-green">Save Resume</button>
+        <button onClick={handleSave} className="saveButton bg-slate-700 hover:bg-green">Save and Exit</button>
       </div>
 
        {/* Popup */}
@@ -106,4 +116,4 @@ function ActionBar({
   )
 }
 
-export default ActionBar;
+export default ActionTab;

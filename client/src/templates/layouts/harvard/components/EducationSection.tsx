@@ -2,29 +2,29 @@ import { SectionHeading } from '../elements/SectionHeading';
 import { SectionList } from '../elements/SectionList';
 import { SectionSubtitle } from '../elements/SectionSubtitle';
 import { SectionTitle } from '../elements/SectionTitle';
-import { ISchoolType } from '../../../../types/types';
+import { IEducationType } from '../../../../types/types';
 
-interface SchoolSectionProps {
-  schools: ISchoolType[];
+interface EducationSectionProps {
+  education: IEducationType[];
 }
 
-export const SchoolSection = ({ schools }: SchoolSectionProps) => {
+export const EducationSection = ({ education }: EducationSectionProps) => {
   return (
     <div>
       <SectionHeading title="Education" />
 
-      {schools.length > 0 && schools.map((item: ISchoolType, index: number) => {
+      {education.length > 0 && education.map((item: IEducationType, index: number) => {
         return (
         <div key={`resume-school${index}`}>
           <div className="flex justify-between items-center">
             <div>
               <SectionTitle label={item.name} />
-              <SectionSubtitle label={`${item.degree}, ${item.major}`} />
+              <SectionSubtitle label={`${item?.degree || ''}, ${item?.major || ''}`} />
             </div>
           <div>
               <p className="text-s py-1">
                 {item.startDateMonth} {item.startDateYear} -{' '}
-                {item.endDateCurrent === true ? 'present' : `${item.endDateMonth} ${item.endDateYear}`}
+                {item.endDateCurrent === true ? 'Present' : `${item?.endDateMonth || ''} ${item?.endDateYear || ''}`}
               </p>
             </div>
           </div>

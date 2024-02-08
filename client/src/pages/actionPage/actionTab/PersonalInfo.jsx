@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 function PersonalInfo ({ initialInfo, onUpdate }) {
   const [infoForm, setInfoForm] = useState(initialInfo);
@@ -14,20 +14,19 @@ function PersonalInfo ({ initialInfo, onUpdate }) {
     onUpdate(infoForm);
   }
 
-  useEffect (() => {
-    setInfoForm(initialInfo);
-  }, [initialInfo]);
+  // TODO slow, remove
+  useEffect(() => {}, [initialInfo])
 
   return (
-    <div className="border border-black border-2 rounded-lg w-full my-4 text-white bg-slate-700">
+    <div className="form-container">
     <div className="font-bold border-b border-black rounded-t p-4">{"Personal Info"}</div>
 
       {isEditing ? (
         <div className="">
 
-          <div className="p-4 flex flex-cols justify-between">
+          <div className="p-4 left-right-spacing">
             <div className="w-full pr-2">
-            <label htmlFor={"firstName"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">First Name</label>
+            <label htmlFor={"firstName"} className="form-label-text">First Name</label>
             <input 
               type="text"
               id={"firstName"}
@@ -38,7 +37,7 @@ function PersonalInfo ({ initialInfo, onUpdate }) {
               required />
             </div>
             <div className="w-full pl-2">
-            <label htmlFor={"lastName"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Last Name</label>
+            <label htmlFor={"lastName"} className="form-label-text">Last Name</label>
             <input 
               type="text"
               id={"lastName"}

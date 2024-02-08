@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
+import './Action.css';
 
-function School({ editingSchool, onSave, onDelete, onCancel }) {
+function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
   const [schoolForm, setSchoolForm] = useState(editingSchool);
   const [endDateChecked, setEndDateChecked] = useState(editingSchool.endDateCurrent || false);
 
@@ -69,7 +70,7 @@ function School({ editingSchool, onSave, onDelete, onCancel }) {
       </div>
 
 
-      <div className="mb-6 flex flex-cols justify-between">
+      <div className="mb-6 left-right-spacing">
         <div className="w-full pr-2">
         <label htmlFor={"city"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">City</label>
         <input 
@@ -106,10 +107,10 @@ function School({ editingSchool, onSave, onDelete, onCancel }) {
         </select>
       </div>
 
-      <div className="mb-6 flex flex-cols justify-between">
+      <div className="mb-6 left-right-spacing">
         <div className="w-full pr-2">
           <label htmlFor={"startDate"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Start Date</label>
-          <div className="flex flex-cols">
+          <div className="flex">
             <div className="w-[75%] pr-1">
               <input 
                 type="text"
@@ -134,7 +135,7 @@ function School({ editingSchool, onSave, onDelete, onCancel }) {
         </div>
         <div className="w-full pl-2">
         <div className="w-full pr-2">
-          <div className="flex flex-cols justify-between">
+          <div className="left-right-spacing">
             <label htmlFor={"endDate"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">End Date</label>
             <label htmlFor="endDateCheckbox" className="flex items-center">
               <div className="text-xs pr-2">Current</div>
@@ -148,7 +149,7 @@ function School({ editingSchool, onSave, onDelete, onCancel }) {
             />
             </label>
           </div>
-          <div className="flex flex-cols">
+          <div className="flex">
             <div className="w-[75%] pr-1">
               <input 
                 type="text"
@@ -191,7 +192,7 @@ function School({ editingSchool, onSave, onDelete, onCancel }) {
 
       {schoolForm.content && (
         <div className="m-2">
-          <div className="flex flex-cols justify-between my-2">
+          <div className="left-right-spacing my-2">
             <label htmlFor={"jobContent"} className="block text-sm font-medium text-gray-900 dark:text-white">Content</label>
             <button
               className="greenButton bg-slate-800 p-2"
@@ -202,7 +203,7 @@ function School({ editingSchool, onSave, onDelete, onCancel }) {
           </div>
           {/* <VerticalList items={schoolForm.content.map((item, index) => ({ id: index + 1, content: item })) || []} onSave={handleSchoolContentChange} /> */}
           {schoolForm.content.map((item, index) => (
-            <div className="flex flex-cols justify-between">
+            <div className="left-right-spacing">
               <div className="w-full pr-2">
                 <textarea 
                   type="text"
@@ -214,9 +215,9 @@ function School({ editingSchool, onSave, onDelete, onCancel }) {
                   required 
                 />
               </div>
-              <div className="">
+              <div>
                 <button
-                  className="inline-block align-middle redButton bg-slate-800 p-2"
+                  className="remove-content-button"
                   onClick={() => handleContentDelete(index)}
                 >
                   {"X"}
@@ -253,4 +254,4 @@ function School({ editingSchool, onSave, onDelete, onCancel }) {
   );
 }
 
-export default School;
+export default SchoolEditor;

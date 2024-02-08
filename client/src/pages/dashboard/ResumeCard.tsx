@@ -1,27 +1,27 @@
 import React from 'react';
 import ResumeContainer from '../../templates/ResumeContainer';
 import HarvardResume from '../../templates/layouts/harvard/Harvard';
-import { IProfileType, ISchoolType, IWorkType } from '../../types/types';
+import { IBasicsType, IEducationType, IWorkType } from '../../types/types';
 
 interface ResumeCardProps {
-  personalInfo: IProfileType;
+  basics: IBasicsType;
   summary: string;
-  schools: ISchoolType[];
+  education: IEducationType[];
   jobs: IWorkType[];
   skills: string[];
 }
 
 const ResumeCard: React.FC<ResumeCardProps> = ({
-  personalInfo,
+  basics,
   summary,
-  schools,
+  education,
   jobs,
   skills,
 }) => {
   return (
     <div className="mx-4 border border-2 border-black">
       <ResumeContainer>
-        <HarvardResume personalInfo={personalInfo} summary={summary} schools={schools} jobs={jobs} skills={skills}/>
+        <HarvardResume basics={basics} summary={summary} education={education} jobs={jobs} skills={skills}/>
       </ResumeContainer>
     </div>
   );

@@ -1,10 +1,10 @@
 import React from 'react';
 import { PersonalInfo } from './components/PersonalInfo';
 import { WorkSection } from './components/WorkSection';
-import { SchoolSection } from './components/SchoolSection';
+import { EducationSection } from './components/EducationSection';
 import { SkillsSection } from './components/SkillsSection';
 import { Summary } from './components/Summary';
-import { ISchoolType, IWorkType, IProfileType } from '../../../types/types';
+import { IEducationType, IWorkType, IBasicsType } from '../../../types/types';
 
 const sampleData = {
   "basics": {
@@ -31,24 +31,24 @@ const sampleData = {
 }
 
 interface HarvardResumeProps {
-  personalInfo: IProfileType;
+  basics: IBasicsType;
   summary: string;
-  schools: ISchoolType[];
+  education: IEducationType[];
   jobs: IWorkType[];
   skills: string[];
 }
 
-export default function HarvardResume({ personalInfo, summary, schools, jobs, skills }: HarvardResumeProps) {
+export default function HarvardResume({ basics, summary, education, jobs, skills }: HarvardResumeProps) {
   const resumeData = sampleData;
   return (
     <div className="p-2 text-black">
       <PersonalInfo
-        name={`${personalInfo ? `${personalInfo.firstName} ${personalInfo.lastName}` :  resumeData.basics.name}`}
+        name={`${basics ? `${basics.firstName} ${basics.lastName}` :  resumeData.basics.name}`}
         label={resumeData.basics.label}
-        url={personalInfo.url}
-        email={personalInfo?.email || resumeData.basics.email}
-        city={personalInfo?.city || ""}
-        phone={personalInfo?.phone || resumeData.basics.phone}
+        url={basics?.url}
+        email={basics?.email || resumeData.basics.email}
+        city={basics?.city || ""}
+        phone={basics?.phone || resumeData.basics.phone}
         image={resumeData.basics.image}
       />
       <div className="">
@@ -57,7 +57,7 @@ export default function HarvardResume({ personalInfo, summary, schools, jobs, sk
         </div>
         
         <div className="pt-1 px-2 w-full">
-          <SchoolSection schools={schools} />
+          <EducationSection education={education} />
         </div>
 
         <div className="pt-1 px-2 w-full">

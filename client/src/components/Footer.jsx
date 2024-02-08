@@ -10,6 +10,11 @@ export default function Footer() {
           </a>
         </li>
         <li>
+          <a href="/privacy" className="text-gray-600 pr-4">
+            Privacy Policy
+          </a>
+        </li>
+        <li>
           <a href="/contact" className="text-gray-600 pr-4">
             Contact Us
           </a>

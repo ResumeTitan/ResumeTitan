@@ -28,7 +28,7 @@ const getPrompt = (resume) => {
   In jobs, if a job title is recognized, use the full name of that job title in the value of the JSON output.
   In jobs, if a company is recognized, use the full name of that company in the value of the JSON output.
   In addition, based on the information provided, create an "summary" statement relating to the jobs and education given. Include this in the JSON response.
-  In addition, based on the information provided, create a "skills" array that includes the skills gained through the education and work experience provided. There must be at least 6 skills. Include this in the JSON response.
+  In addition, based on the information provided, create a "skills" array that includes the skills gained through the education and work experience provided. Create 6 skills. Include this in the JSON response.
   If the resume provided is blank, provide a generic JSON template based on the keys in the input.`
   ;
 
@@ -54,7 +54,8 @@ export const createResume = async (req, res) => {
     }
 
     // Get rid of periods at the end of each sentence
-    resumeWithResponse.jobs.forEach((job) => {
+    resumeWithResponse.jobs.forEach((job, index) => {
+      job.id = index + 1;
       job.content = job.content.map((sentence) => {
         if (sentence[sentence.length - 1] === '.') {
           return sentence.substring(0, sentence.length - 1);
@@ -64,7 +65,8 @@ export const createResume = async (req, res) => {
       })}
     );
 
-    resumeWithResponse.schools.forEach((school) => {
+    resumeWithResponse.schools.forEach((school, index) => {
+      school.id = index + 1;
       school.content = school.content.map((sentence) => {
         if (sentence[sentence.length - 1] === '.') {
           return sentence.substring(0, sentence.length - 1);
