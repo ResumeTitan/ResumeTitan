@@ -1,37 +1,34 @@
 import React from "react";
 import { PersonalName } from "../elements/PersonalName";
 import { PersonalContact } from "../elements/PersonalContact";
+import { IBasicsType } from 'types/types';
 
-export const PersonalInfo = ({
-  name,
-  label,
-  url,
-  email,
-  phone,
-  city,
-  image,
-}: {
-  name: string;
-  label: string;
-  url?: string;
-  email: string;
-  phone: string;
-  city?: string;
-  image: string;
-}) => {
+interface Props {
+  basics: IBasicsType
+}
+
+export const PersonalInfo = ({ basics }: Props) => {
+  console.log(basics);
   return (
     <div className="flex justify-center items-center p-2">
       <div>
-        <PersonalName name={name} />
+        <PersonalName name={basics?.name} />
         <div className="flex gap-3">
-          <PersonalContact text={phone} />
-          <PersonalContact text={email} />
-          {city && (
-            <PersonalContact text={city} />
+          {basics?.label && (
+            <PersonalContact text={basics?.label} />
           )}
-          {url && (
+          {basics?.phone && (
+            <PersonalContact text={basics.phone} />
+          )}
+          {basics?.email && (
+            <PersonalContact text={basics?.email} />
+          )}
+          {basics?.city && (
+            <PersonalContact text={basics.city} />
+          )}
+          {basics?.url && (
             <div className="flex gap-2 ml-2 items-center">
-              <PersonalContact text={url} />
+              <PersonalContact text={basics.url} />
             </div>
           )}
         </div>

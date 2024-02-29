@@ -26,24 +26,13 @@ function PersonalInfo ({ initialInfo, onUpdate }) {
 
           <div className="p-4 left-right-spacing">
             <div className="w-full pr-2">
-            <label htmlFor={"firstName"} className="form-label-text">First Name</label>
+            <label htmlFor={"name"} className="form-label-text">Name</label>
             <input 
               type="text"
-              id={"firstName"}
+              id={"name"}
               className="formStyle"
-              placeholder="Enter first name..."
-              value={infoForm.firstName || ''}
-              onChange={handleInfoChange}
-              required />
-            </div>
-            <div className="w-full pl-2">
-            <label htmlFor={"lastName"} className="form-label-text">Last Name</label>
-            <input 
-              type="text"
-              id={"lastName"}
-              className="formStyle"
-              placeholder="Enter last name..."
-              value={infoForm.lastName || ''}
+              placeholder="Enter name..."
+              // value={infoForm.name || ''}
               onChange={handleInfoChange}
               required />
             </div>
@@ -85,7 +74,7 @@ function PersonalInfo ({ initialInfo, onUpdate }) {
       ) : (
         <div className="p-4 border-b border-black hover:bg-slate-500" onClick={() => {setIsEditing(true)}}>
           <div className="flex justify-between font-bold">
-            {infoForm.firstName} {infoForm.lastName}
+            {/* {infoForm.name} */}
           </div>
           <div className="pt-2 flex justify-between">
             {infoForm.phone}

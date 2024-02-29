@@ -4,7 +4,7 @@ import { SectionHeading } from '../elements/SectionHeading';
 export const Summary = ({
   summary,
 }: {
-  summary: string;
+  summary?: string;
 }) => {
   return (
     <div className="">

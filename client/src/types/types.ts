@@ -2,10 +2,8 @@ export interface IEducationType {
   name: string;
   major: string;
   degree: string;
-  startDateMonth: string;
-  startDateYear: string;
-  endDateMonth: string;
-  endDateYear: string;
+  startDate: string;
+  endDate: string;
   endDateCurrent: boolean;
   content?: string[];
 }
@@ -23,8 +21,7 @@ export interface IWorkType {
 }
 
 export interface IBasicsType {
-  firstName?: string;
-  lastName?: string;
+  name: string;
   label?: string;
   email?: string;
   phone?: string;

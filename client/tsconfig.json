@@ -24,10 +24,6 @@
       // set to define the "paths" option.
       "baseUrl": "src/",
       "paths": {
-        // Resolve all "@wasp" imports to the generated source code.
-        "@wasp/*": [
-          "src/*"
-        ],
         // Resolve all non-relative imports to the correct node module. Source:
         // https://www.typescriptlang.org/docs/handbook/module-resolution.html#path-mapping
         "*": [
@@ -38,7 +34,9 @@
           // definitions.
           "node_modules/@types/*"
         ],
-        "src/*": ["./src/*"]
+        "src/*": ["./src/*"],
+        "types/*": ["./types/*"],
+        "templates/*": ["./templates/*"],
       },
       // Correctly resolve types: https://www.typescriptlang.org/tsconfig#typeRoots
       "typeRoots": [

@@ -84,7 +84,8 @@ export const Dashboard = () => {
           summary={resumes[index].summary}
           education={resumes[index].schools}
           jobs={resumes[index].jobs}
-          skills={resumes[index].skills} />
+          skills={resumes[index].skills}
+          theme={"harvard"} />
           
         {/* Overlay */}
         <div className="hidden absolute inset-0 bg-gray-800 bg-opacity-25 group-hover:flex group-hover:flex-rows items-center justify-center">
@@ -102,7 +103,7 @@ export const Dashboard = () => {
 
   return (
     <div className="bg-slate-400 text-white min-h-screen">
-      <h1 className="text-3xl font-bold bg-slate-700 p-2 w-full">Welcome {currentUser?.firstName}</h1>
+      <h1 className="text-3xl font-bold bg-slate-700 p-2 w-full">Welcome to ResumeTitan</h1>
 
       <div className="text-3xl font-bold bg-slate-700 p-2">My Resumes:</div>
       <button className="mx-4 mt-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-white font-bold py-2 px-4" onClick={() => navigate('/resume')}>Add New</button>

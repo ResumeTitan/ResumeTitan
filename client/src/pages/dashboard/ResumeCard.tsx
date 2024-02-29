@@ -7,22 +7,28 @@ interface ResumeCardProps {
   basics: IBasicsType;
   summary: string;
   education: IEducationType[];
-  jobs: IWorkType[];
+  work: IWorkType[];
   skills: string[];
+  theme: string;
 }
 
 const ResumeCard: React.FC<ResumeCardProps> = ({
   basics,
   summary,
   education,
-  jobs,
+  work,
   skills,
+  theme,
 }) => {
   return (
     <div className="mx-4 border border-2 border-black">
-      <ResumeContainer>
-        <HarvardResume basics={basics} summary={summary} education={education} jobs={jobs} skills={skills}/>
-      </ResumeContainer>
+      <ResumeContainer resume={{
+      basics: basics,
+      jobs: work,
+      schools: education,
+      skills: skills,
+      summary: summary,
+    }} theme={theme} />
     </div>
   );
 };

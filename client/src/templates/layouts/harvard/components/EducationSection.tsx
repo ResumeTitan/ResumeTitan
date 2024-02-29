@@ -2,7 +2,8 @@ import { SectionHeading } from '../elements/SectionHeading';
 import { SectionList } from '../elements/SectionList';
 import { SectionSubtitle } from '../elements/SectionSubtitle';
 import { SectionTitle } from '../elements/SectionTitle';
-import { IEducationType } from '../../../../types/types';
+import { IEducationType } from 'types/types';
+import { formatDate } from '../../../../utils';
 
 interface EducationSectionProps {
   education: IEducationType[];
@@ -23,8 +24,8 @@ export const EducationSection = ({ education }: EducationSectionProps) => {
             </div>
           <div>
               <p className="text-s py-1">
-                {item.startDateMonth} {item.startDateYear} -{' '}
-                {item.endDateCurrent === true ? 'Present' : `${item?.endDateMonth || ''} ${item?.endDateYear || ''}`}
+                {formatDate(item.startDate)} -{' '}
+                {item.endDateCurrent === true ? 'Present' : `${formatDate(item.endDate)}`}
               </p>
             </div>
           </div>

@@ -6,7 +6,6 @@ import DocumentScannerIcon from '@mui/icons-material/DocumentScanner';
 import ActionTab from './actionTab/Action';
 import CustomizeTab from './customizeTab';
 import Tabs from './Tabs';
-import HarvardResume from 'templates/layouts/harvard/Harvard';
 import ResumeContainer from 'templates/ResumeContainer';
 import { createResume, updateResume } from 'api/resume';
 import Spinner from 'components/Spinner';
@@ -20,9 +19,13 @@ const LG_SCREEN_WIDTH = 1024;
 // The resume reference
 const ResumeComponent = React.forwardRef((props, ref) => (
   <div ref={ref} className="print:!scale-100">
-    <ResumeContainer>
-      <HarvardResume basics={props.personalInfo} summary={props.summary} education={props.schools} jobs={props.jobs} skills={props.skills}/>
-    </ResumeContainer>
+    <ResumeContainer resume={{
+      basics: props.basics,
+      jobs: props.jobs,
+      schools: props.schools,
+      skills: props.skills,
+      summary: props.summary,
+    }} theme={"harvard"} />
   </div>
 ));
 
@@ -39,9 +42,8 @@ function ActionPage() {
   const currentUser = useSelector((state) => state.user);
   const isAuth = Boolean(useSelector((state) => state.token));
   const [isLoginOpen, setIsLoginOpen] = useState(false);
-  const [profile, setProfile] = useState({
-    firstName: currentUser?.firstName || 'John',
-    lastName: currentUser?.lastName || 'Doe',
+  const [basics, setBasics] = useState({
+    name: `${currentUser.firstName} ${currentUser.firstName}`,
     phone: '(123)-456-7890',
     email: currentUser?.email || 'johndoe@example.com',
   });
@@ -65,7 +67,7 @@ function ActionPage() {
       setSchools(resume.schools);
       setJobs(resume.jobs);
       setSkills(resume.skills);
-      setProfile(resume.basics);
+      setBasics(resume.basics);
     } catch (err) {
       console.log(err);
       throw err;
@@ -151,7 +153,7 @@ function ActionPage() {
       _id: resumeId,
       jobs: jobs,
       schools: schools,
-      basics: profile
+      basics: basics,
     };
     setResumeLoading(true);
     try {
@@ -180,7 +182,7 @@ function ActionPage() {
       userId: currentUser._id,
       jobs: jobs,
       schools: schools,
-      basics: profile,
+      basics: basics,
       summary: summary,
       skills: skills
     };
@@ -212,7 +214,7 @@ function ActionPage() {
       <Tabs></Tabs>
 
       <ActionTab 
-        profile={profile}
+        profile={basics}
         jobs={jobs}
         schools={schools}
         skills={skills}
@@ -224,7 +226,7 @@ function ActionPage() {
         onUpdateSchools={(schoolsIn) => setSchools(schoolsIn)}
         onUpdateSkills={(skillsIn) => setSkills(skillsIn)}
         onUpdateSummary={(sum) => setSummary(sum)}
-        onUpdateProfile={(profileIn) => setProfile(profileIn)}
+        onUpdateProfile={(basicsIn) => setBasics(basicsIn)}
         onGenerateResume={handleGenerateResume} 
         onSave={handleSaveResume}
       />
@@ -232,7 +234,7 @@ function ActionPage() {
       {showResume && (
         <div className="p-2 origin-top ease-linear transform lg:scale-90">
           <ResumeComponent 
-            personalInfo={profile}
+            personalInfo={basics}
             summary={summary}
             schools={schools}
             jobs={jobs}
@@ -251,7 +253,7 @@ function ActionPage() {
       <div className={`${isOpen ? "fixed": "hidden"} bg-black bg-opacity-50 flex justify-center items-center w-full h-full overflow-auto top-0`} onClick={togglePopup}>
         <div className="pt-4 transform translate-12 md:translate-y-36 scale-50 sm:scale-60 lg:scale-75 origin-top print:!scale-100">
         <ResumeComponent 
-          personalInfo={profile}
+          personalInfo={basics}
           summary={summary}
           schools={schools} 
           jobs={jobs}
