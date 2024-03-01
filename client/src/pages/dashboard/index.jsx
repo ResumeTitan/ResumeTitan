@@ -51,7 +51,6 @@ export const Dashboard = () => {
       return;
     }
     const data = await getResumes(token, currentUser._id);
-    console.log(data);
     setResumes(data.resumes);
   };
 
@@ -81,9 +80,8 @@ export const Dashboard = () => {
       <div className="hover:cursor-pointer relative group">
         <ResumeCard
           basics={resumes[index].basics}
-          summary={resumes[index].summary}
-          education={resumes[index].schools}
-          jobs={resumes[index].jobs}
+          education={resumes[index].education}
+          work={resumes[index].work}
           skills={resumes[index].skills}
           theme={"harvard"} />
           

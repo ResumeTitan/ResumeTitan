@@ -20,7 +20,7 @@ export const EducationSection = ({ education }: EducationSectionProps) => {
           <div className="flex justify-between items-center">
             <div>
               <SectionTitle label={item.name} />
-              <SectionSubtitle label={`${item?.degree || ''}, ${item?.major || ''}`} />
+              <SectionSubtitle label={`${item?.studyType || ''}, ${item?.area || ''}`} />
             </div>
           <div>
               <p className="text-s py-1">

@@ -1,7 +1,7 @@
 export interface IEducationType {
   name: string;
-  major: string;
-  degree: string;
+  area: string;
+  studyType: string;
   startDate: string;
   endDate: string;
   endDateCurrent: boolean;
@@ -9,12 +9,10 @@ export interface IEducationType {
 }
 
 export interface IWorkType {
-  title: string;
-  employer: string;
-  startDateMonth: string;
-  startDateYear: string;
-  endDateMonth: string;
-  endDateYear: string;
+  name: string;
+  position: string;
+  startDate: string;
+  endDate: string;
   endDateCurrent: boolean;
   notes?: string;
   content?: string[];

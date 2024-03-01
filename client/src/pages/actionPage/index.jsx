@@ -35,17 +35,16 @@ function ActionPage() {
   const [resumeId, setResumeId] = useState(null);
   const [showResume, setShowResume] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const [schools, setSchools] = useState([]);
-  const [jobs, setJobs] = useState([]);
+  const [education, setEducation] = useState([]);
+  const [work, setWork] = useState([]);
   const [skills, setSkills] = useState([]);
   const [summary, setSummary] = useState('');
   const currentUser = useSelector((state) => state.user);
   const isAuth = Boolean(useSelector((state) => state.token));
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [basics, setBasics] = useState({
-    name: `${currentUser.firstName} ${currentUser.firstName}`,
-    phone: '(123)-456-7890',
-    email: currentUser?.email || 'johndoe@example.com',
+    name: `${currentUser.firstName} ${currentUser.lastName}`,
+    email: currentUser.email,
   });
   const [resumeLoading, setResumeLoading] = useState(false);
   const navigate = useNavigate();
@@ -63,11 +62,11 @@ function ActionPage() {
         return;
       }
       const { resume } = await getResume(token, id);
-      setSummary(resume.summary);
-      setSchools(resume.schools);
-      setJobs(resume.jobs);
-      setSkills(resume.skills);
       setBasics(resume.basics);
+      setSummary(resume.basics.summary);
+      setEducation(resume.education);
+      setWork(resume.work);
+      setSkills(resume.skills);
     } catch (err) {
       console.log(err);
       throw err;
@@ -151,8 +150,8 @@ function ActionPage() {
     }
     const resume = {
       _id: resumeId,
-      jobs: jobs,
-      schools: schools,
+      work: work,
+      education: education,
       basics: basics,
     };
     setResumeLoading(true);
@@ -180,18 +179,17 @@ function ActionPage() {
     const resume = {
       _id: resumeId,
       userId: currentUser._id,
-      jobs: jobs,
-      schools: schools,
+      work: work,
+      education: education,
       basics: basics,
-      summary: summary,
       skills: skills
     };
     setResumeLoading(true);
     try {
       const savedResume = await updateResume(token, resume);
-
-      setSchools(savedResume.resume.schools);
-      setJobs(savedResume.resume.jobs);
+      setBasics(savedResume.resume.basics);
+      setEducation(savedResume.resume.education);
+      setWork(savedResume.resume.work);
       setSkills(savedResume.resume.skills);
       setResumeLoading(false);
       navigate('/dashboard');
@@ -210,34 +208,35 @@ function ActionPage() {
         <Spinner />
       )}
 
-      <div className="px-2 md:px-4 lg:px-8 w-full flex flex-col">
-      <Tabs></Tabs>
+      <div className="px-2 pt-4 md:px-4 lg:px-8 w-full flex flex-col">
+      {/* <Tabs></Tabs> */}
 
       <ActionTab 
-        profile={basics}
-        jobs={jobs}
-        schools={schools}
+        basics={basics}
+        work={work}
+        education={education}
         skills={skills}
         summary={summary}
         onPrint={() => {
           handleSaveToPdf();
         }}
-        onUpdateJobs={(jobsIn) => setJobs(jobsIn)}
-        onUpdateSchools={(schoolsIn) => setSchools(schoolsIn)}
+        onUpdateWork={(jobsIn) => setWork(jobsIn)}
+        onUpdateEducation={(schoolsIn) => setEducation(schoolsIn)}
         onUpdateSkills={(skillsIn) => setSkills(skillsIn)}
         onUpdateSummary={(sum) => setSummary(sum)}
-        onUpdateProfile={(basicsIn) => setBasics(basicsIn)}
+        onUpdateBasics={(basicsIn) => setBasics(basicsIn)}
         onGenerateResume={handleGenerateResume} 
         onSave={handleSaveResume}
       />
       </div>
+      {/* Desktop View */}
       {showResume && (
-        <div className="p-2 origin-top ease-linear transform lg:scale-90">
+        <div className="p-2 origin-top-left lg:w-1/2 xl:w-3/5 ease-linear transform lg:scale-60 xl:scale-90">
           <ResumeComponent 
-            personalInfo={basics}
+            basics={basics}
             summary={summary}
-            schools={schools}
-            jobs={jobs}
+            schools={education}
+            jobs={work}
             skills={skills}
             ref={resumeRef}/>
         </div>
@@ -249,14 +248,14 @@ function ActionPage() {
         </div>
       )}
 
-
-      <div className={`${isOpen ? "fixed": "hidden"} bg-black bg-opacity-50 flex justify-center items-center w-full h-full overflow-auto top-0`} onClick={togglePopup}>
-        <div className="pt-4 transform translate-12 md:translate-y-36 scale-50 sm:scale-60 lg:scale-75 origin-top print:!scale-100">
+      {/* Mobile View */}
+      <div className={`${isOpen ? "fixed": "hidden"} bg-black bg-opacity-50 flex justify-center items-center w-full h-full top-0`} onClick={togglePopup}>
+        <div className="pt-4 transform translate-12 md:translate-y-36 scale-50 sm:scale-60 lg:scale-75 origin-center print:!scale-100">
         <ResumeComponent 
           personalInfo={basics}
           summary={summary}
-          schools={schools} 
-          jobs={jobs}
+          schools={education} 
+          jobs={work}
           skills={skills}
           ref={resumeRef}/>
         </div>

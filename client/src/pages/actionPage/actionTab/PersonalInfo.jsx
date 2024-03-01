@@ -15,7 +15,9 @@ function PersonalInfo ({ initialInfo, onUpdate }) {
   }
 
   // TODO slow, remove
-  useEffect(() => {}, [initialInfo])
+  useEffect(() => {
+    setInfoForm(initialInfo);
+  }, [initialInfo])
 
   return (
     <div className="form-container">
@@ -32,7 +34,7 @@ function PersonalInfo ({ initialInfo, onUpdate }) {
               id={"name"}
               className="formStyle"
               placeholder="Enter name..."
-              // value={infoForm.name || ''}
+              value={infoForm.name}
               onChange={handleInfoChange}
               required />
             </div>
@@ -47,7 +49,7 @@ function PersonalInfo ({ initialInfo, onUpdate }) {
               placeholder="123-456-7890"
               pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
               onChange={handleInfoChange}
-              value={infoForm.phone || ''}
+              value={infoForm?.phone || ''}
               required />
           </div>
 
@@ -74,13 +76,13 @@ function PersonalInfo ({ initialInfo, onUpdate }) {
       ) : (
         <div className="p-4 border-b border-black hover:bg-slate-500" onClick={() => {setIsEditing(true)}}>
           <div className="flex justify-between font-bold">
-            {/* {infoForm.name} */}
+            {infoForm.name}
           </div>
           <div className="pt-2 flex justify-between">
-            {infoForm.phone}
+            {infoForm?.phone || ''}
           </div>
           <div className="flex justify-between">
-            {infoForm.email}
+            {infoForm?.email}
           </div>
         </div>
       )}

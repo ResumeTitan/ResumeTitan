@@ -8,12 +8,11 @@ interface Props {
 }
 
 export const PersonalInfo = ({ basics }: Props) => {
-  console.log(basics);
   return (
     <div className="flex justify-center items-center p-2">
       <div>
         <PersonalName name={basics?.name} />
-        <div className="flex gap-3">
+        <div className="flex justify-center items-center gap-3">
           {basics?.label && (
             <PersonalContact text={basics?.label} />
           )}

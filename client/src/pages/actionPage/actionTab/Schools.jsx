@@ -3,7 +3,7 @@ import SchoolEditor from './SchoolEditor';
 import SchoolIcon from '@mui/icons-material/School';
 import './Action.css';
 
-function Schools({ schools, onSave, onDelete }) {
+function Schools({ education, onSave, onDelete }) {
   const [isEditing, setIsEditing] = useState(false);
   const [editingSchool, setEditingSchool] = useState({});
 
@@ -23,7 +23,7 @@ function Schools({ schools, onSave, onDelete }) {
 
   const handleEditSchool = (index) => {
     setIsEditing(true);
-    const foundSchool = schools.find(obj => obj.id === index);
+    const foundSchool = education.find(obj => obj.id === index);
     setEditingSchool(foundSchool);
   }
 
@@ -32,7 +32,7 @@ function Schools({ schools, onSave, onDelete }) {
     setEditingSchool({});
   }
 
-  useEffect(() => {}, [schools]);
+  useEffect(() => {}, [education]);
 
   const editingForm = (
     <div className="px-4 pb-4">
@@ -47,13 +47,13 @@ function Schools({ schools, onSave, onDelete }) {
       {!isEditing && (
         <div>
           <div className="font-bold border-b border-black rounded-t p-4">{"School Info"}</div>
-          {schools.map((school, index) => (
+          {education.map((school, index) => (
             <div key={`school-${index}`} className="p-4 border-b border-black hover:bg-slate-500" onClick={() => handleEditSchool(school.id)}>
               <div className="flex justify-between font-bold">
                 {school.name}
               </div>
               <div className="flex justify-between">
-                {school.major}
+                {school.area}
               </div>
             </div>
           ))}

@@ -16,6 +16,7 @@ const NavBar = () => {
   const navigate = useNavigate();
 
   const handleLoginLogout = () => {
+    console.log("clicked login/logout", user)
     setIsMobileMenuOpen(false);
     if (user) {
       dispatch(setLogout());

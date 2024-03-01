@@ -14,7 +14,6 @@ interface ResumeCardProps {
 
 const ResumeCard: React.FC<ResumeCardProps> = ({
   basics,
-  summary,
   education,
   work,
   skills,
@@ -27,7 +26,7 @@ const ResumeCard: React.FC<ResumeCardProps> = ({
       jobs: work,
       schools: education,
       skills: skills,
-      summary: summary,
+      summary: basics.summary,
     }} theme={theme} />
     </div>
   );

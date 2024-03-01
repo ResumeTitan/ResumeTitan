@@ -13,21 +13,21 @@ const getPrompt = (resume) => {
   The responses must be in the past tense.
   Here is the resume in JSON format: 
   ${JSON.stringify({
-    jobs: resume.jobs,
-    schools: resume.schools,
+    work: resume.work,
+    education: resume.education,
   })}
   
   \n
-  In schools, using the notes, create a content field in the JSON response.
-  In schools, the content field shall contain 2 full sentences in an array format, each with accomplishments/skills given by the student. If no accomplishments/skills are found, create some that would be associated with the major entered
-  In schools, if a school name is recognized, use the full name of that school in the value of the JSON output.
-  In schools, if a major is recognized, use the full name of that major in the value of the JSON output.
+  In education, using the notes, create a content field in the JSON response.
+  In education, the content field shall contain 2 full sentences in an array format, each with accomplishments/skills given by the student. If no accomplishments/skills are found, create some that would be associated with the major entered
+  In education, if a school name is recognized, use the full name of that school in the value of the JSON output.
+  In education, if a major is recognized, use the full name of that major in the value of the JSON output.
 
-  In jobs, using the notes, create an content field in the JSON response.
-  In jobs, the content field shall contain 4 full sentences in an array format, each with responsibilities/skills an employee might have.
-  In jobs, if a job title is recognized, use the full name of that job title in the value of the JSON output.
-  In jobs, if a company is recognized, use the full name of that company in the value of the JSON output.
-  In addition, based on the information provided, create an "summary" statement relating to the jobs and education given. Include this in the JSON response.
+  In work, using the notes, create an content field in the JSON response.
+  In work, the content field shall contain 4 full sentences in an array format, each with responsibilities/skills an employee might have.
+  In work, if a job title is recognized, use the full name of that job title in the value of the JSON output.
+  In work, if a company is recognized, use the full name of that company in the value of the JSON output.
+  In addition, based on the information provided, create an "summary" statement relating to the jobs and education given. This should write like an objective statement for the beginning of the resume. Include this in the JSON response.
   In addition, based on the information provided, create a "skills" array that includes the skills gained through the education and work experience provided. Create 6 skills. Include this in the JSON response.
   If the resume provided is blank, provide a generic JSON template based on the keys in the input.`
   ;
@@ -54,7 +54,7 @@ export const createResume = async (req, res) => {
     }
 
     // Get rid of periods at the end of each sentence
-    resumeWithResponse.jobs.forEach((job, index) => {
+    resumeWithResponse.work.forEach((job, index) => {
       job.id = index + 1;
       job.content = job.content.map((sentence) => {
         if (sentence[sentence.length - 1] === '.') {
@@ -65,7 +65,7 @@ export const createResume = async (req, res) => {
       })}
     );
 
-    resumeWithResponse.schools.forEach((school, index) => {
+    resumeWithResponse.education.forEach((school, index) => {
       school.id = index + 1;
       school.content = school.content.map((sentence) => {
         if (sentence[sentence.length - 1] === '.') {
@@ -77,6 +77,8 @@ export const createResume = async (req, res) => {
     );
 
     const resumeOut = Object.assign(resume, resumeWithResponse);
+    resumeOut.basics.summary = resumeWithResponse.summary;
+    delete resumeOut.summary;
     resumeOut.userId = req.user.id;
     
     // Save resume to database

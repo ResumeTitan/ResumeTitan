@@ -1,11 +1,20 @@
 import React, { useState } from 'react';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import './Action.css';
 
 function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
   const [schoolForm, setSchoolForm] = useState(editingSchool);
+  const [startDate, setStartDate] = useState(new Date(editingSchool.startDate) || new Date());
+  const [endDate, setEndDate] = useState(new Date(editingSchool.endDate) || new Date());
   const [endDateChecked, setEndDateChecked] = useState(editingSchool.endDateCurrent || false);
 
   const handleSaveSchool = () => {
+    schoolForm.startDate = startDate.toString();
+    schoolForm.endDate = endDate.toString();
     onSave(schoolForm);
     setSchoolForm({});
   }
@@ -57,13 +66,13 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
           required />
       </div>
       <div className="mb-6">
-        <label htmlFor={"major"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Major</label>
+        <label htmlFor={"area"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Area of Study</label>
         <input 
           type="text"
-          id={"major"}
+          id={"area"}
           className="formStyle"
-          placeholder="Enter major..."
-          value={schoolForm.major || ''}
+          placeholder="Enter area of study..."
+          value={schoolForm.area || ''}
           onChange={handleSchoolChange}
           required 
         />
@@ -95,48 +104,52 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
         </div>
       </div>
 
-      <div className="mb-6">
-        <label htmlFor={"degree"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Degree Earned/Working Towards</label>
-        <select id={"degree"} className="formStyle" defaultValue={""} onChange={handleSchoolChange}>
-          <option value="" disabled>Select a degree...</option>
-          <option>High School Diploma</option>
-          <option>Bachelor of Science</option>
-          <option>Bachelor of Arts</option>
-          <option>Masters Degree</option>
-          <option>Doctorate</option>
-        </select>
-      </div>
-
-      <div className="mb-6 left-right-spacing">
-        <div className="w-full pr-2">
-          <label htmlFor={"startDate"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Start Date</label>
-          <div className="flex">
-            <div className="w-[75%] pr-1">
-              <input 
-                type="text"
-                id={"startDateMonth"}
-                className="formStyle"
-                placeholder="Enter month..."
-                value={schoolForm.startDateMonth || ''}
-                onChange={handleSchoolChange}
-                required />
-            </div>
-            <div className="pl-1">
-              <input 
-                type="text"
-                id={"startDateYear"}
-                className="formStyle"
-                placeholder="Enter year..."
-                value={schoolForm.startDateYear || ''}
-                onChange={handleSchoolChange}
-                required />
-            </div>
-          </div>
+      <div className="w-full pr-2">
+        <label htmlFor={"studyType"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Degree</label>
+        <input 
+          type="text"
+          id={"studyType"}
+          className="formStyle"
+          placeholder="Enter degree type..."
+          value={schoolForm.studyType || ''}
+          onChange={handleSchoolChange}
+          required />
         </div>
-        <div className="w-full pl-2">
+
+      <div className="mb-6 left-right-spacing pt-4">
         <div className="w-full pr-2">
-          <div className="left-right-spacing">
-            <label htmlFor={"endDate"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">End Date</label>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DemoContainer components={['DatePicker', 'DatePicker']}>
+              <DatePicker
+                label="Start Date"
+                value={dayjs(startDate)}
+                onChange={(newValue) => setStartDate(newValue.toString())}
+                sx={{
+                  svg: { color: "white" },
+                  input: { color: "white" },
+                  label: { color: "white" }
+                }}
+              />
+            </DemoContainer>
+          </LocalizationProvider>
+        </div>
+        <div className="w-full">
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DemoContainer components={['DatePicker', 'DatePicker']}>
+              <DatePicker
+                label="End Date"
+                value={dayjs(endDate)}
+                onChange={(newValue) => {setEndDate(newValue.toString())}}
+                disabled={endDateChecked}
+                sx={{
+                  svg: { color: "white" },
+                  input: { color: "white" },
+                  label: { color: "white" }
+                }}
+              />
+            </DemoContainer>
+          </LocalizationProvider>
+          <div className="align-right">
             <label htmlFor="endDateCheckbox" className="flex items-center">
               <div className="text-xs pr-2">Current</div>
             <input 
@@ -149,31 +162,6 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
             />
             </label>
           </div>
-          <div className="flex">
-            <div className="w-[75%] pr-1">
-              <input 
-                type="text"
-                id={"endDateMonth"}
-                className={`formStyle ${endDateChecked ? '' : 'disabled'}`}
-                placeholder="Enter month..."
-                value={schoolForm.endDateMonth || ''}
-                onChange={handleSchoolChange}
-                disabled={endDateChecked}
-              />
-            </div>
-            <div className="pl-1">
-              <input 
-                type="text"
-                id={"endDateYear"}
-                className={`formStyle ${endDateChecked ? '' : 'disabled'}`}
-                placeholder="Enter year..."
-                value={schoolForm.endDateYear || ''}
-                onChange={handleSchoolChange}
-                disabled={endDateChecked}
-              />
-            </div>
-          </div>
-      </div>
         </div>
       </div>
 
