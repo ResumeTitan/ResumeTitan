@@ -252,7 +252,7 @@ function ActionPage() {
       <div className={`${isOpen ? "fixed": "hidden"} bg-black bg-opacity-50 flex justify-center items-center w-full h-full top-0`} onClick={togglePopup}>
         <div className="pt-4 transform translate-12 md:translate-y-36 scale-50 sm:scale-60 lg:scale-75 origin-center print:!scale-100">
         <ResumeComponent 
-          personalInfo={basics}
+          basics={basics}
           summary={summary}
           schools={education} 
           jobs={work}
