@@ -70,6 +70,14 @@
     transition ease-in-out duration-200;   
 }
 
+.page-container {
+  @apply flex justify-center min-h-screen bg-slate-400
+}
+
+.page-header {
+  @apply px-2 pt-4 md:px-4 lg:px-8 w-full flex flex-col
+}
+
 .redButton {
   @apply text-white text-center font-medium rounded-lg text-sm
     hover:bg-red-800;
@@ -87,6 +95,12 @@
 .addButton {
   @apply text-white text-center border-2 border-slate-300 font-medium rounded-lg text-sm px-5 py-2.5 m-1
     hover:bg-teal-800 hover:cursor-pointer
+    transition ease-in-out duration-200;
+}
+
+.interview-button {
+  @apply text-white text-center border-2 border-slate-300 font-medium rounded-lg text-sm px-5 py-2.5 m-1
+    hover:bg-accent-blue hover:cursor-pointer
     transition ease-in-out duration-200;   
 }
 

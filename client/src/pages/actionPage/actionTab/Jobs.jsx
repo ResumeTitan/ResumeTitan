@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import JobEditor from './JobEditor';
 import WorkIcon from '@mui/icons-material/Work';
-import '../index.css';
+import 'styles/index.css';
 
 function Jobs({ jobs, onSave, onDelete, onSwap }) {
   const [isEditing, setIsEditing] = useState(false);

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import '../index.css';
+import 'styles/index.css';
 
 interface Props {
   description: string;

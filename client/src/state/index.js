@@ -73,11 +73,9 @@ export const authSlice = createSlice({
       state.jobs = updatedJobs;
     },
     addJob: (state, action) => {
-      console.log("adding job", action.payload.job);
       state.jobs.push(action.payload.job);
     },
     deleteJob: (state, action) => {
-      console.log("deleting job", action.payload.job.id)
       const updatedJobs = state.schools.filter(
         (job) => job.id !== action.payload.job.id
       );

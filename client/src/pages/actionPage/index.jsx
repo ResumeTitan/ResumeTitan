@@ -11,7 +11,7 @@ import { createResume, updateResume } from 'api/resume';
 import Spinner from 'components/Spinner';
 import { LoginForm } from 'components/LoginForm';
 import { getResume } from 'api/resume';
-import './index.css';
+import 'styles/index.css';
 const LG_SCREEN_WIDTH = 1024;
 
 // This page should do all loading, other pages do rendering
@@ -204,7 +204,7 @@ function ActionPage() {
   }
 
   return (
-    <div className="flex justify-center min-h-screen bg-slate-400">
+    <div className="page-container">
       {resumeLoading && (
         <Spinner />
       )}
