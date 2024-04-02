@@ -105,11 +105,13 @@ export const Dashboard = () => {
 
       <div className="text-3xl font-bold bg-slate-700 p-2">My Resumes:</div>
       <button className="mx-4 mt-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-white font-bold py-2 px-4" onClick={() => navigate('/resume')}>Add New</button>
-      <div className="flex lg:min-w-0 w-1/2 h-2 items-start p-2">
+      <div className="flex lg:min-w-0 w-1/2 h-80 items-start p-2">
         <div className="transform scale-25 flex origin-top-left">
           {resumeWidgets}
         </div>
       </div>
+
+      <div className="text-3xl font-bold bg-slate-700 p-2 flex">My Interviews:</div>
 
       {/* <Tabs onTabClick={() => {}}/> */}
 

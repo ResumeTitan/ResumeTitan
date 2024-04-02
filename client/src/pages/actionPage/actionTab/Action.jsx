@@ -8,7 +8,7 @@ import Summary from './Summary';
 import Popup from '../Popup';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import { swapArrayElements } from 'utils';
-import './Action.css';
+import '../index.css';
 
 function ActionTab({
   basics, 
@@ -20,9 +20,7 @@ function ActionTab({
   onUpdateEducation, 
   onUpdateBasics, 
   onUpdateSkills,
-  onUpdateSummary,
-  onGenerateResume, 
-  onSave 
+  onUpdateSummary 
 }) {
   const [popupOpen, setPopupOpen] = React.useState(false);
 
@@ -68,14 +66,6 @@ function ActionTab({
     onUpdateEducation(updatedEducation);
   }
 
-  const handleGenerateResume = () => {
-    onGenerateResume();
-  }
-
-  const handleSave = () => {
-    onSave();
-  }
- 
   const handleSwapJobs = (up, index) => {
     const tempWork = work;
     if (up) {
@@ -83,7 +73,6 @@ function ActionTab({
     } else {
       swapArrayElements(tempWork, index, index + 1);
     }
-    console.log('handing swap jobs', tempWork);
     onUpdateWork(tempWork);
   }
 
@@ -104,10 +93,6 @@ function ActionTab({
       
       <Summary initSummary={basics?.summary || ""} onUpdate={onUpdateSummary} />
       <Skills initSkills={skills} onUpdate={onUpdateSkills}/>
-      <div className="w-full">
-        <button onClick={handleGenerateResume} className="generateButton bg-slate-700">Generate Resume</button>
-        <button onClick={handleSave} className="saveButton bg-slate-700 hover:bg-green">Save and Exit</button>
-      </div>
 
        {/* Popup */}
        {popupOpen && <Popup message={`These fields will be filled in when clicking "Generate Resume"`} handleOk={() => setPopupOpen(false)} />}

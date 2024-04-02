@@ -6,11 +6,17 @@ dotenv.config();
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 const gpt = new ChatGPTAPI({apiKey: OPENAI_API_KEY});
 
-const getPrompt = (resume) => {
+const getPrompt = (resume, jobDescription) => {
   const prompt = `
   Can you extract key information from my resume and return it in a structured format?
   Your reseponse can only by in JSON format, with no other characters or plain text (no notes).
   The responses must be in the past tense.
+  Your response must include the following keys: work, education, summary, skills.
+  The work and education keys must contain an array. Each of these arrays will contain an array of strings called "content".
+  There should be one array of strings for each job or school.
+  The skills key must contain a string array of at least 6 skills.
+  The summary key must contain a string.
+
   Here is the resume in JSON format: 
   ${JSON.stringify({
     work: resume.work,
@@ -18,18 +24,21 @@ const getPrompt = (resume) => {
   })}
   
   \n
-  In education, using the notes, create a content field in the JSON response.
-  In education, the content field shall contain 2 full sentences in an array format, each with accomplishments/skills given by the student. If no accomplishments/skills are found, create some that would be associated with the major entered
+  In education, the content field shall contain an array of strings with accomplishments/skills given by the student. The array should contain at least 4 strings, in full sentences.
+  This content should not repeat the name of the school. If no accomplishments/skills are found, create some that would be associated with the major entered
   In education, if a school name is recognized, use the full name of that school in the value of the JSON output.
   In education, if a major is recognized, use the full name of that major in the value of the JSON output.
 
-  In work, using the notes, create an content field in the JSON response.
-  In work, the content field shall contain 4 full sentences in an array format, each with responsibilities/skills an employee might have.
+  In work, the content field shall be an array of strings with responsibilities/skills an employee has. The array should contain at least 4 strings, in full sentences. This content should not repeat the name of the employer.
   In work, if a job title is recognized, use the full name of that job title in the value of the JSON output.
   In work, if a company is recognized, use the full name of that company in the value of the JSON output.
-  In addition, based on the information provided, create an "summary" statement relating to the jobs and education given. This should write like an objective statement for the beginning of the resume. Include this in the JSON response.
-  In addition, based on the information provided, create a "skills" array that includes the skills gained through the education and work experience provided. Create 6 skills. Include this in the JSON response.
-  If the resume provided is blank, provide a generic JSON template based on the keys in the input.`
+
+  Based on the information provided, fill the "summary" key with a statement relating to the jobs and education given. This should write like an objective statement for the beginning of the resume. Do not repeat the name of any company or school in the summary.
+  Based on the information provided, fill the "skills" key with an array of strings that includes the skills gained through the education and work experience provided.
+  If the resume provided is blank, provide a generic JSON template based on the keys in the input.
+  
+  ${jobDescription ? `When generating the content for the resume, use relevant keywords from the following job description to maximize the score from an applicant tracking system: 
+  ${jobDescription}` : ''}`
   ;
 
   return prompt;
@@ -38,8 +47,9 @@ const getPrompt = (resume) => {
 /* Generate resume from input */
 export const createResume = async (req, res) => {
   try {
-    const resume = req.body;
-    const gptResponse = await gpt.sendMessage(getPrompt(resume));
+    const { resume, jobDescription } = req.body;
+    const gptResponse = await gpt.sendMessage(getPrompt(resume, jobDescription));
+    console.log("response: ", gptResponse.text);
 
     // Find the starting and ending positions of the JSON code
     const start = gptResponse.text.indexOf('{');
@@ -56,7 +66,7 @@ export const createResume = async (req, res) => {
     // Get rid of periods at the end of each sentence
     resumeWithResponse.work.forEach((job, index) => {
       job.id = index + 1;
-      job.content = job.content.map((sentence) => {
+      resume.work[index].content = job.content.map((sentence) => {
         if (sentence[sentence.length - 1] === '.') {
           return sentence.substring(0, sentence.length - 1);
         } else {
@@ -67,7 +77,7 @@ export const createResume = async (req, res) => {
 
     resumeWithResponse.education.forEach((school, index) => {
       school.id = index + 1;
-      school.content = school.content.map((sentence) => {
+      resume.education[index].content = school.content.map((sentence) => {
         if (sentence[sentence.length - 1] === '.') {
           return sentence.substring(0, sentence.length - 1);
         } else {
@@ -76,20 +86,19 @@ export const createResume = async (req, res) => {
       })}
     );
 
-    const resumeOut = Object.assign(resume, resumeWithResponse);
-    resumeOut.basics.summary = resumeWithResponse.summary;
-    delete resumeOut.summary;
-    resumeOut.userId = req.user.id;
-    
+    resume.basics.summary = resumeWithResponse.summary;
+    delete resume.summary;
+    resume.userId = req.user.id;
+
     // Save resume to database
     let newResume;
-    if (resumeOut._id) {
+    if (resume._id) {
       console.log('updating resume');
-      newResume = await Resume.findOneAndUpdate({ _id: resumeOut._id }, resumeOut);
+      newResume = await Resume.findOneAndUpdate({ _id: resume._id }, resume);
     } else {
-      delete resumeOut._id;
+      delete resume._id;
       console.log('creating resume');
-      newResume = new Resume(resumeOut);
+      newResume = new Resume(resume);
       await newResume.save();
     }
 

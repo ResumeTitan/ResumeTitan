@@ -4,7 +4,7 @@ import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs, { Dayjs } from 'dayjs';
-import './Action.css';
+import '../index.css';
 
 function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
   const [jobForm, setJobForm] = useState(editingJob);
@@ -59,7 +59,7 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
         <input 
           type="text"
           id={"position"}
-          className="formStyle" 
+          className="form-style" 
           placeholder="Enter job title..."
           onChange={handleJobChange}
           value={jobForm.position || ''}
@@ -70,7 +70,7 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
         <input 
           type="text"
           id={"name"}
-          className="formStyle"
+          className="form-style"
           placeholder="Enter name of employer..."
           value={jobForm.name || ''}
           onChange={handleJobChange}
@@ -83,7 +83,7 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
         <input 
           type="text"
           id={"city"}
-          className="formStyle"
+          className="form-style"
           placeholder="Enter city..."
           value={jobForm.city || ''}
           onChange={handleJobChange}
@@ -94,7 +94,7 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
         <input 
           type="text"
           id={"state"}
-          className="formStyle"
+          className="form-style"
           placeholder="Enter state..."
           value={jobForm.state || ''}
           onChange={handleJobChange}
@@ -158,7 +158,7 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
         <label htmlFor={"notes"} className="form-label-text">Notes</label>
         <textarea 
           id={"notes"}
-          className="formStyle"
+          className="form-style"
           placeholder="Math club, passed organic chemistry, etc."
           value={jobForm.notes || ''}
           onChange={handleJobChange}
@@ -171,7 +171,7 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
           <div className="left-right-spacing my-2">
             <label htmlFor={"jobContent"} className="form-label-text">Content</label>
             <button
-              className="greenButton p-1 bg-slate-800"
+              className="green-button p-1 bg-slate-800"
               onClick={() => setJobForm({ ...jobForm, content: [...jobForm.content, ""] })}
             >
               {"Add"}
@@ -183,7 +183,7 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
                 <textarea 
                   type="text"
                   id={"jobContent"}
-                  className="formStyle flex-wrap"
+                  className="form-style flex-wrap"
                   placeholder="Enter content..."
                   value={item}
                   onChange={(e) => handleJobContentChange(e.target.value, index)}

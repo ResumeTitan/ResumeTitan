@@ -21,7 +21,7 @@ function PersonalInfo ({ initialInfo, onUpdate }) {
 
   return (
     <div className="form-container">
-    <div className="font-bold border-b border-black rounded-t p-4">{"Personal Info"}</div>
+    <div className="form-text-main">{"Personal Info"}</div>
 
       {isEditing ? (
         <div className="">
@@ -32,7 +32,7 @@ function PersonalInfo ({ initialInfo, onUpdate }) {
             <input 
               type="text"
               id={"name"}
-              className="formStyle"
+              className="form-style"
               placeholder="Enter name..."
               value={infoForm.name}
               onChange={handleInfoChange}
@@ -41,11 +41,11 @@ function PersonalInfo ({ initialInfo, onUpdate }) {
           </div>
 
           <div className="p-4">
-            <label htmlFor={"phone"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Phone Number</label>
+            <label htmlFor={"phone"} className="form-label">Phone Number</label>
             <input 
               type="tel"
               id={"phone"}
-              className="formStyle" 
+              className="form-style" 
               placeholder="123-456-7890"
               pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
               onChange={handleInfoChange}
@@ -54,11 +54,11 @@ function PersonalInfo ({ initialInfo, onUpdate }) {
           </div>
 
           <div className="p-4">
-            <label htmlFor={"email"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email Address</label>
+            <label htmlFor={"email"} className="form-label">Email Address</label>
             <input 
               type="email"
               id={"email"}
-              className="formStyle" 
+              className="form-style" 
               placeholder="example@website.com"
               onChange={handleInfoChange}
               value={infoForm.email || ''}

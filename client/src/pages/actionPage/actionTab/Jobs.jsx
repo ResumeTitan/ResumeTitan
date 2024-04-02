@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import JobEditor from './JobEditor';
 import WorkIcon from '@mui/icons-material/Work';
-import './Action.css';
+import '../index.css';
 
 function Jobs({ jobs, onSave, onDelete, onSwap }) {
   const [isEditing, setIsEditing] = useState(false);
@@ -44,7 +44,7 @@ function Jobs({ jobs, onSave, onDelete, onSwap }) {
 
       {!isEditing && (
         <div>
-          <div className="font-bold border-b border-black rounded-t p-4">{"Job Info"}</div>
+          <div className="form-text-main">{"Job Info"}</div>
           {jobs.map((job, index) => (
             <div key={`job-${index}`} className="left-right-spacing p-4 border-b border-black hover:bg-slate-500 hover:cursor-pointer" onClick={() => handleEditJob(job.id)}>
               <div className="w-full ">

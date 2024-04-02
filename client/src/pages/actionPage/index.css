@@ -2,8 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* rest of content below */
-
 .close {
   margin-left: auto
 }
@@ -18,23 +16,55 @@
   scrollbar-width: none;  /* Firefox */
 }
 
-.formStyle {
+.flex-center {
+  @apply flex justify-between items-center
+}
+
+.tab-text-base {
+  @apply text-xs font-bold uppercase px-5 py-3 shadow-lg rounded block leading-normal
+}
+
+.tab-active {
+  @apply text-white bg-teal-600
+}
+
+.tab-inactive {
+  @apply text-teal-600 bg-white
+}
+
+.tab-ul {
+  @apply flex mb-0 list-none flex-wrap pt-3 pb-4 flex-row
+}
+
+.tab-li {
+  @apply -mb-px mr-2 last:mr-0 flex-auto text-center
+}
+
+.form-section {
+  @apply rounded-lg border border-black border-2 px-4 bg-slate-700 w-full text-white
+}
+
+.form-style {
   @apply bg-gray-500 border border-gray-300 text-light-text text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400;
 }
 
-.formStyle:disabled {
+.form-style:disabled {
   @apply bg-gray-300 cursor-not-allowed opacity-50; /* Add styles for disabled state */
 }
 
-.formLabel {
-  @apply text-gray-900 text-lg font-medium mb-1.5 block dark:text-white;
+.form-label {
+  @apply block mb-2 text-sm font-medium text-gray-900 dark:text-white;
+}
+
+.form-text-main {
+  @apply font-bold border-b border-black rounded-t p-4
 }
 
 .formHeader {
   @apply text-gray-900 text-lg mb-1.5 block dark:text-white;
 }
 
-.greenButton {
+.green-button {
   @apply text-white text-center font-medium rounded-lg text-sm
     hover:bg-teal-800 hover:cursor-pointer
     transition ease-in-out duration-200;   
@@ -66,16 +96,35 @@
     transition ease-in-out duration-300;
 }
 
-.generateButton {
-  @apply text-white text-center font-medium rounded-lg text-sm w-full px-5 py-2.5 m-1 h-12
+.generate-button {
+  @apply text-white text-center font-medium rounded-lg text-lg w-full px-5 py-3 m-1
     hover:bg-accent-blue hover:cursor-pointer hover:text-light-text
+    border-4 border-black
     transition ease-in-out duration-300;
 }
 
-.saveButton {
-  @apply text-white text-center font-medium rounded-lg text-sm w-full px-5 py-2.5 m-1 h-12
+.save-button {
+  @apply text-white text-center font-medium rounded-lg text-lg w-full px-5 py-3 m-1
     hover:bg-teal-800 hover:cursor-pointer hover:text-light-text
+    border-4 border-black
     transition ease-in-out duration-300;
+}
+
+.remove-content-button {
+  @apply inline-block align-middle text-white text-center font-medium rounded-lg text-sm bg-slate-800 p-2
+  hover:bg-red-800;
+}
+
+.left-right-spacing {
+  @apply flex justify-between;
+}
+
+.form-container {
+  @apply border border-black border-2 rounded-lg w-full my-4 text-white bg-slate-700
+}
+
+.form-label-text {
+  @apply block mb-2 text-sm font-medium text-white
 }
 
 @media print {

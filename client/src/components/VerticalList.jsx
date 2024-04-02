@@ -43,7 +43,7 @@ export function VerticalList({ items, onSave }) {
               <Draggable key={item.id} draggableId={String(item.id)} index={index}>
                 {(provided, snapshot) => (
                   <div
-                    className={`formStyle ${snapshot.isDragging ? "bg-slate-600" : "bg-slate-800"}`}
+                    className={`form-style ${snapshot.isDragging ? "bg-slate-600" : "bg-slate-800"}`}
                     ref={provided.innerRef}
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}

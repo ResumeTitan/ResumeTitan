@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import SchoolEditor from './SchoolEditor';
 import SchoolIcon from '@mui/icons-material/School';
-import './Action.css';
+import '../index.css';
 
 function Schools({ education, onSave, onDelete }) {
   const [isEditing, setIsEditing] = useState(false);
@@ -46,7 +46,7 @@ function Schools({ education, onSave, onDelete }) {
 
       {!isEditing && (
         <div>
-          <div className="font-bold border-b border-black rounded-t p-4">{"School Info"}</div>
+          <div className="form-text-main">{"School Info"}</div>
           {education.map((school, index) => (
             <div key={`school-${index}`} className="p-4 border-b border-black hover:bg-slate-500" onClick={() => handleEditSchool(school.id)}>
               <div className="flex justify-between font-bold">

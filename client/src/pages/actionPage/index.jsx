@@ -49,6 +49,9 @@ function ActionPage() {
   const [resumeLoading, setResumeLoading] = useState(false);
   const navigate = useNavigate();
   const resumeRef = React.useRef();
+  const [activeTab, setActiveTab] = useState(1);
+  const [jobDescription, setJobDescription] = useState('');
+  const [useJobDescription, setUseJobDescription] = useState(false);
 
   /**
    * loadResume
@@ -156,7 +159,8 @@ function ActionPage() {
     };
     setResumeLoading(true);
     try {
-      const newResume = await createResume(token, resume);
+      const jobDescriptionStr = useJobDescription ? jobDescription : '';
+      const newResume = await createResume(token, resume, jobDescriptionStr);
       setResumeLoading(false);
       setResumeId(newResume.resume._id);
       await loadResume(newResume.resume._id);
@@ -199,9 +203,6 @@ function ActionPage() {
     }
   }
 
-  /**
-   * render function
-   */
   return (
     <div className="flex justify-center min-h-screen bg-slate-400">
       {resumeLoading && (
@@ -209,25 +210,38 @@ function ActionPage() {
       )}
 
       <div className="px-2 pt-4 md:px-4 lg:px-8 w-full flex flex-col">
-      {/* <Tabs></Tabs> */}
-
-      <ActionTab 
-        basics={basics}
-        work={work}
-        education={education}
-        skills={skills}
-        summary={summary}
-        onPrint={() => {
-          handleSaveToPdf();
-        }}
-        onUpdateWork={(jobsIn) => setWork(jobsIn)}
-        onUpdateEducation={(schoolsIn) => setEducation(schoolsIn)}
-        onUpdateSkills={(skillsIn) => setSkills(skillsIn)}
-        onUpdateSummary={(sum) => setSummary(sum)}
-        onUpdateBasics={(basicsIn) => setBasics(basicsIn)}
-        onGenerateResume={handleGenerateResume} 
-        onSave={handleSaveResume}
-      />
+        <Tabs openTab={activeTab} setOpenTab={(tab) => setActiveTab(tab)} />
+        {activeTab === 1 && (
+          <ActionTab 
+            basics={basics}
+            work={work}
+            education={education}
+            skills={skills}
+            summary={summary}
+            onPrint={() => {
+              handleSaveToPdf();
+            }}
+            onUpdateWork={(jobsIn) => setWork(jobsIn)}
+            onUpdateEducation={(schoolsIn) => setEducation(schoolsIn)}
+            onUpdateSkills={(skillsIn) => setSkills(skillsIn)}
+            onUpdateSummary={(sum) => setSummary(sum)}
+            onUpdateBasics={(basicsIn) => setBasics(basicsIn)}
+            onGenerateResume={handleGenerateResume} 
+            onSave={handleSaveResume}
+          />
+        )}
+        {activeTab === 2 && (
+          <CustomizeTab 
+            description={jobDescription}
+            descriptionUsed={useJobDescription}
+            onUpdateJobDescription={(description) => setJobDescription(description)}
+            isJobDescriptionUsed={(checked) => setUseJobDescription(checked)}
+          />
+        )}
+        <div className="w-full">
+          <button onClick={handleGenerateResume} className="generate-button">Generate Resume</button>
+          <button onClick={handleSaveResume} className="save-button">Save and Exit</button>
+        </div>
       </div>
       {/* Desktop View */}
       {showResume && (
