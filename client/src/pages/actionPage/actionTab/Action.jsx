@@ -8,93 +8,81 @@ import Summary from './Summary';
 import Popup from '../Popup';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import { swapArrayElements } from 'utils';
-import './Action.css';
+import '../index.css';
 
 function ActionTab({
-  profile, 
-  jobs, 
-  schools, 
+  basics, 
+  work,
+  education,
   skills,
-  summary,
   onPrint, 
-  onUpdateJobs, 
-  onUpdateSchools, 
-  onUpdateProfile, 
+  onUpdateWork, 
+  onUpdateEducation, 
+  onUpdateBasics, 
   onUpdateSkills,
-  onUpdateSummary,
-  onGenerateResume, 
-  onSave 
+  onUpdateSummary 
 }) {
   const [popupOpen, setPopupOpen] = React.useState(false);
 
-  const handleSaveJob = (jobForm) => {
-    if (jobForm.id) {
-      const updatedJobs = jobs.map((job) => {
-        if (job.id === jobForm.id) {
-          return jobForm;
+  const handleSaveWork = (workForm) => {
+    if (workForm.id) {
+      const updatedWork = work.map((job) => {
+        if (job.id === workForm.id) {
+          return workForm;
         } else { 
           return job;
         }
       });
-      onUpdateJobs(updatedJobs);
+      onUpdateWork(updatedWork);
     } else {
-      jobForm.id = jobs.length + 1;
-      onUpdateJobs([...jobs, jobForm]);
+      workForm.id = work.length + 1;
+      onUpdateWork([...work, workForm]);
     }
   }
 
-  const handleDeleteJob = (id) => {
-    const updatedJobs = jobs.filter((job) => job.id !== id);
-    onUpdateJobs(updatedJobs);
+  const handleDeleteWork = (id) => {
+    const updatedWork = work.filter((job) => job.id !== id);
+    onUpdateWork(updatedWork);
   }
 
-  const handleSaveSchool = (schoolForm) => {
-    if (schoolForm.id) {
-      const updatedSchools = schools.map((school) => {
-        if (school.id === schoolForm.id) {
-          return schoolForm;
+  const handleSaveEducation = (educationForm) => {
+    if (educationForm.id) {
+      const updatedEducation = education.map((school) => {
+        if (school.id === educationForm.id) {
+          return educationForm;
         } else {
           return school;
         }
       });
-      onUpdateSchools(updatedSchools);
+      onUpdateEducation(updatedEducation);
     } else {
-      schoolForm.id = schools.length + 1;
-      onUpdateSchools([...schools, schoolForm]);
+      educationForm.id = education.length + 1;
+      onUpdateEducation([...education, educationForm]);
     }
   }
 
-  const handleDeleteSchool = (id) => {
-    const updatedSchools = schools.filter((school) => school.id !== id);
-    onUpdateSchools(updatedSchools);
+  const handleDeleteEducation = (id) => {
+    const updatedEducation = education.filter((school) => school.id !== id);
+    onUpdateEducation(updatedEducation);
   }
 
-  const handleGenerateResume = () => {
-    onGenerateResume();
-  }
-
-  const handleSave = () => {
-    onSave();
-  }
- 
   const handleSwapJobs = (up, index) => {
-    const tempJobs = jobs;
+    const tempWork = work;
     if (up) {
-      swapArrayElements(tempJobs, index, index - 1);
+      swapArrayElements(tempWork, index, index - 1);
     } else {
-      swapArrayElements(tempJobs, index, index + 1);
+      swapArrayElements(tempWork, index, index + 1);
     }
-    console.log('handing swap jobs', tempJobs);
-    onUpdateJobs(tempJobs);
+    onUpdateWork(tempWork);
   }
 
   return (
     <div>
       <ResumeName onPrint={ onPrint } />
-      <PersonalInfo initialInfo={profile} key={profile} onUpdate={onUpdateProfile} />
+      <PersonalInfo initialInfo={basics} key={basics} onUpdate={onUpdateBasics} />
 
-      <Schools schools={schools} onSave={handleSaveSchool} onDelete={handleDeleteSchool} />
-      <Jobs jobs={jobs} onSave={handleSaveJob} onDelete={handleDeleteJob} onSwap={handleSwapJobs}/>
+      <Schools education={education} onSave={handleSaveEducation} onDelete={handleDeleteEducation} />
+      <Jobs jobs={work} onSave={handleSaveWork} onDelete={handleDeleteWork} onSwap={handleSwapJobs}/>
       
       <div className="flex w-full">
         <div className="font-bold pr-2">Optional:</div>
@@ -103,12 +91,8 @@ function ActionTab({
         </button>
       </div>
       
-      <Summary initSummary={summary} onUpdate={onUpdateSummary} />
+      <Summary initSummary={basics?.summary || ""} onUpdate={onUpdateSummary} />
       <Skills initSkills={skills} onUpdate={onUpdateSkills}/>
-      <div className="w-full">
-        <button onClick={handleGenerateResume} className="generateButton bg-slate-700">Generate Resume</button>
-        <button onClick={handleSave} className="saveButton bg-slate-700 hover:bg-green">Save and Exit</button>
-      </div>
 
        {/* Popup */}
        {popupOpen && <Popup message={`These fields will be filled in when clicking "Generate Resume"`} handleOk={() => setPopupOpen(false)} />}

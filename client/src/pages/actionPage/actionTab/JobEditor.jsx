@@ -1,11 +1,20 @@
 import React, { useState } from 'react';
-import './Action.css';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import dayjs, { Dayjs } from 'dayjs';
+import '../index.css';
 
 function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
   const [jobForm, setJobForm] = useState(editingJob);
+  const [startDate, setStartDate] = useState(new Date(editingJob.startDate) || new Date());
+  const [endDate, setEndDate] = useState(new Date(editingJob.endDate) || new Date());
   const [endDateChecked, setEndDateChecked] = useState(editingJob.endDateCurrent || false);
 
   const handleSaveJob = () => {
+    jobForm.startDate = startDate.toString();
+    jobForm.endDate = endDate.toString();
     onSave(jobForm);
     setJobForm({});
   }
@@ -46,24 +55,24 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
   return (
     <div className="mt-6">
       <div className="mb-6">
-        <label htmlFor={"title"} className="form-label-text">Job Title</label>
+        <label htmlFor={"position"} className="form-label-text">Job Title</label>
         <input 
           type="text"
-          id={"title"}
-          className="formStyle" 
+          id={"position"}
+          className="form-style" 
           placeholder="Enter job title..."
           onChange={handleJobChange}
-          value={jobForm.title || ''}
+          value={jobForm.position || ''}
           required />
       </div>
       <div className="mb-6">
-        <label htmlFor={"employer"} className="form-label-text">Employer</label>
+        <label htmlFor={"name"} className="form-label-text">Employer/Organization</label>
         <input 
           type="text"
-          id={"employer"}
-          className="formStyle"
-          placeholder="Enter employer..."
-          value={jobForm.employer || ''}
+          id={"name"}
+          className="form-style"
+          placeholder="Enter name of employer..."
+          value={jobForm.name || ''}
           onChange={handleJobChange}
           required 
         />
@@ -74,7 +83,7 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
         <input 
           type="text"
           id={"city"}
-          className="formStyle"
+          className="form-style"
           placeholder="Enter city..."
           value={jobForm.city || ''}
           onChange={handleJobChange}
@@ -85,7 +94,7 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
         <input 
           type="text"
           id={"state"}
-          className="formStyle"
+          className="form-style"
           placeholder="Enter state..."
           value={jobForm.state || ''}
           onChange={handleJobChange}
@@ -95,34 +104,40 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
 
       <div className="mb-6 flex justify-between">
         <div className="w-full pr-2">
-          <label htmlFor={"startDate"} className="form-label-text">Start Date</label>
-          <div className="flex">
-            <div className="w-[75%] pr-1">
-              <input 
-                type="text"
-                id={"startDateMonth"}
-                className="formStyle"
-                placeholder="Enter month..."
-                value={jobForm.startDateMonth || ''}
-                onChange={handleJobChange}
-                required />
-            </div>
-            <div className="pl-1">
-              <input 
-                type="text"
-                id={"startDateYear"}
-                className="formStyle"
-                placeholder="Enter year..."
-                value={jobForm.startDateYear || ''}
-                onChange={handleJobChange}
-                required />
-            </div>
-          </div>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DemoContainer components={['DatePicker', 'DatePicker']}>
+              <DatePicker
+                label="Start Date"
+                value={dayjs(startDate)}
+                onChange={(newValue) => {setStartDate(newValue.toString())}}
+                sx={{
+                  svg: { color: "white" },
+                  input: { color: "white" },
+                  label: { color: "white" }
+                }}
+              />
+            </DemoContainer>
+          </LocalizationProvider>
         </div>
         <div className="w-full pl-2">
         <div className="w-full pr-2">
+
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DemoContainer components={['DatePicker', 'DatePicker']}>
+              <DatePicker
+                label="End Date"
+                value={dayjs(endDate)}
+                onChange={(newValue) => {setEndDate(newValue.toString())}}
+                disabled={endDateChecked}
+                sx={{
+                  svg: { color: "white" },
+                  input: { color: "white" },
+                  label: { color: "white" }
+                }}
+              />
+            </DemoContainer>
+          </LocalizationProvider>
           <div className="left-right-spacing">
-            <label htmlFor={"endDate"} className="form-label-text">End Date</label>
             <label htmlFor="endDateCheckbox" className="flex items-center">
               <div className="text-xs pr-2">Current</div>
             <input 
@@ -135,30 +150,6 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
             />
             </label>
           </div>
-          <div className="flex">
-            <div className="w-[75%] pr-1">
-              <input 
-                type="text"
-                id={"endDateMonth"}
-                className="formStyle"
-                placeholder="Enter month..."
-                value={jobForm.endDateMonth || ''}
-                onChange={handleJobChange}
-                disabled={endDateChecked}
-                required />
-            </div>
-            <div className="pl-1">
-              <input 
-                type="text"
-                id={"endDateYear"}
-                className="formStyle"
-                placeholder="Enter year..."
-                value={jobForm.endDateYear || ''}
-                onChange={handleJobChange}
-                disabled={endDateChecked}
-                required />
-            </div>
-          </div>
         </div>
         </div>
       </div>
@@ -167,7 +158,7 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
         <label htmlFor={"notes"} className="form-label-text">Notes</label>
         <textarea 
           id={"notes"}
-          className="formStyle"
+          className="form-style"
           placeholder="Math club, passed organic chemistry, etc."
           value={jobForm.notes || ''}
           onChange={handleJobChange}
@@ -180,7 +171,7 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
           <div className="left-right-spacing my-2">
             <label htmlFor={"jobContent"} className="form-label-text">Content</label>
             <button
-              className="greenButton p-1 bg-slate-800"
+              className="green-button p-1 bg-slate-800"
               onClick={() => setJobForm({ ...jobForm, content: [...jobForm.content, ""] })}
             >
               {"Add"}
@@ -192,7 +183,7 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
                 <textarea 
                   type="text"
                   id={"jobContent"}
-                  className="formStyle flex-wrap"
+                  className="form-style flex-wrap"
                   placeholder="Enter content..."
                   value={item}
                   onChange={(e) => handleJobContentChange(e.target.value, index)}

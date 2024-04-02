@@ -1,6 +1,48 @@
 import mongoose from "mongoose";
 
-const JobSchema = new mongoose.Schema(
+/**
+ * Build out resume schema from JSON Resume
+ * https://jsonresume.org/schema/
+ */
+
+const BasicsSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      description: "Name of the user",
+    },
+    label: {
+      type: String,
+      description: "Label of the user",
+    },
+    image: {
+      type: String,
+      description: "Image of the user",
+    },
+    email: {
+      type: String,
+      description: "Email of the user",
+    },
+    phone: {
+      type: String,
+      description: "Phone number of the user",
+    },
+    url: {
+      type: String,
+      description: "URL of the user",
+    },
+    summary: {
+      type: String,
+      description: "Summary of the user",
+    },
+    location: {
+      type: String,
+      description: "Location of the user",
+    },
+  }
+)
+
+const WorkSchema = new mongoose.Schema(
   {
     id: {
       type: Number,
@@ -23,21 +65,13 @@ const JobSchema = new mongoose.Schema(
       type: String,
       description: "State of employer",
     },
-    startDateMonth: {
+    startDate: {
       type: String,
-      description: "Month of start date",
+      description: "Start date",
     },
-    startDateYear: {
+    endDate: {
       type: String,
-      description: "Year of start date",
-    },
-    endDateMonth: {
-      type: String,
-      description: "Month of end date",
-    },
-    endDateYear: {
-      type: String,
-      description: "Year of end date",
+      description: "End date",
     },
     endDateCurrent: {
       type: Boolean,
@@ -48,63 +82,41 @@ const JobSchema = new mongoose.Schema(
       type: String,
       description: "Notes about the job",
     },
-    content: {
+    highlights: {
       type: Array,
       items: {
         type: String
       },
       description: "AI generated content"
     },
-    userId: {
-      type: mongoose.Schema.Types.ObjectId,
-      required: true,
-      description: "User ID",
-    },
-    id: {
-      type: Number,
-      description: "Job ID from the current resume",
-    }
-  },
-  { timestamps: true }
+  }
 );
 
-const SchoolSchema = new mongoose.Schema(
+const EducationSchema = new mongoose.Schema(
   {
     id: {
       type: Number,
       description: "School ID from the current resume",
     },
-    schoolName: {
+    institution: {
       type: String,
-      description: "School Name",
+      description: "Name of the institution",
     },
-    fieldOfStudy: {
+    area: {
       type: String,
-      description: "Major or field of study",
+      description: "Area of study",
     },
-    city: {
+    studyType: {
       type: String,
-      description: "City of school",
+      description: "Type of degree",
     },
-    state: {
+    startDate: {
       type: String,
-      description: "State of school",
+      description: "Start date",
     },
-    startDateMonth: {
+    endDate: {
       type: String,
-      description: "Month of start date",
-    },
-    startDateYear: {
-      type: String,
-      description: "Year of start date",
-    },
-    endDateMonth: {
-      type: String,
-      description: "Month of end date",
-    },
-    endDateYear: {
-      type: String,
-      description: "Year of end date",
+      description: "End date",
     },
     endDateCurrent: {
       type: Boolean,
@@ -122,31 +134,25 @@ const SchoolSchema = new mongoose.Schema(
       },
       description: "AI generated content"
     },
-    userId: {
-      type: mongoose.Schema.Types.ObjectId,
-      required: true,
-      description: "User ID",
-    },
-    id: {
-      type: Number,
-      description: "School ID from the current resume",
-    }
-  },
-  { timestamps: true }
+  }
 );
 
 const ResumeSchema = new mongoose.Schema(
   {
-    jobs: {
+    basics: {
+      type: BasicsSchema,
+      required: true,
+    },
+    work: {
       type: Array,
       items: {
-        type: JobSchema
+        type: WorkSchema
       },
     },
-    schools: {
+    education: {
       type: Array,
       items: {
-        type: SchoolSchema
+        type: EducationSchema
       },
     },
     summary: {
@@ -160,15 +166,6 @@ const ResumeSchema = new mongoose.Schema(
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
-    },
-    phone: {
-      type: String,
-    },
-    basics: {
-      firstName: String,
-      lastName: String,
-      email: String,
-      phone: String,
     },
   },
   { timestamps: true }

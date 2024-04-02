@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Tooltip from 'components/Tooltip';
-import './Action.css';
+import '../index.css';
 
 function Summary ({ initSummary, onUpdate }) {
   const [summary, setSummary] = useState([]);
@@ -22,7 +22,7 @@ function Summary ({ initSummary, onUpdate }) {
 
   return (
     <div className="form-container">
-        <div className="font-bold border-b border-black rounded-t p-4 hover:bg-slate-500" onClick={() => {setIsEditing(true)}}>
+        <div className="form-text-main hover:bg-slate-500" onClick={() => {setIsEditing(true)}}>
           <Tooltip message={"Note: this will be automatically generated when clicking \"Generate Resume\""}>
             <div>{"Summary"}</div>
           </Tooltip>
@@ -35,14 +35,14 @@ function Summary ({ initSummary, onUpdate }) {
             <textarea 
               type="text"
               id={"summary"}
-              className="formStyle w-full h-16"
+              className="form-style w-full h-16"
               placeholder=""
               value={summary || ''}
               onChange={handleSummaryChange}
               required />
               <div className="pl-2">
                 <button
-                  className="greenButton bg-slate-800 p-2"
+                  className="green-button bg-slate-800 p-2"
                   onClick={handleSaveSummary}
                 >
                   {"Save"}

@@ -6,7 +6,6 @@ import DocumentScannerIcon from '@mui/icons-material/DocumentScanner';
 import ActionTab from './actionTab/Action';
 import CustomizeTab from './customizeTab';
 import Tabs from './Tabs';
-import HarvardResume from 'templates/layouts/harvard/Harvard';
 import ResumeContainer from 'templates/ResumeContainer';
 import { createResume, updateResume } from 'api/resume';
 import Spinner from 'components/Spinner';
@@ -20,9 +19,13 @@ const LG_SCREEN_WIDTH = 1024;
 // The resume reference
 const ResumeComponent = React.forwardRef((props, ref) => (
   <div ref={ref} className="print:!scale-100">
-    <ResumeContainer>
-      <HarvardResume basics={props.personalInfo} summary={props.summary} education={props.schools} jobs={props.jobs} skills={props.skills}/>
-    </ResumeContainer>
+    <ResumeContainer resume={{
+      basics: props.basics,
+      jobs: props.jobs,
+      schools: props.schools,
+      skills: props.skills,
+      summary: props.summary,
+    }} theme={"harvard"} />
   </div>
 ));
 
@@ -32,22 +35,23 @@ function ActionPage() {
   const [resumeId, setResumeId] = useState(null);
   const [showResume, setShowResume] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const [schools, setSchools] = useState([]);
-  const [jobs, setJobs] = useState([]);
+  const [education, setEducation] = useState([]);
+  const [work, setWork] = useState([]);
   const [skills, setSkills] = useState([]);
   const [summary, setSummary] = useState('');
   const currentUser = useSelector((state) => state.user);
   const isAuth = Boolean(useSelector((state) => state.token));
   const [isLoginOpen, setIsLoginOpen] = useState(false);
-  const [profile, setProfile] = useState({
-    firstName: currentUser?.firstName || 'John',
-    lastName: currentUser?.lastName || 'Doe',
-    phone: '(123)-456-7890',
-    email: currentUser?.email || 'johndoe@example.com',
+  const [basics, setBasics] = useState({
+    name: `${currentUser.firstName} ${currentUser.lastName}`,
+    email: currentUser.email,
   });
   const [resumeLoading, setResumeLoading] = useState(false);
   const navigate = useNavigate();
   const resumeRef = React.useRef();
+  const [activeTab, setActiveTab] = useState(1);
+  const [jobDescription, setJobDescription] = useState('');
+  const [useJobDescription, setUseJobDescription] = useState(false);
 
   /**
    * loadResume
@@ -61,11 +65,11 @@ function ActionPage() {
         return;
       }
       const { resume } = await getResume(token, id);
-      setSummary(resume.summary);
-      setSchools(resume.schools);
-      setJobs(resume.jobs);
+      setBasics(resume.basics);
+      setSummary(resume.basics.summary);
+      setEducation(resume.education);
+      setWork(resume.work);
       setSkills(resume.skills);
-      setProfile(resume.basics);
     } catch (err) {
       console.log(err);
       throw err;
@@ -149,13 +153,14 @@ function ActionPage() {
     }
     const resume = {
       _id: resumeId,
-      jobs: jobs,
-      schools: schools,
-      basics: profile
+      work: work,
+      education: education,
+      basics: basics,
     };
     setResumeLoading(true);
     try {
-      const newResume = await createResume(token, resume);
+      const jobDescriptionStr = useJobDescription ? jobDescription : '';
+      const newResume = await createResume(token, resume, jobDescriptionStr);
       setResumeLoading(false);
       setResumeId(newResume.resume._id);
       await loadResume(newResume.resume._id);
@@ -178,18 +183,17 @@ function ActionPage() {
     const resume = {
       _id: resumeId,
       userId: currentUser._id,
-      jobs: jobs,
-      schools: schools,
-      basics: profile,
-      summary: summary,
+      work: work,
+      education: education,
+      basics: basics,
       skills: skills
     };
     setResumeLoading(true);
     try {
       const savedResume = await updateResume(token, resume);
-
-      setSchools(savedResume.resume.schools);
-      setJobs(savedResume.resume.jobs);
+      setBasics(savedResume.resume.basics);
+      setEducation(savedResume.resume.education);
+      setWork(savedResume.resume.work);
       setSkills(savedResume.resume.skills);
       setResumeLoading(false);
       navigate('/dashboard');
@@ -199,43 +203,54 @@ function ActionPage() {
     }
   }
 
-  /**
-   * render function
-   */
   return (
     <div className="flex justify-center min-h-screen bg-slate-400">
       {resumeLoading && (
         <Spinner />
       )}
 
-      <div className="px-2 md:px-4 lg:px-8 w-full flex flex-col">
-      <Tabs></Tabs>
-
-      <ActionTab 
-        profile={profile}
-        jobs={jobs}
-        schools={schools}
-        skills={skills}
-        summary={summary}
-        onPrint={() => {
-          handleSaveToPdf();
-        }}
-        onUpdateJobs={(jobsIn) => setJobs(jobsIn)}
-        onUpdateSchools={(schoolsIn) => setSchools(schoolsIn)}
-        onUpdateSkills={(skillsIn) => setSkills(skillsIn)}
-        onUpdateSummary={(sum) => setSummary(sum)}
-        onUpdateProfile={(profileIn) => setProfile(profileIn)}
-        onGenerateResume={handleGenerateResume} 
-        onSave={handleSaveResume}
-      />
-      </div>
-      {showResume && (
-        <div className="p-2 origin-top ease-linear transform lg:scale-90">
-          <ResumeComponent 
-            personalInfo={profile}
+      <div className="px-2 pt-4 md:px-4 lg:px-8 w-full flex flex-col">
+        <Tabs openTab={activeTab} setOpenTab={(tab) => setActiveTab(tab)} />
+        {activeTab === 1 && (
+          <ActionTab 
+            basics={basics}
+            work={work}
+            education={education}
+            skills={skills}
             summary={summary}
-            schools={schools}
-            jobs={jobs}
+            onPrint={() => {
+              handleSaveToPdf();
+            }}
+            onUpdateWork={(jobsIn) => setWork(jobsIn)}
+            onUpdateEducation={(schoolsIn) => setEducation(schoolsIn)}
+            onUpdateSkills={(skillsIn) => setSkills(skillsIn)}
+            onUpdateSummary={(sum) => setSummary(sum)}
+            onUpdateBasics={(basicsIn) => setBasics(basicsIn)}
+            onGenerateResume={handleGenerateResume} 
+            onSave={handleSaveResume}
+          />
+        )}
+        {activeTab === 2 && (
+          <CustomizeTab 
+            description={jobDescription}
+            descriptionUsed={useJobDescription}
+            onUpdateJobDescription={(description) => setJobDescription(description)}
+            isJobDescriptionUsed={(checked) => setUseJobDescription(checked)}
+          />
+        )}
+        <div className="w-full">
+          <button onClick={handleGenerateResume} className="generate-button">Generate Resume</button>
+          <button onClick={handleSaveResume} className="save-button">Save and Exit</button>
+        </div>
+      </div>
+      {/* Desktop View */}
+      {showResume && (
+        <div className="p-2 origin-top-left lg:w-1/2 xl:w-3/5 ease-linear transform lg:scale-60 xl:scale-90">
+          <ResumeComponent 
+            basics={basics}
+            summary={summary}
+            schools={education}
+            jobs={work}
             skills={skills}
             ref={resumeRef}/>
         </div>
@@ -247,14 +262,14 @@ function ActionPage() {
         </div>
       )}
 
-
-      <div className={`${isOpen ? "fixed": "hidden"} bg-black bg-opacity-50 flex justify-center items-center w-full h-full overflow-auto top-0`} onClick={togglePopup}>
-        <div className="pt-4 transform translate-12 md:translate-y-36 scale-50 sm:scale-60 lg:scale-75 origin-top print:!scale-100">
+      {/* Mobile View */}
+      <div className={`${isOpen ? "fixed": "hidden"} bg-black bg-opacity-50 flex justify-center items-center w-full h-full top-0`} onClick={togglePopup}>
+        <div className="pt-4 transform translate-12 md:translate-y-36 scale-50 sm:scale-60 lg:scale-75 origin-center print:!scale-100">
         <ResumeComponent 
-          personalInfo={profile}
+          basics={basics}
           summary={summary}
-          schools={schools} 
-          jobs={jobs}
+          schools={education} 
+          jobs={work}
           skills={skills}
           ref={resumeRef}/>
         </div>

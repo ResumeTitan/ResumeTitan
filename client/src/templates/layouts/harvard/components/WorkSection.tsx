@@ -3,6 +3,7 @@ import { SectionList } from '../elements/SectionList';
 import { SectionSubtitle } from '../elements/SectionSubtitle';
 import { SectionTitle } from '../elements/SectionTitle';
 import { IWorkType } from '../../../../types/types';
+import { formatDate } from '../../../../utils';
 
 interface WorkSectionProps {
   experience: IWorkType[]; 
@@ -18,13 +19,13 @@ export const WorkSection = ({ experience }: WorkSectionProps) => {
       {experience.length > 0 && experience.map((item: IWorkType, index: number) => {
         return (
           <div key={index}>
-            <SectionTitle label={item.employer} />
+            <SectionTitle label={item.name} />
             <div className={sectionStyling}>
-              <SectionSubtitle label={item.title} />
+              <SectionSubtitle label={item.position} />
               <div>
                 <p className="text-s">
-                  {item.startDateMonth} {item.startDateYear} -{' '}
-                  {item.endDateCurrent === true ? 'Present' : `${item.endDateMonth} ${item.endDateYear}`}
+                  {formatDate(item.startDate)} -{' '}
+                  {item.endDateCurrent === true ? 'Present' : `${formatDate(item.endDate)}`}
                 </p>
               </div>
             </div>

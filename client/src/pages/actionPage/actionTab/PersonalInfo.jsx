@@ -15,59 +15,50 @@ function PersonalInfo ({ initialInfo, onUpdate }) {
   }
 
   // TODO slow, remove
-  useEffect(() => {}, [initialInfo])
+  useEffect(() => {
+    setInfoForm(initialInfo);
+  }, [initialInfo])
 
   return (
     <div className="form-container">
-    <div className="font-bold border-b border-black rounded-t p-4">{"Personal Info"}</div>
+    <div className="form-text-main">{"Personal Info"}</div>
 
       {isEditing ? (
         <div className="">
 
           <div className="p-4 left-right-spacing">
             <div className="w-full pr-2">
-            <label htmlFor={"firstName"} className="form-label-text">First Name</label>
+            <label htmlFor={"name"} className="form-label-text">Name</label>
             <input 
               type="text"
-              id={"firstName"}
-              className="formStyle"
-              placeholder="Enter first name..."
-              value={infoForm.firstName || ''}
-              onChange={handleInfoChange}
-              required />
-            </div>
-            <div className="w-full pl-2">
-            <label htmlFor={"lastName"} className="form-label-text">Last Name</label>
-            <input 
-              type="text"
-              id={"lastName"}
-              className="formStyle"
-              placeholder="Enter last name..."
-              value={infoForm.lastName || ''}
+              id={"name"}
+              className="form-style"
+              placeholder="Enter name..."
+              value={infoForm.name}
               onChange={handleInfoChange}
               required />
             </div>
           </div>
 
           <div className="p-4">
-            <label htmlFor={"phone"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Phone Number</label>
+            <label htmlFor={"phone"} className="form-label">Phone Number</label>
             <input 
               type="tel"
               id={"phone"}
-              className="formStyle" 
+              className="form-style" 
               placeholder="123-456-7890"
               pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
               onChange={handleInfoChange}
-              value={infoForm.phone || ''}
+              value={infoForm?.phone || ''}
               required />
           </div>
 
           <div className="p-4">
-            <label htmlFor={"email"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email Address</label>
+            <label htmlFor={"email"} className="form-label">Email Address</label>
             <input 
               type="email"
               id={"email"}
-              className="formStyle" 
+              className="form-style" 
               placeholder="example@website.com"
               onChange={handleInfoChange}
               value={infoForm.email || ''}
@@ -85,13 +76,13 @@ function PersonalInfo ({ initialInfo, onUpdate }) {
       ) : (
         <div className="p-4 border-b border-black hover:bg-slate-500" onClick={() => {setIsEditing(true)}}>
           <div className="flex justify-between font-bold">
-            {infoForm.firstName} {infoForm.lastName}
+            {infoForm.name}
           </div>
           <div className="pt-2 flex justify-between">
-            {infoForm.phone}
+            {infoForm?.phone || ''}
           </div>
           <div className="flex justify-between">
-            {infoForm.email}
+            {infoForm?.email}
           </div>
         </div>
       )}

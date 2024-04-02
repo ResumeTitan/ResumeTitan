@@ -1,11 +1,20 @@
 import React, { useState } from 'react';
-import './Action.css';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import dayjs, { Dayjs } from 'dayjs';
+import '../index.css';
 
 function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
   const [schoolForm, setSchoolForm] = useState(editingSchool);
+  const [startDate, setStartDate] = useState(new Date(editingSchool.startDate) || new Date());
+  const [endDate, setEndDate] = useState(new Date(editingSchool.endDate) || new Date());
   const [endDateChecked, setEndDateChecked] = useState(editingSchool.endDateCurrent || false);
 
   const handleSaveSchool = () => {
+    schoolForm.startDate = startDate.toString();
+    schoolForm.endDate = endDate.toString();
     onSave(schoolForm);
     setSchoolForm({});
   }
@@ -46,24 +55,24 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
   return (
     <div className="mt-6">
       <div className="mb-6">
-        <label htmlFor={"name"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">School Name</label>
+        <label htmlFor={"name"} className="form-label">School Name</label>
         <input 
           type="text"
           id={"name"}
-          className="formStyle" 
+          className="form-style" 
           placeholder="Enter school name..."
           onChange={handleSchoolChange}
           value={schoolForm.name || ''}
           required />
       </div>
       <div className="mb-6">
-        <label htmlFor={"major"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Major</label>
+        <label htmlFor={"area"} className="form-label">Area of Study</label>
         <input 
           type="text"
-          id={"major"}
-          className="formStyle"
-          placeholder="Enter major..."
-          value={schoolForm.major || ''}
+          id={"area"}
+          className="form-style"
+          placeholder="Enter area of study..."
+          value={schoolForm.area || ''}
           onChange={handleSchoolChange}
           required 
         />
@@ -72,22 +81,22 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
 
       <div className="mb-6 left-right-spacing">
         <div className="w-full pr-2">
-        <label htmlFor={"city"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">City</label>
+        <label htmlFor={"city"} className="form-label">City</label>
         <input 
           type="text"
           id={"city"}
-          className="formStyle"
+          className="form-style"
           placeholder="Enter city..."
           value={schoolForm.city || ''}
           onChange={handleSchoolChange}
           required />
         </div>
         <div className="w-full pl-2">
-        <label htmlFor={"state"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">State</label>
+        <label htmlFor={"state"} className="form-label">State</label>
         <input 
           type="text"
           id={"state"}
-          className="formStyle"
+          className="form-style"
           placeholder="Enter state..."
           value={schoolForm.state || ''}
           onChange={handleSchoolChange}
@@ -95,94 +104,73 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
         </div>
       </div>
 
-      <div className="mb-6">
-        <label htmlFor={"degree"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Degree Earned/Working Towards</label>
-        <select id={"degree"} className="formStyle" defaultValue={""} onChange={handleSchoolChange}>
-          <option value="" disabled>Select a degree...</option>
-          <option>High School Diploma</option>
-          <option>Bachelor of Science</option>
-          <option>Bachelor of Arts</option>
-          <option>Masters Degree</option>
-          <option>Doctorate</option>
-        </select>
-      </div>
-
-      <div className="mb-6 left-right-spacing">
-        <div className="w-full pr-2">
-          <label htmlFor={"startDate"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Start Date</label>
-          <div className="flex">
-            <div className="w-[75%] pr-1">
-              <input 
-                type="text"
-                id={"startDateMonth"}
-                className="formStyle"
-                placeholder="Enter month..."
-                value={schoolForm.startDateMonth || ''}
-                onChange={handleSchoolChange}
-                required />
-            </div>
-            <div className="pl-1">
-              <input 
-                type="text"
-                id={"startDateYear"}
-                className="formStyle"
-                placeholder="Enter year..."
-                value={schoolForm.startDateYear || ''}
-                onChange={handleSchoolChange}
-                required />
-            </div>
-          </div>
+      <div className="w-full pr-2">
+        <label htmlFor={"studyType"} className="form-label">Degree</label>
+        <input 
+          type="text"
+          id={"studyType"}
+          className="form-style"
+          placeholder="Enter degree type..."
+          value={schoolForm.studyType || ''}
+          onChange={handleSchoolChange}
+          required />
         </div>
-        <div className="w-full pl-2">
+
+      <div className="mb-6 left-right-spacing pt-4">
         <div className="w-full pr-2">
-          <div className="left-right-spacing">
-            <label htmlFor={"endDate"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">End Date</label>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DemoContainer components={['DatePicker', 'DatePicker']}>
+              <DatePicker
+                label="Start Date"
+                value={dayjs(startDate)}
+                onChange={(newValue) => setStartDate(newValue.toString())}
+                sx={{
+                  svg: { color: "white" },
+                  input: { color: "white" },
+                  label: { color: "white" }
+                }}
+              />
+            </DemoContainer>
+          </LocalizationProvider>
+        </div>
+        <div className="w-full">
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DemoContainer components={['DatePicker', 'DatePicker']}>
+              <DatePicker
+                label="End Date"
+                value={dayjs(endDate)}
+                onChange={(newValue) => {setEndDate(newValue.toString())}}
+                disabled={endDateChecked}
+                sx={{
+                  svg: { color: "white" },
+                  input: { color: "white" },
+                  label: { color: "white" }
+                }}
+              />
+            </DemoContainer>
+          </LocalizationProvider>
+          <div className="align-right">
             <label htmlFor="endDateCheckbox" className="flex items-center">
               <div className="text-xs pr-2">Current</div>
-            <input 
-              id="endDateCheckbox"
-              type="checkbox"
-              value=""
-              className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" 
-              onChange={handleEndDateCurrent}
-              checked={endDateChecked}
-            />
+              <input 
+                id="endDateCheckbox"
+                type="checkbox"
+                value=""
+                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" 
+                onChange={handleEndDateCurrent}
+                checked={endDateChecked}
+              />
             </label>
           </div>
-          <div className="flex">
-            <div className="w-[75%] pr-1">
-              <input 
-                type="text"
-                id={"endDateMonth"}
-                className={`formStyle ${endDateChecked ? '' : 'disabled'}`}
-                placeholder="Enter month..."
-                value={schoolForm.endDateMonth || ''}
-                onChange={handleSchoolChange}
-                disabled={endDateChecked}
-              />
-            </div>
-            <div className="pl-1">
-              <input 
-                type="text"
-                id={"endDateYear"}
-                className={`formStyle ${endDateChecked ? '' : 'disabled'}`}
-                placeholder="Enter year..."
-                value={schoolForm.endDateYear || ''}
-                onChange={handleSchoolChange}
-                disabled={endDateChecked}
-              />
-            </div>
-          </div>
-      </div>
         </div>
       </div>
 
 
       <div className="my-6">
-        <label htmlFor={"notes"} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Notes</label>
+        <label htmlFor={"notes"} className="form-label">Notes</label>
         <textarea 
           id={"notes"}
-          className="formStyle"
+          className="form-style"
           placeholder="Enter a description about your time at school..."
           value={schoolForm.notes || ''}
           onChange={handleSchoolChange}
@@ -195,7 +183,7 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
           <div className="left-right-spacing my-2">
             <label htmlFor={"jobContent"} className="block text-sm font-medium text-gray-900 dark:text-white">Content</label>
             <button
-              className="greenButton bg-slate-800 p-2"
+              className="green-button bg-slate-800 p-2"
               onClick={() => setSchoolForm({ ...schoolForm, content: [...schoolForm.content, ""] })}
             >
               {"Add"}
@@ -208,7 +196,7 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
                 <textarea 
                   type="text"
                   id={"jobContent"}
-                  className="formStyle flex-wrap"
+                  className="form-style flex-wrap"
                   placeholder="Enter content..."
                   value={item}
                   onChange={(e) => handleSchoolContentChange(e.target.value, index)}

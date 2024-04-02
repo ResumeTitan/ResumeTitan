@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import EditIcon from '@mui/icons-material/Edit';
-import './Action.css';
+import '../index.css';
 
 function ResumeName({ onPrint }) {
   const [isEditing, setIsEditing] = useState(false);
@@ -26,13 +26,13 @@ function ResumeName({ onPrint }) {
   }, [isEditing]);
 
   return (
-    <div className="rounded-lg border border-black border-2 px-4 bg-slate-700 w-full text-white">
-      <div className={`flex justify-between items-center`}>
-        <div className="flex justify-between items-center">
+    <div className="form-section">
+      <div className="flex-center">
+        <div>
           {isEditing ? (
             <div>
               <input
-                className="formStyle"
+                className="form-style"
                 id="resumeName"
                 type="text"
                 placeholder="Enter Resume Name"

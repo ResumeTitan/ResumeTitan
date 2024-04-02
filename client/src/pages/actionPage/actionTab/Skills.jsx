@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import './Action.css';
+import '../index.css';
 
 function Skills ({ initSkills, onUpdate }) {
   const [skills, setSkills] = useState([]);
@@ -33,7 +33,7 @@ function Skills ({ initSkills, onUpdate }) {
 
   return (
     <div className="form-container">
-      <div className="font-bold border-b border-black rounded-t p-4 hover:bg-slate-500" onClick={() => {setIsEditing(true)}}>{"Skills"}</div>
+      <div className="form-text-main hover:bg-slate-500" onClick={() => {setIsEditing(true)}}>{"Skills"}</div>
 
       {isEditing && (
         <div className="p-4 ">
@@ -43,7 +43,7 @@ function Skills ({ initSkills, onUpdate }) {
             <input 
               type="text"
               id={"skills"}
-              className="formStyle"
+              className="form-style"
               placeholder=""
               value={item || ''}
               onChange={(e) => handleSkillsChange(e, index)}
@@ -62,13 +62,13 @@ function Skills ({ initSkills, onUpdate }) {
           </div>
           <div className="flex justify-between">
             <button
-              className="greenButton p-2 my-2 bg-slate-800"
+              className="green-button p-2 my-2 bg-slate-800"
               onClick={handleAddSkills}
             >
               {"Add"}
             </button>
             <button
-              className="greenButton p-2 my-2 bg-slate-800"
+              className="green-button p-2 my-2 bg-slate-800"
               onClick={handleSaveSkills}
             >
               {"Save"}

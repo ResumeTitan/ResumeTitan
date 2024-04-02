@@ -1,13 +1,13 @@
 const API_URL = process.env.REACT_APP_API_URL;
 
-export const createResume = async (token, resume) => {
+export const createResume = async (token, resume, jobDescription) => {
   const response = await fetch(`${API_URL}/resume/create`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`
     },
-    body: JSON.stringify(resume),
+    body: JSON.stringify({resume, jobDescription}),
   });
 
   const data = await response.json();
