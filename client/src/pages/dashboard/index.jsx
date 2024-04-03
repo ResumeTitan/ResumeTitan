@@ -5,7 +5,6 @@ import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { getResumes, deleteResume } from '../../api/resume';
 import { setActiveResume } from '../../state';
-import { Tabs } from './Tabs';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import Popup from './Popup';
@@ -17,34 +16,9 @@ export const Dashboard = () => {
   const token = useSelector((state) => state.token);
   const [resumes, setResumes] = useState([]);
   const navigate = useNavigate();
-  const [numResumesShown, setNumResumesShown] = useState(3);
+  const [numResumesShown, setNumResumesShown] = useState(10);
   const [showPopup, setShowPopup] = useState(false);
   const [deleteId, setDeleteId] = useState(0);
-
-  useEffect(() => {
-    window.scrollTo(0, 0);
-    const handleResize = () => {
-      if (window.innerWidth < 512) {
-        setNumResumesShown(1);
-      } else if (window.innerWidth < 680) {
-        setNumResumesShown(2);
-      } else if (window.innerWidth < 940) {
-        setNumResumesShown(3);
-      } else if (window.innerWidth < 940) {
-        setNumResumesShown(4);
-      } else {
-        setNumResumesShown(5);
-      }
-    };
-
-    // Add event listener to window resize
-    window.addEventListener('resize', handleResize);
-    handleResize(); // Initial check on component mount
-
-    return () => {
-      window.removeEventListener('resize', handleResize); // Clean up listener on component unmount
-    };
-  }, [])
 
   const loadResumes = async () => {
     if (!currentUser) {
@@ -105,13 +79,16 @@ export const Dashboard = () => {
 
       <div className="text-3xl font-bold bg-slate-700 p-2">My Resumes:</div>
       <button className="mx-4 mt-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-white font-bold py-2 px-4" onClick={() => navigate('/resume')}>Add New</button>
-      <div className="flex lg:min-w-0 w-1/2 h-80 items-start p-2">
-        <div className="transform scale-25 flex origin-top-left">
-          {resumeWidgets}
+      <div className="overflow-x-scroll">
+        <div className="flex lg:min-w-0 w-1/2 h-80 items-start p-2">
+          <div className="transform scale-25 flex origin-top-left">
+            {resumeWidgets}
+          </div>
         </div>
       </div>
 
       <div className="text-3xl font-bold bg-slate-700 p-2 flex">My Interviews:</div>
+      <button className="mx-4 mt-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-white font-bold py-2 px-4" onClick={() => navigate('/interview')}>Add New</button>
 
       {/* <Tabs onTabClick={() => {}}/> */}
 
