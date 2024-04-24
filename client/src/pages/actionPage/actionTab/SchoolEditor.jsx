@@ -48,7 +48,7 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
 
   const handleEndDateCurrent = () => {
     const endDateCurrent = !endDateChecked;
-    setSchoolForm({ ...schoolForm, endDateCurrent: endDateCurrent });
+    setSchoolForm({ ...schoolForm, endDateCurrent: endDateCurrent, endDate: "" });
     setEndDateChecked(endDateCurrent);
   }
 

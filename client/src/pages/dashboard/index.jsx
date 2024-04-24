@@ -16,7 +16,6 @@ export const Dashboard = () => {
   const token = useSelector((state) => state.token);
   const [resumes, setResumes] = useState([]);
   const navigate = useNavigate();
-  const [numResumesShown, setNumResumesShown] = useState(10);
   const [showPopup, setShowPopup] = useState(false);
   const [deleteId, setDeleteId] = useState(0);
 
@@ -50,14 +49,15 @@ export const Dashboard = () => {
   }, []);
 
     // Create an array of ResumeWidget components based on numWidgets
-    const resumeWidgets = Array.from({ length: Math.min(resumes.length, numResumesShown) }, (_, index) => (
+    const resumeWidgets = Array.from({ length: resumes.length }, (_, index) => (
       <div className="hover:cursor-pointer relative group">
         <ResumeCard
           basics={resumes[index].basics}
           education={resumes[index].education}
           work={resumes[index].work}
           skills={resumes[index].skills}
-          theme={"harvard"} />
+          theme={"one-page"} 
+        />
           
         {/* Overlay */}
         <div className="hidden absolute inset-0 bg-gray-800 bg-opacity-25 group-hover:flex group-hover:flex-rows items-center justify-center">
@@ -79,7 +79,7 @@ export const Dashboard = () => {
 
       <div className="text-3xl font-bold bg-slate-700 p-2">My Resumes:</div>
       <button className="mx-4 mt-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-white font-bold py-2 px-4" onClick={() => navigate('/resume')}>Add New</button>
-      <div className="overflow-x-scroll">
+      <div className="overflow-x-scroll hide-scrollbar">
         <div className="flex lg:min-w-0 w-1/2 h-80 items-start p-2">
           <div className="transform scale-25 flex origin-top-left">
             {resumeWidgets}

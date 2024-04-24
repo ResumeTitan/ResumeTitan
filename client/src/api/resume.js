@@ -83,3 +83,16 @@ export const deleteResume = async (token, resumeId) => {
 
   return response.json();
 }
+
+export const saveResumeAsPdf = async (token, resumeHtml) => {
+  const response = await fetch(`${API_URL}/auth/register`, {
+    method: "POST",
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`
+    },
+    body: JSON.stringify(resumeHtml),
+  });
+
+  return response;
+}

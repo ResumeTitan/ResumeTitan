@@ -1,6 +1,5 @@
 import React from 'react';
-import ResumeContainer from '../../templates/ResumeContainer';
-import HarvardResume from '../../templates/layouts/harvard/Harvard';
+import ResumeContainer from 'templates/ResumeContainer';
 import { IBasicsType, IEducationType, IWorkType } from '../../types/types';
 
 interface ResumeCardProps {
@@ -22,12 +21,14 @@ const ResumeCard: React.FC<ResumeCardProps> = ({
   return (
     <div className="mx-4 border border-2 border-black">
       <ResumeContainer resume={{
-      basics: basics,
-      jobs: work,
-      schools: education,
-      skills: skills,
-      summary: basics.summary,
-    }} theme={theme} />
+          basics: basics,
+          work: work,
+          education: education,
+          skills: skills,
+          summary: basics.summary,
+        }}
+        theme={theme} 
+      />
     </div>
   );
 };

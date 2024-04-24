@@ -23,15 +23,15 @@ export default function HarvardResume({ resume }: HarvardResumeProps) {
           </div>
         )}
         
-        {resume.schools && resume.schools.length > 0 && (
+        {resume.education && resume.education.length > 0 && (
           <div className="pt-1 px-2 w-full">
-            <EducationSection education={resume.schools} />
+            <EducationSection education={resume.education} />
           </div>
         )}
 
-        {resume.jobs && resume.jobs.length > 0 && (
+        {resume.work && resume.work.length > 0 && (
           <div className="pt-1 px-2 w-full">
-            <WorkSection experience={resume.jobs} />
+            <WorkSection experience={resume.work} />
           </div>
         )}
 

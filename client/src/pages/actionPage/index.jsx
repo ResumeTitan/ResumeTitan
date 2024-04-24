@@ -21,13 +21,15 @@ const ResumeComponent = React.forwardRef((props, ref) => (
   <div ref={ref} className="print:!scale-100">
     <ResumeContainer resume={{
       basics: props.basics,
-      jobs: props.jobs,
-      schools: props.schools,
+      work: props.work,
+      education: props.education,
       skills: props.skills,
       summary: props.summary,
-    }} theme={"harvard"} />
+    }} theme={"one-page"} />
   </div>
 ));
+
+
 
 function ActionPage() {
   const location = useLocation();
@@ -124,21 +126,10 @@ function ActionPage() {
    * @description Called when clicking Print to PDF button, calls react-to-print library
    * @todo Fix printing for mobile, gets too many notifications, generate on backend
    */
-  const handleSaveToPdf = useReactToPrint({
-    onBeforePrint: () => {
-      if (window.innerWidth <= LG_SCREEN_WIDTH) {
-        setIsOpen(true);
-      }
-    },
-    content: () => resumeRef.current,
-    documentTitle: 'Resume',
-    pageStyle: '@page { size: A4; margin: 0mm; } @media print { body { -webkit-print-color-adjust: exact; } }',
-    onAfterPrint: () => {
-      if (window.innerWidth <= LG_SCREEN_WIDTH) {
-        setIsOpen(false);
-      }
-    }
-  });
+  const handleSaveToPdf = () => {
+    const resumeHtml = document.getElementById('print-resume').innerHTML;
+    console.log(resumeHtml);
+  }
 
   /**
    * handleGenerateResume
@@ -218,9 +209,7 @@ function ActionPage() {
             education={education}
             skills={skills}
             summary={summary}
-            onPrint={() => {
-              handleSaveToPdf();
-            }}
+            onPrint={handleSaveToPdf}
             onUpdateWork={(jobsIn) => setWork(jobsIn)}
             onUpdateEducation={(schoolsIn) => setEducation(schoolsIn)}
             onUpdateSkills={(skillsIn) => setSkills(skillsIn)}
@@ -249,8 +238,8 @@ function ActionPage() {
           <ResumeComponent 
             basics={basics}
             summary={summary}
-            schools={education}
-            jobs={work}
+            education={education}
+            work={work}
             skills={skills}
             ref={resumeRef}/>
         </div>
@@ -268,8 +257,8 @@ function ActionPage() {
         <ResumeComponent 
           basics={basics}
           summary={summary}
-          schools={education} 
-          jobs={work}
+          education={education} 
+          work={work}
           skills={skills}
           ref={resumeRef}/>
         </div>

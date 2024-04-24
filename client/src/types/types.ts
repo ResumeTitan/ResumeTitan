@@ -30,8 +30,8 @@ export interface IBasicsType {
 
 export interface IResumeType {
   basics: IBasicsType;
-  schools?: IEducationType[];
-  jobs?: IWorkType[];
+  education?: IEducationType[];
+  work?: IWorkType[];
   skills?: string[];
   summary?: string;
 }

@@ -87,6 +87,7 @@ export const createResume = async (req, res) => {
     );
 
     resume.basics.summary = resumeWithResponse.summary;
+    resume.skills = resumeWithResponse.skills;
     delete resume.summary;
     resume.userId = req.user.id;
 
