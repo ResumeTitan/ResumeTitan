@@ -10,6 +10,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import authRoutes from "./routes/auth.js";
 import resumeRoutes from "./routes/resume.js";
+import interviewRoutes from "./routes/interview.js";
 
 /* CONFIGURATIONS */
 const __filename = fileURLToPath(import.meta.url);
@@ -42,6 +43,7 @@ const upload = multer({ storage });
 /* ROUTES */
 app.use("/auth", authRoutes);
 app.use("/resume", resumeRoutes);
+app.use("/interview", interviewRoutes);
 // app.use("/posts", postRoutes);
 // app.use('/search', searchRoutes);
 

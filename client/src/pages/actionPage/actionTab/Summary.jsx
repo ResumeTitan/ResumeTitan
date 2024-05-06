@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Tooltip from 'components/Tooltip';
-import '../index.css';
+import 'styles/index.css';
 
 function Summary ({ initSummary, onUpdate }) {
   const [summary, setSummary] = useState([]);

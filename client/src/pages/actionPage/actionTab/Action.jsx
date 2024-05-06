@@ -8,10 +8,10 @@ import Summary from './Summary';
 import Popup from '../Popup';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import { swapArrayElements } from 'utils';
-import '../index.css';
+import 'styles/index.css';
 
 function ActionTab({
-  basics, 
+  basics,
   work,
   education,
   skills,

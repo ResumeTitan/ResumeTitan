@@ -163,6 +163,11 @@ const ResumeSchema = new mongoose.Schema(
       type: Array,
       default: []
     },
+    theme: {
+      type: String,
+      description: "Theme of the resume selected by the user",
+      default: "default"
+    },
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,

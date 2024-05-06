@@ -3,8 +3,9 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import dayjs, { Dayjs } from 'dayjs';
-import '../index.css';
+import dayjs from 'dayjs';
+import StatePicker from 'components/StatePicker';
+import 'styles/index.css';
 
 function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
   const [schoolForm, setSchoolForm] = useState(editingSchool);
@@ -14,7 +15,11 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
 
   const handleSaveSchool = () => {
     schoolForm.startDate = startDate.toString();
-    schoolForm.endDate = endDate.toString();
+    if (endDateChecked) {
+      schoolForm.endDate = "";
+    } else {
+      schoolForm.endDate = endDate.toString();
+    }
     onSave(schoolForm);
     setSchoolForm({});
   }
@@ -34,6 +39,10 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
     setSchoolForm({ ...schoolForm, [id]: value });
   }
 
+  const handleStateChange = (state) => {
+    setSchoolForm({ ...schoolForm, state: state });
+  }
+
   const handleSchoolContentChange = (content, index) => {
     const newForm = { ...schoolForm };
     newForm.content[index] = content;
@@ -48,7 +57,7 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
 
   const handleEndDateCurrent = () => {
     const endDateCurrent = !endDateChecked;
-    setSchoolForm({ ...schoolForm, endDateCurrent: endDateCurrent });
+    setSchoolForm({ ...schoolForm, endDateCurrent: endDateCurrent, endDate: "" });
     setEndDateChecked(endDateCurrent);
   }
 
@@ -63,7 +72,8 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
           placeholder="Enter school name..."
           onChange={handleSchoolChange}
           value={schoolForm.name || ''}
-          required />
+          required 
+        />
       </div>
       <div className="mb-6">
         <label htmlFor={"area"} className="form-label">Area of Study</label>
@@ -93,14 +103,7 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
         </div>
         <div className="w-full pl-2">
         <label htmlFor={"state"} className="form-label">State</label>
-        <input 
-          type="text"
-          id={"state"}
-          className="form-style"
-          placeholder="Enter state..."
-          value={schoolForm.state || ''}
-          onChange={handleSchoolChange}
-          required />
+        <StatePicker onChange={handleStateChange} initState={schoolForm.state || ""}/>
         </div>
       </div>
 

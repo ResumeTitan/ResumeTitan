@@ -1,14 +1,23 @@
 import React, { useState } from 'react';
-import '../index.css';
+import ThemeSelector from './themeSelector';
+import HarvardImg from 'assets/harvard.png';
+import OnepageImg from 'assets/onepage.png';
+import 'styles/index.css';
 
 interface Props {
   description: string;
   descriptionUsed: boolean;
   onUpdateJobDescription: (jobDescription: string) => void;
   isJobDescriptionUsed: (isJobDescriptionUsed: boolean) => void;
+  onChangeTheme: (theme: string) => void;
 }
 
-const CustomizeTab: React.FC<Props> = ({description, descriptionUsed, onUpdateJobDescription, isJobDescriptionUsed}) => {
+const CustomizeTab: React.FC<Props> = ({description, 
+  descriptionUsed, 
+  onUpdateJobDescription, 
+  isJobDescriptionUsed, 
+  onChangeTheme
+}) => {
   const [isJobDescriptionChecked, setIsJobDescriptionChecked] = useState(descriptionUsed);
   const [jobTitle, setJobTitle] = useState("");
   const [jobDescription, setJobDescription] = useState(description);
@@ -26,6 +35,7 @@ const CustomizeTab: React.FC<Props> = ({description, descriptionUsed, onUpdateJo
   }
 
   return (
+    <>
     <div className="form-section p-2">
       <div>
         <input 
@@ -60,6 +70,14 @@ const CustomizeTab: React.FC<Props> = ({description, descriptionUsed, onUpdateJo
         </div>
       </div>
     </div>
+    <div className="form-section p-2 my-2 font-bold">
+      Theme
+      <ThemeSelector images={[
+        {id: "harvard", url: HarvardImg}, 
+        {id: "one-page", url: OnepageImg}
+      ]} onSelect={(image) => onChangeTheme(image.id)}> </ThemeSelector>
+    </div>
+    </>
   );
 };
 
