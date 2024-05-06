@@ -6,6 +6,7 @@ const initialState = {
   token: null,
   jobs: [],
   activeResume: null,
+  activeInterview: null,
 };
 
 export const authSlice = createSlice({
@@ -36,6 +37,9 @@ export const authSlice = createSlice({
     setActiveResume: (state, action) => {
       state.activeResume = action.payload;
     },
+    setActiveInterview: (state, action) => {
+      state.activeInterview = action.payload;
+    },
   },
 });
 
@@ -48,7 +52,8 @@ export const {
   setJob, 
   addJob, 
   deleteJob, 
-  setActiveResume 
+  setActiveResume,
+  setActiveInterview
 } =
   authSlice.actions;
 export default authSlice.reducer;

@@ -1,24 +1,7 @@
-/* em {
-    color: #999;
-}
-
-ul {
-    margin-bottom: 0;
-}
-
-li {
-    margin-bottom: 2px;
-}
-
-a {
-    text-decoration: none;
-} */
-
 #resume {
     margin: 0 auto;
     padding: 80px 100px;
     background: #fff;
-    border: 1px solid #ccc;
     font: 14px "Times New Roman", Times, sans-serif;
     color: #222;
     line-height: 1.4;
@@ -107,6 +90,15 @@ a {
 blockquote.reference {
     margin: 0;
     margin-bottom: 1em;
+}
+
+
+.name {
+    font-size: 24px;
+}
+
+.skill {
+    margin-bottom: 2px;
 }
 
 

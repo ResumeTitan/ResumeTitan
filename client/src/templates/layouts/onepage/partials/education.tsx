@@ -2,7 +2,7 @@ import React from "react";
 import { formatDate } from '../../../../utils';
 
 interface Education {
-  institution?: string;
+  name?: string;
   startDate?: string;
   endDate?: string;
   studyType?: string;
@@ -28,7 +28,7 @@ const EducationComponent: React.FC<Props> = ({ education }) => {
             <div className="sectionContent">
               {education.map((edu, index) => (
                 <div key={index} className="educationBlock">
-                  <span className="title">{edu.institution}</span>
+                  <span className="title">{edu.name}</span>
                   {edu.startDate && (
                     <span className="date">
                       {formatDate(edu.startDate)} &mdash;{" "}

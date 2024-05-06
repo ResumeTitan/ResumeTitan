@@ -115,14 +115,14 @@ body {
 }
 
 .generate-button {
-  @apply text-white text-center font-medium rounded-lg text-lg w-full px-5 py-3 m-1
+  @apply bg-white text-accent-blue text-center font-medium rounded-lg text-lg w-full px-5 py-3 m-1
     hover:bg-accent-blue hover:cursor-pointer hover:text-light-text
     border-4 border-black
     transition ease-in-out duration-300;
 }
 
 .save-button {
-  @apply text-white text-center font-medium rounded-lg text-lg w-full px-5 py-3 m-1
+  @apply bg-white text-teal-800 text-center font-medium rounded-lg text-lg w-full px-5 py-3 m-1
     hover:bg-teal-800 hover:cursor-pointer hover:text-light-text
     border-4 border-black
     transition ease-in-out duration-300;

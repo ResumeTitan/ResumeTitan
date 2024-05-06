@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import { useLocation } from 'react-router-dom';
 import DetailsExpand from './Details';
-import { createInterview } from 'api/interview';
+import { createInterview, getInterview } from 'api/interview';
 import 'styles/index.css';
 
 interface Interview {
@@ -11,10 +12,48 @@ interface Interview {
 }
 
 const InterviewPage: React.FC = () => {
+  const location = useLocation();
   const token = useSelector((state: any) => state.token);
+  const [interviewId, setInterviewId] = useState('');
   const [jobTitle, setJobTitle] = useState('');
   const [jobDescription, setJobDescription] = useState('');
   const [interview, setInterview] = useState<Interview[]>([]);
+
+  /**
+   * loadInterview
+   * @description Fetch updated resume from mongodb and update states 
+   * @param {string} id The resume id to load
+   * @returns 
+   */
+  const loadInterview = async (id: string) => {
+    try {
+      if (!id) {
+        return;
+      }
+      const { interview } = await getInterview(token, id);
+      setInterview(interview.interview);
+    } catch (err) {
+      console.log(err);
+      throw err;
+    }
+  };
+
+  /**
+   * useEffect
+   * @description hook for if resumeId changes (refresh)
+   */
+    useEffect(() => {
+      const loadInterviewChange = async () => {
+        if (location.state) {
+          setInterviewId(location.state.interviewId);
+          await loadInterview(location.state.interviewId);
+        }
+      }
+      loadInterviewChange().catch((err) => {
+        console.log(err);
+        throw err;
+      });
+    }, [location.state]);
 
   const handleGenerateInterview = async () => {
     try {

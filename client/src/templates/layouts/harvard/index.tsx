@@ -17,9 +17,9 @@ export default function HarvardResume({ resume }: HarvardResumeProps) {
         basics={resume.basics}
       />
       <div>
-        {resume.summary && (
+        {resume.basics.summary && (
           <div className="pt-1 px-2 w-full">
-            <Summary summary={resume.summary}/>
+            <Summary summary={resume.basics.summary}/>
           </div>
         )}
         

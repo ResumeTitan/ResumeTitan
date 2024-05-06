@@ -18,6 +18,10 @@ export default function ResumeContainer({ resume, theme } : Props) {
         { theme === "one-page" && (
           <OnePageResume resume={ resume }/>
         )}
+        {/* Default, remove later */}
+        { theme === "" && (
+          <HarvardResume resume={ resume }/>
+        )}
       </div>
     </div>
   );

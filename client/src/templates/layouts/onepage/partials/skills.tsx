@@ -25,7 +25,7 @@ const SkillsComponent: React.FC<SkillsProps> = ({ skills }) => {
               <ul className="skillBlock">
               {skills.map((skill, index) => (
                   <span key={index}>
-                    <li className="name">{skill}</li>
+                    <li className="skill">{skill}</li>
                   </span>
               ))}
               </ul>

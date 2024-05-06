@@ -3,7 +3,8 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
+import StatePicker from 'components/StatePicker';
 import 'styles/index.css';
 
 function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
@@ -14,7 +15,11 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
 
   const handleSaveJob = () => {
     jobForm.startDate = startDate.toString();
-    jobForm.endDate = endDate.toString();
+    if (endDateChecked) {
+      jobForm.endDate = "";
+    } else {
+      jobForm.endDate = endDate.toString();
+    }
     onSave(jobForm);
     setJobForm({});
   }
@@ -38,6 +43,10 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
     const newForm = { ...jobForm };
     newForm.content[index] = content;
     setJobForm(newForm);
+  }
+
+  const handleStateChange = (state) => {
+    setJobForm({ ...jobForm, state: state });
   }
 
   const handleContentDelete = (index) => {
@@ -91,14 +100,7 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
         </div>
         <div className="w-full pl-2">
         <label htmlFor={"state"} className="form-label-text">State</label>
-        <input 
-          type="text"
-          id={"state"}
-          className="form-style"
-          placeholder="Enter state..."
-          value={jobForm.state || ''}
-          onChange={handleJobChange}
-          required />
+        <StatePicker onChange={handleStateChange} initState={jobForm.state || ""}/>
         </div>
       </div>
 

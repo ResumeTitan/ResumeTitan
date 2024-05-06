@@ -24,8 +24,7 @@ const ResumeComponent = React.forwardRef((props, ref) => (
       work: props.work,
       education: props.education,
       skills: props.skills,
-      summary: props.summary,
-    }} theme={"one-page"} />
+    }} theme={props.theme} />
   </div>
 ));
 
@@ -40,7 +39,7 @@ function ActionPage() {
   const [education, setEducation] = useState([]);
   const [work, setWork] = useState([]);
   const [skills, setSkills] = useState([]);
-  const [summary, setSummary] = useState('');
+  const [theme, setTheme] = useState('harvard');
   const currentUser = useSelector((state) => state.user);
   const isAuth = Boolean(useSelector((state) => state.token));
   const [isLoginOpen, setIsLoginOpen] = useState(false);
@@ -68,10 +67,10 @@ function ActionPage() {
       }
       const { resume } = await getResume(token, id);
       setBasics(resume.basics);
-      setSummary(resume.basics.summary);
       setEducation(resume.education);
       setWork(resume.work);
       setSkills(resume.skills);
+      setTheme(resume.theme);
     } catch (err) {
       console.log(err);
       throw err;
@@ -147,6 +146,7 @@ function ActionPage() {
       work: work,
       education: education,
       basics: basics,
+      theme: theme
     };
     setResumeLoading(true);
     try {
@@ -177,7 +177,8 @@ function ActionPage() {
       work: work,
       education: education,
       basics: basics,
-      skills: skills
+      skills: skills,
+      theme: theme
     };
     setResumeLoading(true);
     try {
@@ -208,12 +209,17 @@ function ActionPage() {
             work={work}
             education={education}
             skills={skills}
-            summary={summary}
+            summary={basics.summary}
             onPrint={handleSaveToPdf}
             onUpdateWork={(jobsIn) => setWork(jobsIn)}
             onUpdateEducation={(schoolsIn) => setEducation(schoolsIn)}
             onUpdateSkills={(skillsIn) => setSkills(skillsIn)}
-            onUpdateSummary={(sum) => setSummary(sum)}
+            onUpdateSummary={(sum) => {
+              setBasics({
+                ...basics,
+                summary: sum
+              });
+            }}
             onUpdateBasics={(basicsIn) => setBasics(basicsIn)}
             onGenerateResume={handleGenerateResume} 
             onSave={handleSaveResume}
@@ -225,6 +231,7 @@ function ActionPage() {
             descriptionUsed={useJobDescription}
             onUpdateJobDescription={(description) => setJobDescription(description)}
             isJobDescriptionUsed={(checked) => setUseJobDescription(checked)}
+            onChangeTheme={(theme) => setTheme(theme)}
           />
         )}
         <div className="w-full">
@@ -237,11 +244,12 @@ function ActionPage() {
         <div className="p-2 origin-top-left lg:w-1/2 xl:w-3/5 ease-linear transform lg:scale-60 xl:scale-90">
           <ResumeComponent 
             basics={basics}
-            summary={summary}
             education={education}
             work={work}
             skills={skills}
-            ref={resumeRef}/>
+            theme={theme}
+            ref={resumeRef}
+          />
         </div>
       )}
 
@@ -256,7 +264,6 @@ function ActionPage() {
         <div className="pt-4 transform translate-12 md:translate-y-36 scale-50 sm:scale-60 lg:scale-75 origin-center print:!scale-100">
         <ResumeComponent 
           basics={basics}
-          summary={summary}
           education={education} 
           work={work}
           skills={skills}

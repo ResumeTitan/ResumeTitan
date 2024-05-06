@@ -39,6 +39,7 @@
         "types/*": ["./types/*"],
         "styles/*": ["./styles/*"],
         "templates/*": ["./templates/*"],
+        "assets/*": ["./assets/*"],
       },
       // Correctly resolve types: https://www.typescriptlang.org/tsconfig#typeRoots
       "typeRoots": [
