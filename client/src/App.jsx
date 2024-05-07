@@ -8,6 +8,7 @@ import LandingPage from './scenes/landingPage';
 import ContactPage from './pages/contact';
 import { Survey } from './pages/survey';
 import { Dashboard } from './pages/dashboard';
+import AboutUs from 'pages/aboutUs';
 
 export default function App() {
   return (
@@ -23,6 +24,7 @@ export default function App() {
           <Route path="/login" element={<Navigate to="/" />} />
           <Route path="/survey" element={<Survey />} />
           <Route path="/contact" element={<ContactPage />} />
+          <Route path="/about" element={<AboutUs />} />
         </Routes>
         <Footer />
       </BrowserRouter>
