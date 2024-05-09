@@ -23,6 +23,15 @@ const AboutUs = () => {
         
       </div>
 
+
+      <div className="py-8">
+        <h1 className="text-3xl font-bold mb-2">Success Stories</h1>
+        <p className="text-gray-600 text-sm leading-relaxed">
+        Collaborating with students at Methodist University, ResumeTitan conducted a user test involving 300 students, revealing insightful feedback. Surprisingly, 65% of participants weren't utilizing any resume creation tool prior to our solution. Impressively, 80% rated our solution with 4 or 5 stars on a scale of 1-5, showcasing its effectiveness and user satisfaction. Notably, 90% found our solution easy to navigate, while an overwhelming 95% expressed willingness to continue using it beyond the test environment. Moreover, students displayed a positive outlook on the integration of AI into society. Leveraging this feedback, ResumeTitan remains committed to refining and enhancing our tool, ensuring an optimal user experience for students navigating their career paths.
+        </p>
+        
+      </div>
+
     </div>
   );
 };
