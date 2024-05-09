@@ -24,7 +24,7 @@ function PersonalInfo ({ initialInfo, onUpdate }) {
     <div className="form-text-main">{"Personal Info"}</div>
 
       {isEditing ? (
-        <div className="">
+        <div>
 
           <div className="p-4 left-right-spacing">
             <div className="w-full pr-2">

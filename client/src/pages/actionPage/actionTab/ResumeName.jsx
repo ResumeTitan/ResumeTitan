@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import EditIcon from '@mui/icons-material/Edit';
-import '../index.css';
+import 'styles/index.css';
 
 function ResumeName({ onPrint }) {
   const [isEditing, setIsEditing] = useState(false);

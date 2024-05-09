@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import '../index.css';
+import 'styles/index.css';
 
 function Skills ({ initSkills, onUpdate }) {
   const [skills, setSkills] = useState([]);

@@ -4,8 +4,8 @@ import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { getResumes, deleteResume } from '../../api/resume';
-import { setActiveResume } from '../../state';
-import { Tabs } from './Tabs';
+import { getInterviews } from '../../api/interview';
+import { setActiveResume, setActiveInterview } from '../../state';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import Popup from './Popup';
@@ -16,36 +16,15 @@ export const Dashboard = () => {
   const currentUser = useSelector((state) => state.user);
   const token = useSelector((state) => state.token);
   const [resumes, setResumes] = useState([]);
+  const [interviews, setInterviews] = useState([]);
   const navigate = useNavigate();
-  const [numResumesShown, setNumResumesShown] = useState(3);
   const [showPopup, setShowPopup] = useState(false);
   const [deleteId, setDeleteId] = useState(0);
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
-    const handleResize = () => {
-      if (window.innerWidth < 512) {
-        setNumResumesShown(1);
-      } else if (window.innerWidth < 680) {
-        setNumResumesShown(2);
-      } else if (window.innerWidth < 940) {
-        setNumResumesShown(3);
-      } else if (window.innerWidth < 940) {
-        setNumResumesShown(4);
-      } else {
-        setNumResumesShown(5);
-      }
-    };
-
-    // Add event listener to window resize
-    window.addEventListener('resize', handleResize);
-    handleResize(); // Initial check on component mount
-
-    return () => {
-      window.removeEventListener('resize', handleResize); // Clean up listener on component unmount
-    };
-  }, [])
-
+  /**
+   * loadResumes
+   * @description Load resumes from the database, sets state
+   */
   const loadResumes = async () => {
     if (!currentUser) {
       return;
@@ -54,9 +33,26 @@ export const Dashboard = () => {
     setResumes(data.resumes);
   };
 
+  /**
+   * loadInterviews
+   * @description Load interviews from the database, sets state
+   */
+  const loadInterviews = async () => {
+    if (!currentUser) {
+      return;
+    }
+    const data = await getInterviews(token, currentUser._id);
+    console.log("interviews", data.interviews);
+    setInterviews(data.interviews);
+  }
+
   const handleClickResume = (resumeId) => {
-    dispatch(setActiveResume(resumeId));
     navigate(`/resume`, {state: {resumeId: resumeId}});
+  }
+
+  const handleClickInterview = (interviewId) => {
+    console.log("interviewId", interviewId);
+    navigate('/interview', {state: {interviewId: interviewId}});
   }
 
   const handleClickedDelete = (resumeIndex) => {
@@ -72,18 +68,20 @@ export const Dashboard = () => {
 
   useEffect(() => {
     loadResumes();
+    loadInterviews();
     dispatch(setActiveResume(null));
   }, []);
 
     // Create an array of ResumeWidget components based on numWidgets
-    const resumeWidgets = Array.from({ length: Math.min(resumes.length, numResumesShown) }, (_, index) => (
+    const resumeWidgets = Array.from({ length: resumes.length }, (_, index) => (
       <div className="hover:cursor-pointer relative group">
         <ResumeCard
           basics={resumes[index].basics}
           education={resumes[index].education}
           work={resumes[index].work}
           skills={resumes[index].skills}
-          theme={"harvard"} />
+          theme={resumes[index].theme} 
+        />
           
         {/* Overlay */}
         <div className="hidden absolute inset-0 bg-gray-800 bg-opacity-25 group-hover:flex group-hover:flex-rows items-center justify-center">
@@ -105,13 +103,33 @@ export const Dashboard = () => {
 
       <div className="text-3xl font-bold bg-slate-700 p-2">My Resumes:</div>
       <button className="mx-4 mt-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-white font-bold py-2 px-4" onClick={() => navigate('/resume')}>Add New</button>
-      <div className="flex lg:min-w-0 w-1/2 h-80 items-start p-2">
-        <div className="transform scale-25 flex origin-top-left">
-          {resumeWidgets}
+      <div className="overflow-x-scroll hide-scrollbar">
+        <div className="flex lg:min-w-0 w-1/2 h-80 items-start p-2">
+          <div className="transform scale-25 flex origin-top-left">
+            {resumeWidgets}
+          </div>
         </div>
       </div>
 
-      <div className="text-3xl font-bold bg-slate-700 p-2 flex">My Interviews:</div>
+      <div>
+        <div className="text-3xl font-bold bg-slate-700 p-2 flex">My Interviews:</div>
+        <button className="mx-4 mt-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-white font-bold py-2 px-4" onClick={() => navigate('/interview')}>Add New</button>
+
+        <div className="overflow-x-scroll hide-scrollbar">
+          <div className="flex lg:min-w-0 w-1/2 h-80 items-start p-2">
+            <div className="flex origin-top-left">
+              {interviews.map((interview, index) => (
+                <div onClick={() => handleClickInterview(interview._id)} className="hover:cursor-pointer relative group">
+                  <div className="bg-gray-800 bg-opacity-25 w-40 h-40 p-2 m-2 rounded-lg">
+                    <div className="text-xl font-bold">{`Interview ${index + 1}`}</div>
+                    <div className="">{`Questions: ${interview.interview.length}`}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* <Tabs onTabClick={() => {}}/> */}
 

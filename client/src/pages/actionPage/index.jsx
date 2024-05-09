@@ -11,7 +11,7 @@ import { createResume, updateResume } from 'api/resume';
 import Spinner from 'components/Spinner';
 import { LoginForm } from 'components/LoginForm';
 import { getResume } from 'api/resume';
-import './index.css';
+import 'styles/index.css';
 const LG_SCREEN_WIDTH = 1024;
 
 // This page should do all loading, other pages do rendering
@@ -21,13 +21,14 @@ const ResumeComponent = React.forwardRef((props, ref) => (
   <div ref={ref} className="print:!scale-100">
     <ResumeContainer resume={{
       basics: props.basics,
-      jobs: props.jobs,
-      schools: props.schools,
+      work: props.work,
+      education: props.education,
       skills: props.skills,
-      summary: props.summary,
-    }} theme={"harvard"} />
+    }} theme={props.theme} />
   </div>
 ));
+
+
 
 function ActionPage() {
   const location = useLocation();
@@ -38,7 +39,7 @@ function ActionPage() {
   const [education, setEducation] = useState([]);
   const [work, setWork] = useState([]);
   const [skills, setSkills] = useState([]);
-  const [summary, setSummary] = useState('');
+  const [theme, setTheme] = useState('harvard');
   const currentUser = useSelector((state) => state.user);
   const isAuth = Boolean(useSelector((state) => state.token));
   const [isLoginOpen, setIsLoginOpen] = useState(false);
@@ -66,10 +67,10 @@ function ActionPage() {
       }
       const { resume } = await getResume(token, id);
       setBasics(resume.basics);
-      setSummary(resume.basics.summary);
       setEducation(resume.education);
       setWork(resume.work);
       setSkills(resume.skills);
+      setTheme(resume.theme);
     } catch (err) {
       console.log(err);
       throw err;
@@ -124,21 +125,10 @@ function ActionPage() {
    * @description Called when clicking Print to PDF button, calls react-to-print library
    * @todo Fix printing for mobile, gets too many notifications, generate on backend
    */
-  const handleSaveToPdf = useReactToPrint({
-    onBeforePrint: () => {
-      if (window.innerWidth <= LG_SCREEN_WIDTH) {
-        setIsOpen(true);
-      }
-    },
-    content: () => resumeRef.current,
-    documentTitle: 'Resume',
-    pageStyle: '@page { size: A4; margin: 0mm; } @media print { body { -webkit-print-color-adjust: exact; } }',
-    onAfterPrint: () => {
-      if (window.innerWidth <= LG_SCREEN_WIDTH) {
-        setIsOpen(false);
-      }
-    }
-  });
+  const handleSaveToPdf = () => {
+    const resumeHtml = document.getElementById('print-resume').innerHTML;
+    console.log(resumeHtml);
+  }
 
   /**
    * handleGenerateResume
@@ -156,6 +146,7 @@ function ActionPage() {
       work: work,
       education: education,
       basics: basics,
+      theme: theme
     };
     setResumeLoading(true);
     try {
@@ -186,7 +177,8 @@ function ActionPage() {
       work: work,
       education: education,
       basics: basics,
-      skills: skills
+      skills: skills,
+      theme: theme
     };
     setResumeLoading(true);
     try {
@@ -204,7 +196,7 @@ function ActionPage() {
   }
 
   return (
-    <div className="flex justify-center min-h-screen bg-slate-400">
+    <div className="page-container">
       {resumeLoading && (
         <Spinner />
       )}
@@ -217,14 +209,17 @@ function ActionPage() {
             work={work}
             education={education}
             skills={skills}
-            summary={summary}
-            onPrint={() => {
-              handleSaveToPdf();
-            }}
+            summary={basics.summary}
+            onPrint={handleSaveToPdf}
             onUpdateWork={(jobsIn) => setWork(jobsIn)}
             onUpdateEducation={(schoolsIn) => setEducation(schoolsIn)}
             onUpdateSkills={(skillsIn) => setSkills(skillsIn)}
-            onUpdateSummary={(sum) => setSummary(sum)}
+            onUpdateSummary={(sum) => {
+              setBasics({
+                ...basics,
+                summary: sum
+              });
+            }}
             onUpdateBasics={(basicsIn) => setBasics(basicsIn)}
             onGenerateResume={handleGenerateResume} 
             onSave={handleSaveResume}
@@ -236,6 +231,7 @@ function ActionPage() {
             descriptionUsed={useJobDescription}
             onUpdateJobDescription={(description) => setJobDescription(description)}
             isJobDescriptionUsed={(checked) => setUseJobDescription(checked)}
+            onChangeTheme={(theme) => setTheme(theme)}
           />
         )}
         <div className="w-full">
@@ -248,11 +244,12 @@ function ActionPage() {
         <div className="p-2 origin-top-left lg:w-1/2 xl:w-3/5 ease-linear transform lg:scale-60 xl:scale-90">
           <ResumeComponent 
             basics={basics}
-            summary={summary}
-            schools={education}
-            jobs={work}
+            education={education}
+            work={work}
             skills={skills}
-            ref={resumeRef}/>
+            theme={theme}
+            ref={resumeRef}
+          />
         </div>
       )}
 
@@ -267,9 +264,8 @@ function ActionPage() {
         <div className="pt-4 transform translate-12 md:translate-y-36 scale-50 sm:scale-60 lg:scale-75 origin-center print:!scale-100">
         <ResumeComponent 
           basics={basics}
-          summary={summary}
-          schools={education} 
-          jobs={work}
+          education={education} 
+          work={work}
           skills={skills}
           ref={resumeRef}/>
         </div>

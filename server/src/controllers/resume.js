@@ -29,7 +29,7 @@ const getPrompt = (resume, jobDescription) => {
   In education, if a school name is recognized, use the full name of that school in the value of the JSON output.
   In education, if a major is recognized, use the full name of that major in the value of the JSON output.
 
-  In work, the content field shall be an array of strings with responsibilities/skills an employee has. The array should contain at least 4 strings, in full sentences. This content should not repeat the name of the employer.
+  In work, the content field shall be an array of strings with responsibilities/skills an employee has. The array must contain at least 4 strings, in full sentences. This content should not repeat the name of the employer. If content already exists, generate new content that would be associated with the job title entered.
   In work, if a job title is recognized, use the full name of that job title in the value of the JSON output.
   In work, if a company is recognized, use the full name of that company in the value of the JSON output.
 
@@ -87,6 +87,7 @@ export const createResume = async (req, res) => {
     );
 
     resume.basics.summary = resumeWithResponse.summary;
+    resume.skills = resumeWithResponse.skills;
     delete resume.summary;
     resume.userId = req.user.id;
 

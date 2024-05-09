@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import SchoolEditor from './SchoolEditor';
 import SchoolIcon from '@mui/icons-material/School';
-import '../index.css';
+import 'styles/index.css';
 
 function Schools({ education, onSave, onDelete }) {
   const [isEditing, setIsEditing] = useState(false);
