@@ -138,11 +138,12 @@ blockquote.reference {
 @media print {
     body {
         background: #FFFFFF;
+        color: #000;
+        width: 8.5in;
+        height: 11in;
     }
     #resume {
         margin: 0 auto;
-        max-width: 600px;
-        padding: 0px 0px;
         border: 0px;
         background: #fff;
         box-shadow: none;

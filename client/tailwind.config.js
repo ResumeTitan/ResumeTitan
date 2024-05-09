@@ -35,6 +35,9 @@ module.exports = {
         '60': '0.60',
         '90': '0.90',
       },
+      aspectRatio: {
+        resume: '210/296',
+      },
     },
   },
   plugins: [],

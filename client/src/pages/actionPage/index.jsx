@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useReactToPrint } from 'react-to-print';
-import DocumentScannerIcon from '@mui/icons-material/DocumentScanner';
 import ActionTab from './actionTab/Action';
 import CustomizeTab from './customizeTab';
 import Tabs from './Tabs';
@@ -18,7 +17,7 @@ const LG_SCREEN_WIDTH = 1024;
 
 // The resume reference
 const ResumeComponent = React.forwardRef((props, ref) => (
-  <div ref={ref} className="print:!scale-100">
+  <div ref={ref}>
     <ResumeContainer resume={{
       basics: props.basics,
       work: props.work,
@@ -43,6 +42,7 @@ function ActionPage() {
   const currentUser = useSelector((state) => state.user);
   const isAuth = Boolean(useSelector((state) => state.token));
   const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [isPrinting, setIsPrinting] = useState(false);
   const [basics, setBasics] = useState({
     name: `${currentUser.firstName} ${currentUser.lastName}`,
     email: currentUser.email,
@@ -75,15 +75,6 @@ function ActionPage() {
       console.log(err);
       throw err;
     }
-  };
-
-  /**
-   * togglePopup
-   * @description Called by mobile viewer icon (DocumentScanner)
-   *    
-   */
-  const togglePopup = () => {
-    setIsOpen(!isOpen);
   };
 
   /**
@@ -125,10 +116,15 @@ function ActionPage() {
    * @description Called when clicking Print to PDF button, calls react-to-print library
    * @todo Fix printing for mobile, gets too many notifications, generate on backend
    */
-  const handleSaveToPdf = () => {
-    const resumeHtml = document.getElementById('print-resume').innerHTML;
-    console.log(resumeHtml);
-  }
+  const handleSaveToPdf = useReactToPrint({
+    content: () => resumeRef.current,
+    onBeforePrint: () => {
+      setIsPrinting(true);
+    },
+    onAfterPrint: () => {
+      setIsPrinting(false);
+    }
+  });
 
   /**
    * handleGenerateResume
@@ -238,10 +234,22 @@ function ActionPage() {
           <button onClick={handleGenerateResume} className="generate-button">Generate Resume</button>
           <button onClick={handleSaveResume} className="save-button">Save and Exit</button>
         </div>
+
+      {/* Printing view */}
+      <div className="flex flex-col mb-2 lg:hidden">
+        <ResumeComponent 
+          basics={basics}
+          education={education}
+          work={work}
+          skills={skills}
+          theme={theme}
+          ref={resumeRef}
+        />
+      </div>
+
       </div>
       {/* Desktop View */}
-      {showResume && (
-        <div className="p-2 origin-top-left lg:w-1/2 xl:w-3/5 ease-linear transform lg:scale-60 xl:scale-90">
+        <div className="hidden lg:block p-2 origin-top-left lg:w-1/2 xl:w-3/5 ease-linear transform lg:scale-60 xl:scale-90">
           <ResumeComponent 
             basics={basics}
             education={education}
@@ -251,25 +259,6 @@ function ActionPage() {
             ref={resumeRef}
           />
         </div>
-      )}
-
-      {!showResume && (
-        <div className="fixed bottom-8 right-8 hover:cursor-pointer" onClick={togglePopup}>
-          <DocumentScannerIcon className="text-white" style={{ fontSize: 70 }}/>
-        </div>
-      )}
-
-      {/* Mobile View */}
-      <div className={`${isOpen ? "fixed": "hidden"} bg-black bg-opacity-50 flex justify-center items-center w-full h-full top-0`} onClick={togglePopup}>
-        <div className="pt-4 transform translate-12 md:translate-y-36 scale-50 sm:scale-60 lg:scale-75 origin-center print:!scale-100">
-        <ResumeComponent 
-          basics={basics}
-          education={education} 
-          work={work}
-          skills={skills}
-          ref={resumeRef}/>
-        </div>
-      </div>
 
       {isLoginOpen && (
         <LoginForm

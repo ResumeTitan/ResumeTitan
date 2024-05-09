@@ -149,6 +149,8 @@ body {
   body {
     width: 8.5in;
     height: 11in;
+    background: #FFFFFF;
+    color: #000;
   }
 
   .print-content {
