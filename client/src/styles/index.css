@@ -146,6 +146,8 @@ body {
 }
 
 @media print {
+  #controls, .footer, .footerarea{ display: none; }
+
   body {
     width: 8.5in;
     height: 11in;
@@ -157,5 +159,9 @@ body {
     width: 100%;
     height: 100%;
     box-sizing: border-box;
+  }
+
+  @page {
+    size: 210mm 296mm
   }
 }

@@ -42,7 +42,6 @@ export const Dashboard = () => {
       return;
     }
     const data = await getInterviews(token, currentUser._id);
-    console.log("interviews", data.interviews);
     setInterviews(data.interviews);
   }
 
@@ -51,7 +50,6 @@ export const Dashboard = () => {
   }
 
   const handleClickInterview = (interviewId) => {
-    console.log("interviewId", interviewId);
     navigate('/interview', {state: {interviewId: interviewId}});
   }
 

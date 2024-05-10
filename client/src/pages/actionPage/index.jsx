@@ -11,13 +11,23 @@ import Spinner from 'components/Spinner';
 import { LoginForm } from 'components/LoginForm';
 import { getResume } from 'api/resume';
 import 'styles/index.css';
+import { styled } from '@mui/system';
+import DescriptionIcon from '@mui/icons-material/Description';
+
+const CustomIcon = styled(DescriptionIcon)({
+  backgroundColor: 'white',
+  color: 'black',
+  fontSize: '72px',
+  borderRadius: '10%'
+});
+
 const LG_SCREEN_WIDTH = 1024;
 
 // This page should do all loading, other pages do rendering
 
 // The resume reference
 const ResumeComponent = React.forwardRef((props, ref) => (
-  <div ref={ref}>
+  <div className={"text-black"} ref={ref}>
     <ResumeContainer resume={{
       basics: props.basics,
       work: props.work,
@@ -119,10 +129,9 @@ function ActionPage() {
   const handleSaveToPdf = useReactToPrint({
     content: () => resumeRef.current,
     onBeforePrint: () => {
-      setIsPrinting(true);
-    },
-    onAfterPrint: () => {
-      setIsPrinting(false);
+      if (window.innerWidth < LG_SCREEN_WIDTH) {
+        setIsOpen(true);
+      }
     }
   });
 
@@ -235,8 +244,13 @@ function ActionPage() {
           <button onClick={handleSaveResume} className="save-button">Save and Exit</button>
         </div>
 
-      {/* Printing view */}
-      <div className="flex flex-col mb-2 lg:hidden">
+        <div onClick={() => setIsOpen(true)} className="fixed bottom-8 right-8 hover:cursor-pointer lg:hidden">
+          <CustomIcon />
+        </div>
+
+      </div>
+      {/* Desktop View */}
+      <div className="hidden lg:block p-2 origin-top-left lg:w-1/2 xl:w-3/5 ease-linear transform lg:scale-60 xl:scale-90">
         <ResumeComponent 
           basics={basics}
           education={education}
@@ -247,18 +261,18 @@ function ActionPage() {
         />
       </div>
 
-      </div>
-      {/* Desktop View */}
-        <div className="hidden lg:block p-2 origin-top-left lg:w-1/2 xl:w-3/5 ease-linear transform lg:scale-60 xl:scale-90">
-          <ResumeComponent 
-            basics={basics}
-            education={education}
-            work={work}
-            skills={skills}
-            theme={theme}
-            ref={resumeRef}
-          />
+      {/* Mobile View */}
+      <div className={`${isOpen ? "fixed": "hidden"} bg-black bg-opacity-50 flex justify-center items-center w-full h-full top-0`} onClick={() => setIsOpen(false)}>
+        <div className="pt-4 transform translate-12 md:translate-y-24 scale-50 sm:scale-60 lg:scale-75 origin-center print:!scale-100">
+        <ResumeComponent 
+          basics={basics}
+          education={education} 
+          work={work}
+          skills={skills}
+          theme={theme}
+          ref={resumeRef}/>
         </div>
+      </div>
 
       {isLoginOpen && (
         <LoginForm
