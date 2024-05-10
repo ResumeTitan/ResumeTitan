@@ -75,7 +75,6 @@ export const createInterview = async (req, res) => {
 export const getInterviews = async (req, res) => {
   try {
     const interviews = await Interview.find({ userId: req.user.id });
-    console.log("interviews", interviews);
     res.status(200).json({ interviews });
   } catch (error) {
     console.log("Error: ", error);
