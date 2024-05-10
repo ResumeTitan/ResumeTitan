@@ -20,8 +20,13 @@ export default function Footer() {
           </a>
         </li>
         <li>
-          <a href="/survey" className="text-gray-600">
+          <a href="/survey" className="text-gray-600 pr-4">
             Have Feedback?
+          </a>
+        </li>
+        <li>
+          <a href="/about" className="text-gray-600">
+            About Us
           </a>
         </li>
         </ul>

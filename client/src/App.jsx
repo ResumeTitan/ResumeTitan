@@ -10,6 +10,7 @@ import InterviewPage from './pages/interviewHelper';
 import TipPage from './pages/tipPage';
 import { Survey } from './pages/survey';
 import { Dashboard } from './pages/dashboard';
+import AboutUs from 'pages/aboutUs';
 
 export default function App() {
   return (
@@ -25,6 +26,7 @@ export default function App() {
           <Route path="/login" element={<Navigate to="/" />} />
           <Route path="/survey" element={<Survey />} />
           <Route path="/contact" element={<ContactPage />} />
+          <Route path="/about" element={<AboutUs />} />
           <Route path="/interview" element={<InterviewPage />} />
           <Route path="/tip" element={<TipPage />} />
           <Route path="*" element={<Navigate to="/" />} />
