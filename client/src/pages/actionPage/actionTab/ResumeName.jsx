@@ -54,7 +54,7 @@ function ResumeName({ onPrint }) {
         </div>
         <div>
           <button onClick={handlePrint} className="border-2 submitButton">
-            {"Print to PDF"}
+            {"Save as PDF"}
           </button>
         </div>
       </div>

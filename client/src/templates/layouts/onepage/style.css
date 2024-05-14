@@ -76,7 +76,9 @@
 
 .skillBlock {
     margin-bottom: 4px;
-    @apply grid grid-cols-2 gap-2;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.5rem;
 }
 
 .jobBlock {
@@ -92,7 +94,6 @@ blockquote.reference {
     margin-bottom: 1em;
 }
 
-
 .name {
     font-size: 24px;
 }
@@ -104,52 +105,13 @@ blockquote.reference {
 
 /* Media Queries */
 
-@media only screen and (max-width: 40em) {
-    body {
-        margin: 0;
-        font-size: 14px;
-    }
-    #resume {
-        margin: 0 auto;
-        max-width: 600px;
-        padding: 0.5em 1em;
-        border: none;
-    }
-    .sectionBlock {
-        flex-direction: column;
-    }
-    .sectionContent {
-        width: 100%;
-    }
-    .sectionContent .date {
-        padding-right: 2em;
-    }
-    .sectionName {
-        width: auto;
-    }
-    .largeFont {
-        font-size: 20px;
-    }
-    .smallFont {
-        font-size: 14px;
-    }
+@page {
+    size: A4;
+    margin: 0;
 }
-
 @media print {
-    body {
-        background: #FFFFFF;
-        color: #000;
-        width: 8.5in;
-        height: 11in;
-    }
-    #resume {
-        margin: 0 auto;
-        border: 0px;
-        background: #fff;
-        box-shadow: none;
-        -webkit-box-shadow: none;
-    }
-    a {
-        color: black;
+    html, body {
+        width: 210mm;
+        height: 297mm;
     }
 }

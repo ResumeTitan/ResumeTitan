@@ -29,6 +29,7 @@ export interface IBasicsType {
 }
 
 export interface IResumeType {
+  theme?: string;
   basics: IBasicsType;
   education?: IEducationType[];
   work?: IWorkType[];

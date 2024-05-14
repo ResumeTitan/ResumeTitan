@@ -1,15 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useReactToPrint } from 'react-to-print';
 import ActionTab from './actionTab/Action';
 import CustomizeTab from './customizeTab';
 import Tabs from './Tabs';
 import ResumeContainer from 'templates/ResumeContainer';
-import { createResume, updateResume } from 'api/resume';
+import { getResume, createResume, updateResume, getResumeAsPdf } from 'api/resume';
 import Spinner from 'components/Spinner';
 import { LoginForm } from 'components/LoginForm';
-import { getResume } from 'api/resume';
 import 'styles/index.css';
 import { styled } from '@mui/system';
 import DescriptionIcon from '@mui/icons-material/Description';
@@ -21,13 +19,11 @@ const CustomIcon = styled(DescriptionIcon)({
   borderRadius: '10%'
 });
 
-const LG_SCREEN_WIDTH = 1024;
-
 // This page should do all loading, other pages do rendering
 
 // The resume reference
 const ResumeComponent = React.forwardRef((props, ref) => (
-  <div className={"text-black"} ref={ref}>
+  <div ref={ref}>
     <ResumeContainer resume={{
       basics: props.basics,
       work: props.work,
@@ -37,13 +33,10 @@ const ResumeComponent = React.forwardRef((props, ref) => (
   </div>
 ));
 
-
-
 function ActionPage() {
   const location = useLocation();
   const token = useSelector((state) => state.token);
   const [resumeId, setResumeId] = useState(null);
-  const [showResume, setShowResume] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [education, setEducation] = useState([]);
   const [work, setWork] = useState([]);
@@ -52,7 +45,6 @@ function ActionPage() {
   const currentUser = useSelector((state) => state.user);
   const isAuth = Boolean(useSelector((state) => state.token));
   const [isLoginOpen, setIsLoginOpen] = useState(false);
-  const [isPrinting, setIsPrinting] = useState(false);
   const [basics, setBasics] = useState({
     name: `${currentUser.firstName} ${currentUser.lastName}`,
     email: currentUser.email,
@@ -65,7 +57,7 @@ function ActionPage() {
   const [useJobDescription, setUseJobDescription] = useState(false);
 
   /**
-   * loadResume
+   * @function loadResume
    * @description Fetch updated resume from mongodb and update states 
    * @param {string} id The resume id to load
    * @returns 
@@ -88,24 +80,7 @@ function ActionPage() {
   };
 
   /**
-   * useEffect
-   * @description hook called when resizing page, show resume preview if screen large enough
-   */
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth > LG_SCREEN_WIDTH) {
-        setShowResume(true);
-      } else {
-        setShowResume(false);
-      }
-    };
-    window.addEventListener("resize", handleResize);
-    handleResize();
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  /**
-   * useEffect
+   * @function useEffect
    * @description hook for if resumeId changes (refresh)
    */
   useEffect(() => {
@@ -122,21 +97,34 @@ function ActionPage() {
   }, [location.state]);
 
   /**
-   * handleSaveToPdf
+   * @function handleSaveToPdf
    * @description Called when clicking Print to PDF button, calls react-to-print library
    * @todo Fix printing for mobile, gets too many notifications, generate on backend
    */
-  const handleSaveToPdf = useReactToPrint({
-    content: () => resumeRef.current,
-    onBeforePrint: () => {
-      if (window.innerWidth < LG_SCREEN_WIDTH) {
-        setIsOpen(true);
-      }
+  const handleSaveToPdf = async () => {
+    const response = await getResumeAsPdf(token, location.state.resumeId);
+    try {
+      const pdf = await response.blob();
+      // Create a URL for the Blob
+      const url = URL.createObjectURL(pdf);
+
+      // Create an <a> element to trigger the download
+      const a = document.createElement('a');
+      a.href = url;
+      a.target = '_blank';
+      a.download = 'resume.pdf';
+      a.click();
+
+      // Clean up the URL object after the download is initiated
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.log(error);
+      throw error;
     }
-  });
+  };
 
   /**
-   * handleGenerateResume
+   * @function handleGenerateResume
    * @description Calls backend when clicking Generate Resume
    *    Check Auth first, if not logged in prompt login
    *    Start loading spinner
@@ -167,7 +155,7 @@ function ActionPage() {
   }
 
   /**
-   * handleSaveResume
+   * @function handleSaveResume
    * @description Save current state of resume, only works if logged in
    *    Redirect to dashboard
    */
@@ -270,7 +258,8 @@ function ActionPage() {
           work={work}
           skills={skills}
           theme={theme}
-          ref={resumeRef}/>
+          ref={resumeRef}
+        />
         </div>
       </div>
 

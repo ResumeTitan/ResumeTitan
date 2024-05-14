@@ -49,6 +49,9 @@ export const getResume = async (token, resumeId) => {
     }
   });
 
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}, error: ${JSON.stringify(await response.json())}`);
+  }
   return response.json();
 }
 
@@ -84,14 +87,20 @@ export const deleteResume = async (token, resumeId) => {
   return response.json();
 }
 
-export const saveResumeAsPdf = async (token, resumeHtml) => {
-  const response = await fetch(`${API_URL}/resume/pdf`, {
-    method: "POST",
+/**
+ * @function getResumeAsPdf
+ * @description Send request to backend to retrieve file as PDF
+ * @param {string} token Auth token for a logged in user
+ * @param {string} id The id of the resume to print
+ * @returns Successful response object
+ */
+export const getResumeAsPdf = async (token, id) => {
+  const response = await fetch(`${API_URL}/resume/print/${id}`, {
+    method: "GET",
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`
-    },
-    body: JSON.stringify({ htmlContent: resumeHtml }),
+    }
   });
 
   if (!response.ok) {

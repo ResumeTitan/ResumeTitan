@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import DetailsExpand from './Details';
+import Spinner from 'components/Spinner';
 import { createInterview, getInterview } from 'api/interview';
 import 'styles/index.css';
 
@@ -14,10 +15,10 @@ interface Interview {
 const InterviewPage: React.FC = () => {
   const location = useLocation();
   const token = useSelector((state: any) => state.token);
-  const [interviewId, setInterviewId] = useState('');
   const [jobTitle, setJobTitle] = useState('');
   const [jobDescription, setJobDescription] = useState('');
   const [interview, setInterview] = useState<Interview[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   /**
    * loadInterview
@@ -26,14 +27,19 @@ const InterviewPage: React.FC = () => {
    * @returns 
    */
   const loadInterview = async (id: string) => {
+    setIsLoading(true);
     try {
       if (!id) {
         return;
       }
       const { interview } = await getInterview(token, id);
       setInterview(interview.interview);
+      setJobTitle(interview.jobTitle);
+      setJobDescription(interview.jobDescription);
+      setIsLoading(false);
     } catch (err) {
       console.log(err);
+      setIsLoading(false);
       throw err;
     }
   };
@@ -45,7 +51,6 @@ const InterviewPage: React.FC = () => {
     useEffect(() => {
       const loadInterviewChange = async () => {
         if (location.state) {
-          setInterviewId(location.state.interviewId);
           await loadInterview(location.state.interviewId);
         }
       }
@@ -57,9 +62,10 @@ const InterviewPage: React.FC = () => {
 
   const handleGenerateInterview = async () => {
     try {
+      setIsLoading(true);
       const { interview } = await createInterview(token, jobTitle, jobDescription);
-      console.log('interview', interview.interview);
       setInterview(interview.interview);
+      setIsLoading(false);
     } catch (error) {
       console.error(error);
     }
@@ -121,7 +127,10 @@ const InterviewPage: React.FC = () => {
         )}
 
       </div>
-      
+
+      { isLoading && (
+        <Spinner />
+      )}
     </div>
   );
 };

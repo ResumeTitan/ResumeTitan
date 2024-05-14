@@ -173,11 +173,11 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
 
 
       <div className="my-6">
-        <label htmlFor={"notes"} className="form-label">Notes</label>
+        <label htmlFor={"notes"} className="form-label">Add details</label>
         <textarea 
           id={"notes"}
           className="form-style"
-          placeholder="Enter a description about your time at school..."
+          placeholder="Add a few details about your time at school..."
           value={schoolForm.notes || ''}
           onChange={handleSchoolChange}
           required 

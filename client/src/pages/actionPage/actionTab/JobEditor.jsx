@@ -157,11 +157,11 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
       </div>
 
       <div className="my-6">
-        <label htmlFor={"notes"} className="form-label-text">Notes</label>
+        <label htmlFor={"notes"} className="form-label-text">Add details</label>
         <textarea 
           id={"notes"}
           className="form-style"
-          placeholder="Math club, passed organic chemistry, etc."
+          placeholder="Add a few details about your work experience..."
           value={jobForm.notes || ''}
           onChange={handleJobChange}
           required 

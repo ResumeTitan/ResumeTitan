@@ -14,4 +14,14 @@ export const swapArrayElements = (array: any[], index1: number, index2: number) 
   let tempEl = array[index1];
   array[index1] = array[index2]
   array[index2] = tempEl;
+};
+
+export const formatDateFull = (date: Date) => {
+  const inputDate = new Date(date);
+  const formattedDate = inputDate.toLocaleString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+  return formattedDate;
 }

@@ -54,11 +54,10 @@ export const deleteInterview = async (token: string, id: string) => {
     }
   });
 
-  const data = await response.json();
   if (!response.ok) {
-    throw new Error(data.message);
+    throw new Error(response.statusText);
   }
-  return data;
+  return response;
 }
 
 export const getInterview = async (token: string, id: string) => {

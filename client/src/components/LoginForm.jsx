@@ -234,6 +234,7 @@ export const LoginForm = ({ onCloseLogin, registerOpen }) => {
 
           <div className="flex items-center justify-between mb-4">
             <button
+              id="submitLogin"
               type="submit"
               className="bg-accent-blue hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             >

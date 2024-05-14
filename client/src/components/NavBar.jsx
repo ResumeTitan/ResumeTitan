@@ -109,7 +109,7 @@ const NavBar = () => {
           }`}
         >
           <a
-            href="/dashboard"
+            href={user ? "/dashboard" : "/"}
             className="font-outline-2 flex font-bold text-xl tracking-tight text-white"
           >
             {mobileScreen ? (
@@ -130,6 +130,7 @@ const NavBar = () => {
         ) : (
           <div className="flex items-center">
             <button
+              id="loginBtn"
               href="/login"
               className="text-md px-2 py-2 font-bold leading-none border border-4 rounded text-white border-white hover:border-transparent hover:bg-white hover:text-teal-800 items-center transition duration-300 ease-in-out"
               onClick={handleLoginLogout}

@@ -10,7 +10,7 @@ const TipPage: React.FC = () => {
   };
 
   return (
-    <div className="bg-slate-700 flex flex-col items-center justify-center min-h-screen py-12 bg-gray-100">
+    <div className="bg-slate-700 flex flex-col items-center min-h-screen py-2 lg:py-8 bg-gray-100">
       <div className="w-full max-w-lg px-4 py-8 bg-white shadow-md rounded-lg">
         <h1 className="text-3xl font-bold text-center mb-4">Leave us a tip</h1>
         <p className="text-gray-600 text-center mb-8">
