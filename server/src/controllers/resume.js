@@ -1,8 +1,11 @@
 import { ChatGPTAPI } from 'chatgpt';
+import puppeteer from 'puppeteer';
+import locateChrome from 'locate-chrome';
 import Resume from "../models/Resume.js";
 
 import dotenv from "dotenv";
 dotenv.config();
+const CLIENT_URL = process.env.CLIENT_URL;
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 const gpt = new ChatGPTAPI({apiKey: OPENAI_API_KEY});
 
@@ -162,3 +165,55 @@ export const deleteResume = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+/**
+ * @function getResumeAsPdf
+ * @descripton Uses puppeteer library to render resume page then save as pdf
+ * @param {Request} req
+ * @param {Response} res
+ */
+export const getResumeAsPdf = async (req, res) => {
+  const id = req.params.id;
+
+  // Authenticate data
+  const resume = await Resume.findById(id);
+  if (!resume) {
+    return res.status(400).send('Resume not found, cannot authenticate print');
+  }
+  if (!resume.userId) {
+    return res.status(401).send('User not known, cannot authenticate print');
+  }
+
+  try {
+    const executablePath = await new Promise(resolve => locateChrome((arg) => resolve(arg))) || '';
+    const browser = await puppeteer.launch({ 
+      args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
+      headless: true,
+      executablePath,
+      ignoreHTTPSErrors: true
+    });
+    const page = await browser.newPage();
+
+    // Login and load page
+    await page.goto(CLIENT_URL);
+    await page.click('#loginBtn');
+    await page.type('#email', 'test@test.com');
+    await page.type('#password', 'test');
+    await page.click('#submitLogin');
+    await page.waitForNavigation();
+
+    await page.goto(`${CLIENT_URL}/print-resume/${id}`, { waitUntil: 'networkidle0' });
+    const pdfBuffer = await page.pdf();
+    await browser.close();
+
+    // Return the PDF buffer
+    res.set({
+      'Content-Type': 'application/pdf',
+      'Content-Disposition': 'attachment; filename="resume.pdf"',
+    });
+    res.send(pdfBuffer);
+  } catch (error) {
+    console.error('Error generating PDF:', error);
+    res.status(500).send('Internal Server Error');
+  }
+}

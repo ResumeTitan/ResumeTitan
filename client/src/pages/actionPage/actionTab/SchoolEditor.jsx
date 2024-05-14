@@ -5,6 +5,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
 import StatePicker from 'components/StatePicker';
+import DegreePicker from 'components/DegreePicker';
 import 'styles/index.css';
 
 function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
@@ -41,6 +42,16 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
 
   const handleStateChange = (state) => {
     setSchoolForm({ ...schoolForm, state: state });
+  }
+
+  /**
+   * @function handleDegreeChange
+   * @description Handle the change of the degree type
+   * @param {string} degree Name of the study type/degree
+   * @returns {void}
+   */
+  const handleDegreeChange = (degree) => {
+    setSchoolForm({ ...schoolForm, studyType: degree });
   }
 
   const handleSchoolContentChange = (content, index) => {
@@ -88,8 +99,12 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
         />
       </div>
 
+      <div className="w-full mb-6 pr-2">
+        <label htmlFor={"studyType"} className="form-label">Degree</label>
+        <DegreePicker onChange={handleDegreeChange}/>
+      </div>
 
-      <div className="mb-6 left-right-spacing">
+      <div className="mb-2 left-right-spacing">
         <div className="w-full pr-2">
         <label htmlFor={"city"} className="form-label">City</label>
         <input 
@@ -106,18 +121,6 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
         <StatePicker onChange={handleStateChange} initState={schoolForm.state || ""}/>
         </div>
       </div>
-
-      <div className="w-full pr-2">
-        <label htmlFor={"studyType"} className="form-label">Degree</label>
-        <input 
-          type="text"
-          id={"studyType"}
-          className="form-style"
-          placeholder="Enter degree type..."
-          value={schoolForm.studyType || ''}
-          onChange={handleSchoolChange}
-          required />
-        </div>
 
       <div className="mb-6 left-right-spacing pt-4">
         <div className="w-full pr-2">
@@ -170,11 +173,11 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
 
 
       <div className="my-6">
-        <label htmlFor={"notes"} className="form-label">Notes</label>
+        <label htmlFor={"notes"} className="form-label">Add details</label>
         <textarea 
           id={"notes"}
           className="form-style"
-          placeholder="Enter a description about your time at school..."
+          placeholder="Add a few details about your time at school..."
           value={schoolForm.notes || ''}
           onChange={handleSchoolChange}
           required 

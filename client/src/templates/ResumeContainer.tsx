@@ -10,7 +10,7 @@ interface Props {
 
 export default function ResumeContainer({ resume, theme } : Props) {
   return (
-    <div id={"print-resume"} className="origin-top transition-all duration-300 ease-linear print:!scale-100">
+    <div className="origin-top transition-all duration-300 ease-linear">
       <div className="w-[210mm] h-[296mm] font-[Times] bg-white my-0 mx-auto">
         { theme === "harvard" && (
           <HarvardResume resume={ resume }/>

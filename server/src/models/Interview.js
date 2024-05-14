@@ -15,6 +15,11 @@ const InterviewQuestionSchema = new mongoose.Schema(
       type: String,
       description: "Guidance on how to answer the questions",
     },
+    answer: {
+      type: String,
+      required: false,
+      description: "A response from the user"
+    }
   },
   { timestamps: true }
 );
@@ -24,6 +29,14 @@ const InterviewSchema = new mongoose.Schema(
     interview: {
       type: [InterviewQuestionSchema],
       description: "The interview questions",
+    },
+    jobTitle: {
+      type: String,
+      description: "Title of the job being interviewed for"
+    },
+    jobDescription: {
+      type: String,
+      description: "Description of the job being interviewed for"
     },
     userId: {
       type: mongoose.Schema.Types.ObjectId,

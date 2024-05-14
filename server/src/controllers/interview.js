@@ -56,6 +56,8 @@ export const createInterview = async (req, res) => {
 
     // Save the interview to the database
     interview.userId = req.user.id;
+    interview.jobTitle = jobTitle;
+    interview.jobDescription = jobDescription;
     await Interview.create(interview);
 
     res.status(200).json({ interview: interview });
@@ -75,7 +77,6 @@ export const createInterview = async (req, res) => {
 export const getInterviews = async (req, res) => {
   try {
     const interviews = await Interview.find({ userId: req.user.id });
-    console.log("interviews", interviews);
     res.status(200).json({ interviews });
   } catch (error) {
     console.log("Error: ", error);
@@ -86,9 +87,8 @@ export const getInterviews = async (req, res) => {
 /**
  * getInterview
  * @description GET that retrieves a single interview
- * @param {string} token The user token
- * @param {string} id The interview id
- * @returns 
+ * @param {Request} req
+ * @param {Response} res
  */
 export const getInterview = async (req, res) => {
   try {
@@ -97,5 +97,21 @@ export const getInterview = async (req, res) => {
   } catch (error) {
     console.log("Error: ", error);
     res.status(500).json({ error: error.message });
+  }
+}
+
+/**
+ * @function deleteInterview
+ * @description Delete an interview from an id
+ * @param {Request} req
+ * @param {Response} res
+ */
+export const deleteInterview = async (req, res) => {
+  const id = req.params.id;
+  try {
+    await Interview.findOneAndDelete({ _id: id });
+    res.status(204).send();
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 }

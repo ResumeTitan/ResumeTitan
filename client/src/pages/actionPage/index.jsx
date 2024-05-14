@@ -1,24 +1,29 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useReactToPrint } from 'react-to-print';
-import DocumentScannerIcon from '@mui/icons-material/DocumentScanner';
 import ActionTab from './actionTab/Action';
 import CustomizeTab from './customizeTab';
 import Tabs from './Tabs';
 import ResumeContainer from 'templates/ResumeContainer';
-import { createResume, updateResume } from 'api/resume';
+import { getResume, createResume, updateResume, getResumeAsPdf } from 'api/resume';
 import Spinner from 'components/Spinner';
 import { LoginForm } from 'components/LoginForm';
-import { getResume } from 'api/resume';
 import 'styles/index.css';
-const LG_SCREEN_WIDTH = 1024;
+import { styled } from '@mui/system';
+import DescriptionIcon from '@mui/icons-material/Description';
+
+const CustomIcon = styled(DescriptionIcon)({
+  backgroundColor: 'white',
+  color: 'black',
+  fontSize: '72px',
+  borderRadius: '10%'
+});
 
 // This page should do all loading, other pages do rendering
 
 // The resume reference
 const ResumeComponent = React.forwardRef((props, ref) => (
-  <div ref={ref} className="print:!scale-100">
+  <div ref={ref}>
     <ResumeContainer resume={{
       basics: props.basics,
       work: props.work,
@@ -28,13 +33,10 @@ const ResumeComponent = React.forwardRef((props, ref) => (
   </div>
 ));
 
-
-
 function ActionPage() {
   const location = useLocation();
   const token = useSelector((state) => state.token);
   const [resumeId, setResumeId] = useState(null);
-  const [showResume, setShowResume] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [education, setEducation] = useState([]);
   const [work, setWork] = useState([]);
@@ -55,7 +57,7 @@ function ActionPage() {
   const [useJobDescription, setUseJobDescription] = useState(false);
 
   /**
-   * loadResume
+   * @function loadResume
    * @description Fetch updated resume from mongodb and update states 
    * @param {string} id The resume id to load
    * @returns 
@@ -78,33 +80,7 @@ function ActionPage() {
   };
 
   /**
-   * togglePopup
-   * @description Called by mobile viewer icon (DocumentScanner)
-   *    
-   */
-  const togglePopup = () => {
-    setIsOpen(!isOpen);
-  };
-
-  /**
-   * useEffect
-   * @description hook called when resizing page, show resume preview if screen large enough
-   */
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth > LG_SCREEN_WIDTH) {
-        setShowResume(true);
-      } else {
-        setShowResume(false);
-      }
-    };
-    window.addEventListener("resize", handleResize);
-    handleResize();
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  /**
-   * useEffect
+   * @function useEffect
    * @description hook for if resumeId changes (refresh)
    */
   useEffect(() => {
@@ -121,17 +97,34 @@ function ActionPage() {
   }, [location.state]);
 
   /**
-   * handleSaveToPdf
+   * @function handleSaveToPdf
    * @description Called when clicking Print to PDF button, calls react-to-print library
    * @todo Fix printing for mobile, gets too many notifications, generate on backend
    */
-  const handleSaveToPdf = () => {
-    const resumeHtml = document.getElementById('print-resume').innerHTML;
-    console.log(resumeHtml);
-  }
+  const handleSaveToPdf = async () => {
+    const response = await getResumeAsPdf(token, location.state.resumeId);
+    try {
+      const pdf = await response.blob();
+      // Create a URL for the Blob
+      const url = URL.createObjectURL(pdf);
+
+      // Create an <a> element to trigger the download
+      const a = document.createElement('a');
+      a.href = url;
+      a.target = '_blank';
+      a.download = 'resume.pdf';
+      a.click();
+
+      // Clean up the URL object after the download is initiated
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  };
 
   /**
-   * handleGenerateResume
+   * @function handleGenerateResume
    * @description Calls backend when clicking Generate Resume
    *    Check Auth first, if not logged in prompt login
    *    Start loading spinner
@@ -162,7 +155,7 @@ function ActionPage() {
   }
 
   /**
-   * handleSaveResume
+   * @function handleSaveResume
    * @description Save current state of resume, only works if logged in
    *    Redirect to dashboard
    */
@@ -238,36 +231,35 @@ function ActionPage() {
           <button onClick={handleGenerateResume} className="generate-button">Generate Resume</button>
           <button onClick={handleSaveResume} className="save-button">Save and Exit</button>
         </div>
+
+        <div onClick={() => setIsOpen(true)} className="fixed bottom-8 right-8 hover:cursor-pointer lg:hidden">
+          <CustomIcon />
+        </div>
+
       </div>
       {/* Desktop View */}
-      {showResume && (
-        <div className="p-2 origin-top-left lg:w-1/2 xl:w-3/5 ease-linear transform lg:scale-60 xl:scale-90">
-          <ResumeComponent 
-            basics={basics}
-            education={education}
-            work={work}
-            skills={skills}
-            theme={theme}
-            ref={resumeRef}
-          />
-        </div>
-      )}
-
-      {!showResume && (
-        <div className="fixed bottom-8 right-8 hover:cursor-pointer" onClick={togglePopup}>
-          <DocumentScannerIcon className="text-white" style={{ fontSize: 70 }}/>
-        </div>
-      )}
+      <div className="hidden lg:block p-2 origin-top-left lg:w-1/2 xl:w-3/5 ease-linear transform lg:scale-60 xl:scale-90">
+        <ResumeComponent 
+          basics={basics}
+          education={education}
+          work={work}
+          skills={skills}
+          theme={theme}
+          ref={resumeRef}
+        />
+      </div>
 
       {/* Mobile View */}
-      <div className={`${isOpen ? "fixed": "hidden"} bg-black bg-opacity-50 flex justify-center items-center w-full h-full top-0`} onClick={togglePopup}>
-        <div className="pt-4 transform translate-12 md:translate-y-36 scale-50 sm:scale-60 lg:scale-75 origin-center print:!scale-100">
+      <div className={`${isOpen ? "fixed": "hidden"} bg-black bg-opacity-50 flex justify-center items-center w-full h-full top-0`} onClick={() => setIsOpen(false)}>
+        <div className="pt-4 transform translate-12 md:translate-y-24 scale-50 sm:scale-60 lg:scale-75 origin-center print:!scale-100">
         <ResumeComponent 
           basics={basics}
           education={education} 
           work={work}
           skills={skills}
-          ref={resumeRef}/>
+          theme={theme}
+          ref={resumeRef}
+        />
         </div>
       </div>
 

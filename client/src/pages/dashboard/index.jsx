@@ -1,40 +1,43 @@
 import React, { useEffect, useState } from 'react';
 import ResumeCard from './ResumeCard';
 import { useSelector } from 'react-redux';
-import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { getResumes, deleteResume } from '../../api/resume';
-import { getInterviews } from '../../api/interview';
-import { setActiveResume, setActiveInterview } from '../../state';
+import { getResumes, deleteResume } from 'api/resume';
+import { deleteInterview, getInterviews } from 'api/interview';
+import Spinner from 'components/Spinner';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import Popup from './Popup';
+import { formatDateFull } from 'utils';
 import './dashboard.css';
 
 export const Dashboard = () => {
-  const dispatch = useDispatch();
   const currentUser = useSelector((state) => state.user);
   const token = useSelector((state) => state.token);
+  const [isLoading, setIsLoading] = useState(false);
   const [resumes, setResumes] = useState([]);
   const [interviews, setInterviews] = useState([]);
   const navigate = useNavigate();
   const [showPopup, setShowPopup] = useState(false);
   const [deleteId, setDeleteId] = useState(0);
 
+
   /**
-   * loadResumes
+   * @function loadResumes
    * @description Load resumes from the database, sets state
    */
   const loadResumes = async () => {
     if (!currentUser) {
       return;
     }
+    setIsLoading(true);
     const data = await getResumes(token, currentUser._id);
     setResumes(data.resumes);
+    setIsLoading(false);
   };
 
   /**
-   * loadInterviews
+   * @function loadInterviews
    * @description Load interviews from the database, sets state
    */
   const loadInterviews = async () => {
@@ -42,7 +45,6 @@ export const Dashboard = () => {
       return;
     }
     const data = await getInterviews(token, currentUser._id);
-    console.log("interviews", data.interviews);
     setInterviews(data.interviews);
   }
 
@@ -51,12 +53,11 @@ export const Dashboard = () => {
   }
 
   const handleClickInterview = (interviewId) => {
-    console.log("interviewId", interviewId);
     navigate('/interview', {state: {interviewId: interviewId}});
   }
 
-  const handleClickedDelete = (resumeIndex) => {
-    setDeleteId(resumeIndex);
+  const handleClickedDelete = (resumeId) => {
+    setDeleteId(resumeId);
     setShowPopup(true);
   }
 
@@ -66,10 +67,16 @@ export const Dashboard = () => {
     await loadResumes();
   }
 
+  const handleDeleteInterview = async (id) => {
+    await deleteInterview(token, id);
+    await loadInterviews();
+  }
+
   useEffect(() => {
+    setIsLoading(true);
     loadResumes();
     loadInterviews();
-    dispatch(setActiveResume(null));
+    setIsLoading(false);
   }, []);
 
     // Create an array of ResumeWidget components based on numWidgets
@@ -82,7 +89,7 @@ export const Dashboard = () => {
           skills={resumes[index].skills}
           theme={resumes[index].theme} 
         />
-          
+
         {/* Overlay */}
         <div className="hidden absolute inset-0 bg-gray-800 bg-opacity-25 group-hover:flex group-hover:flex-rows items-center justify-center">
           <button className="bg-green-700 bg-opacity-25 text-white w-full h-full hover:bg-opacity-75"
@@ -121,9 +128,19 @@ export const Dashboard = () => {
               {interviews.map((interview, index) => (
                 <div onClick={() => handleClickInterview(interview._id)} className="hover:cursor-pointer relative group">
                   <div className="bg-gray-800 bg-opacity-25 w-40 h-40 p-2 m-2 rounded-lg">
-                    <div className="text-xl font-bold">{`Interview ${index + 1}`}</div>
+                    <div className="text-xl font-bold">{interview.jobTitle}</div>
                     <div className="">{`Questions: ${interview.interview.length}`}</div>
+                    <div className="">{`${formatDateFull(interview.createdAt)}`}</div>
                   </div>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteInterview(interviews[index]._id);
+                    }}
+                    className="absolute top-3 right-3 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100"
+                  >
+                    X
+                  </button>
                 </div>
               ))}
             </div>
@@ -131,10 +148,11 @@ export const Dashboard = () => {
         </div>
       </div>
 
-      {/* <Tabs onTabClick={() => {}}/> */}
-
       {/* Popup */}
       {showPopup && <Popup message={`Are you sure you want to delete this resume?`} handleDelete={handleDeleteResume} handleCancel={() => setShowPopup(false)} />}
+
+      {/* Spinner while loading */}
+      {isLoading && <Spinner />}
     </div>
   );
 };

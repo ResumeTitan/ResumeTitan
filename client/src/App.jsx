@@ -1,3 +1,4 @@
+import React from 'react';
 import Footer from 'components/Footer';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import NavBar from './components/NavBar';
@@ -7,6 +8,8 @@ import PrivacyPolicy from './pages/privacyPolicy';
 import LandingPage from './scenes/landingPage';
 import ContactPage from './pages/contact';
 import InterviewPage from './pages/interviewHelper';
+import TipPage from './pages/tipPage';
+import { PrintToPdf } from 'pages/printPage';
 import { Survey } from './pages/survey';
 import { Dashboard } from './pages/dashboard';
 import AboutUs from 'pages/aboutUs';
@@ -15,7 +18,7 @@ export default function App() {
   return (
     <div className="min-h-screen h-screen">
       <BrowserRouter>
-        <NavBar />
+        {!window.location.pathname.includes('/print-resume') && <NavBar />}
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/resume" element={<ActionPage />} />
@@ -25,12 +28,13 @@ export default function App() {
           <Route path="/login" element={<Navigate to="/" />} />
           <Route path="/survey" element={<Survey />} />
           <Route path="/contact" element={<ContactPage />} />
-
           <Route path="/about" element={<AboutUs />} />
           <Route path="/interview" element={<InterviewPage />} />
-
+          <Route path="/tip" element={<TipPage />} />
+          <Route path="/print-resume/:id" element={<PrintToPdf />} />
+          <Route path="*" element={<Navigate to="/" />} />
         </Routes>
-        <Footer />
+        {!window.location.pathname.includes('/print-resume') && <Footer />}
       </BrowserRouter>
     </div>
   );
