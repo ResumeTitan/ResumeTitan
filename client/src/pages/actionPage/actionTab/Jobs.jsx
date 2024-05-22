@@ -71,7 +71,7 @@ function Jobs({ jobs, onSave, onDelete, onSwap }) {
               </div> */}
             </div>
           ))}
-          <div className={`p-4 flex flex-col items-center justify-center addButton`} onClick={handleAddJob}>
+          <div className={`p-4 flex flex-col items-center justify-center add-button`} onClick={handleAddJob}>
             <WorkIcon fontSize="large"/>
             <span>{"Add Job"}</span>
           </div>

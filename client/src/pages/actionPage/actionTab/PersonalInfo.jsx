@@ -66,7 +66,7 @@ function PersonalInfo ({ initialInfo, onUpdate }) {
           </div>
           <div className="text-right p-2">
             <button
-              className="addButton bg-slate-800"
+              className="add-button"
               onClick={handleSaveInfo}
             >
             {"Save"}

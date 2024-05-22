@@ -57,7 +57,7 @@ function Schools({ education, onSave, onDelete }) {
               </div>
             </div>
           ))}
-          <div className={`p-4 flex flex-col items-center justify-center addButton`} onClick={handleAddSchool}>
+          <div className={`p-4 flex flex-col items-center justify-center add-button`} onClick={handleAddSchool}>
             <SchoolIcon fontSize="large"/>
             <span>{"Add School"}</span>
           </div>

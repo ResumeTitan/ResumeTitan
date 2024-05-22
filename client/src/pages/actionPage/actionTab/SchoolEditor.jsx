@@ -133,7 +133,7 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
                 sx={{
                   svg: { color: "white" },
                   input: { color: "white" },
-                  label: { color: "white" }
+                  label: { color: "white" },
                 }}
               />
             </DemoContainer>
@@ -150,7 +150,7 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
                 sx={{
                   svg: { color: "white" },
                   input: { color: "white" },
-                  label: { color: "white" }
+                  label: { color: "white" },
                 }}
               />
             </DemoContainer>
@@ -162,7 +162,7 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
                 id="endDateCheckbox"
                 type="checkbox"
                 value=""
-                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" 
+                className="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-600 ring-offset-gray-800 focus:ring-2" 
                 onChange={handleEndDateCurrent}
                 checked={endDateChecked}
               />
@@ -187,7 +187,7 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
       {schoolForm.content && (
         <div className="m-2">
           <div className="left-right-spacing my-2">
-            <label htmlFor={"jobContent"} className="block text-sm font-medium text-gray-900 dark:text-white">Content</label>
+            <label htmlFor={"jobContent"} className="block text-sm font-medium">Content</label>
             <button
               className="green-button bg-slate-800 p-2"
               onClick={() => setSchoolForm({ ...schoolForm, content: [...schoolForm.content, ""] })}
@@ -238,7 +238,7 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
           {"Cancel"}
         </button>
         <button
-          className="addButton p-1 bg-slate-800"
+          className="add-button p-1"
           onClick={handleSaveSchool}
         >
           {"Save"}
