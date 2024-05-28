@@ -46,10 +46,11 @@ const CustomizeTab: React.FC<Props> = ({description,
           onChange={handleJobDescriptionChecked}
           checked={isJobDescriptionChecked}
         />
-        <label htmlFor="jobDescription" className="ml-2 text-sm font-medium text-gray-300">Target resume to job description</label>
+        <label htmlFor="jobTitle" className="ml-2 text-sm font-medium text-gray-300">Target resume to job description</label>
         <div className="font-bold">
           Job Title
           <input
+            name="jobTitle"
             className="form-style"
             type="text"
             value={jobTitle}

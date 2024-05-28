@@ -5,7 +5,7 @@ import NavBar from './components/NavBar';
 import ActionPage from './pages/actionPage';
 import TermsPage from './pages/termsPage';
 import PrivacyPolicy from './pages/privacyPolicy';
-import LandingPage from './scenes/landingPage';
+import LandingPage from './pages/landingPage';
 import ContactPage from './pages/contact';
 import InterviewPage from './pages/interviewHelper';
 import TipPage from './pages/tipPage';

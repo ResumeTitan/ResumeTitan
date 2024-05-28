@@ -40,7 +40,7 @@
         "styles/*": ["./styles/*"],
         "templates/*": ["./templates/*"],
         "assets/*": ["./assets/*"],
-        "components/*": ["./components/*"]
+        "components/*": ["./components/*"],
       },
       // Correctly resolve types: https://www.typescriptlang.org/tsconfig#typeRoots
       "typeRoots": [
