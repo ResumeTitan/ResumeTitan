@@ -75,6 +75,24 @@ export const postRegister = async (values) => {
   return response;
 }
 
+/**
+ * @function reloadUser
+ * @description Send request to backend to reload user data
+ * @param {string} token Auth token
+ * @returns Updated user
+ */
+export const reloadUser = async (token) => {
+  const response = await fetch(`${API_URL}/auth/reload`, {
+    method: "GET",
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`
+    }
+  });
+
+  return response;
+}
+
 export const deleteResume = async (token, resumeId) => {
   const response = await fetch(`${API_URL}/resume/delete?id=${resumeId}`, {
     method: 'DELETE',

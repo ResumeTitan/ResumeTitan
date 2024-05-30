@@ -7,6 +7,7 @@ import Tabs from './Tabs';
 import ResumeContainer from 'templates/ResumeContainer';
 import { getResume, createResume, updateResume, getResumeAsPdf } from 'api/resume';
 import Spinner from 'components/Spinner';
+import ErrorAlert from 'components/Alert/ErrorAlert';
 import { LoginForm } from 'components/LoginForm';
 import 'styles/index.css';
 import { styled } from '@mui/system';
@@ -55,6 +56,7 @@ function ActionPage() {
   const [activeTab, setActiveTab] = useState(1);
   const [jobDescription, setJobDescription] = useState('');
   const [useJobDescription, setUseJobDescription] = useState(false);
+  const [showPrintError, setShowPrintError] = useState(false);
 
   /**
    * @function loadResume
@@ -102,6 +104,10 @@ function ActionPage() {
    * @todo Fix printing for mobile, gets too many notifications, generate on backend
    */
   const handleSaveToPdf = async () => {
+    if (!currentUser.premiumUntil || new Date(currentUser.premiumUntil) < new Date()) {
+      setShowPrintError(true);
+      return;
+    }
     const response = await getResumeAsPdf(token, location.state.resumeId);
     try {
       const pdf = await response.blob();
@@ -195,6 +201,15 @@ function ActionPage() {
       )}
 
       <div className="px-2 pt-4 md:px-4 lg:px-8 w-full flex flex-col">
+      {showPrintError && (
+        <ErrorAlert 
+          onClose={() => setShowPrintError(false)}
+        >
+          <p>You must be a premium member to save resume. 
+            Upgrade to premium by <a className="underline" href="/pricing">clicking here.</a>
+          </p>
+        </ErrorAlert>
+      )}
         <Tabs openTab={activeTab} setOpenTab={(tab) => setActiveTab(tab)} />
         {activeTab === 1 && (
           <ActionTab 

@@ -60,3 +60,21 @@ export const login = async (req, res) => {
     res.status(500).json({ msg: err.message });
   }
 };
+
+/**
+ * @function reloadUser
+ * @param {Request} req 
+ * @param {Response} res 
+ * @returns Updated user
+ */
+export const reload = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(400).json({ msg: "User not found." });
+    }
+    res.status(200).json(user);
+  } catch (err) {
+    res.status(500).json({ msg: err.message });
+  }
+};

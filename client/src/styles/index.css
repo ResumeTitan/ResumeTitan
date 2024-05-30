@@ -140,3 +140,15 @@ body {
 .form-label-text {
   @apply block mb-2 text-sm font-medium text-white
 }
+
+.login-button {
+  @apply p-2 font-bold leading-none border border-4 rounded text-white border-white hover:border-transparent hover:bg-white hover:text-teal-800 items-center transition duration-300 ease-in-out
+}
+
+.action-button {
+  @apply bg-main-green p-4 font-bold leading-none rounded text-white border hover:border-transparent hover:bg-white hover:text-teal-800 hover:border-black items-center transition duration-300 ease-in-out
+}
+
+.secondary-action-button {
+  @apply bg-white p-4 font-bold leading-none rounded text-main-green border border-black hover:border-transparent hover:bg-main-green hover:text-white hover:border-white items-center transition duration-300 ease-in-out;
+}

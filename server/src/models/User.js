@@ -26,6 +26,7 @@ const UserSchema = new mongoose.Schema(
       min: 5,
     },
     phone: Number,
+    premiumUntil: Date,
   },
   { timestamps: true }
 );
