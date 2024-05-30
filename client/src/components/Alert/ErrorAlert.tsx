@@ -2,17 +2,18 @@ import React from 'react'
 import './Alert.css'
 
 const ErrorAlert = ({
-  message,
+  children,
   onClose,
 }: {
-  message: string
+  children: React.ReactNode
   onClose: () => void
 }) => {
+  console.log("showing error message");
 
   return (
   <div className={`alert error-alert`} role="alert">
     <div className={`ml-3 text-sm font-medium`}>
-      {message}
+      {children}
     </div>
     <button onClick={onClose} type="button" className={`close-button error-button`}>
     <span className="sr-only">Close</span>

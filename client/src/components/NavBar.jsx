@@ -5,7 +5,7 @@ import { setLogout } from 'state';
 import WhiteLogo from '../assets/logo-white.png';
 import TextLogo from '../assets/text-logo-white.png';
 import { LoginForm } from './LoginForm';
-import '../index.css';
+import 'styles/index.css';
 
 const NavBar = () => {
   const user = useSelector((state) => state.user);
@@ -132,7 +132,7 @@ const NavBar = () => {
             <button
               id="loginBtn"
               href="/login"
-              className="text-md px-2 py-2 font-bold leading-none border border-4 rounded text-white border-white hover:border-transparent hover:bg-white hover:text-teal-800 items-center transition duration-300 ease-in-out"
+              className="login-button text-md"
               onClick={handleLoginLogout}
             >
               {user ? 'Logout' : 'Login'}

@@ -88,7 +88,7 @@ const Logos: React.FC = () => {
   return (
     <div className="px-4 mx-auto mt-24 max-w-7xl sm:mt-32 sm:px-6 lg:mt-36 lg:px-8">
       <div className="px-6 mx-auto max-w-7xl lg:px-8">
-        <h2 className="text-lg font-semibold leading-tight tracking-wide text-center text-neutral-900 dark:text-neutral-50">
+        <h2 className="text-lg font-semibold leading-tight tracking-wide text-center text-neutral-900">
           Trusted by the world's most unknown companies
         </h2>
 

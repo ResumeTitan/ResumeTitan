@@ -8,7 +8,8 @@ import PrivacyPolicy from './pages/privacyPolicy';
 import LandingPage from './pages/landingPage';
 import ContactPage from './pages/contact';
 import InterviewPage from './pages/interviewHelper';
-import TipPage from './pages/tipPage';
+import SuccessPage from './pages/paymentSuccess';
+import PricingPage from './pages/pricing';
 import { PrintToPdf } from 'pages/printPage';
 import { Survey } from './pages/survey';
 import { Dashboard } from './pages/dashboard';
@@ -30,8 +31,9 @@ export default function App() {
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/about" element={<AboutUs />} />
           <Route path="/interview" element={<InterviewPage />} />
-          <Route path="/tip" element={<TipPage />} />
           <Route path="/print-resume/:id" element={<PrintToPdf />} />
+          <Route path="/success" element={<SuccessPage />} />
+          <Route path="/pricing" element={<PricingPage />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
         {!window.location.pathname.includes('/print-resume') && <Footer />}

@@ -1,4 +1,6 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
+import { createStripeSession } from 'api/stripe';
 
 interface Tier {
   name: string;
@@ -15,8 +17,8 @@ interface Tier {
 const tiers: Tier[] = [
   {
     name: '7 Days',
-    id: 'tier-basic',
-    href: '#',
+    id: '7days',
+    href: 'https://buy.stripe.com/5kAbKA39k0ct800eUY',
     price: { monthly: '$3', annually: '$5' },
     features: [
       'Unlimited Resume Downloads',
@@ -27,7 +29,7 @@ const tiers: Tier[] = [
   },
   {
     name: '1 Month',
-    id: 'tier-premium',
+    id: '1month',
     href: '#',
     price: { monthly: '$10', annually: '$15' },
     features: [
@@ -39,7 +41,7 @@ const tiers: Tier[] = [
   },
   {
     name: '6 Months',
-    id: 'tier-enterprise',
+    id: '6months',
     href: '#',
     price: { monthly: '$50', annually: '$75' },
     features: [
@@ -52,14 +54,27 @@ const tiers: Tier[] = [
 ];
 
 const Pricing: React.FC = () => {
+  const currentUser = useSelector((state: any) => state.user);
+
+  const handleBuyButtonClick = async (planId: string) => {
+    try {
+      const response = await createStripeSession(currentUser.email, planId);
+      console.log(response);
+      const url = response.sessionUrl;
+      if (url) window.open(url, '_self');
+    } catch (error) {
+      alert('Something went wrong. Please try again');
+    }
+  };
+
   return (
-    <div className="mx-auto mt-24 max-w-7xl px-4 sm:mt-32 sm:px-6 lg:mt-40 lg:px-8">
+    <div className="mx-auto mt-12 max-w-7xl px-4 sm:mt-16 sm:px-6 lg:mt-20 lg:px-8">
       <div className="mx-auto flex max-w-4xl flex-col space-y-7 text-center">
-        <h2 className="text-4xl font-bold leading-tight tracking-wide text-neutral-900 dark:text-neutral-50 xl:text-5xl">
-          Upgrade for full access
+        <h2 className="text-4xl font-bold leading-tight tracking-wide text-neutral-900 xl:text-5xl">
+          Upgrade for Full Access
         </h2>
 
-        <p className="text-lg text-neutral-600 dark:text-neutral-400">
+        <p className="text-lg text-neutral-600">
           Unlock the full power of ResumeTitan by subscribing for a premium plan. 
           Don't worry, we don't save your payment info, and we will not renew your subscription automatically.
         </p>
@@ -69,35 +84,34 @@ const Pricing: React.FC = () => {
         {tiers.map((tier) => (
           <div
             key={tier.id}
-            className="flex flex-col justify-between space-y-10 rounded-xl bg-white p-8 text-center ring-1 ring-neutral-200 dark:bg-neutral-950 dark:ring-neutral-800 xl:p-10"
+            className="flex flex-col justify-between space-y-10 rounded-xl bg-white p-8 text-center ring-2 ring-neutral-500 xl:p-10"
           >
             <div>
               <h3
                 id={tier.id}
-                className="text-lg font-semibold leading-8 text-neutral-900 dark:text-neutral-200"
+                className="text-lg font-semibold leading-8 text-neutral-900"
               >
                 {tier.name}
               </h3>
 
               <div className="mt-2 flex flex-col space-y-4">
                 <p className="flex items-baseline justify-center gap-x-1">
-                  <span className="text-5xl font-bold tracking-tight text-neutral-900 dark:text-white">
+                  <span className="text-5xl font-bold tracking-tight text-neutral-900">
                     {tier.price.monthly}
                   </span>
-                  <span className="line-through	text-neutral-600 dark:text-neutral-500">
+                  <span className="line-through	text-neutral-600">
                     {tier.price.annually}
                   </span>
                 </p>
               </div>
 
               <ul
-                role="list"
-                className="mt-6 space-y-3 text-sm leading-6 text-neutral-600 dark:text-neutral-300"
+                className="mt-6 space-y-3 text-sm leading-6 text-neutral-600"
               >
                 {tier.features.map((feature) => (
                   <li key={feature} className="flex gap-x-3">
                     <CheckIcon
-                      className="h-6 w-5 flex-none text-neutral-600 dark:text-neutral-400"
+                      className="h-6 w-5 flex-none text-neutral-600"
                       aria-hidden="true"
                     />
                     {feature}
@@ -106,13 +120,12 @@ const Pricing: React.FC = () => {
               </ul>
             </div>
 
-            <a
-              href={tier.href}
-              aria-describedby={tier.id}
-              className="rounded-md bg-neutral-900 px-10 py-3 text-sm font-semibold text-white shadow-sm hover:bg-neutral-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-500 dark:bg-neutral-50 dark:text-neutral-900 dark:hover:bg-neutral-300 dark:focus-visible:outline-neutral-400"
+            <button
+              onClick={() => handleBuyButtonClick(tier.id)}
+              className="rounded-md bg-main-green px-10 py-3 text-md font-semibold text-white shadow-sm hover:bg-neutral-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-500"
             >
               {tier.cta}
-            </a>
+            </button>
           </div>
         ))}
       </div>

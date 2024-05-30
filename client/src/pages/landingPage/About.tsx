@@ -1,40 +1,41 @@
 import React from 'react';
 import interviewImg from 'assets/interview.png';
+import 'styles/index.css';
 
 const About: React.FC = () => {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 mx-auto mt-24 max-w-7xl px-4 sm:mt-32 sm:px-6 lg:mt-40 lg:px-8">
       <div className="lg:pr-10 flex-1 max-w-4xl flex-col space-y-7">
-        <h3 className="text-lg font-medium uppercase tracking-wide text-neutral-800 dark:text-neutral-200">
+        <h3 className="text-lg font-medium uppercase tracking-wide text-neutral-800">
           Spend time on your job search, not your resume
         </h3>
 
-        <h2 className="text-4xl font-bold leading-tight tracking-wide text-neutral-900 dark:text-neutral-50 xl:text-5xl">
-          Next-gen features at your fingertips
+        <h2 className="text-4xl font-bold leading-tight tracking-wide text-neutral-900 xl:text-5xl">
+          Innovative Features at Your Fingertips
         </h2>
 
-        <p className="text-lg text-neutral-600 dark:text-neutral-400">
+        <p className="text-lg text-neutral-600">
           Whether you're a seasoned professional or just starting out, our tool provides 
           personalized suggestions to highlight your skills and experiences. 
           In a matter of minutes, you can have your own professional-grade resumes generated and ready to send out. 
           Say goodbye to formatting headaches and let us help you get noticed by employers.
         </p>
 
-        <p className="text-lg text-neutral-600 dark:text-neutral-400">
+        <p className="text-lg text-neutral-600">
           Read more about us, and our mission to redesign the job application process.
         </p>
 
         <div className="flex space-x-8">
           <a
             href="/about"
-            className="rounded-md bg-neutral-900 px-10 py-3 text-sm font-semibold text-white shadow-sm hover:bg-neutral-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-500 dark:bg-neutral-50 dark:text-neutral-900 dark:hover:bg-neutral-300 dark:focus-visible:outline-neutral-400"
+            className="action-button text-md"
           >
             About Us
           </a>          
         </div>
       </div>
       <div className="my-8 order-last mx-auto max-w-lg ">
-        <img src={interviewImg} alt="hero" className="border rounded-lg md:order-last order-first" />
+        <img src={interviewImg} alt="hero" className="rounded-lg md:order-last order-first" />
       </div>
     </div>
   );

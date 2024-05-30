@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { LoginForm } from 'components/LoginForm';
 import heroImg from 'assets/heroImg.png';
+import 'styles/index.css';
 
 const Hero: React.FC = () => {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
@@ -10,15 +11,15 @@ const Hero: React.FC = () => {
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <div className="grid grid-cols-1 items-center gap-14 lg:grid-cols-2">
         <div className="mx-auto flex max-w-3xl flex-col gap-8">
-          <span className="text-lg font-medium text-neutral-800 dark:text-neutral-200">
+          <h3 className="text-lg font-medium uppercase tracking-wide text-neutral-800">
             Empower Your Career
-          </span>
+          </h3>
 
-          <h2 className="text-4xl font-bold leading-tight tracking-wide text-neutral-900 dark:text-neutral-50 xl:text-5xl">
+          <h2 className="text-4xl font-bold leading-tight tracking-wide text-neutral-900 xl:text-5xl">
             Create Professional Resumes in Minutes
           </h2>
 
-          <p className="text-lg text-neutral-600 dark:text-neutral-400">
+          <p className="text-lg text-neutral-600">
             Looking for a job can be stressful, but creating your resume doesn't have to be. 
             Our AI-powered tool helps you craft a stunning resume in just a few clicks. 
             Simply enter your information, and let our technology do the rest. 
@@ -31,7 +32,7 @@ const Hero: React.FC = () => {
                 setIsLoginOpen(true)
                 setIsRegistering(true)
               }}
-              className="rounded-md bg-neutral-900 px-10 py-3 text-sm font-semibold text-white shadow-sm hover:bg-neutral-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-500 dark:bg-neutral-50 dark:text-neutral-900 dark:hover:bg-neutral-300 dark:focus-visible:outline-neutral-400"
+              className="action-button text-lg"
             >
               Sign Up
             </button>
@@ -41,7 +42,7 @@ const Hero: React.FC = () => {
                 setIsLoginOpen(true)
                 setIsRegistering(false)
               }}
-              className="rounded-md bg-transparent px-10 py-3 text-sm font-semibold text-neutral-900 shadow-sm ring-1 ring-inset ring-neutral-500 hover:bg-neutral-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-500 dark:text-neutral-100 dark:ring-neutral-600 dark:hover:bg-neutral-800 dark:focus-visible:outline-neutral-400"
+              className="secondary-action-button text-lg"
             >
               Log In
             </button>
@@ -49,7 +50,7 @@ const Hero: React.FC = () => {
         </div>
 
         <div className="order-last mx-auto max-w-lg lg:order-first">
-          <img src={heroImg} alt="hero" className="border rounded-lg md:order-last order-first" />
+          <img src={heroImg} alt="hero" className="rounded-lg md:order-last order-first" />
         </div>
       </div>
       {isLoginOpen && (

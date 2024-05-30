@@ -21,7 +21,6 @@ export const Dashboard = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [deleteId, setDeleteId] = useState(0);
 
-
   /**
    * @function loadResumes
    * @description Load resumes from the database, sets state
@@ -30,6 +29,7 @@ export const Dashboard = () => {
     if (!currentUser) {
       return;
     }
+    console.log('current user', currentUser);
     setIsLoading(true);
     const data = await getResumes(token, currentUser._id);
     setResumes(data.resumes);
@@ -106,8 +106,6 @@ export const Dashboard = () => {
 
   return (
     <div className="bg-slate-400 text-white min-h-screen">
-      <h1 className="text-3xl font-bold bg-slate-700 p-2 w-full">Welcome to ResumeTitan</h1>
-
       <div className="text-3xl font-bold bg-slate-700 p-2">My Resumes:</div>
       <button className="mx-4 mt-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-white font-bold py-2 px-4" onClick={() => navigate('/resume')}>Add New</button>
       <div className="overflow-x-scroll hide-scrollbar">
@@ -127,7 +125,7 @@ export const Dashboard = () => {
             <div className="flex origin-top-left">
               {interviews.map((interview, index) => (
                 <div onClick={() => handleClickInterview(interview._id)} className="hover:cursor-pointer relative group">
-                  <div className="bg-gray-800 bg-opacity-25 w-40 h-40 p-2 m-2 rounded-lg">
+                  <div className="bg-white text-black w-40 h-40 p-2 m-2 rounded-lg">
                     <div className="text-xl font-bold">{interview.jobTitle}</div>
                     <div className="">{`Questions: ${interview.interview.length}`}</div>
                     <div className="">{`${formatDateFull(interview.createdAt)}`}</div>

@@ -11,6 +11,7 @@ import { fileURLToPath } from "url";
 import authRoutes from "./routes/auth.js";
 import resumeRoutes from "./routes/resume.js";
 import interviewRoutes from "./routes/interview.js";
+import stripeRoutes from "./routes/stripe.js";
 
 /* CONFIGURATIONS */
 const __filename = fileURLToPath(import.meta.url);
@@ -18,6 +19,7 @@ const __dirname = path.dirname(__filename);
 dotenv.config();
 const app = express();
 app.use(express.json());
+app.use(bodyParser.raw({ type: "application/json" }));
 app.use(helmet());
 app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
 app.use(morgan("common"));
@@ -44,6 +46,7 @@ const upload = multer({ storage });
 app.use("/auth", authRoutes);
 app.use("/resume", resumeRoutes);
 app.use("/interview", interviewRoutes);
+app.use("/checkout", stripeRoutes)
 // app.use("/posts", postRoutes);
 // app.use('/search', searchRoutes);
 
