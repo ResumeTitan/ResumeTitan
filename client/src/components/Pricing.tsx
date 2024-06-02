@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { createStripeSession } from 'api/stripe';
+import { LoginForm } from './LoginForm';
 
 interface Tier {
   name: string;
@@ -55,8 +56,13 @@ const tiers: Tier[] = [
 
 const Pricing: React.FC = () => {
   const currentUser = useSelector((state: any) => state.user);
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
 
   const handleBuyButtonClick = async (planId: string) => {
+    if (!currentUser) {
+      setIsLoginOpen(true);
+      return;
+    }
     try {
       const response = await createStripeSession(currentUser.email, planId);
       console.log(response);
@@ -129,6 +135,15 @@ const Pricing: React.FC = () => {
           </div>
         ))}
       </div>
+
+      {isLoginOpen && (
+        <LoginForm
+          registerOpen={false}
+          onCloseLogin={() => {
+            setIsLoginOpen(false);
+          }}
+        />
+      )}
     </div>
   );
 }

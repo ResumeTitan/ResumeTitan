@@ -1,8 +1,23 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { LoginForm } from 'components/LoginForm';
 import interviewImg from 'assets/interview.png';
 import 'styles/index.css';
 
 const About: React.FC = () => {
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const user = useSelector((state: any) => state.user);
+  const navigate = useNavigate();
+
+  const handleActionButton = () => {
+    if (user) {
+      navigate('/dashboard');
+    } else {
+      setIsLoginOpen(true);
+    }
+  }
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 mx-auto mt-24 max-w-7xl px-4 sm:mt-32 sm:px-6 lg:mt-40 lg:px-8">
       <div className="lg:pr-10 flex-1 max-w-4xl flex-col space-y-7">
@@ -22,21 +37,36 @@ const About: React.FC = () => {
         </p>
 
         <p className="text-lg text-neutral-600">
-          Read more about us, and our mission to redesign the job application process.
+          Click to get started now, or read more about us and our mission to redesign the job application process.
         </p>
 
         <div className="flex space-x-8">
-          <a
-            href="/about"
+          <button
+            onClick={handleActionButton}
             className="action-button text-md"
           >
+            Get Started
+          </button>
+          <a
+            href="/about"
+            className="secondary-action-button text-md"
+          >
             About Us
-          </a>          
+          </a>     
         </div>
       </div>
       <div className="my-8 order-last mx-auto max-w-lg ">
         <img src={interviewImg} alt="hero" className="rounded-lg md:order-last order-first" />
       </div>
+
+      {isLoginOpen && (
+        <LoginForm
+          registerOpen={false}
+          onCloseLogin={() => {
+            setIsLoginOpen(false);
+          }}
+        />
+      )}
     </div>
   );
 }
