@@ -77,15 +77,19 @@ const NavBar = () => {
       {isMobileMenuOpen && (
         <div className="absolute top-16 rounded right-0 bg-gray-800 py-2 px-4">
           <button
-            href="/login"
             onClick={handleLoginLogout}
             className="block text-white py-2"
           >
             {user ? 'Logout' : 'Login'}
           </button>
+          <button
+            className="text-white pr-8"
+            onClick={() => navigate('/pricing')}
+          >
+            {'Pricing'}
+          </button>
           {user && (
             <button
-              href="/dashboard"
               className="block text-white py-2"
               onClick={() => {
                 toggleMobileMenu();
@@ -109,7 +113,7 @@ const NavBar = () => {
           }`}
         >
           <a
-            href={user ? "/dashboard" : "/"}
+            href="/"
             className="font-outline-2 flex font-bold text-xl tracking-tight text-white"
           >
             {mobileScreen ? (
@@ -129,10 +133,24 @@ const NavBar = () => {
           mobileNavbar
         ) : (
           <div className="flex items-center">
+            {user && (
+              <button
+                className="text-white pr-8"
+                onClick={() => navigate('/dashboard')}
+              >
+                {'Dashboard'}
+              </button>
+            )}
+            <button
+              className="text-white pr-8"
+              onClick={() => navigate('/pricing')}
+            >
+              {'Pricing'}
+            </button>
             <button
               id="loginBtn"
               href="/login"
-              className="login-button text-md"
+              className="login-button"
               onClick={handleLoginLogout}
             >
               {user ? 'Logout' : 'Login'}

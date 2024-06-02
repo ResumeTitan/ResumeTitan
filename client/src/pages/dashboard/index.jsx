@@ -22,6 +22,14 @@ export const Dashboard = () => {
   const [deleteId, setDeleteId] = useState(0);
 
   /**
+   * @function useEffect
+   * @description Scroll to top of page on load
+   */
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, []);
+
+  /**
    * @function loadResumes
    * @description Load resumes from the database, sets state
    */
