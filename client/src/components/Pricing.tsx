@@ -74,7 +74,7 @@ const Pricing: React.FC = () => {
   };
 
   return (
-    <div className="mx-auto mt-12 max-w-7xl px-4 sm:mt-16 sm:px-6 lg:mt-20 lg:px-8">
+    <div className="mx-auto mt-12 max-w-7xl px-4 sm:mt-16 sm:px-6 lg:mt-20 lg:px-8" data-aos="fade-right">
       <div className="mx-auto flex max-w-4xl flex-col space-y-7 text-center">
         <h2 className="text-4xl font-bold leading-tight tracking-wide text-neutral-900 xl:text-5xl">
           Upgrade for Full Access
