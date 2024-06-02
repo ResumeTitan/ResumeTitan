@@ -4,7 +4,7 @@ import 'styles/index.css';
 
 const About: React.FC = () => {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 mx-auto mt-24 max-w-7xl px-4 sm:mt-32 sm:px-6 lg:mt-40 lg:px-8">
+    <div className="grid grid-cols-1 lg:grid-cols-2 mx-auto mt-24 max-w-7xl px-4 sm:mt-32 sm:px-6 lg:mt-40 lg:px-8" data-aos="fade-left">
       <div className="lg:pr-10 flex-1 max-w-4xl flex-col space-y-7">
         <h3 className="text-lg font-medium uppercase tracking-wide text-neutral-800">
           Spend time on your job search, not your resume

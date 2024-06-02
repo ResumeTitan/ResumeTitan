@@ -14,6 +14,12 @@ import { PrintToPdf } from 'pages/printPage';
 import { Survey } from './pages/survey';
 import { Dashboard } from './pages/dashboard';
 import AboutUs from 'pages/aboutUs';
+import AOS from 'aos';
+import 'aos/dist/aos.css'; // You can also use <link> for styles
+// ..
+AOS.init({
+  duration: 500
+});
 
 export default function App() {
   return (
