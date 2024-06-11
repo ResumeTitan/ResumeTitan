@@ -3,12 +3,16 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import dayjs from 'dayjs';
 import StatePicker from 'components/StatePicker';
+import SpinnerSmall from 'components/SpinnerSmall';
+import api from 'api/actions';
 import 'styles/index.css';
 
 function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
   const [jobForm, setJobForm] = useState(editingJob);
+  const [aiLoading, setAiLoading] = useState(false);
   const [startDate, setStartDate] = useState(new Date(editingJob.startDate) || new Date());
   const [endDate, setEndDate] = useState(new Date(editingJob.endDate) || new Date());
   const [endDateChecked, setEndDateChecked] = useState(editingJob.endDateCurrent || false);
@@ -61,9 +65,26 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
     setEndDateChecked(!endDateChecked);
   }
 
+  const handleResponsibilityAdd = () => {
+    if (!jobForm.content) {
+      setJobForm({ ...jobForm, content: [""] });
+    }
+    setJobForm({ ...jobForm, content: [...jobForm.content, ""] });
+  }
+
+  /**
+   * @function handleAiCall
+   */
+  const handleAiCall = async () => {
+    setAiLoading(true);
+    const jobResponse = await api.post("/new/job", { job: jobForm });
+    setJobForm({ ...jobForm, content: jobResponse.data.response.responsibilities });
+    setAiLoading(false);
+  }
+
   return (
-    <div className="mt-6">
-      <div className="mb-6">
+    <div className="my-6 ">
+      <div>
         <label htmlFor={"position"} className="form-label-text">Job Title</label>
         <input 
           type="text"
@@ -156,55 +177,56 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
         </div>
       </div>
 
-      <div className="my-6">
-        <label htmlFor={"notes"} className="form-label-text">Add details</label>
-        <textarea 
-          id={"notes"}
-          className="form-style"
-          placeholder="Add a few details about your work experience..."
-          value={jobForm.notes || ''}
-          onChange={handleJobChange}
-          required 
-        />
-      </div>
-
-      {jobForm.content && (
-        <div className="m-2">
-          <div className="left-right-spacing my-2">
-            <label htmlFor={"jobContent"} className="form-label-text">Content</label>
+      <div className="m-2">
+        <div className="left-right-spacing my-2">
+          <label htmlFor={"jobContent"} className="form-label-text">Responsibilities</label>
+          <div>
             <button
-              className="green-button p-1 bg-slate-800"
-              onClick={() => setJobForm({ ...jobForm, content: [...jobForm.content, ""] })}
+              className="green-button py-1 px-4 mx-1 bg-slate-800"
+              onClick={handleAiCall}
+            >
+              <div>
+                {aiLoading ? (
+                  <SpinnerSmall />
+                ) : (
+                  <AutoAwesomeIcon className="pr-2"/>
+                )}
+                <span>Write with AI</span>
+              </div>
+            </button>
+            <button
+              className="green-button py-1 px-4 mx-1 bg-slate-800"
+              onClick={handleResponsibilityAdd}
             >
               {"Add"}
             </button>
           </div>
-          {jobForm.content.map((item, index) => (
-            <div className="left-right-spacing">
-              <div className="w-full pr-2">
-                <textarea 
-                  type="text"
-                  id={"jobContent"}
-                  className="form-style flex-wrap"
-                  placeholder="Enter content..."
-                  value={item}
-                  onChange={(e) => handleJobContentChange(e.target.value, index)}
-                  required 
-                />
-              </div>
-              <div>
-                <button
-                  className="remove-content-button"
-                  onClick={() => handleContentDelete(index)}
-                >
-                  {"X"}
-                </button>
-              </div>
-            </div>
-            )
-          )}
         </div>
-      )}
+        {jobForm.content && jobForm.content.map((item, index) => (
+          <div className="left-right-spacing">
+            <div className="w-full pr-2">
+              <textarea 
+                type="text"
+                id={"jobContent"}
+                className="form-style flex-wrap"
+                placeholder="Enter content..."
+                value={item}
+                onChange={(e) => handleJobContentChange(e.target.value, index)}
+                required 
+              />
+            </div>
+            <div>
+              <button
+                className="remove-content-button"
+                onClick={() => handleContentDelete(index)}
+              >
+                {"X"}
+              </button>
+            </div>
+          </div>
+          )
+        )}
+      </div>
 
       <div className="left-right-spacing">
         <button

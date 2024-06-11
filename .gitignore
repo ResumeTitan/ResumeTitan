@@ -1,5 +1,6 @@
 node_modules
 server/node_modules
+server/dist
 server/.env
 server/.cache
 client/node_modules
