@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import 'styles/index.css';
 
-function Skills ({ initSkills, onUpdate }) {
+function Skills({ initSkills, aiLoading, onUpdate, onAiCall }) {
   const [skills, setSkills] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
 
@@ -31,12 +32,39 @@ function Skills ({ initSkills, onUpdate }) {
     setSkills(initSkills);
   }, [initSkills]);
 
+  useEffect(() => {}, [aiLoading]);
+
   return (
-    <div className="form-container">
+    <div className={`${aiLoading ? "animate-pulse" : ""} form-container`}>
       <div className="form-text-main hover:bg-slate-500" onClick={() => {setIsEditing(true)}}>{"Skills"}</div>
 
       {isEditing && (
-        <div className="p-4 ">
+        <div className="px-4 pb-4">
+          <div className="flex justify-between">
+            <button
+              className="green-button p-2 my-2 bg-slate-800"
+              onClick={handleSaveSkills}
+            >
+              {"Save"}
+            </button>
+            <div>
+              <button
+                className="green-button p-2 my-2 bg-slate-800"
+                onClick={handleAddSkills}
+              >
+                {"Add"}
+              </button>
+              <button
+                className="green-button py-1 px-4 mx-1 bg-slate-800"
+                onClick={onAiCall}
+              >
+                <div>
+                  <AutoAwesomeIcon className="pr-2"/>
+                  <span>Write with AI</span>
+                </div>
+              </button>
+            </div>
+          </div>
           <div className="w-full pr-2">
           {skills.map((item, index) => (
             <div className="flex justify-between">
@@ -61,18 +89,6 @@ function Skills ({ initSkills, onUpdate }) {
           )}
           </div>
           <div className="flex justify-between">
-            <button
-              className="green-button p-2 my-2 bg-slate-800"
-              onClick={handleAddSkills}
-            >
-              {"Add"}
-            </button>
-            <button
-              className="green-button p-2 my-2 bg-slate-800"
-              onClick={handleSaveSkills}
-            >
-              {"Save"}
-            </button>
           </div>
         </div>
       )}

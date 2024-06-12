@@ -63,6 +63,9 @@ const InterviewPage: React.FC = () => {
   const handleGenerateInterview = async () => {
     try {
       setIsLoading(true);
+      if (location.state?.interviewId) {
+        
+      }
       const { interview } = await createInterview(token, jobTitle, jobDescription);
       setInterview(interview.interview);
       setIsLoading(false);

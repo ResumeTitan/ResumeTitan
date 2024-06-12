@@ -6,7 +6,6 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import dayjs from 'dayjs';
 import StatePicker from 'components/StatePicker';
-import SpinnerSmall from 'components/SpinnerSmall';
 import api from 'api/actions';
 import 'styles/index.css';
 
@@ -68,8 +67,9 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
   const handleResponsibilityAdd = () => {
     if (!jobForm.content) {
       setJobForm({ ...jobForm, content: [""] });
+    } else {
+      setJobForm({ ...jobForm, content: [...jobForm.content, ""] });
     }
-    setJobForm({ ...jobForm, content: [...jobForm.content, ""] });
   }
 
   /**
@@ -83,7 +83,7 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
   }
 
   return (
-    <div className="my-6 ">
+    <div className={`my-6 ${aiLoading ? "animate-pulse" : ""}`}>
       <div>
         <label htmlFor={"position"} className="form-label-text">Job Title</label>
         <input 
@@ -95,7 +95,7 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
           value={jobForm.position || ''}
           required />
       </div>
-      <div className="mb-6">
+      <div className="my-6">
         <label htmlFor={"name"} className="form-label-text">Employer/Organization</label>
         <input 
           type="text"
@@ -186,11 +186,7 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
               onClick={handleAiCall}
             >
               <div>
-                {aiLoading ? (
-                  <SpinnerSmall />
-                ) : (
-                  <AutoAwesomeIcon className="pr-2"/>
-                )}
+                <AutoAwesomeIcon className="pr-2"/>
                 <span>Write with AI</span>
               </div>
             </button>
@@ -204,18 +200,18 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
         </div>
         {jobForm.content && jobForm.content.map((item, index) => (
           <div className="left-right-spacing">
-            <div className="w-full pr-2">
+            <div className="w-full pr-2 py-1">
               <textarea 
                 type="text"
                 id={"jobContent"}
-                className="form-style flex-wrap"
+                className="form-style flex-wrap h-24 lg:h-16"
                 placeholder="Enter content..."
                 value={item}
                 onChange={(e) => handleJobContentChange(e.target.value, index)}
                 required 
               />
             </div>
-            <div>
+            <div className="flex items-center">
               <button
                 className="remove-content-button"
                 onClick={() => handleContentDelete(index)}

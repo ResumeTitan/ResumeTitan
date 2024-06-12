@@ -12,6 +12,7 @@ module.exports = {
     extend: {
       colors: {
         'main-green': '#115e59',
+        'dark-green': '#0D4541',
         'background': '#475569',
         'background-dark': '#3d485c',
         'background-light': '#6d7c99',
@@ -26,6 +27,16 @@ module.exports = {
         '60': '0.60',
         '90': '0.90',
       },
+      keyframes: {
+        pulse: {
+          '0%, 100%': {
+            opacity: 0.5,
+          },
+          '50%': {
+            opacity: 0.2,
+          },
+        },
+      }
     },
   },
   plugins: [],

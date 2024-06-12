@@ -3,13 +3,16 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import dayjs from 'dayjs';
 import StatePicker from 'components/StatePicker';
 import DegreePicker from 'components/DegreePicker';
+import api from 'api/actions';
 import 'styles/index.css';
 
 function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
   const [schoolForm, setSchoolForm] = useState(editingSchool);
+  const [aiLoading, setAiLoading] = useState(false);
   const [startDate, setStartDate] = useState(new Date(editingSchool.startDate) || new Date());
   const [endDate, setEndDate] = useState(new Date(editingSchool.endDate) || new Date());
   const [endDateChecked, setEndDateChecked] = useState(editingSchool.endDateCurrent || false);
@@ -72,9 +75,27 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
     setEndDateChecked(endDateCurrent);
   }
 
+  const handleAccomplishmentAdd = () => {
+    if (!schoolForm.content) {
+      setSchoolForm({ ...schoolForm, content: [""] });
+    } else {
+      setSchoolForm({ ...schoolForm, content: [...schoolForm.content, ""] });
+    }
+  }
+
+  /**
+   * @function handleAiCall
+   */
+  const handleAiCall = async () => {
+    setAiLoading(true);
+    const schoolResponse = await api.post("/new/education", { education: schoolForm });
+    setSchoolForm({ ...schoolForm, content: schoolResponse.data.response.accomplishments });
+    setAiLoading(false);
+  }
+
   return (
-    <div className="mt-6">
-      <div className="mb-6">
+    <div className={`${aiLoading ? "animate-pulse" : ""}`}>
+      <div className="my-6">
         <label htmlFor={"name"} className="form-label">School Name</label>
         <input 
           type="text"
@@ -171,57 +192,52 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
         </div>
       </div>
 
-
-      <div className="my-6">
-        <label htmlFor={"notes"} className="form-label">Add details</label>
-        <textarea 
-          id={"notes"}
-          className="form-style"
-          placeholder="Add a few details about your time at school..."
-          value={schoolForm.notes || ''}
-          onChange={handleSchoolChange}
-          required 
-        />
-      </div>
-
-      {schoolForm.content && (
-        <div className="m-2">
-          <div className="left-right-spacing my-2">
-            <label htmlFor={"jobContent"} className="block text-sm font-medium">Content</label>
+      <div className="m-2">
+        <div className="left-right-spacing my-2">
+          <label htmlFor={"jobContent"} className="block text-sm font-medium">Accomplishments</label>
+          <div>
             <button
-              className="green-button bg-slate-800 p-2"
-              onClick={() => setSchoolForm({ ...schoolForm, content: [...schoolForm.content, ""] })}
+              className="green-button py-1 px-4 mx-1 bg-slate-800"
+              onClick={handleAiCall}
+            >
+              <div>
+                <AutoAwesomeIcon className="pr-2"/>
+                <span>Write with AI</span>
+              </div>
+            </button>
+            <button
+              className="green-button bg-slate-800 py-1 px-4 mx-1"
+              onClick={handleAccomplishmentAdd}
             >
               {"Add"}
             </button>
           </div>
-          {/* <VerticalList items={schoolForm.content.map((item, index) => ({ id: index + 1, content: item })) || []} onSave={handleSchoolContentChange} /> */}
-          {schoolForm.content.map((item, index) => (
-            <div className="left-right-spacing">
-              <div className="w-full pr-2">
-                <textarea 
-                  type="text"
-                  id={"jobContent"}
-                  className="form-style flex-wrap"
-                  placeholder="Enter content..."
-                  value={item}
-                  onChange={(e) => handleSchoolContentChange(e.target.value, index)}
-                  required 
-                />
-              </div>
-              <div>
-                <button
-                  className="remove-content-button"
-                  onClick={() => handleContentDelete(index)}
-                >
-                  {"X"}
-                </button>
-              </div>
-            </div>
-            )
-          )}
         </div>
-      )}
+        {schoolForm.content && schoolForm.content.map((item, index) => (
+          <div className="left-right-spacing">
+            <div className="w-full pr-2 py-1">
+              <textarea 
+                type="text"
+                id={"jobContent"}
+                className="form-style flex-wrap h-24 lg:h-16"
+                placeholder="Enter content..."
+                value={item}
+                onChange={(e) => handleSchoolContentChange(e.target.value, index)}
+                required 
+              />
+            </div>
+            <div className="flex items-center">
+              <button
+                className="remove-content-button"
+                onClick={() => handleContentDelete(index)}
+              >
+                {"X"}
+              </button>
+            </div>
+          </div>
+          )
+        )}
+      </div>
 
       <div className="flex justify-between">
         <button
@@ -238,7 +254,7 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
           {"Cancel"}
         </button>
         <button
-          className="add-button p-1"
+          className="add-button"
           onClick={handleSaveSchool}
         >
           {"Save"}

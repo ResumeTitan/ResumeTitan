@@ -37,7 +37,6 @@ export const Dashboard = () => {
     if (!currentUser) {
       return;
     }
-    console.log('current user', currentUser);
     setIsLoading(true);
     const data = await getResumes(token, currentUser._id);
     setResumes(data.resumes);

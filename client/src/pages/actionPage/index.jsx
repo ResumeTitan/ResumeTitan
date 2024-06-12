@@ -164,8 +164,9 @@ function ActionPage() {
    * @function handleSaveResume
    * @description Save current state of resume, only works if logged in
    *    Redirect to dashboard
+   * @param {boolean} exit If true, redirect to dashboard
    */
-  const handleSaveResume = async () => {
+  const handleSaveResume = async (exit) => {
     if (!isAuth) {
       setIsLoginOpen(true);
       return;
@@ -187,7 +188,9 @@ function ActionPage() {
       setWork(savedResume.resume.work);
       setSkills(savedResume.resume.skills);
       setResumeLoading(false);
-      navigate('/dashboard');
+      if (exit) {
+        navigate('/dashboard');
+      }
     } catch (err) {
       console.log(err);
       throw err;
@@ -230,7 +233,6 @@ function ActionPage() {
             }}
             onUpdateBasics={(basicsIn) => setBasics(basicsIn)}
             onGenerateResume={handleGenerateResume} 
-            onSave={handleSaveResume}
           />
         )}
         {activeTab === 2 && (
@@ -243,8 +245,8 @@ function ActionPage() {
           />
         )}
         <div className="w-full">
-          <button onClick={handleGenerateResume} className="generate-button">Generate Resume</button>
-          <button onClick={handleSaveResume} className="save-button">Save and Exit</button>
+          <button onClick={() => handleSaveResume(false)} className="save-button">Save Resume</button>
+          <button onClick={() => handleSaveResume(true)} className="save-button">Save and Exit</button>
         </div>
 
         <div onClick={() => setIsOpen(true)} className="fixed bottom-8 right-8 hover:cursor-pointer lg:hidden">
