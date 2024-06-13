@@ -38,6 +38,7 @@ function ActionPage() {
   const location = useLocation();
   const token = useSelector((state) => state.token);
   const [resumeId, setResumeId] = useState(null);
+  const [resumeName, setResumeName] = useState('Resume Name');
   const [isOpen, setIsOpen] = useState(false);
   const [education, setEducation] = useState([]);
   const [work, setWork] = useState([]);
@@ -75,6 +76,7 @@ function ActionPage() {
       setWork(resume.work);
       setSkills(resume.skills);
       setTheme(resume.theme);
+      setResumeName(resume.name);
     } catch (err) {
       console.log(err);
       throw err;
@@ -147,7 +149,8 @@ function ActionPage() {
       work: work,
       education: education,
       basics: basics,
-      theme: theme
+      theme: theme,
+      name: resumeName
     };
     setResumeLoading(true);
     try {
@@ -180,7 +183,8 @@ function ActionPage() {
       education: education,
       basics: basics,
       skills: skills,
-      theme: theme
+      theme: theme,
+      name: resumeName
     };
     setResumeLoading(true);
     try {
@@ -224,6 +228,8 @@ function ActionPage() {
             education={education}
             skills={skills}
             summary={basics.summary}
+            resumeName={resumeName}
+            onUpdateResumeName={setResumeName}
             onPrint={handleSaveToPdf}
             onUpdateWork={(jobsIn) => setWork(jobsIn)}
             onUpdateEducation={(schoolsIn) => setEducation(schoolsIn)}

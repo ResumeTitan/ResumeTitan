@@ -15,6 +15,8 @@ function ActionTab({
   work,
   education,
   skills,
+  resumeName,
+  onUpdateResumeName,
   onPrint, 
   onUpdateWork, 
   onUpdateEducation, 
@@ -116,7 +118,7 @@ function ActionTab({
 
   return (
     <div>
-      <ResumeName onPrint={ onPrint } />
+      <ResumeName initName={resumeName} onPrint={ onPrint } onUpdateResumeName={onUpdateResumeName} />
       <PersonalInfo initialInfo={basics} key={basics} onUpdate={onUpdateBasics} />
 
       <Schools key={education} education={education} onSave={handleSaveEducation} onDelete={handleDeleteEducation} onReorder={handleSwapEducation}/>
