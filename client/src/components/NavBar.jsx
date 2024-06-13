@@ -135,14 +135,14 @@ const NavBar = () => {
           <div className="flex items-center">
             {user && (
               <button
-                className="text-white pr-8"
+                className="text-white font-bold pr-8"
                 onClick={() => navigate('/dashboard')}
               >
                 {'Dashboard'}
               </button>
             )}
             <button
-              className="text-white pr-8"
+              className="text-white font-bold pr-8"
               onClick={() => navigate('/pricing')}
             >
               {'Pricing'}

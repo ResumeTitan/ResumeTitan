@@ -108,7 +108,9 @@ function ActionPage() {
       setShowPrintError(true);
       return;
     }
-    const response = await getResumeAsPdf(token, location.state.resumeId);
+    // Save the resume first
+    await handleSaveResume(false);
+    const response = await getResumeAsPdf(token, resumeId);
     try {
       const pdf = await response.blob();
       // Create a URL for the Blob
@@ -187,6 +189,7 @@ function ActionPage() {
       setEducation(savedResume.resume.education);
       setWork(savedResume.resume.work);
       setSkills(savedResume.resume.skills);
+      setResumeId(savedResume.resume._id);
       setResumeLoading(false);
       if (exit) {
         navigate('/dashboard');

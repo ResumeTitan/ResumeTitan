@@ -3,6 +3,7 @@ import About from './About';
 import Hero from './Hero';
 // import Logos from './Logos/Logos';
 import Pricing from 'components/Pricing';
+import 'styles/index.css';
 
 const LandingPage: React.FC = () => {
   return (

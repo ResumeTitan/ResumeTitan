@@ -13,7 +13,7 @@ const DetailsExpand: React.FC<DetailsProps> = ({label, description}) => {
         <summary className="leading-6 text-white font-semibold select-none">
           {label}
         </summary>
-        <div className="mt-3 text-sm leading-6 text-slate-400">
+        <div className="mt-3 text-sm leading-6">
           <p>{description}</p>
         </div>
       </details>

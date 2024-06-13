@@ -7,6 +7,7 @@ import { deleteInterview, getInterviews } from 'api/interview';
 import Spinner from 'components/Spinner';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import CloseIcon from '@mui/icons-material/Close';
 import Popup from './Popup';
 import { formatDateFull } from 'utils';
 import './dashboard.css';
@@ -74,7 +75,8 @@ export const Dashboard = () => {
     await loadResumes();
   }
 
-  const handleDeleteInterview = async (id) => {
+  const handleDeleteInterview = async (event, id) => {
+    event.stopPropagation();
     await deleteInterview(token, id);
     await loadInterviews();
   }
@@ -112,39 +114,46 @@ export const Dashboard = () => {
     ));
 
   return (
-    <div className="bg-slate-400 text-white min-h-screen">
-      <div className="text-3xl font-bold bg-slate-700 p-2">My Resumes:</div>
-      <button className="mx-4 mt-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-white font-bold py-2 px-4" onClick={() => navigate('/resume')}>Add New</button>
-      <div className="overflow-x-scroll hide-scrollbar">
-        <div className="flex lg:min-w-0 w-1/2 h-80 items-start p-2">
-          <div className="transform scale-25 flex origin-top-left">
-            {resumeWidgets}
+    <div className="bg-white text-white">
+      <div className="dashboard-container">
+        <div className="dashboard-header">My Resumes:</div>
+        <button className="dashboard-button" onClick={() => navigate('/resume')}>Add New</button>
+        <div className="overflow-x-scroll hide-scrollbar">
+          <div className="flex lg:min-w-0 w-1/2 h-80 items-start p-2">
+            <div className="transform scale-25 flex origin-top-left">
+              {resumeWidgets}
+            </div>
           </div>
         </div>
       </div>
 
-      <div>
-        <div className="text-3xl font-bold bg-slate-700 p-2 flex">My Interviews:</div>
-        <button className="mx-4 mt-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-white font-bold py-2 px-4" onClick={() => navigate('/interview')}>Add New</button>
-
+      <div className="dashboard-container">
+        <div className="dashboard-header">My Interviews:</div>
+        <button className="dashboard-button" onClick={() => navigate('/interview')}>Add New</button>
         <div className="overflow-x-scroll hide-scrollbar">
-          <div className="flex lg:min-w-0 w-1/2 h-80 items-start p-2">
+          <div className="flex lg:min-w-0 w-1/2 items-start p-2">
             <div className="flex origin-top-left">
               {interviews.map((interview, index) => (
-                <div onClick={() => handleClickInterview(interview._id)} className="hover:cursor-pointer relative group">
-                  <div className="bg-white text-black w-40 h-40 p-2 m-2 rounded-lg">
+                <div className="border border-4 m-2 rounded-lg border-black hover:bg-lightest-green relative group">
+                  <div className="text-black w-40 h-40 p-2 m-2 rounded-lg">
                     <div className="text-xl font-bold">{interview.jobTitle}</div>
                     <div className="">{`Questions: ${interview.interview.length}`}</div>
                     <div className="">{`${formatDateFull(interview.createdAt)}`}</div>
                   </div>
                   <button
+                    onClick={(e) => handleDeleteInterview(e, interviews[index]._id)}
+                    className="hover:cursor-pointer absolute top-3 right-3 bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center opacity-0 group-hover:opacity-100"
+                  >
+                    <CloseIcon />
+                  </button>
+                  <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleDeleteInterview(interviews[index]._id);
+                      handleClickInterview(interview._id);
                     }}
-                    className="absolute top-3 right-3 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100"
+                    className="hover:cursor-pointer absolute top-3 left-3 bg-dark-green text-white rounded-full w-8 h-8 flex items-center justify-center opacity-0 group-hover:opacity-100"
                   >
-                    X
+                    <EditIcon />
                   </button>
                 </div>
               ))}

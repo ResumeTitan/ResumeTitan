@@ -44,7 +44,7 @@ function ResumeName({ onPrint }) {
             </div>
           ) : (
             <div
-              className="flex items-center font-bold text-lg hover:text-accent-blue hover:cursor-pointer transition-colors duration-300"
+              className="flex items-center font-bold text-lg hover:text-lighter-green hover:cursor-pointer transition-colors duration-300"
               onClick={handleIsEditing}
             >
               <div className="mr-2">{resumeName || "Resume Name"}</div>
@@ -53,7 +53,7 @@ function ResumeName({ onPrint }) {
           )}
         </div>
         <div>
-          <button onClick={handlePrint} className="border-2 submitButton">
+          <button onClick={handlePrint} className="submit-button">
             {"Save as PDF"}
           </button>
         </div>
