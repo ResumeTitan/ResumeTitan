@@ -7,7 +7,7 @@ import 'styles/index.css';
 
 const LandingPage: React.FC = () => {
   return (
-    <div className="py-10 bg-white">
+    <div className="py-10 bg-white overflow-x-hidden">
       <Hero />
       {/* <Logos /> */}
       <About />
