@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { setUser } from '../../state';
+import { setUser } from '../../state/authReducer';
 import { reloadUser } from 'api/resume';
 
 const SuccessPage = () => {

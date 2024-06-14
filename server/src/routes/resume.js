@@ -1,6 +1,7 @@
 import express from "express";
 import { createResume, getResume, getResumes, updateResume, deleteResume, getResumeAsPdf } from "../controllers/resume.js";
 import { verifyToken } from "../middleware/auth.js";
+
 const router = express.Router();
 
 router.post("/create", verifyToken, createResume);

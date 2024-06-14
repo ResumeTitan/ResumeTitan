@@ -27,6 +27,10 @@ const UserSchema = new mongoose.Schema(
     },
     phone: Number,
     premiumUntil: Date,
+    chatId: {
+      type: String,
+      description: "Chat ID for the resume",
+    },
   },
   { timestamps: true }
 );

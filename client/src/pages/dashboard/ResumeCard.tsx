@@ -3,32 +3,31 @@ import ResumeContainer from 'templates/ResumeContainer';
 import { IBasicsType, IEducationType, IWorkType } from '../../types/types';
 
 interface ResumeCardProps {
-  basics: IBasicsType;
-  summary: string;
-  education: IEducationType[];
-  work: IWorkType[];
-  skills: string[];
-  theme: string;
+  resume: {
+    basics: IBasicsType;
+    summary: string;
+    education: IEducationType[];
+    work: IWorkType[];
+    skills: string[];
+    theme: string;
+  }
 }
 
-const ResumeCard: React.FC<ResumeCardProps> = ({
-  basics,
-  education,
-  work,
-  skills,
-  theme,
-}) => {
+const ResumeCard: React.FC<ResumeCardProps> = ({ resume }) => {
   return (
-    <div className="mx-4 border border-2 border-black">
+    <div>
       <ResumeContainer resume={{
-          basics: basics,
-          work: work,
-          education: education,
-          skills: skills,
-          summary: basics.summary,
+          basics: resume.basics,
+          work: resume.work,
+          education: resume.education,
+          skills: resume.skills,
+          summary: resume.basics.summary,
         }}
-        theme={theme} 
+        theme={resume.theme} 
       />
+      <div>
+
+      </div>
     </div>
   );
 };

@@ -172,6 +172,10 @@ const ResumeSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       required: true,
     },
+    name: {
+      type: String,
+      default: "Resume Name",
+    },
   },
   { timestamps: true }
 );

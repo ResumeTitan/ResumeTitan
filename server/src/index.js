@@ -12,6 +12,7 @@ import authRoutes from "./routes/auth.js";
 import resumeRoutes from "./routes/resume.js";
 import interviewRoutes from "./routes/interview.js";
 import stripeRoutes from "./routes/stripe.js";
+import newRoutes from "./routes/resumeInteractive.js";
 
 /* CONFIGURATIONS */
 const __filename = fileURLToPath(import.meta.url);
@@ -46,7 +47,8 @@ const upload = multer({ storage });
 app.use("/auth", authRoutes);
 app.use("/resume", resumeRoutes);
 app.use("/interview", interviewRoutes);
-app.use("/checkout", stripeRoutes)
+app.use("/checkout", stripeRoutes);
+app.use("/new", newRoutes);
 // app.use("/posts", postRoutes);
 // app.use('/search', searchRoutes);
 

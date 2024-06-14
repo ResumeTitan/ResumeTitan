@@ -2,7 +2,7 @@ import { postLogIn, postRegister } from 'api/resume';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { setLogin } from 'state';
+import { setLogin } from 'state/authReducer';
 import SuccessAlert from './Alert/SuccessAlert';
 import ErrorAlert from './Alert/ErrorAlert';
 
@@ -226,7 +226,7 @@ export const LoginForm = ({ onCloseLogin, registerOpen }) => {
             <div className="text-sm text-white pb-4">
               <p>
                 {'By creating an account, you agree to our '}
-                <a href="/terms" className="text-sm text-accent-blue hover:text-white">Terms of Service</a>
+                <a href="/terms" className="text-sm text-lighter-green hover:text-white">Terms of Service</a>
                 {'. We do not sell your personal data. To learn more about how we collect, use, share and protect it please read our Privacy Policy'}
               </p>
             </div>
@@ -236,13 +236,13 @@ export const LoginForm = ({ onCloseLogin, registerOpen }) => {
             <button
               id="submitLogin"
               type="submit"
-              className="bg-accent-blue hover:bg-main-green text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              className="border border-4 border-white hover:bg-light-green text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             >
               {isRegister ? 'Register' : 'Sign In'}
             </button>
             <button
               type="button"
-              className="text-accent-blue hover:text-white text-sm"
+              className="text-lighter-green hover:text-white text-sm font-bold"
               onClick={toggleRegister}
             >
               {isRegister ? 'Sign In' : 'Register'}

@@ -123,7 +123,7 @@ export const updateResume = async (req, res) => {
       const resumeModel = new Resume(resume);
       resumeOut = await resumeModel.save();
     } else {
-      resumeOut = await Resume.findOneAndUpdate({ _id: resume._id }, resume);
+      resumeOut = await Resume.findOneAndUpdate({ _id: resume._id }, resume, { new: true, upsert: true });
     }
 
     res.status(200).json( { resume: resumeOut });

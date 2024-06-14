@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { setLogout } from 'state';
+import { setLogout } from 'state/authReducer';
 import WhiteLogo from '../assets/logo-white.png';
 import TextLogo from '../assets/text-logo-white.png';
 import { LoginForm } from './LoginForm';
@@ -135,14 +135,14 @@ const NavBar = () => {
           <div className="flex items-center">
             {user && (
               <button
-                className="text-white pr-8"
+                className="text-white font-bold pr-8"
                 onClick={() => navigate('/dashboard')}
               >
                 {'Dashboard'}
               </button>
             )}
             <button
-              className="text-white pr-8"
+              className="text-white font-bold pr-8"
               onClick={() => navigate('/pricing')}
             >
               {'Pricing'}

@@ -4,12 +4,14 @@ import { useLocation } from 'react-router-dom';
 import DetailsExpand from './Details';
 import Spinner from 'components/Spinner';
 import { createInterview, getInterview } from 'api/interview';
+import api from 'api/actions';
 import 'styles/index.css';
 
 interface Interview {
   question: string;
   example: string;
   guidance: string;
+  answer: string;
 }
 
 const InterviewPage: React.FC = () => {
@@ -63,14 +65,52 @@ const InterviewPage: React.FC = () => {
   const handleGenerateInterview = async () => {
     try {
       setIsLoading(true);
-      const { interview } = await createInterview(token, jobTitle, jobDescription);
-      setInterview(interview.interview);
+      let interviewId = '';
+      if (location.state?.interviewId) {
+        interviewId = location.state.interviewId;
+      }
+      const response = await api.post("interview", { jobTitle, jobDescription, interviewId });
+      //@ts-ignore
+      setInterview(response.data.interview.interview);
       setIsLoading(false);
     } catch (error) {
       console.error(error);
     }
   }
 
+  /**
+   * @function handleSaveInterview
+   * @description Save the interview to the database
+   */
+  const handleSaveInterview = async () => {
+    setIsLoading(true);
+    try {
+      const response = await api.put(`/interview/${location.state.interviewId}`, {
+        jobTitle,
+        jobDescription,
+        interview,
+      });
+
+      setInterview(response.data.interview.interview);
+    } catch (error) {
+      console.error(error);
+    }
+    setIsLoading(false);
+  }
+
+  /**
+   * @function handleAnswerChange
+   * @description Update the answer for the question
+   */
+  const handleAnswerChange = (index: number, event: any) => {
+    const newInterview = [...interview];
+    newInterview[index].answer = event.target.value;
+    setInterview(newInterview);
+  }
+
+  /**
+   * @description Render the Interview Page
+   */
   return (
     <div className="page-container">
       <div className="page-header">
@@ -104,8 +144,8 @@ const InterviewPage: React.FC = () => {
                 className="interview-button bg-slate-800"
                 onClick={handleGenerateInterview}
               >
-              {"Generate Interview Questions"}
-            </button>
+                {"Generate Interview Questions"}
+              </button>
             </div>
         </div>
 
@@ -116,7 +156,11 @@ const InterviewPage: React.FC = () => {
                 <div key={index} className="question-container">
                   <div className="p-4">{index + 1}. {question.question}</div>
                   <div className="px-4">
-                    <textarea className="form-style" rows={4} />
+                    <textarea 
+                      className="form-style" 
+                      onChange={(event) => handleAnswerChange(index, event)} rows={4} 
+                      value={question.answer}
+                    />
                   </div>
                   <DetailsExpand label="Example Answer:" description={question.example} />
                   <DetailsExpand label="Guidance:" description={question.guidance} />
@@ -126,6 +170,20 @@ const InterviewPage: React.FC = () => {
           </div>
         )}
 
+        <div className="py-4 flex justify-between">
+          <button
+            className="add-button bg-slate-800"
+            onClick={handleSaveInterview}
+          >
+            {"Save Interview"}
+          </button>
+          <button
+            className="remove-button bg-slate-800"
+            onClick={() => window.location.replace('/dashboard')}
+          >
+            {"Exit to Dashboard"}
+          </button>
+        </div>
       </div>
 
       { isLoading && (

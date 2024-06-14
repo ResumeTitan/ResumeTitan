@@ -1,10 +1,18 @@
-import { ChatGPTAPI } from 'chatgpt';
+import { ChatOpenAI } from "@langchain/openai";
+import { z } from "zod";
 import Interview from "../models/Interview.js";
 
 import dotenv from "dotenv";
 dotenv.config();
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
-const gpt = new ChatGPTAPI({apiKey: OPENAI_API_KEY});
+const model = new ChatOpenAI({ model: "gpt-4o", apiKey: OPENAI_API_KEY });
+const interviewModel = model.withStructuredOutput(z.object({
+  interview: z.array(z.object({
+    question: z.string(),
+    example: z.string(),
+    guidance: z.string()
+  }))
+}));
 
 const getPrompt = (jobTitle, jobDescription) => {
   const prompt = `
@@ -14,53 +22,41 @@ const getPrompt = (jobTitle, jobDescription) => {
   Along with the list of questions, please provide me with an example answer to each question.
   Along with the list of questions, please provide guidance on what you are looking for in the answer and how I should respond.
   Your response must be in JSON format. The format shall have a key called "interview" with an array of questions. Each question shall have the following keys: question, example, guidance.
-  Here is an example of the JSON format:
-  {interview: [
-    {
-      question: "Can you describe a challenging technical problem you faced in a previous project, and how you solved it?",
-      example: "In my previous role, I encountered a scalability issue where our system couldn't handle a sudden spike in user traffic. I led a team to identify the bottleneck in our architecture, implemented optimizations, and introduced load balancing techniques to distribute the traffic efficiently. Through careful monitoring and testing, we successfully resolved the issue and improved our system's performance.",
-      guidance: "When answering this question, focus on the specific problem, your approach to solving it, and the outcome of your efforts. Highlight your problem-solving skills, teamwork, and ability to handle challenges effectively."
-    }
-  ]}`;
+  Give at least 10 questions.`;
 
   return prompt;
 }
 
 /**
- * createInterview
+ * createUpdateInterview
  * @description POST that creates interview questions based on the resume and job description
  * @param {string} token The user token
  * @param {string} id The resume id
  * @returns 
  */
-export const createInterview = async (req, res) => {
+export const createUpdateInterview = async (req, res) => {
   try {
-    const { jobTitle, jobDescription } = req.body;
-    const gptResponse = await gpt.sendMessage(getPrompt(jobTitle, jobDescription));
+    const { jobTitle, jobDescription, interviewId } = req.body;
+    const gptResponse = await interviewModel.invoke(getPrompt(jobTitle, jobDescription));
 
-    // Find the starting and ending positions of the JSON code
-    const start = gptResponse.text.indexOf('{');
-    const end = gptResponse.text.lastIndexOf('}');
-
-    let interview;
-    if (start !== -1 && end !== -1) {
-      const jsonStr = gptResponse.text.substring(start, end + 1);
-      interview = JSON.parse(jsonStr);
-    } else {
-      interview = {
-        question: [],
-        example: [],
-        guidance: [],
-      };
-    }
+    const interview = gptResponse.interview;
 
     // Save the interview to the database
+    const interviewIn = {
+      interview,
+      jobTitle,
+      jobDescription,
+      userId: req.user.id,
+    }
     interview.userId = req.user.id;
-    interview.jobTitle = jobTitle;
-    interview.jobDescription = jobDescription;
-    await Interview.create(interview);
+    if (interviewId) {
+      const interviewOut = await Interview.findOneAndUpdate({ _id: interviewId }, interviewIn);
+      res.status(200).json({ interview: interviewOut });
+      return;
+    }
 
-    res.status(200).json({ interview: interview });
+    const interviewOut = await Interview.create(interviewIn);
+    res.status(200).json({ interview: interviewOut });
   } catch (error) {
     console.log("Error: ", error);
     res.status(500).json({ error: error.message });
@@ -111,6 +107,23 @@ export const deleteInterview = async (req, res) => {
   try {
     await Interview.findOneAndDelete({ _id: id });
     res.status(204).send();
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+}
+
+/**
+ * @fuction updateInterview
+ * @description Update an interview
+ * @param {Request} req
+ * @param {Response} res
+ */
+export const updateInterview = async (req, res) => {
+  const id = req.params.id;
+  const interview = req.body;
+  try {
+    await Interview.findOneAndUpdate({ _id: id }, interview);
+    res.status(200).json({ interview });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

@@ -12,20 +12,32 @@ module.exports = {
     extend: {
       colors: {
         'main-green': '#115e59',
+        'dark-green': '#0e4a45',
+        'darker-green': '#0b3733',
+        'darkest-green': '#082421',
+        'lightest-green': '#e0f2f1',
+        'lighter-green': '#b2dfdb',
+        'light-green': '#80cbc4',
+        'main-opposite': '#59115e',
+        'analaogous-green': '#115e45',
+        'analaogous-blue': '#115e73',
         'background': '#475569',
-        'background-dark': '#3d485c',
-        'background-light': '#6d7c99',
-        'accent-gold': '#ffc154',
-        'accent-blue': '#5e92a2',
-        'dark-text': '#333333',
-        'light-text': '#ffffff',
-        'default-gray': '#bdbdbd',
       },
       scale: {
         '25': '0.25',
         '60': '0.60',
         '90': '0.90',
       },
+      keyframes: {
+        pulse: {
+          '0%, 100%': {
+            opacity: 0.5,
+          },
+          '50%': {
+            opacity: 0.2,
+          },
+        },
+      }
     },
   },
   plugins: [],

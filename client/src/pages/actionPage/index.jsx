@@ -38,6 +38,7 @@ function ActionPage() {
   const location = useLocation();
   const token = useSelector((state) => state.token);
   const [resumeId, setResumeId] = useState(null);
+  const [resumeName, setResumeName] = useState('Resume Name');
   const [isOpen, setIsOpen] = useState(false);
   const [education, setEducation] = useState([]);
   const [work, setWork] = useState([]);
@@ -75,6 +76,7 @@ function ActionPage() {
       setWork(resume.work);
       setSkills(resume.skills);
       setTheme(resume.theme);
+      setResumeName(resume.name);
     } catch (err) {
       console.log(err);
       throw err;
@@ -108,7 +110,9 @@ function ActionPage() {
       setShowPrintError(true);
       return;
     }
-    const response = await getResumeAsPdf(token, location.state.resumeId);
+    // Save the resume first
+    await handleSaveResume(false);
+    const response = await getResumeAsPdf(token, resumeId);
     try {
       const pdf = await response.blob();
       // Create a URL for the Blob
@@ -145,7 +149,8 @@ function ActionPage() {
       work: work,
       education: education,
       basics: basics,
-      theme: theme
+      theme: theme,
+      name: resumeName
     };
     setResumeLoading(true);
     try {
@@ -164,8 +169,9 @@ function ActionPage() {
    * @function handleSaveResume
    * @description Save current state of resume, only works if logged in
    *    Redirect to dashboard
+   * @param {boolean} exit If true, redirect to dashboard
    */
-  const handleSaveResume = async () => {
+  const handleSaveResume = async (exit) => {
     if (!isAuth) {
       setIsLoginOpen(true);
       return;
@@ -177,7 +183,8 @@ function ActionPage() {
       education: education,
       basics: basics,
       skills: skills,
-      theme: theme
+      theme: theme,
+      name: resumeName
     };
     setResumeLoading(true);
     try {
@@ -186,8 +193,11 @@ function ActionPage() {
       setEducation(savedResume.resume.education);
       setWork(savedResume.resume.work);
       setSkills(savedResume.resume.skills);
+      setResumeId(savedResume.resume._id);
       setResumeLoading(false);
-      navigate('/dashboard');
+      if (exit) {
+        navigate('/dashboard');
+      }
     } catch (err) {
       console.log(err);
       throw err;
@@ -218,6 +228,8 @@ function ActionPage() {
             education={education}
             skills={skills}
             summary={basics.summary}
+            resumeName={resumeName}
+            onUpdateResumeName={setResumeName}
             onPrint={handleSaveToPdf}
             onUpdateWork={(jobsIn) => setWork(jobsIn)}
             onUpdateEducation={(schoolsIn) => setEducation(schoolsIn)}
@@ -230,7 +242,6 @@ function ActionPage() {
             }}
             onUpdateBasics={(basicsIn) => setBasics(basicsIn)}
             onGenerateResume={handleGenerateResume} 
-            onSave={handleSaveResume}
           />
         )}
         {activeTab === 2 && (
@@ -243,8 +254,8 @@ function ActionPage() {
           />
         )}
         <div className="w-full">
-          <button onClick={handleGenerateResume} className="generate-button">Generate Resume</button>
-          <button onClick={handleSaveResume} className="save-button">Save and Exit</button>
+          <button onClick={() => handleSaveResume(false)} className="save-button">Save Resume</button>
+          <button onClick={() => handleSaveResume(true)} className="save-button">Save and Exit</button>
         </div>
 
         <div onClick={() => setIsOpen(true)} className="fixed bottom-8 right-8 hover:cursor-pointer lg:hidden">

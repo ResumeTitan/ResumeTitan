@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import ResumeName from './ResumeName';
 import PersonalInfo from './PersonalInfo';
 import Schools from './Schools';
@@ -6,7 +6,7 @@ import Jobs from './Jobs';
 import Skills from './Skills';
 import Summary from './Summary';
 import Popup from '../Popup';
-import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import api from 'api/actions';
 import { swapArrayElements } from 'utils';
 import 'styles/index.css';
 
@@ -15,6 +15,8 @@ function ActionTab({
   work,
   education,
   skills,
+  resumeName,
+  onUpdateResumeName,
   onPrint, 
   onUpdateWork, 
   onUpdateEducation, 
@@ -22,7 +24,39 @@ function ActionTab({
   onUpdateSkills,
   onUpdateSummary 
 }) {
-  const [popupOpen, setPopupOpen] = React.useState(false);
+  const [popupOpen, setPopupOpen] = useState(false);
+  const [aiSkillsLoading, setAiSkillsLoading] = useState(false);
+  const [aiSummaryLoading, setAiSummaryLoading] = useState(false);
+
+  /**
+   * @function handleSummaryAiCall
+   */
+  const handleSummaryAiCall = async () => {
+    setAiSummaryLoading(true);
+    const summaryResponse = await api.post("/new/summary", { 
+      summary: basics.summary,
+      work: work,
+      education: education,
+      skills: skills
+    });
+    onUpdateSummary(summaryResponse.data.response.summary);
+    setAiSummaryLoading(false);
+  }
+
+  /**
+   * @function handleSkillsAiCall
+   */
+  const handleSkillsAiCall = async () => {
+    setAiSkillsLoading(true);
+    const summaryResponse = await api.post("/new/skills", { 
+      summary: basics.summary,
+      work: work,
+      education: education,
+      skills: skills
+    });
+    onUpdateSkills(summaryResponse.data.response.skills);
+    setAiSkillsLoading(false);
+  }
 
   const handleSaveWork = (workForm) => {
     if (workForm.id) {
@@ -76,23 +110,21 @@ function ActionTab({
     onUpdateWork(tempWork);
   }
 
+  const handleSwapEducation = (indexA, indexB) => {
+    const tempEducation = education;
+    swapArrayElements(tempEducation, indexA, indexB);
+    onUpdateEducation(tempEducation);
+  }
+
   return (
     <div>
-      <ResumeName onPrint={ onPrint } />
+      <ResumeName initName={resumeName} onPrint={ onPrint } onUpdateResumeName={onUpdateResumeName} />
       <PersonalInfo initialInfo={basics} key={basics} onUpdate={onUpdateBasics} />
 
-      <Schools education={education} onSave={handleSaveEducation} onDelete={handleDeleteEducation} />
-      <Jobs jobs={work} onSave={handleSaveWork} onDelete={handleDeleteWork} onSwap={handleSwapJobs}/>
-      
-      <div className="flex w-full">
-        <div className="font-bold pr-2">Optional:</div>
-        <button onClick={() => setPopupOpen(true)}>
-          <HelpOutlineIcon/>
-        </button>
-      </div>
-      
-      <Summary initSummary={basics?.summary || ""} onUpdate={onUpdateSummary} />
-      <Skills initSkills={skills} onUpdate={onUpdateSkills}/>
+      <Schools key={education} education={education} onSave={handleSaveEducation} onDelete={handleDeleteEducation} onReorder={handleSwapEducation}/>
+      <Jobs jobs={work} onSave={handleSaveWork} onDelete={handleDeleteWork} onSwap={handleSwapJobs}/>      
+      <Summary summary={basics?.summary || ""} aiLoading={aiSummaryLoading} onUpdate={onUpdateSummary} onAiCall={handleSummaryAiCall} />
+      <Skills initSkills={skills} aiLoading={aiSkillsLoading} onUpdate={onUpdateSkills} onAiCall={handleSkillsAiCall}/>
 
        {/* Popup */}
        {popupOpen && <Popup message={`These fields will be filled in when clicking "Generate Resume"`} handleOk={() => setPopupOpen(false)} />}

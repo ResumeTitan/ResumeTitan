@@ -2,9 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import EditIcon from '@mui/icons-material/Edit';
 import 'styles/index.css';
 
-function ResumeName({ onPrint }) {
+function ResumeName({ initName, onPrint, onUpdateResumeName }) {
   const [isEditing, setIsEditing] = useState(false);
-  const [resumeName, setResumeName] = useState("");
+  const [resumeName, setResumeName] = useState(initName);
   const inputRef = useRef();
 
   const handleIsEditing = () => {
@@ -13,6 +13,7 @@ function ResumeName({ onPrint }) {
 
   const handleBlur = () => {
     setIsEditing(false);
+    onUpdateResumeName(resumeName);
   }
 
   const handlePrint = () => {
@@ -23,7 +24,8 @@ function ResumeName({ onPrint }) {
     if (isEditing && inputRef.current) {
       inputRef.current.focus();
     }
-  }, [isEditing]);
+    setResumeName(initName);
+  }, [isEditing, initName]);
 
   return (
     <div className="form-section">
@@ -44,7 +46,7 @@ function ResumeName({ onPrint }) {
             </div>
           ) : (
             <div
-              className="flex items-center font-bold text-lg hover:text-accent-blue hover:cursor-pointer transition-colors duration-300"
+              className="flex items-center font-bold text-lg hover:text-lighter-green hover:cursor-pointer transition-colors duration-300"
               onClick={handleIsEditing}
             >
               <div className="mr-2">{resumeName || "Resume Name"}</div>
@@ -53,7 +55,7 @@ function ResumeName({ onPrint }) {
           )}
         </div>
         <div>
-          <button onClick={handlePrint} className="border-2 submitButton">
+          <button onClick={handlePrint} className="submit-button">
             {"Save as PDF"}
           </button>
         </div>

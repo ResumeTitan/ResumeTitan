@@ -1,6 +1,6 @@
 export default function Footer() {
   return (
-    <footer className="bg-main-green text-white p-2 inset-x-0 bottom-0">
+    <footer className="bg-main-green text-white p-2">
       <div className="w-full mx-auto max-w-screen-xl sm:p-2 p-4 md:flex md:items-center md:justify-between">
         <span className="text-md sm:text-center">&#169; ResumeTitan {new Date().getFullYear()}</span>
         <ul className="block md:flex md:flex-wrap items-center mt-3 text-sm font-medium text-gray-500 sm:mt-0 list-none">
