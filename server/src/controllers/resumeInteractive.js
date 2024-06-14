@@ -95,26 +95,6 @@ const getPrompt = (section, data) => {
 //   res.status(200).json({ message: 'Personal information added successfully', response: gptResponse });
 // };
 
-// export const chatIdMiddleware = async (req, res, next) => {
-//   const { userId } = req.body;
-
-//   // Check if chat session already exists for this user
-//   let chat = await User.findOne({ _id: userId });
-
-//   if (!chat?.chatId) {
-//     // If not, create a new chat session and save it
-//     const gptResponse = await model.startChatSession();
-//     const chat = await User.findOneAndUpdate(
-//       { _id: userId },
-//       { $set: { chatId: gptResponse.chatId } },
-//       { new: true, upsert: true } // Creates new document if no document matches the query
-//     );
-//   }
-
-//   req.chatId = chat.chatId;
-//   next();
-// };
-
 export const postSummary = async (req, res) => {
   const { summary, work, education, skills } = req.body;
   resumeData.summary = summary;
@@ -144,8 +124,6 @@ export const postJob = async (req, res) => {
     resumeData.jobs = [];
   }
   resumeData.jobs.push(job);
-
-  console.log('resumeData:', job);
 
   const gptResponse = await jobModel.invoke(getPrompt('job', job));
 
