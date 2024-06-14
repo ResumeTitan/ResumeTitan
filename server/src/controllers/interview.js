@@ -28,7 +28,7 @@ const getPrompt = (jobTitle, jobDescription) => {
 }
 
 /**
- * createInterview
+ * createUpdateInterview
  * @description POST that creates interview questions based on the resume and job description
  * @param {string} token The user token
  * @param {string} id The resume id

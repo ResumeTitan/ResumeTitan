@@ -11,7 +11,9 @@ const LandingPage: React.FC = () => {
       <Hero />
       {/* <Logos /> */}
       <About />
-      <Pricing />
+      <div data-aos="fade-right">
+        <Pricing />
+      </div>
       {/* <Blogs /> */}
     </div>
   );
