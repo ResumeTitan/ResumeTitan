@@ -3,6 +3,7 @@
  * to the subscription payments.
  */
 
+//@ts-ignore
 const API_URL = process.env.REACT_APP_API_URL;
 
 export const createStripeSession = async (
