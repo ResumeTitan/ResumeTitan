@@ -1,14 +1,7 @@
 import React from "react";
 
-interface Skill {
-  name?: string;
-  level?: string;
-  keywords?: string[];
-  details?: { text?: string; comment?: string }[];
-}
-
 interface SkillsProps {
-  skills: Skill[];
+  skills: string[];
 }
 
 const SkillsComponent: React.FC<SkillsProps> = ({ skills }) => {

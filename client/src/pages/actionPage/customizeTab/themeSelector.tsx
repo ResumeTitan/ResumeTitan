@@ -14,7 +14,7 @@ type ImageProps = {
 };
 
 // Image component
-const Image: React.FC<ImageProps> = ({ image, isSelected, onClick }) => {
+const Image: React.FC<ImageProps> = ({ image, isSelected, onClick }: ImageProps) => {
   return (
     <div
       className={`relative ${isSelected ? "border-2 border-blue-500" : ""}`}

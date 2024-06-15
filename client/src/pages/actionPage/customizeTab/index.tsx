@@ -76,7 +76,7 @@ const CustomizeTab: React.FC<Props> = ({description,
       <ThemeSelector images={[
         {id: "harvard", url: HarvardImg}, 
         {id: "one-page", url: OnepageImg}
-      ]} onSelect={(image) => onChangeTheme(image.id)}> </ThemeSelector>
+      ]} onSelect={(image) => onChangeTheme(image.id)} />
     </div>
     </>
   );
