@@ -9,9 +9,11 @@ import { getResume, createResume, updateResume, getResumeAsPdf } from 'api/resum
 import Spinner from 'components/Spinner';
 import ErrorAlert from 'components/Alert/ErrorAlert';
 import { LoginForm } from 'components/LoginForm';
+import api from 'api/actions';
 import 'styles/index.css';
 import { styled } from '@mui/system';
 import DescriptionIcon from '@mui/icons-material/Description';
+import { saveAs } from 'file-saver';
 
 const CustomIcon = styled(DescriptionIcon)({
   backgroundColor: 'white',
@@ -110,23 +112,19 @@ function ActionPage() {
       setShowPrintError(true);
       return;
     }
-    // Save the resume first
-    await handleSaveResume(false);
-    const response = await getResumeAsPdf(token, resumeId);
+
     try {
-      const pdf = await response.blob();
-      // Create a URL for the Blob
-      const url = URL.createObjectURL(pdf);
+      setResumeLoading(true);
 
-      // Create an <a> element to trigger the download
-      const a = document.createElement('a');
-      a.href = url;
-      a.target = '_blank';
-      a.download = 'resume.pdf';
-      a.click();
+      // Save the resume first
+      await handleSaveResume(false);
+  
+      const response = await api.get(`/resume/print/${resumeId}`, { responseType: 'blob' });
+      const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
+      const resumeNameClean = resumeName.replace(' ', '_');
+      saveAs(pdfBlob, `${resumeNameClean}.pdf`);
 
-      // Clean up the URL object after the download is initiated
-      URL.revokeObjectURL(url);
+      setResumeLoading(false);
     } catch (error) {
       console.log(error);
       throw error;

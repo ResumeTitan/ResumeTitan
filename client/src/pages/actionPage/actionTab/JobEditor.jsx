@@ -198,14 +198,14 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
             </button>
           </div>
         </div>
-        {jobForm.content && jobForm.content.map((item, index) => (
+        {jobForm.content ? jobForm.content.map((item, index) => (
           <div className="left-right-spacing">
             <div className="w-full pr-2 py-1">
               <textarea 
                 type="text"
                 id={"jobContent"}
                 className="form-style flex-wrap h-24 lg:h-16"
-                placeholder="Enter content..."
+                placeholder="Enter responsibilities or skills..."
                 value={item}
                 onChange={(e) => handleJobContentChange(e.target.value, index)}
                 required 
@@ -221,6 +221,17 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
             </div>
           </div>
           )
+        ) : (
+          <div className="left-right-spacing">
+            <div className="w-full pr-2 py-1">
+              <textarea 
+                type="text"
+                className="form-style flex-wrap h-24 lg:h-16 text-black"
+                placeholder="Click add to start adding responsibilities/skills..."
+                disabled
+              />
+            </div>
+          </div>
         )}
       </div>
 

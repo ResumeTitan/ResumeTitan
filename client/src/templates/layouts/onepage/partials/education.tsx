@@ -36,8 +36,8 @@ const EducationComponent: React.FC<Props> = ({ education }) => {
                     </span>
                   )}
                   <div>
-                    {edu.studyType && <>{edu.studyType} </>}
-                    - {edu.area}
+                    {edu.studyType && <>{edu.studyType} - </>}
+                    {edu.area}
                     {edu.gpa && `, GPA: ${edu.gpa}`}
                   </div>
                   {edu.content && edu.content.length > 0 && (

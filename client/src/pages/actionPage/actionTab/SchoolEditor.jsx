@@ -96,7 +96,7 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
   return (
     <div className={`${aiLoading ? "animate-pulse" : ""}`}>
       <div className="my-6">
-        <label htmlFor={"name"} className="form-label">School Name</label>
+        <label htmlFor={"name"} className="form-label-text">School Name</label>
         <input 
           type="text"
           id={"name"}
@@ -108,7 +108,7 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
         />
       </div>
       <div className="mb-6">
-        <label htmlFor={"area"} className="form-label">Area of Study</label>
+        <label htmlFor={"area"} className="form-label-text">Area of Study</label>
         <input 
           type="text"
           id={"area"}
@@ -121,13 +121,13 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
       </div>
 
       <div className="w-full mb-6 pr-2">
-        <label htmlFor={"studyType"} className="form-label">Degree</label>
+        <label htmlFor={"studyType"} className="form-label-text">Degree</label>
         <DegreePicker onChange={handleDegreeChange}/>
       </div>
 
       <div className="mb-2 left-right-spacing">
         <div className="w-full pr-2">
-        <label htmlFor={"city"} className="form-label">City</label>
+        <label htmlFor={"city"} className="form-label-text">City</label>
         <input 
           type="text"
           id={"city"}
@@ -138,7 +138,7 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
           required />
         </div>
         <div className="w-full pl-2">
-        <label htmlFor={"state"} className="form-label">State</label>
+        <label htmlFor={"state"} className="form-label-text">State</label>
         <StatePicker onChange={handleStateChange} initState={schoolForm.state || ""}/>
         </div>
       </div>
@@ -194,7 +194,7 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
 
       <div className="m-2">
         <div className="left-right-spacing my-2">
-          <label htmlFor={"jobContent"} className="block text-sm font-medium">Accomplishments</label>
+          <label htmlFor={"schoolContent"} className="form-label-text">Accomplishments</label>
           <div>
             <button
               className="green-button py-1 px-4 mx-1 bg-slate-800"
@@ -213,14 +213,14 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
             </button>
           </div>
         </div>
-        {schoolForm.content && schoolForm.content.map((item, index) => (
+        {schoolForm.content ? schoolForm.content.map((item, index) => (
           <div className="left-right-spacing">
             <div className="w-full pr-2 py-1">
               <textarea 
                 type="text"
-                id={"jobContent"}
+                id={"schoolContent"}
                 className="form-style flex-wrap h-24 lg:h-16"
-                placeholder="Enter content..."
+                placeholder="Enter accomplishments or skills..."
                 value={item}
                 onChange={(e) => handleSchoolContentChange(e.target.value, index)}
                 required 
@@ -236,6 +236,17 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
             </div>
           </div>
           )
+        ) : (
+        <div className="left-right-spacing">
+          <div className="w-full pr-2 py-1">
+            <textarea 
+              type="text"
+              className="form-style flex-wrap h-24 lg:h-16"
+              placeholder="Click add to start adding accomplishments/skills..."
+              disabled
+            />
+          </div>
+        </div>
         )}
       </div>
 

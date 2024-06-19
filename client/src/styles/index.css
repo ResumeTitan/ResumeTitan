@@ -1,4 +1,9 @@
 @tailwind base;
+@layer base {
+  img {
+    @apply inline-block;
+  }
+}
 @tailwind components;
 @tailwind utilities;
 
@@ -144,7 +149,7 @@ body {
 }
 
 .form-label-text {
-  @apply block mb-2 text-sm font-medium text-white
+  @apply block mb-2 text-base font-medium text-white
 }
 
 .login-button {
@@ -152,11 +157,11 @@ body {
 }
 
 .action-button {
-  @apply bg-main-green p-4 font-bold leading-none rounded text-white border hover:border-transparent hover:bg-white hover:text-teal-800 hover:border-black items-center transition duration-300 ease-in-out
+  @apply bg-main-green p-4 font-bold leading-none rounded text-white border hover:border-transparent hover:bg-gray-200 hover:text-teal-800 hover:border-black items-center transition duration-300 ease-in-out
 }
 
 .secondary-action-button {
-  @apply bg-white p-4 font-bold leading-none rounded text-main-green border border-black hover:border-transparent hover:bg-main-green hover:text-white hover:border-white items-center transition duration-300 ease-in-out;
+  @apply bg-white p-4 font-bold leading-none rounded text-main-green border border-black hover:bg-main-green hover:text-white hover:border-main-green items-center transition duration-300 ease-in-out;
 }
 
 .dashboard-container {

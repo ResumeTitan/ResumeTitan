@@ -193,15 +193,10 @@ export const getResumeAsPdf = async (req, res) => {
       ignoreHTTPSErrors: true
     });
     const page = await browser.newPage();
-
-    // Login and load page
-    await page.goto(CLIENT_URL);
-    await page.click('#loginBtn');
-    await page.type('#email', 'test@test.com');
-    await page.type('#password', 'test');
-    await page.click('#submitLogin');
-    await page.waitForNavigation();
-
+    await page.setViewport({ width: 1920, height: 1080 });
+    await page.setExtraHTTPHeaders({ Authorization: req.headers['authorization'] });
+    console.log('Authorization:', req.headers['authorization']);
+    console.log("url", `${CLIENT_URL}/print-resume/${id}`);
     await page.goto(`${CLIENT_URL}/print-resume/${id}`, { waitUntil: 'networkidle0' });
     const pdfBuffer = await page.pdf();
     await browser.close();

@@ -32,7 +32,7 @@ const Hero: React.FC = () => {
                 setIsLoginOpen(true)
                 setIsRegistering(true)
               }}
-              className="action-button text-lg"
+              className="secondary-action-button text-lg"
             >
               Sign Up
             </button>
@@ -42,7 +42,7 @@ const Hero: React.FC = () => {
                 setIsLoginOpen(true)
                 setIsRegistering(false)
               }}
-              className="secondary-action-button text-lg"
+              className="action-button text-lg"
             >
               Log In
             </button>
