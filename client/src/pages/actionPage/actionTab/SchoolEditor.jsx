@@ -125,8 +125,8 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
         <DegreePicker onChange={handleDegreeChange}/>
       </div>
 
-      <div className="mb-2 left-right-spacing">
-        <div className="w-full pr-2">
+      <div className="mb-6 left-right-spacing phone-screen-stack">
+        <div className="w-full">
         <label htmlFor={"city"} className="form-label-text">City</label>
         <input 
           type="text"
@@ -137,14 +137,14 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
           onChange={handleSchoolChange}
           required />
         </div>
-        <div className="w-full pl-2">
+        <div className="w-full">
         <label htmlFor={"state"} className="form-label-text">State</label>
         <StatePicker onChange={handleStateChange} initState={schoolForm.state || ""}/>
         </div>
       </div>
 
-      <div className="mb-6 left-right-spacing pt-4">
-        <div className="w-full pr-2">
+      <div className="mb-6 left-right-spacing phone-screen-stack">
+        <div className="w-full">
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DemoContainer components={['DatePicker', 'DatePicker']}>
               <DatePicker
@@ -183,11 +183,14 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
       </div>
 
       <div className="m-2">
-        <div className="left-right-spacing my-2">
-          <label htmlFor={"schoolContent"} className="form-label-text">Accomplishments</label>
-          <div>
+        <div className="left-right-spacing flex my-2">
+          <div className="flex items-center">
+            <label htmlFor={"schoolContent"} className="form-label-text">Accomplishments</label>
+          </div>
+
+          <div className="flex flex-col space-y-2 xs:flex-row xs:space-y-0 xs:space-x-2">
             <button
-              className="green-button"
+              className="green-button order-last xs:order-first p-2 my-1"
               onClick={handleAiCall}
             >
               <div>
@@ -196,10 +199,10 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
               </div>
             </button>
             <button
-              className="green-button"
+              className="green-button order-first xs:order-last p-2 my-1"
               onClick={handleAccomplishmentAdd}
             >
-              {"Add"}
+              Add
             </button>
           </div>
         </div>
@@ -209,7 +212,7 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
               <textarea 
                 type="text"
                 id={"schoolContent"}
-                className="form-style flex-wrap h-24 lg:h-16"
+                className="form-style flex-wrap h-36 md:h-24 lg:h-16"
                 placeholder="Enter accomplishments or skills..."
                 value={item}
                 onChange={(e) => handleSchoolContentChange(e.target.value, index)}

@@ -40,11 +40,12 @@ function Jobs({ jobs, onSave, onDelete, onSwap }) {
 
   return (
     <div className="form-container">
+      <div className="form-text-main">{"Job Info"}</div>
       {isEditing && editingForm}
 
       {!isEditing && (
         <div>
-          <div className="form-text-main">{"Job Info"}</div>
+          
           {jobs.map((job, index) => (
             <div key={`job-${index}`} className="form-secondary-area" onClick={() => handleEditJob(job.id)}>
               <div className="w-full">

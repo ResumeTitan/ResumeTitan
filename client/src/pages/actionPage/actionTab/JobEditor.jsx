@@ -83,8 +83,8 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
   }
 
   return (
-    <div className={`my-6 ${aiLoading ? "animate-pulse" : ""}`}>
-      <div>
+    <div className={`${aiLoading ? "animate-pulse" : ""}`}>
+      <div className="py-4">
         <label htmlFor={"position"} className="form-label-text">Job Title</label>
         <input 
           type="text"
@@ -107,8 +107,8 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
           required 
         />
       </div> 
-      <div className="mb-6 left-right-spacing">
-        <div className="w-full pr-2">
+      <div className="mb-6 left-right-spacing phone-screen-stack">
+        <div className="w-full">
         <label htmlFor={"city"} className="form-label-text">City</label>
         <input 
           type="text"
@@ -119,14 +119,14 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
           onChange={handleJobChange}
           required />
         </div>
-        <div className="w-full pl-2">
+        <div className="w-full">
         <label htmlFor={"state"} className="form-label-text">State</label>
         <StatePicker onChange={handleStateChange} initState={jobForm.state || ""}/>
         </div>
       </div>
 
-      <div className="mb-6 flex justify-between">
-        <div className="w-full pr-2">
+      <div className="mb-6 justify-between phone-screen-stack">
+        <div className="w-full">
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DemoContainer components={['DatePicker', 'DatePicker']}>
               <DatePicker
@@ -137,8 +137,7 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
             </DemoContainer>
           </LocalizationProvider>
         </div>
-        <div className="w-full pl-2">
-        <div className="w-full pr-2">
+        <div className="w-full">
 
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DemoContainer components={['DatePicker', 'DatePicker']}>
@@ -164,15 +163,17 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
             </label>
           </div>
         </div>
-        </div>
       </div>
 
       <div className="m-2">
         <div className="left-right-spacing my-2">
-          <label htmlFor={"jobContent"} className="form-label-text">Responsibilities</label>
-          <div>
+          <div className="flex items-center">
+            <label htmlFor={"jobContent"} className="form-label-text">Responsibilities</label>
+          </div>
+          
+          <div className="phone-screen-stack">
             <button
-              className="green-button"
+              className="green-button order-last xs:order-first p-2 my-1"
               onClick={handleAiCall}
             >
               <div>
@@ -181,10 +182,10 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
               </div>
             </button>
             <button
-              className="green-button"
+              className="green-button order-first xs:order-last p-2 my-1"
               onClick={handleResponsibilityAdd}
             >
-              {"Add"}
+              Add
             </button>
           </div>
         </div>
