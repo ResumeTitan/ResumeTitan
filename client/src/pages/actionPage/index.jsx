@@ -5,7 +5,7 @@ import ActionTab from './actionTab/Action';
 import CustomizeTab from './customizeTab';
 import Tabs from './Tabs';
 import ResumeContainer from 'templates/ResumeContainer';
-import { getResume, createResume, updateResume, getResumeAsPdf } from 'api/resume';
+import { getResume, createResume, updateResume } from 'api/resume';
 import Spinner from 'components/Spinner';
 import ErrorAlert from 'components/Alert/ErrorAlert';
 import { LoginForm } from 'components/LoginForm';
@@ -15,11 +15,13 @@ import { styled } from '@mui/system';
 import DescriptionIcon from '@mui/icons-material/Description';
 import { saveAs } from 'file-saver';
 
-const CustomIcon = styled(DescriptionIcon)({
-  backgroundColor: 'white',
-  color: 'black',
+const CustomDocumentIcon = styled(DescriptionIcon)({
+  backgroundColor: '#0b3733',
+  color: 'white',
   fontSize: '72px',
-  borderRadius: '10%'
+  borderRadius: '30%',
+  borderWidth: '4px',
+  borderColor: '#0b3733',
 });
 
 // This page should do all loading, other pages do rendering
@@ -260,7 +262,7 @@ function ActionPage() {
         </div>
 
         <div onClick={() => setIsOpen(true)} className="fixed bottom-8 right-8 hover:cursor-pointer lg:hidden">
-          <CustomIcon />
+          <CustomDocumentIcon />
         </div>
 
       </div>
@@ -278,15 +280,15 @@ function ActionPage() {
 
       {/* Mobile View */}
       <div className={`${isOpen ? "fixed": "hidden"} bg-black bg-opacity-50 flex justify-center items-center w-full h-full top-0`} onClick={() => setIsOpen(false)}>
-        <div className="pt-4 transform translate-12 md:translate-y-24 scale-50 sm:scale-60 lg:scale-75 origin-center print:!scale-100">
-        <ResumeComponent 
-          basics={basics}
-          education={education} 
-          work={work}
-          skills={skills}
-          theme={theme}
-          ref={resumeRef}
-        />
+        <div className="pt-4 transform scale-50 sm:scale-60 lg:scale-75 print:!scale-100">
+          <ResumeComponent 
+            basics={basics}
+            education={education} 
+            work={work}
+            skills={skills}
+            theme={theme}
+            ref={resumeRef}
+          />
         </div>
       </div>
 

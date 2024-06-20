@@ -42,20 +42,20 @@ function Skills({ initSkills, aiLoading, onUpdate, onAiCall }) {
         <div className="p-4">
           <div className="flex justify-between">
             <button
-              className="green-button"
+              className="green-button p-1"
               onClick={handleSaveSkills}
             >
               {"Save"}
             </button>
-            <div>
+            <div className="flex justify-center">
               <button
-                className="green-button"
+                className="green-button p-1 mr-1"
                 onClick={handleAddSkills}
               >
                 {"Add"}
               </button>
               <button
-                className="green-button"
+                className="green-button p-1"
                 onClick={onAiCall}
               >
                 <div>
