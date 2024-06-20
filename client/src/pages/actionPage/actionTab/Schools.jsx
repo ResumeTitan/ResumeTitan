@@ -42,21 +42,22 @@ function Schools({ education, onSave, onDelete, onReorder }) {
 
   return (
     <div className="form-container">
+      <div className="form-text-main">{"School Info"}</div>
       {isEditing && editingForm}
 
       {!isEditing && (
         <div>
-          <div className="form-text-main">{"School Info"}</div>
+          
           {education.map((school, index) => (
             <div key={`school-${index}`} 
-              className="flex justify-between p-4 border-b border-black hover:bg-slate-500" 
+              className="form-secondary-area" 
               onClick={() => handleEditSchool(school.id)}
             >
               <div>
                 <div className="font-bold">
                   {school.name}
                 </div>
-                <div className="">
+                <div>
                   {school.area}
                 </div>
               </div>

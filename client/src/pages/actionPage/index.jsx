@@ -26,7 +26,7 @@ const CustomIcon = styled(DescriptionIcon)({
 
 // The resume reference
 const ResumeComponent = React.forwardRef((props, ref) => (
-  <div ref={ref}>
+  <div className="border-2 border-gray-700" ref={ref}>
     <ResumeContainer resume={{
       basics: props.basics,
       work: props.work,
@@ -68,6 +68,7 @@ function ActionPage() {
    * @returns 
    */
   const loadResume = async (id) => {
+    setResumeLoading(true);
     try {
       if (!id) {
         return;
@@ -79,8 +80,10 @@ function ActionPage() {
       setSkills(resume.skills);
       setTheme(resume.theme);
       setResumeName(resume.name);
+      setResumeLoading(false);
     } catch (err) {
       console.log(err);
+      setResumeLoading(false);
       throw err;
     }
   };

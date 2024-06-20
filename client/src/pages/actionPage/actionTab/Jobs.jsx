@@ -46,8 +46,8 @@ function Jobs({ jobs, onSave, onDelete, onSwap }) {
         <div>
           <div className="form-text-main">{"Job Info"}</div>
           {jobs.map((job, index) => (
-            <div key={`job-${index}`} className="left-right-spacing p-4 border-b border-black hover:bg-slate-500 hover:cursor-pointer" onClick={() => handleEditJob(job.id)}>
-              <div className="w-full ">
+            <div key={`job-${index}`} className="form-secondary-area" onClick={() => handleEditJob(job.id)}>
+              <div className="w-full">
                 <div className="font-bold">
                   {job?.position}
                 </div>

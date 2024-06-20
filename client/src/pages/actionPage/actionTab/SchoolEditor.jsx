@@ -95,7 +95,7 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
 
   return (
     <div className={`${aiLoading ? "animate-pulse" : ""}`}>
-      <div className="my-6">
+      <div className="py-4">
         <label htmlFor={"name"} className="form-label-text">School Name</label>
         <input 
           type="text"
@@ -151,11 +151,6 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
                 label="Start Date"
                 value={dayjs(startDate)}
                 onChange={(newValue) => setStartDate(newValue.toString())}
-                sx={{
-                  svg: { color: "white" },
-                  input: { color: "white" },
-                  label: { color: "white" },
-                }}
               />
             </DemoContainer>
           </LocalizationProvider>
@@ -168,11 +163,6 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
                 value={dayjs(endDate)}
                 onChange={(newValue) => {setEndDate(newValue.toString())}}
                 disabled={endDateChecked}
-                sx={{
-                  svg: { color: "white" },
-                  input: { color: "white" },
-                  label: { color: "white" },
-                }}
               />
             </DemoContainer>
           </LocalizationProvider>
@@ -197,7 +187,7 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
           <label htmlFor={"schoolContent"} className="form-label-text">Accomplishments</label>
           <div>
             <button
-              className="green-button py-1 px-4 mx-1 bg-slate-800"
+              className="green-button"
               onClick={handleAiCall}
             >
               <div>
@@ -206,7 +196,7 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
               </div>
             </button>
             <button
-              className="green-button bg-slate-800 py-1 px-4 mx-1"
+              className="green-button"
               onClick={handleAccomplishmentAdd}
             >
               {"Add"}
@@ -253,19 +243,19 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
       <div className="flex justify-between">
         <button
           disabled={!schoolForm.id}
-          className={`${schoolForm.id ? "removeButton bg-slate-800" : "disabledButton"}`}
+          className={`${schoolForm.id ? "remove-button" : "disabled-button"}`}
           onClick={handleDeleteSchool}
         >
           {"Delete"}
         </button>
         <button
-          className="removeButton bg-slate-800"
+          className="remove-button"
           onClick={handleCancel}
         >
           {"Cancel"}
         </button>
         <button
-          className="add-button"
+          className="add-button-small"
           onClick={handleSaveSchool}
         >
           {"Save"}

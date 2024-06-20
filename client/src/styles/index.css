@@ -50,33 +50,40 @@ body {
 }
 
 .form-section {
-  @apply rounded-lg border border-black border-2 px-4 bg-slate-700 w-full text-white
+  @apply rounded-lg border border-black border-2 px-4 bg-main-green w-full text-white
 }
 
 .form-style {
-  @apply bg-gray-500 border border-gray-300 text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400;
+  @apply bg-gray-100 text-black border border-black text-base rounded-lg block w-full p-2.5;
 }
 
 .form-style:disabled {
-  @apply bg-gray-300 cursor-not-allowed opacity-50; /* Add styles for disabled state */
-}
-
-.form-label {
-  @apply block mb-2 text-sm font-medium text-white;
+  @apply bg-gray-200 text-black cursor-not-allowed opacity-70;
 }
 
 .form-text-main {
-  @apply font-bold border-b border-black rounded-t p-4
+  @apply bg-main-green text-white font-bold border-b-2 border-black rounded-t p-4
+}
+
+.form-secondary-area {
+  @apply p-4 border-b border-black bg-white text-black hover:cursor-pointer hover:bg-gray-300
+  transition ease-in-out duration-300;
+}
+
+.form-single-header {
+  @apply bg-main-green text-white font-bold border-b-2 border-black rounded-t p-4
+    hover:bg-gray-300 hover:text-main-green hover:cursor-pointer 
+    transition ease-in-out duration-300;
 }
 
 .green-button {
-  @apply text-white text-center font-medium rounded-lg text-sm
-    hover:bg-teal-800 hover:cursor-pointer
-    transition ease-in-out duration-200;   
+  @apply text-white text-center font-medium rounded-lg text-sm font-bold py-1 px-4 mx-1 border-2 border-black text-black
+    hover:bg-teal-800 hover:cursor-pointer hover:border-main-green hover:text-white
+    transition ease-in-out duration-300;
 }
 
 .page-container {
-  @apply flex justify-center min-h-screen bg-slate-400
+  @apply flex justify-center min-h-screen bg-white
 }
 
 .page-header {
@@ -88,25 +95,26 @@ body {
     hover:bg-red-800;
 }
 
-.removeButton {
-  @apply text-white border-2 border-slate-300 text-center font-medium rounded-lg text-sm px-5 py-2.5 m-1
-    hover:bg-red-800;
-}
-
 .remove-button {
-  @apply text-white border-2 border-slate-300 text-center font-medium rounded-lg text-sm px-5 py-2.5 m-1
-    hover:bg-red-800
-    transition ease-in-out duration-200;;
+  @apply text-black border-2 border-black text-center font-medium rounded-lg text-sm px-5 py-2.5 m-1
+    hover:bg-red-800 hover:text-white hover:cursor-pointer
+    transition ease-in-out duration-300;
 }
 
-.disabledButton {
+.disabled-button {
   @apply text-white border-2 border-slate-300 text-center font-medium rounded-lg text-sm px-5 py-2.5 m-1;
 }
 
 .add-button {
-  @apply text-white text-center border-2 border-slate-300 font-medium rounded-lg text-sm px-5 py-2.5 m-1
-    hover:bg-teal-800 hover:cursor-pointer bg-slate-800
+  @apply text-black text-center font-medium rounded-lg text-sm px-5 py-2.5 m-1
+    hover:bg-teal-800 hover:text-white hover:cursor-pointer
     transition ease-in-out duration-200;
+}
+
+.add-button-small {
+  @apply border-2 border-black text-black text-center font-medium rounded-lg text-sm px-5 py-2.5 m-1
+  hover:bg-teal-800 hover:text-white hover:cursor-pointer
+  transition ease-in-out duration-200;
 }
 
 .interview-button {
@@ -136,8 +144,10 @@ body {
 }
 
 .remove-content-button {
-  @apply inline-block align-middle text-white text-center font-medium rounded-lg text-sm bg-slate-800 p-2
-  hover:bg-red-800;
+  @apply inline-block align-middle text-red-800 text-center font-bold rounded-lg text-lg bg-white 
+  p-2 border-2 border-red-800
+  hover:bg-red-800 hover:text-white hover:cursor-pointer
+  transition ease-in-out duration-300;
 }
 
 .left-right-spacing {
@@ -145,11 +155,11 @@ body {
 }
 
 .form-container {
-  @apply border border-black border-2 rounded-lg w-full my-4 text-white bg-slate-700
+  @apply border border-black border-2 rounded-lg w-full my-4 bg-white
 }
 
 .form-label-text {
-  @apply block mb-2 text-base font-medium text-white
+  @apply block mb-2 text-base font-medium text-black
 }
 
 .login-button {

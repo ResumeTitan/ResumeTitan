@@ -98,7 +98,7 @@ export const Dashboard = () => {
 
         <button
           onClick={() => handleClickResume(resumes[index]._id)}
-          className="dashboard-edit-button w-5/6 h-96 top-10 left-20"
+          className="dashboard-edit-button w-5/6 h-96 top-20 left-20"
         >
           <EditIcon style={{ fontSize: 256 }} />
         </button>

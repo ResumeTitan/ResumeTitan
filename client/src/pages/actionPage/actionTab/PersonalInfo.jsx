@@ -22,11 +22,9 @@ function PersonalInfo ({ initialInfo, onUpdate }) {
   return (
     <div className="form-container">
     <div className="form-text-main">{"Personal Info"}</div>
-
       {isEditing ? (
-        <div>
-
-          <div className="p-4 left-right-spacing">
+        <div className="p-4">
+          <div className="pb-2">
             <div className="w-full pr-2">
             <label htmlFor={"name"} className="form-label-text">Name</label>
             <input 
@@ -40,8 +38,8 @@ function PersonalInfo ({ initialInfo, onUpdate }) {
             </div>
           </div>
 
-          <div className="p-4">
-            <label htmlFor={"phone"} className="form-label">Phone Number</label>
+          <div className="pb-2">
+            <label htmlFor={"phone"} className="form-label-text">Phone Number</label>
             <input 
               type="tel"
               id={"phone"}
@@ -53,8 +51,8 @@ function PersonalInfo ({ initialInfo, onUpdate }) {
               required />
           </div>
 
-          <div className="p-4">
-            <label htmlFor={"email"} className="form-label">Email Address</label>
+          <div className="pb-2">
+            <label htmlFor={"email"} className="form-label-text">Email Address</label>
             <input 
               type="email"
               id={"email"}
@@ -66,7 +64,7 @@ function PersonalInfo ({ initialInfo, onUpdate }) {
           </div>
           <div className="text-right p-2">
             <button
-              className="add-button"
+              className="add-button-small"
               onClick={handleSaveInfo}
             >
             {"Save"}
@@ -74,7 +72,7 @@ function PersonalInfo ({ initialInfo, onUpdate }) {
           </div>
         </div>
       ) : (
-        <div className="p-4 border-b border-black hover:bg-slate-500" onClick={() => {setIsEditing(true)}}>
+        <div className="form-secondary-area" onClick={() => {setIsEditing(true)}}>
           <div className="flex justify-between font-bold">
             {infoForm.name}
           </div>

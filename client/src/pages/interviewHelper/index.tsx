@@ -129,7 +129,7 @@ const InterviewPage: React.FC = () => {
             </div>
 
             <div className="p-4">
-              <label htmlFor={"phone"} className="form-label">Job Description</label>
+              <label htmlFor={"phone"} className="form-label-text">Job Description</label>
               <textarea 
                 id={"phone"}
                 className="form-style" 

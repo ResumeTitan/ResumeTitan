@@ -133,11 +133,6 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
                 label="Start Date"
                 value={dayjs(startDate)}
                 onChange={(newValue) => {setStartDate(newValue.toString())}}
-                sx={{
-                  svg: { color: "white" },
-                  input: { color: "white" },
-                  label: { color: "white" }
-                }}
               />
             </DemoContainer>
           </LocalizationProvider>
@@ -152,11 +147,6 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
                 value={dayjs(endDate)}
                 onChange={(newValue) => {setEndDate(newValue.toString())}}
                 disabled={endDateChecked}
-                sx={{
-                  svg: { color: "white" },
-                  input: { color: "white" },
-                  label: { color: "white" }
-                }}
               />
             </DemoContainer>
           </LocalizationProvider>
@@ -182,7 +172,7 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
           <label htmlFor={"jobContent"} className="form-label-text">Responsibilities</label>
           <div>
             <button
-              className="green-button py-1 px-4 mx-1 bg-slate-800"
+              className="green-button"
               onClick={handleAiCall}
             >
               <div>
@@ -191,7 +181,7 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
               </div>
             </button>
             <button
-              className="green-button py-1 px-4 mx-1 bg-slate-800"
+              className="green-button"
               onClick={handleResponsibilityAdd}
             >
               {"Add"}
@@ -238,19 +228,19 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
       <div className="left-right-spacing">
         <button
           disabled={!jobForm.id}
-          className={`${jobForm.id ? "removeButton bg-slate-800" : "disabledButton"}`}
+          className={`${jobForm.id ? "remove-button" : "disabled-button"}`}
           onClick={handleDeleteJob}
         >
           {"Delete"}
         </button>
         <button
-          className="removeButton bg-slate-800"
+          className="remove-button"
           onClick={handleCancel}
         >
           {"Cancel"}
         </button>
         <button
-          className="add-button"
+          className="add-button-small"
           onClick={handleSaveJob}
         >
           {"Save"}

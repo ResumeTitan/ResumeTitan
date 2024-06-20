@@ -18,10 +18,8 @@ function Summary ({ summary, aiLoading, onUpdate, onAiCall }) {
 
   return (
     <div key="summary-editor" className={`${aiLoading ? "animate-pulse" : ""} form-container`}>
-        <div className="form-text-main hover:bg-slate-500" onClick={() => {setIsEditing(true)}}>
-          {/* <Tooltip message={"Note: this will be automatically generated when clicking \"Generate Resume\""}> */}
-            <div>{"Summary"}</div>
-          {/* </Tooltip> */}
+        <div className="form-single-header" onClick={() => {setIsEditing(true)}}>
+          <div>{"Summary"}</div>
         </div>
 
       {isEditing && (
@@ -29,13 +27,13 @@ function Summary ({ summary, aiLoading, onUpdate, onAiCall }) {
           <div className="w-full pr-2">
             <div className="py-2">
               <button
-                className="green-button bg-slate-800 p-2"
+                className="green-button"
                 onClick={handleSaveSummary}
               >
                 {"Save"}
               </button>
               <button
-                className="green-button py-1 px-4 mx-1 bg-slate-800"
+                className="green-button"
                 onClick={onAiCall}
               >
                 <div>
