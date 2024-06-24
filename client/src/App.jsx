@@ -10,6 +10,7 @@ import ContactPage from './pages/contact';
 import InterviewPage from './pages/interviewHelper';
 import SuccessPage from './pages/paymentSuccess';
 import PricingPage from './pages/pricing';
+import CoverLetterPage from './pages/coverLetter';
 import { PrintToPdf } from 'pages/printPage';
 import { Survey } from './pages/survey';
 import { Dashboard } from './pages/dashboard';
@@ -40,6 +41,7 @@ export default function App() {
           <Route path="/print-resume/:id" element={<PrintToPdf />} />
           <Route path="/success" element={<SuccessPage />} />
           <Route path="/pricing" element={<PricingPage />} />
+          <Route path="/cover-letter" element={<CoverLetterPage />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
         {!window.location.pathname.includes('/print-resume') && <Footer />}

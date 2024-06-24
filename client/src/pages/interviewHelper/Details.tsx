@@ -10,7 +10,7 @@ const DetailsExpand: React.FC<DetailsProps> = ({label, description}) => {
   return (
     <div className="question-options">
       <details className="p-4 rounded-lg transform-gpu delay-75 duration-100 ease-in-out ">
-        <summary className="leading-6 text-white font-semibold select-none">
+        <summary className="leading-6 text-black font-semibold select-none">
           {label}
         </summary>
         <div className="mt-3 text-sm leading-6">

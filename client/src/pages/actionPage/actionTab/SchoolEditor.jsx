@@ -95,8 +95,8 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
 
   return (
     <div className={`${aiLoading ? "animate-pulse" : ""}`}>
-      <div className="my-6">
-        <label htmlFor={"name"} className="form-label">School Name</label>
+      <div className="py-4">
+        <label htmlFor={"name"} className="form-label-text">School Name</label>
         <input 
           type="text"
           id={"name"}
@@ -108,7 +108,7 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
         />
       </div>
       <div className="mb-6">
-        <label htmlFor={"area"} className="form-label">Area of Study</label>
+        <label htmlFor={"area"} className="form-label-text">Area of Study</label>
         <input 
           type="text"
           id={"area"}
@@ -121,13 +121,13 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
       </div>
 
       <div className="w-full mb-6 pr-2">
-        <label htmlFor={"studyType"} className="form-label">Degree</label>
+        <label htmlFor={"studyType"} className="form-label-text">Degree</label>
         <DegreePicker onChange={handleDegreeChange}/>
       </div>
 
-      <div className="mb-2 left-right-spacing">
-        <div className="w-full pr-2">
-        <label htmlFor={"city"} className="form-label">City</label>
+      <div className="mb-6 left-right-spacing phone-screen-stack">
+        <div className="w-full">
+        <label htmlFor={"city"} className="form-label-text">City</label>
         <input 
           type="text"
           id={"city"}
@@ -137,25 +137,20 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
           onChange={handleSchoolChange}
           required />
         </div>
-        <div className="w-full pl-2">
-        <label htmlFor={"state"} className="form-label">State</label>
+        <div className="w-full">
+        <label htmlFor={"state"} className="form-label-text">State</label>
         <StatePicker onChange={handleStateChange} initState={schoolForm.state || ""}/>
         </div>
       </div>
 
-      <div className="mb-6 left-right-spacing pt-4">
-        <div className="w-full pr-2">
+      <div className="mb-6 left-right-spacing phone-screen-stack">
+        <div className="w-full">
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DemoContainer components={['DatePicker', 'DatePicker']}>
               <DatePicker
                 label="Start Date"
                 value={dayjs(startDate)}
                 onChange={(newValue) => setStartDate(newValue.toString())}
-                sx={{
-                  svg: { color: "white" },
-                  input: { color: "white" },
-                  label: { color: "white" },
-                }}
               />
             </DemoContainer>
           </LocalizationProvider>
@@ -168,11 +163,6 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
                 value={dayjs(endDate)}
                 onChange={(newValue) => {setEndDate(newValue.toString())}}
                 disabled={endDateChecked}
-                sx={{
-                  svg: { color: "white" },
-                  input: { color: "white" },
-                  label: { color: "white" },
-                }}
               />
             </DemoContainer>
           </LocalizationProvider>
@@ -193,11 +183,14 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
       </div>
 
       <div className="m-2">
-        <div className="left-right-spacing my-2">
-          <label htmlFor={"jobContent"} className="block text-sm font-medium">Accomplishments</label>
-          <div>
+        <div className="left-right-spacing flex my-2">
+          <div className="flex items-center">
+            <label htmlFor={"schoolContent"} className="form-label-text">Accomplishments</label>
+          </div>
+
+          <div className="flex flex-col space-y-2 xs:flex-row xs:space-y-0 xs:space-x-2">
             <button
-              className="green-button py-1 px-4 mx-1 bg-slate-800"
+              className="green-button order-last xs:order-first p-2 my-1"
               onClick={handleAiCall}
             >
               <div>
@@ -206,21 +199,21 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
               </div>
             </button>
             <button
-              className="green-button bg-slate-800 py-1 px-4 mx-1"
+              className="green-button order-first xs:order-last p-2 my-1"
               onClick={handleAccomplishmentAdd}
             >
-              {"Add"}
+              Add
             </button>
           </div>
         </div>
-        {schoolForm.content && schoolForm.content.map((item, index) => (
+        {schoolForm.content ? schoolForm.content.map((item, index) => (
           <div className="left-right-spacing">
             <div className="w-full pr-2 py-1">
               <textarea 
                 type="text"
-                id={"jobContent"}
-                className="form-style flex-wrap h-24 lg:h-16"
-                placeholder="Enter content..."
+                id={"schoolContent"}
+                className="form-style flex-wrap h-36 md:h-24 lg:h-16"
+                placeholder="Enter accomplishments or skills..."
                 value={item}
                 onChange={(e) => handleSchoolContentChange(e.target.value, index)}
                 required 
@@ -236,25 +229,36 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
             </div>
           </div>
           )
+        ) : (
+        <div className="left-right-spacing">
+          <div className="w-full pr-2 py-1">
+            <textarea 
+              type="text"
+              className="form-style flex-wrap h-24 lg:h-16"
+              placeholder="Click add to start adding accomplishments/skills..."
+              disabled
+            />
+          </div>
+        </div>
         )}
       </div>
 
       <div className="flex justify-between">
         <button
           disabled={!schoolForm.id}
-          className={`${schoolForm.id ? "removeButton bg-slate-800" : "disabledButton"}`}
+          className={`${schoolForm.id ? "remove-button" : "disabled-button"}`}
           onClick={handleDeleteSchool}
         >
           {"Delete"}
         </button>
         <button
-          className="removeButton bg-slate-800"
+          className="remove-button"
           onClick={handleCancel}
         >
           {"Cancel"}
         </button>
         <button
-          className="add-button"
+          className="add-button-small"
           onClick={handleSaveSchool}
         >
           {"Save"}

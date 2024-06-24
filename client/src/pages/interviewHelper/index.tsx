@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import DetailsExpand from './Details';
 import Spinner from 'components/Spinner';
-import { createInterview, getInterview } from 'api/interview';
+import { getInterview } from 'api/interview';
 import api from 'api/actions';
 import 'styles/index.css';
 
@@ -47,20 +47,20 @@ const InterviewPage: React.FC = () => {
   };
 
   /**
-   * useEffect
+   * @function useEffect
    * @description hook for if resumeId changes (refresh)
    */
-    useEffect(() => {
-      const loadInterviewChange = async () => {
-        if (location.state) {
-          await loadInterview(location.state.interviewId);
-        }
+  useEffect(() => {
+    const loadInterviewChange = async () => {
+      if (location.state) {
+        await loadInterview(location.state.interviewId);
       }
-      loadInterviewChange().catch((err) => {
-        console.log(err);
-        throw err;
-      });
-    }, [location.state]);
+    }
+    loadInterviewChange().catch((err) => {
+      console.log(err);
+      throw err;
+    });
+  }, [location.state]);
 
   const handleGenerateInterview = async () => {
     try {
@@ -115,33 +115,36 @@ const InterviewPage: React.FC = () => {
     <div className="page-container">
       <div className="page-header">
         <div className="form-container">
-            <div className="p-4">
-              <div className="w-full pr-2">
-              <label htmlFor={"title"} className="form-label-text">Job Title</label>
-              <input 
-                type="text"
-                id={"title"}
-                className="form-style"
-                value={jobTitle}
-                onChange={(event) => setJobTitle(event.target.value)}
-              />
-              </div>
+          <div className="form-text-main">
+            Enter Details
+          </div>
+          <div className="p-4">
+            <div className="w-full pr-2">
+            <label htmlFor={"title"} className="form-label-text">Job Title</label>
+            <input 
+              type="text"
+              id={"title"}
+              className="form-style"
+              value={jobTitle}
+              onChange={(event) => setJobTitle(event.target.value)}
+            />
             </div>
+          </div>
 
-            <div className="p-4">
-              <label htmlFor={"phone"} className="form-label">Job Description</label>
-              <textarea 
-                id={"phone"}
-                className="form-style" 
-                rows={10}
-                value={jobDescription}
-                onChange={(event) => setJobDescription(event.target.value)}
-              />
-            </div>
+          <div className="p-4">
+            <label htmlFor={"description"} className="form-label-text">Job Description</label>
+            <textarea 
+              id={"description"}
+              className="form-style" 
+              rows={10}
+              value={jobDescription}
+              onChange={(event) => setJobDescription(event.target.value)}
+            />
+          </div>
 
             <div className="p-4">
               <button
-                className="interview-button bg-slate-800"
+                className="interview-button"
                 onClick={handleGenerateInterview}
               >
                 {"Generate Interview Questions"}
@@ -151,6 +154,9 @@ const InterviewPage: React.FC = () => {
 
         {interview.length > 0 && (
           <div className="form-container">
+            <div className="form-text-main">
+              Interview Questions
+            </div>
             <div className="interview-questions">
               {interview.map((question, index) => (
                 <div key={index} className="question-container">
@@ -172,16 +178,16 @@ const InterviewPage: React.FC = () => {
 
         <div className="py-4 flex justify-between">
           <button
-            className="add-button bg-slate-800"
-            onClick={handleSaveInterview}
-          >
-            {"Save Interview"}
-          </button>
-          <button
-            className="remove-button bg-slate-800"
+            className="remove-button"
             onClick={() => window.location.replace('/dashboard')}
           >
             {"Exit to Dashboard"}
+          </button>
+          <button
+            className="add-button border-2 border-black"
+            onClick={handleSaveInterview}
+          >
+            {"Save Interview"}
           </button>
         </div>
       </div>

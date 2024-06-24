@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { setLogout } from 'state/authReducer';
@@ -30,7 +30,7 @@ const NavBar = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
-  useEffect(() => {
+  React.useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 768) {
         setMobileScreen(true);

@@ -1,30 +1,34 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
 import ActionTab from './actionTab/Action';
 import CustomizeTab from './customizeTab';
 import Tabs from './Tabs';
 import ResumeContainer from 'templates/ResumeContainer';
-import { getResume, createResume, updateResume, getResumeAsPdf } from 'api/resume';
+import { getResume, createResume, updateResume } from 'api/resume';
 import Spinner from 'components/Spinner';
 import ErrorAlert from 'components/Alert/ErrorAlert';
 import { LoginForm } from 'components/LoginForm';
+import api from 'api/actions';
 import 'styles/index.css';
 import { styled } from '@mui/system';
 import DescriptionIcon from '@mui/icons-material/Description';
+import { saveAs } from 'file-saver';
 
-const CustomIcon = styled(DescriptionIcon)({
-  backgroundColor: 'white',
-  color: 'black',
+const CustomDocumentIcon = styled(DescriptionIcon)({
+  backgroundColor: '#0b3733',
+  color: 'white',
   fontSize: '72px',
-  borderRadius: '10%'
+  borderRadius: '30%',
+  borderWidth: '4px',
+  borderColor: '#0b3733',
 });
 
 // This page should do all loading, other pages do rendering
 
 // The resume reference
 const ResumeComponent = React.forwardRef((props, ref) => (
-  <div ref={ref}>
+  <div className="border-2 border-gray-700" ref={ref}>
     <ResumeContainer resume={{
       basics: props.basics,
       work: props.work,
@@ -66,6 +70,7 @@ function ActionPage() {
    * @returns 
    */
   const loadResume = async (id) => {
+    setResumeLoading(true);
     try {
       if (!id) {
         return;
@@ -77,8 +82,10 @@ function ActionPage() {
       setSkills(resume.skills);
       setTheme(resume.theme);
       setResumeName(resume.name);
+      setResumeLoading(false);
     } catch (err) {
       console.log(err);
+      setResumeLoading(false);
       throw err;
     }
   };
@@ -87,7 +94,7 @@ function ActionPage() {
    * @function useEffect
    * @description hook for if resumeId changes (refresh)
    */
-  useEffect(() => {
+  React.useEffect(() => {
     const loadResumeChange = async () => {
       if (location.state) {
         setResumeId(location.state.resumeId);
@@ -110,23 +117,19 @@ function ActionPage() {
       setShowPrintError(true);
       return;
     }
-    // Save the resume first
-    await handleSaveResume(false);
-    const response = await getResumeAsPdf(token, resumeId);
+
     try {
-      const pdf = await response.blob();
-      // Create a URL for the Blob
-      const url = URL.createObjectURL(pdf);
+      setResumeLoading(true);
 
-      // Create an <a> element to trigger the download
-      const a = document.createElement('a');
-      a.href = url;
-      a.target = '_blank';
-      a.download = 'resume.pdf';
-      a.click();
+      // Save the resume first
+      await handleSaveResume(false);
+  
+      const response = await api.get(`/resume/print/${resumeId}`, { responseType: 'blob' });
+      const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
+      const resumeNameClean = resumeName.replace(' ', '_');
+      saveAs(pdfBlob, `${resumeNameClean}.pdf`);
 
-      // Clean up the URL object after the download is initiated
-      URL.revokeObjectURL(url);
+      setResumeLoading(false);
     } catch (error) {
       console.log(error);
       throw error;
@@ -259,7 +262,7 @@ function ActionPage() {
         </div>
 
         <div onClick={() => setIsOpen(true)} className="fixed bottom-8 right-8 hover:cursor-pointer lg:hidden">
-          <CustomIcon />
+          <CustomDocumentIcon />
         </div>
 
       </div>
@@ -277,15 +280,15 @@ function ActionPage() {
 
       {/* Mobile View */}
       <div className={`${isOpen ? "fixed": "hidden"} bg-black bg-opacity-50 flex justify-center items-center w-full h-full top-0`} onClick={() => setIsOpen(false)}>
-        <div className="pt-4 transform translate-12 md:translate-y-24 scale-50 sm:scale-60 lg:scale-75 origin-center print:!scale-100">
-        <ResumeComponent 
-          basics={basics}
-          education={education} 
-          work={work}
-          skills={skills}
-          theme={theme}
-          ref={resumeRef}
-        />
+        <div className="pt-4 transform scale-50 sm:scale-60 lg:scale-75 print:!scale-100">
+          <ResumeComponent 
+            basics={basics}
+            education={education} 
+            work={work}
+            skills={skills}
+            theme={theme}
+            ref={resumeRef}
+          />
         </div>
       </div>
 

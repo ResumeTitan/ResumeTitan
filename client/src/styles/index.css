@@ -1,4 +1,9 @@
 @tailwind base;
+@layer base {
+  img {
+    @apply inline-block;
+  }
+}
 @tailwind components;
 @tailwind utilities;
 
@@ -45,33 +50,42 @@ body {
 }
 
 .form-section {
-  @apply rounded-lg border border-black border-2 px-4 bg-slate-700 w-full text-white
+  @apply rounded-lg border border-black border-2 px-4 bg-main-green w-full text-white
 }
 
 .form-style {
-  @apply bg-gray-500 border border-gray-300 text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400;
+  @apply border border-black text-base rounded-lg block w-full p-2.5
+    bg-gray-100 text-black
+    ;
 }
 
 .form-style:disabled {
-  @apply bg-gray-300 cursor-not-allowed opacity-50; /* Add styles for disabled state */
-}
-
-.form-label {
-  @apply block mb-2 text-sm font-medium text-white;
+  @apply bg-gray-200 text-black cursor-not-allowed opacity-70;
 }
 
 .form-text-main {
-  @apply font-bold border-b border-black rounded-t p-4
+  @apply bg-main-green text-white font-bold border-b-2 border-black rounded-t p-4
+}
+
+.form-secondary-area {
+  @apply p-4 border-b border-black bg-white text-black hover:cursor-pointer hover:bg-gray-300
+  transition ease-in-out duration-300;
+}
+
+.form-single-header {
+  @apply bg-main-green text-white font-bold border-b-2 border-black rounded-t p-4
+    hover:bg-gray-300 hover:text-main-green hover:cursor-pointer 
+    transition ease-in-out duration-300;
 }
 
 .green-button {
-  @apply text-white text-center font-medium rounded-lg text-sm
-    hover:bg-teal-800 hover:cursor-pointer
-    transition ease-in-out duration-200;   
+  @apply text-white text-center font-medium rounded-lg text-sm font-bold sm:py-1 sm:px-4 sm:mx-1 border-2 border-black text-black
+    hover:bg-teal-800 hover:cursor-pointer hover:border-main-green hover:text-white
+    transition ease-in-out duration-300;
 }
 
 .page-container {
-  @apply flex justify-center min-h-screen bg-slate-400
+  @apply flex justify-center min-h-screen bg-white
 }
 
 .page-header {
@@ -83,36 +97,37 @@ body {
     hover:bg-red-800;
 }
 
-.removeButton {
-  @apply text-white border-2 border-slate-300 text-center font-medium rounded-lg text-sm px-5 py-2.5 m-1
-    hover:bg-red-800;
-}
-
 .remove-button {
-  @apply text-white border-2 border-slate-300 text-center font-medium rounded-lg text-sm px-5 py-2.5 m-1
-    hover:bg-red-800
-    transition ease-in-out duration-200;;
+  @apply text-black border-2 border-black text-center font-medium rounded-lg text-sm px-5 py-2.5 m-1
+    hover:bg-red-800 hover:text-white hover:cursor-pointer
+    transition ease-in-out duration-300;
 }
 
-.disabledButton {
-  @apply text-white border-2 border-slate-300 text-center font-medium rounded-lg text-sm px-5 py-2.5 m-1;
+.disabled-button {
+  @apply text-slate-400 border-2 border-slate-400 text-center font-medium rounded-lg text-sm px-5 py-2.5 m-1;
 }
 
 .add-button {
-  @apply text-white text-center border-2 border-slate-300 font-medium rounded-lg text-sm px-5 py-2.5 m-1
-    hover:bg-teal-800 hover:cursor-pointer bg-slate-800
+  @apply text-black text-center font-medium rounded-lg text-sm px-5 py-2.5 m-1
+    hover:bg-teal-800 hover:text-white hover:cursor-pointer
     transition ease-in-out duration-200;
 }
 
+.add-button-small {
+  @apply border-2 border-black text-black text-center font-medium rounded-lg text-sm px-5 py-2.5 m-1
+  hover:bg-teal-800 hover:text-white hover:cursor-pointer
+  transition ease-in-out duration-200;
+}
+
 .interview-button {
-  @apply text-white text-center border-2 border-slate-300 font-medium rounded-lg text-sm px-5 py-2.5 m-1
+  @apply text-black text-center border-2 border-black font-medium rounded-lg text-sm px-5 py-2.5 m-1
     hover:bg-lighter-green hover:cursor-pointer
     transition ease-in-out duration-200;
 }
 
 .submit-button {
-  @apply text-white text-center font-medium rounded-lg text-sm w-full px-5 py-2.5 m-1 h-12 border-2 
-    hover:bg-analaogous-green hover:cursor-pointer
+  @apply bg-gray-200 text-black text-center font-medium rounded-lg text-sm border-2
+    hover:bg-light-green hover:cursor-pointer
     transition ease-in-out duration-300;
 }
 
@@ -131,8 +146,10 @@ body {
 }
 
 .remove-content-button {
-  @apply inline-block align-middle text-white text-center font-medium rounded-lg text-sm bg-slate-800 p-2
-  hover:bg-red-800;
+  @apply inline-block align-middle text-red-800 text-center font-bold rounded-lg text-lg bg-white 
+  p-2 border-2 border-red-800
+  hover:bg-red-800 hover:text-white hover:cursor-pointer
+  transition ease-in-out duration-300;
 }
 
 .left-right-spacing {
@@ -140,11 +157,11 @@ body {
 }
 
 .form-container {
-  @apply border border-black border-2 rounded-lg w-full my-4 text-white bg-slate-700
+  @apply border border-black border-2 rounded-lg w-full my-4 bg-white
 }
 
 .form-label-text {
-  @apply block mb-2 text-sm font-medium text-white
+  @apply mb-2 text-base font-medium text-black
 }
 
 .login-button {
@@ -152,11 +169,11 @@ body {
 }
 
 .action-button {
-  @apply bg-main-green p-4 font-bold leading-none rounded text-white border hover:border-transparent hover:bg-white hover:text-teal-800 hover:border-black items-center transition duration-300 ease-in-out
+  @apply bg-main-green p-4 font-bold leading-none rounded text-white border hover:border-transparent hover:bg-gray-200 hover:text-teal-800 hover:border-black items-center transition duration-300 ease-in-out
 }
 
 .secondary-action-button {
-  @apply bg-white p-4 font-bold leading-none rounded text-main-green border border-black hover:border-transparent hover:bg-main-green hover:text-white hover:border-white items-center transition duration-300 ease-in-out;
+  @apply bg-white p-4 font-bold leading-none rounded text-main-green border border-black hover:bg-main-green hover:text-white hover:border-main-green items-center transition duration-300 ease-in-out;
 }
 
 .dashboard-container {
@@ -180,4 +197,20 @@ body {
 .dashboard-delete-button {
   @apply hover:cursor-pointer absolute bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100
     transition ease-in-out duration-300;
+}
+
+.phone-screen-stack {
+  @apply flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-4
+}
+
+.cover-letter-container {
+  @apply flex justify-center bg-white rounded-lg w-full my-4 bg-white
+}
+
+.left-section {
+  @apply w-full md:w-1/2 mx-4
+}
+
+.right-section {
+  @apply hidden md:flex sm:w-1/2 mx-4
 }

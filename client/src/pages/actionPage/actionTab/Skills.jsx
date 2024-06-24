@@ -36,26 +36,26 @@ function Skills({ initSkills, aiLoading, onUpdate, onAiCall }) {
 
   return (
     <div className={`${aiLoading ? "animate-pulse" : ""} form-container`}>
-      <div className="form-text-main hover:bg-slate-500" onClick={() => {setIsEditing(true)}}>{"Skills"}</div>
+      <div className="form-single-header" onClick={() => {setIsEditing(true)}}>{"Skills"}</div>
 
       {isEditing && (
-        <div className="px-4 pb-4">
+        <div className="p-4">
           <div className="flex justify-between">
             <button
-              className="green-button p-2 my-2 bg-slate-800"
+              className="green-button p-1"
               onClick={handleSaveSkills}
             >
               {"Save"}
             </button>
-            <div>
+            <div className="flex justify-center">
               <button
-                className="green-button p-2 my-2 bg-slate-800"
+                className="green-button p-1 mr-1"
                 onClick={handleAddSkills}
               >
                 {"Add"}
               </button>
               <button
-                className="green-button py-1 px-4 mx-1 bg-slate-800"
+                className="green-button p-1"
                 onClick={onAiCall}
               >
                 <div>
@@ -65,9 +65,9 @@ function Skills({ initSkills, aiLoading, onUpdate, onAiCall }) {
               </button>
             </div>
           </div>
-          <div className="w-full pr-2">
+          <div className="w-full py-2">
           {skills.map((item, index) => (
-            <div className="flex justify-between">
+            <div className="flex justify-between p-1">
             <input 
               type="text"
               id={"skills"}

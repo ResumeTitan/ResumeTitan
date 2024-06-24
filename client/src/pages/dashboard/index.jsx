@@ -98,15 +98,15 @@ export const Dashboard = () => {
 
         <button
           onClick={() => handleClickResume(resumes[index]._id)}
-          className="dashboard-edit-button w-48 h-48 top-10 left-10"
+          className="dashboard-edit-button w-5/6 h-96 top-20 left-20"
         >
-          <EditIcon style={{ fontSize: 128 }} />
+          <EditIcon style={{ fontSize: 256 }} />
         </button>
         <button
           onClick={() => handleClickedDelete(resumes[index]._id)}
-          className="dashboard-delete-button top-10 right-10 w-48 h-48"
+          className="dashboard-delete-button w-5/6 h-96 bottom-60 left-20"
         >
-          <CloseIcon style={{ fontSize: 128 }} />
+          <CloseIcon style={{ fontSize: 256 }} />
         </button>
 
       </div>
@@ -141,15 +141,15 @@ export const Dashboard = () => {
                     e.stopPropagation();
                     handleClickInterview(interview._id);
                   }}
-                  className="dashboard-edit-button top-3 left-3 w-8 h-8"
+                  className="dashboard-edit-button top-3 left-3 w-16 h-16"
                 >
-                  <EditIcon />
+                  <EditIcon style={{ fontSize: 48 }}/>
                 </button>
                 <button
                   onClick={(e) => handleDeleteInterview(e, interviews[index]._id)}
-                  className="dashboard-delete-button top-3 right-3 w-8 h-8"
+                  className="dashboard-delete-button top-3 right-3 w-16 h-16"
                 >
-                  <CloseIcon />
+                  <CloseIcon style={{ fontSize: 48 }} />
                 </button>
               </div>
             ))}

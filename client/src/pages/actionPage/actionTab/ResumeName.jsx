@@ -32,7 +32,7 @@ function ResumeName({ initName, onPrint, onUpdateResumeName }) {
       <div className="flex-center">
         <div>
           {isEditing ? (
-            <div>
+            <div className="flex">
               <input
                 className="form-style"
                 id="resumeName"
@@ -43,6 +43,7 @@ function ResumeName({ initName, onPrint, onUpdateResumeName }) {
                 value={resumeName}
                 ref={inputRef}
               />
+              <button onClick={handleBlur} className="submit-button mx-2 px-2">{"Save"}</button>
             </div>
           ) : (
             <div
@@ -55,7 +56,7 @@ function ResumeName({ initName, onPrint, onUpdateResumeName }) {
           )}
         </div>
         <div>
-          <button onClick={handlePrint} className="submit-button">
+          <button onClick={handlePrint} className="submit-button px-5 py-2.5 m-1 h-12 w-full">
             {"Save as PDF"}
           </button>
         </div>
