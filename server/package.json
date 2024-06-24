@@ -51,8 +51,8 @@
         "passport": "0.6.0",
         "passport-google-oauth20": "2.0.0",
         "patch-package": "^6.4.7",
-        "puppeteer": "^22.8.1",
-        "puppeteer-core": "^22.8.1",
+        "puppeteer": "^22.11.2",
+        "puppeteer-core": "^22.11.2",
         "secure-password": "^4.0.0",
         "stripe": "^15.8.0",
         "uuid": "^9.0.0"
