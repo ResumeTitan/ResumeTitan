@@ -17,9 +17,13 @@ body {
 @layer utilities {
   .text-custom-blue {
     color: #1a75ff;
-}
+  }
 
   .text-custom-green {
     color: #00cc66;
+  }
+
+  .a4-size {
+    @apply w-[21cm] h-[29.7cm];
   }
 }

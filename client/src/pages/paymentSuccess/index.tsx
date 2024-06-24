@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { setUser } from '../../state/authReducer';
@@ -10,7 +10,7 @@ const SuccessPage = () => {
   const navigate = useNavigate();
 
   // Reload user
-  useEffect(() => {
+  React.useEffect(() => {
     const fetchUser = async () => {
       try {
         const response = await reloadUser(token);

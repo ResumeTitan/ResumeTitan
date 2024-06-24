@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
 import ActionTab from './actionTab/Action';
@@ -94,7 +94,7 @@ function ActionPage() {
    * @function useEffect
    * @description hook for if resumeId changes (refresh)
    */
-  useEffect(() => {
+  React.useEffect(() => {
     const loadResumeChange = async () => {
       if (location.state) {
         setResumeId(location.state.resumeId);
