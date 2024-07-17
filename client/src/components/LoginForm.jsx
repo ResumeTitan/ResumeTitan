@@ -3,8 +3,10 @@ import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { setLogin } from 'state/authReducer';
+import CloseIcon from '@mui/icons-material/Close';
 import SuccessAlert from './Alert/SuccessAlert';
 import ErrorAlert from './Alert/ErrorAlert';
+import api from 'api/actions';
 
 export const LoginForm = ({ onCloseLogin, registerOpen }) => {
   const navigate = useNavigate();
@@ -14,9 +16,11 @@ export const LoginForm = ({ onCloseLogin, registerOpen }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isRegister, setIsRegister] = useState(registerOpen);
-  const [newUserRegistered, setNewUserRegistered] = useState(false);
-  const [loginFailed, setLoginFailed] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [showError, setShowError] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
@@ -81,16 +85,17 @@ export const LoginForm = ({ onCloseLogin, registerOpen }) => {
         onCloseLogin();
         navigate('/dashboard', { state: { newUser: true } });
         setIsRegister(false);
-        setNewUserRegistered(true);
+        setSuccessMessage('User registered successfully');
+        setShowSuccess(true);
       }
     } else if (response.status === 400) {
       const error = await response.json();
       setErrorMessage(error.msg);
-      setLoginFailed(true);
+      setShowError(true);
     } else {
       const error = await response.json();
       setErrorMessage('Something went wrong: ', error.msg);
-      setLoginFailed(true);
+      setShowError(true);
     }
   };
 
@@ -103,7 +108,7 @@ export const LoginForm = ({ onCloseLogin, registerOpen }) => {
           `Attempting to log in ${JSON.stringify(loggedIn['user']['email'])}`,
         );
         if (loggedIn) {
-          setLoginFailed(false);
+          setShowError(false);
           dispatch(
             setLogin({
               user: loggedIn.user,
@@ -115,142 +120,198 @@ export const LoginForm = ({ onCloseLogin, registerOpen }) => {
         }
       } else if (response.status === 400) {
         const error = await response.json();
+        console.log('Error logging in:', error.msg);
         setErrorMessage(error.msg);
-        setLoginFailed(true);
+        setShowError(true);
       }
     } catch (e) {
       setErrorMessage(e.message);
-      setLoginFailed(true);
+      setShowError(true);
+    }
+  };
+
+  /**
+   * @function handleForgotPassword
+   * @description Sends a reset password email to the user when button clicked
+   * @throws {Error} If network response was not ok
+   */
+  const handleForgotPassword = async () => {
+    try {
+      const response = await api.post('/forgot-password', { email });
+  
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+  
+      if (response.data.success) {
+        setSuccessMessage('Reset link sent to your email. Please follow instructions');
+      } else {
+        throw new Error(response.data.message || 'Failed to send reset email. Please try again later.');
+      }
+    } catch (error) {
+      console.error('Failed to send reset email:', error);
+      setErrorMessage(error.message);
     }
   };
 
   return (
-  <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-black bg-opacity-50 z-10 p-4">
-    <div className="rounded-lg shadow-card w-full max-w-md bg-slate-700 p-8 pt-6">
-      {newUserRegistered && (
-        <SuccessAlert
-          message={`Success! Registered new user, ${firstName} ${lastName}`}
-          onClose={() => {
-            setNewUserRegistered(false);
-          }}
-        />
-      )}
-      {loginFailed && (
-        <ErrorAlert
-          message={errorMessage}
-          onClose={() => {
-            setLoginFailed(false);
-          }}
-        />
-      )}
-      <div>
-        <div className="flex justify-between">
-          <h2 className="flex text-2xl font-bold mb-4 text-gray-200">
-            {isRegister ? 'Register' : 'Login'}
-          </h2>
-          <button className="flex text-gray-500 hover:text-black bg-gray-700" onClick={onCloseLogin}>
-            <p className="fas fa-times">X</p>
-          </button>
-        </div>
-        <form onSubmit={handleSubmit}>
-          {isRegister && (
-            <div>
-              <div className="mb-4">
-                <label
-                  className="block text-gray-200 text-sm font-bold mb-2"
-                  htmlFor="firstName"
-                >
-                  {'First Name'}
-                </label>
-                <input
-                  type="text"
-                  id="firstName"
-                  className="appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline"
-                  value={firstName}
-                  onChange={handleFirstNameChange}
-                  required
-                />
-              </div>
-              <div className="mb-4">
-                <label
-                  className="block text-gray-300 text-sm font-bold mb-2"
-                  htmlFor="firstName"
-                >
-                  {'Last Name'}
-                </label>
-                <input
-                  type="text"
-                  id="lastName"
-                  className="appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline"
-                  value={lastName}
-                  onChange={handleLastNameChange}
-                  required
-                />
-              </div>
-            </div>
-          )}
-          <div className="mb-4">
-            <label
-              className="block text-gray-300 text-sm font-bold mb-2"
-              htmlFor="email"
-            >
-              Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              className="appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline"
-              value={email}
-              onChange={handleEmailChange}
-              required
-            />
-          </div>
-          <div className="mb-4">
-            <label
-              className="block text-gray-300 text-sm font-bold mb-2"
-              htmlFor="password"
-            >
-              {'Password'}
-            </label>
-            <input
-              type="password"
-              id="password"
-              className="appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline"
-              value={password}
-              onChange={handlePasswordChange}
-              required
-            />
-          </div>
-
-          {isRegister && (
-            <div className="text-sm text-white pb-4">
-              <p>
-                {'By creating an account, you agree to our '}
-                <a href="/terms" className="text-sm text-lighter-green hover:text-white">Terms of Service</a>
-                {'. We do not sell your personal data. To learn more about how we collect, use, share and protect it please read our Privacy Policy'}
-              </p>
-            </div>
-          )}
-
-          <div className="flex items-center justify-between mb-4">
-            <button
-              id="submitLogin"
-              type="submit"
-              className="border border-4 border-white hover:bg-light-green text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-            >
+    <div className="layover-container">
+      <div className="form-header w-5/6 lg:w-3/4 xl:w-1/2 bg-white p-6 rounded-lg text-black">
+        {showSuccess && (
+          <SuccessAlert
+            message={successMessage}
+            onClose={() => {
+              setShowSuccess(false);
+            }}
+          />
+        )}
+        {showError && (
+          <ErrorAlert
+            message={errorMessage}
+            onClose={() => {
+              setShowError(false);
+            }}
+          />
+        )}
+        <div>
+          <div className="flex justify-between">
+            <h2 className="flex text-2xl font-bold mb-4">
               {isRegister ? 'Register' : 'Sign In'}
-            </button>
+            </h2>
+            <div className="items-center justify-center">
             <button
-              type="button"
-              className="text-lighter-green hover:text-white text-sm font-bold"
-              onClick={toggleRegister}
+              onClick={onCloseLogin}
+              className="flex bg-red-500 text-white rounded-full items-center"
             >
-              {isRegister ? 'Sign In' : 'Register'}
+              <CloseIcon style={{ fontSize: 24 }} />
             </button>
+            </div>
           </div>
-        </form>
+          <form onSubmit={handleSubmit}>
+            {isRegister && (
+              <div>
+                <div className="mb-4">
+                  <label
+                    className="block text-sm font-bold mb-2"
+                    htmlFor="firstName"
+                  >
+                    {'First Name'}
+                  </label>
+                  <input
+                    type="text"
+                    id="firstName"
+                    className="form-style"
+                    value={firstName}
+                    onChange={handleFirstNameChange}
+                    required
+                  />
+                </div>
+                <div className="mb-4">
+                  <label
+                    className="block text-sm font-bold mb-2"
+                    htmlFor="firstName"
+                  >
+                    {'Last Name'}
+                  </label>
+                  <input
+                    type="text"
+                    id="lastName"
+                    className="form-style"
+                    value={lastName}
+                    onChange={handleLastNameChange}
+                    required
+                  />
+                </div>
+              </div>
+            )}
+            <div className="mb-4">
+              <label
+                className="block text-sm font-bold mb-2"
+                htmlFor="email"
+              >
+                Email
+              </label>
+              <input
+                type="email"
+                id="email"
+                className="form-style"
+                value={email}
+                onChange={handleEmailChange}
+                required
+              />
+            </div>
+            <div className="mb-4">
+              <label
+                className="block text-sm font-bold mb-2"
+                htmlFor="password"
+              >
+                {'Password'}
+              </label>
+              <input
+                type="password"
+                id="password"
+                className="form-style"
+                value={password}
+                onChange={handlePasswordChange}
+                required
+              />
+            </div>
+
+            {isRegister && (
+              <div className="text-sm pb-4">
+                <p>
+                  {'By creating an account, you agree to our '}
+                  <a href="/terms" className="text-sm text-accent-blue hover:text-blue-700">Terms of Service</a>
+                  {'. We do not sell your personal data. To learn more about how we collect, use, share and protect it please read our Privacy Policy'}
+                </p>
+              </div>
+            )}
+
+            <div className="flex items-center justify-between mb-4">
+              <button
+                id="submitLogin"
+                type="submit"
+                className="action-button"
+              >
+                {isRegister ? 'Register' : 'Sign In'}
+              </button>
+              <button
+                type="button"
+                className="secondary-action-button"
+                onClick={toggleRegister}
+              >
+                {isRegister ? 'Sign In' : 'Register'}
+              </button>
+            </div>
+          </form>
+          <button
+            type="button"
+            className="text-darkest-green hover:text-main-green text-sm mb-4"
+            onClick={() => setShowForgotPassword(!showForgotPassword)}
+          >
+            {showForgotPassword ? 'Hide' : 'Forgot Password?'}
+          </button>
+          {showForgotPassword && (
+            <div className="flex form-style justify-between items-center">
+              <input
+                type="email"
+                placeholder="Enter your email"
+                className="form-style w-3/5"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+              <button
+                type="button"
+                className="flex action-button mx-2"
+                onClick={handleForgotPassword}
+              >
+                Send Reset Link
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </div>
-  </div>
   );
 };

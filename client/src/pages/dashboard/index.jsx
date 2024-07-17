@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router-dom';
 import { getResumes, deleteResume } from 'api/resume';
 import { deleteInterview, getInterviews } from 'api/interview';
 import Spinner from 'components/Spinner';
-import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import CloseIcon from '@mui/icons-material/Close';
 import Popup from './Popup';

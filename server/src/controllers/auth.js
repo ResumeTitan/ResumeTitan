@@ -78,3 +78,23 @@ export const reload = async (req, res) => {
     res.status(500).json({ msg: err.message });
   }
 };
+
+/**
+ * @function forgotPassword
+ * @param {Request} req
+ * @param {Response} res
+ * @returns {Response} 
+ */
+export const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ email: email });
+    if (!user) {
+      return res.status(400).json({ msg: "User not found." });
+    }
+    // TODO send email with reset link
+    res.status(200).json({ msg: "Email sent." });
+  } catch (err) {
+    res.status(500).json({ msg: err.message });
+  }
+}

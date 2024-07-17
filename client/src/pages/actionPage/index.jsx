@@ -215,6 +215,7 @@ function ActionPage() {
 
       <div className="px-2 pt-4 md:px-4 lg:px-8 w-full flex flex-col">
       {showPrintError && (
+        <div className="layover-container">
         <ErrorAlert 
           onClose={() => setShowPrintError(false)}
         >
@@ -222,6 +223,7 @@ function ActionPage() {
             Upgrade to premium by <a className="underline" href="/pricing">clicking here.</a>
           </p>
         </ErrorAlert>
+        </div>
       )}
         <Tabs openTab={activeTab} setOpenTab={(tab) => setActiveTab(tab)} />
         {activeTab === 1 && (
