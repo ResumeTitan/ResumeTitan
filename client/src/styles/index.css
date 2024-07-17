@@ -214,3 +214,7 @@ body {
 .right-section {
   @apply hidden md:flex sm:w-1/2 mx-4
 }
+
+.layover-container {
+  @apply fixed top-0 left-0 w-full h-full flex justify-center items-center bg-black bg-opacity-50 z-10 p-4
+}
