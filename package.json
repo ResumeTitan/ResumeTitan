@@ -14,6 +14,7 @@
   "author": "Mitchell Hay",
   "license": "ISC",
   "dependencies": {
+    "@clerk/clerk-react": "^5.2.8",
     "concurrently": "^8.2.2"
   }
 }

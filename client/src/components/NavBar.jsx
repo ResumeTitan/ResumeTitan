@@ -83,6 +83,7 @@ const NavBar = () => {
           >
             {user ? 'Logout' : 'Login'}
           </button>
+          {/* insert clerk info */}
           {user && (
             <button
               href="/dashboard"

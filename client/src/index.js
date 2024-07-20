@@ -17,6 +17,16 @@ import {
 import storage from "redux-persist/lib/storage";
 import { PersistGate } from "redux-persist/integration/react";
 import './index.css';
+import { ClerkProvider } from '@clerk/clerk-react'
+
+
+
+const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
+
+if (!PUBLISHABLE_KEY) {
+  throw new Error("Missing Publishable Key")
+}
+
 
 const persistConfig = { key: "root", storage, version: 1 };
 const persistedReducer = persistReducer(persistConfig, authReducer);
@@ -30,11 +40,18 @@ const store = configureStore({
     }),
 });
 
+
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <Provider store={store}>
     <PersistGate loading={null} persistor={persistStore(store)}>
+    <ClerkProvider frontendApi={PUBLISHABLE_KEY}>
+
+    
       <App />
+      </ClerkProvider>
+
     </PersistGate>
   </Provider>
 );
