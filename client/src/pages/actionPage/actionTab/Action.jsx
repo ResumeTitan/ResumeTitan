@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import ResumeName from './ResumeName';
 import PersonalInfo from './PersonalInfo';
 import Schools from './Schools';
 import Jobs from './Jobs';
 import Skills from './Skills';
 import Summary from './Summary';
+import Certificates from './Certificates';
 import Popup from '../Popup';
 import api from 'api/actions';
 import { swapArrayElements } from 'utils';
@@ -15,6 +16,7 @@ function ActionTab({
   work,
   education,
   skills,
+  certificates,
   resumeName,
   onUpdateResumeName,
   onPrint, 
@@ -22,7 +24,8 @@ function ActionTab({
   onUpdateEducation, 
   onUpdateBasics, 
   onUpdateSkills,
-  onUpdateSummary 
+  onUpdateSummary,
+  onUpdateCertificates
 }) {
   const [popupOpen, setPopupOpen] = useState(false);
   const [aiSkillsLoading, setAiSkillsLoading] = useState(false);
@@ -125,6 +128,7 @@ function ActionTab({
       <Jobs jobs={work} onSave={handleSaveWork} onDelete={handleDeleteWork} onSwap={handleSwapJobs}/>      
       <Summary summary={basics?.summary || ""} aiLoading={aiSummaryLoading} onUpdate={onUpdateSummary} onAiCall={handleSummaryAiCall} />
       <Skills initSkills={skills} aiLoading={aiSkillsLoading} onUpdate={onUpdateSkills} onAiCall={handleSkillsAiCall}/>
+      <Certificates initCertificates={[]} aiLoading={aiSkillsLoading} onUpdate={onUpdateSkills} onAiCall={handleSkillsAiCall}/>
 
        {/* Popup */}
        {popupOpen && <Popup message={`These fields will be filled in when clicking "Generate Resume"`} handleOk={() => setPopupOpen(false)} />}

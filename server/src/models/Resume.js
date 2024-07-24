@@ -163,6 +163,10 @@ const ResumeSchema = new mongoose.Schema(
       type: Array,
       default: []
     },
+    certificates: {
+      type: Array,
+      default: []
+    },
     theme: {
       type: String,
       description: "Theme of the resume selected by the user",

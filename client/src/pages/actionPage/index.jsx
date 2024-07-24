@@ -213,7 +213,7 @@ function ActionPage() {
         <Spinner />
       )}
 
-      <div className="px-2 pt-4 md:px-4 lg:px-8 w-full flex flex-col">
+      <div className="px-2 p-4 md:px-4 lg:px-8 w-full flex flex-col">
       {showPrintError && (
         <div className="layover-container">
         <ErrorAlert 
