@@ -9,7 +9,9 @@
     "server": "cd server && npm start",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "deploy-client": "cd client/ && flyctl deploy",
-    "deploy-server": "cd server/ && flyctl deploy"
+    "deploy-server": "cd server/ && flyctl deploy",
+    "clean": "rm -rf node_modules && rm package-lock.json",
+    "clean:install": "rm -rf node_modules && rm package-lock.json && npm install"
   },
   "author": "Mitchell Hay",
   "license": "ISC",
