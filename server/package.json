@@ -9,7 +9,9 @@
         "test": "echo \"Error: no test specified\" && exit 1",
         "start": "nodemon src/index.js",
         "start:prod": "node src/index.js",
-        "deploy": "flyctl deploy"
+        "deploy": "flyctl deploy",
+        "clean": "rm -rf node_modules && rm package-lock.json",
+        "clean:install": "rm -rf node_modules && rm package-lock.json && npm install"
     },
     "nodemonConfig": {
         "delay": "1000"

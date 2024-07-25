@@ -40,7 +40,9 @@
         "build": "react-scripts build",
         "test": "react-scripts test",
         "eject": "react-scripts eject",
-        "deploy": "flyctl deploy"
+        "deploy": "flyctl deploy",
+        "clean": "rm -rf node_modules && rm package-lock.json",
+        "clean:install": "rm -rf node_modules && rm package-lock.json && npm install"
     },
     "eslintConfig": {
         "extends": [
