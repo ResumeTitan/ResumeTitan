@@ -82,6 +82,7 @@ const NavBar = () => {
           >
             {user ? 'Logout' : 'Login'}
           </button>
+          {/* insert clerk info */}
           <button
             className="text-white pr-8"
             onClick={() => navigate('/pricing')}
