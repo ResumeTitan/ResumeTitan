@@ -6,6 +6,7 @@ import WhiteLogo from '../assets/logo-white.png';
 import TextLogo from '../assets/text-logo-white.png';
 import { LoginForm } from './LoginForm';
 import 'styles/index.css';
+import { UserButton } from '@clerk/clerk-react';
 
 const NavBar = () => {
   const user = useSelector((state) => state.user);
@@ -158,8 +159,8 @@ const NavBar = () => {
             </button>
           </div>
         )}
+        <UserButton />
       </nav>
-
       {isLoginOpen && (
         <LoginForm
           registerOpen={false}
