@@ -6,7 +6,7 @@ import WhiteLogo from '../assets/logo-white.png';
 import TextLogo from '../assets/text-logo-white.png';
 import { LoginForm } from './LoginForm';
 import 'styles/index.css';
-import { UserButton } from '@clerk/clerk-react';
+import { UserButton , useUser} from '@clerk/clerk-react';
 
 const NavBar = () => {
   const user = useSelector((state) => state.user);
@@ -15,6 +15,17 @@ const NavBar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  // let clerkUserId = "";
+  // let name = "";
+  // let email = "";
+  // const { userClerk } = useUser();
+  
+  // if(userClerk) {
+  //   clerkUserId = userClerk.id;
+  //   name = userClerk.firstName + " " + userClerk.lastName;
+  //   email = userClerk.emailAddresses[0].emailAddress;
+  // }
+
 
   const handleLoginLogout = () => {
     console.log("clicked login/logout", user)
@@ -163,6 +174,9 @@ const NavBar = () => {
         afterSignOutUrl='/'
         />
       </nav>
+      {/* <h1>Clerk user id: {user?.id || "Not logged in"}</h1>
+      <h1>Name: {user?.firstName || "Not logged in"}</h1>
+      <h1>Email: {user?.email || "Not logged in"}</h1> */}
       {isLoginOpen && (
         <LoginForm
           registerOpen={false}

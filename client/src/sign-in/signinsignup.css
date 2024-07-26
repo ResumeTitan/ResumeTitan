@@ -1,0 +1,30 @@
+/* import our font as well */
+
+
+
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.auth-container{
+  background-color: #00cc66;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.cl-internal-b3fm6y{
+  display: none !important;
+}
+
+.cl-card{
+  border-radius: 4px !important;
+}
+
+.cl-formButtonPrimary{
+  background-color: #00cc66;
+  color: white;
+}
