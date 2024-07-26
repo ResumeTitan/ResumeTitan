@@ -45,8 +45,8 @@ export default function App() {
           <Route path="/pricing" element={<PricingPage />} />
           <Route path="/cover-letter" element={<CoverLetterPage />} />
           <Route path="*" element={<Navigate to="/" />} />
-          <Route path="sign-in" element={<SignIn />} />
-          <Route path="sign-up" element={<SignUp />} />
+          <Route path="/sign-in" element={<SignIn />} />
+          <Route path="/sign-up" element={<SignUp />} />
         </Routes>
         {!window.location.pathname.includes('/print-resume') && <Footer />}
       </BrowserRouter>
