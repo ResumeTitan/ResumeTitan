@@ -218,3 +218,27 @@ body {
 .layover-container {
   @apply fixed top-0 left-0 w-full h-full flex justify-center items-center bg-black bg-opacity-50 z-10 p-4
 }
+
+
+/* clerk css */
+
+.auth-container{
+  background-color: #115e59;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.cl-internal-b3fm6y{
+  display: none !important;
+}
+
+.cl-card{
+  border-radius: 4px !important;
+}
+
+.cl-formButtonPrimary{
+  background-color: #115e59;
+  color: white;
+}

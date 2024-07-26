@@ -1,5 +1,5 @@
 import { SignIn } from "@clerk/clerk-react"
-import './signinsignup.css'
+// import './signinsignup.css'
 
 export default function SignInPage() {
   return (
