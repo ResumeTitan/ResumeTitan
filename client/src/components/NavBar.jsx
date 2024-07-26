@@ -159,7 +159,9 @@ const NavBar = () => {
             </button>
           </div>
         )}
-        <UserButton />
+        <UserButton 
+        afterSignOutUrl='/'
+        />
       </nav>
       {isLoginOpen && (
         <LoginForm
