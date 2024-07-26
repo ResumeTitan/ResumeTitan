@@ -4,13 +4,19 @@ import XIcon from '@mui/icons-material/X';
 
 export default function Footer() {
   return (
-    <footer className="bg-main-green text-white p-2 left-0 bottom-0 right-0">
+    <footer className="bg-main-green text-white p-4">
       <div className="w-full mx-auto max-w-screen-xl sm:p-2 p-4 md:flex md:items-center md:justify-between">
         <div>
-          <span className="text-md sm:text-center">&#169; ResumeTitan {new Date().getFullYear()}</span>
-          <YouTubeIcon className="m-2 text-white" />
-          <LinkedInIcon className="text-white" />
-          <XIcon className="m-2 text-white" />
+          <span className="text-md sm:text-center m-1">&#169; ResumeTitan {new Date().getFullYear()}</span>
+          <a href="https://www.linkedin.com/company/resumetitan-llc/">
+            <LinkedInIcon className="m-1 text-white" style={{ fontSize: 24 }} />
+          </a>
+          <a href="https://twitter.com/ResumeTitan">
+            <XIcon className="m-1 text-white" style={{ fontSize: 24 }} />
+          </a>
+          <a href="https://www.youtube.com/@ResumeTitan-llc">
+            <YouTubeIcon className="m-1 text-white" style={{ fontSize: 24 }} />
+          </a>
         </div>
         <ul className="block md:flex md:flex-wrap items-center mt-3 text-sm font-medium text-gray-500 sm:mt-0 list-none">
           <li>

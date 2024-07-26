@@ -1,27 +1,43 @@
 import React, { useEffect, useState, ChangeEvent } from 'react';
-import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import dayjs from 'dayjs';
 import 'styles/index.css';
+import { ICertificatesType } from 'types/types';
 
 interface CertificatesProps {
-  initCertificates: string[];
-  aiLoading: boolean;
-  onUpdate: (certificates: string[]) => void;
-  onAiCall: () => void;
+  initCertificates: ICertificatesType[];
+  onUpdate: (certificates: ICertificatesType[]) => void;
 }
 
-const Certificates: React.FC<CertificatesProps> = ({ initCertificates, aiLoading, onUpdate, onAiCall }) => {
-  const [certificates, setCertificates] = useState<string[]>([]);
+const Certificates: React.FC<CertificatesProps> = ({ initCertificates, onUpdate }) => {
+  const [certificates, setCertificates] = useState<ICertificatesType[]>([]);
   const [isEditing, setIsEditing] = useState(false);
 
-  const handleCertificatesChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {
+  const handleNameChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {
     const { value } = e.target;
     const newCertificates = [...certificates];
-    newCertificates[index] = value;
+    newCertificates[index].name = value;
+    setCertificates(newCertificates);
+  }
+
+  const handleIssuerChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {
+    const { value } = e.target;
+    const newCertificates = [...certificates];
+    newCertificates[index].issuer = value;
+    setCertificates(newCertificates);
+  }
+
+  const handleDateChange = (date: string, index: number) => {
+    const newCertificates = [...certificates];
+    newCertificates[index].date = date;
     setCertificates(newCertificates);
   }
 
   const handleAddCertificates = () => {
-    setCertificates([...certificates, '']);
+    setCertificates([...certificates, {name: '', issuer: '', date: Date()}]);
   }
 
   const handleCertificatesDelete = (index: number) => {
@@ -39,10 +55,8 @@ const Certificates: React.FC<CertificatesProps> = ({ initCertificates, aiLoading
     setCertificates(initCertificates);
   }, [initCertificates]);
 
-  useEffect(() => {}, [aiLoading]);
-
   return (
-    <div className={`${aiLoading ? "animate-pulse" : ""} form-container`}>
+    <div className={`form-container`}>
       <div className="form-single-header" onClick={() => { setIsEditing(true) }}>{"Certificates"}</div>
 
       {isEditing && (
@@ -61,29 +75,47 @@ const Certificates: React.FC<CertificatesProps> = ({ initCertificates, aiLoading
               >
                 {"Add"}
               </button>
-              <button
-                className="green-button p-1"
-                onClick={onAiCall}
-              >
-                <div>
-                  <AutoAwesomeIcon className="pr-2" />
-                  <span>Write with AI</span>
-                </div>
-              </button>
             </div>
           </div>
           <div className="w-full py-2">
-            {certificates.map((item, index) => (
-              <div className="flex justify-between p-1" key={index}>
+            {certificates.map((cert, index) => (
+              <div className={`flex justify-between p-1 ${index > 0 ? "border-t-2 border-black" : ""}`} key={index}>
+                <div className="w-full py-2">
+                <label className="form-label">{"Certificate Name"}</label>
                 <input
                   type="text"
-                  id={"certificates"}
+                  id={"cert-name"}
                   className="form-style"
                   placeholder=""
-                  value={item || ''}
-                  onChange={(e) => handleCertificatesChange(e, index)}
-                  required />
-                <div className="pl-2">
+                  value={cert.name || ''}
+                  onChange={(e) => handleNameChange(e, index)}
+                  required 
+                />
+                <div>
+                  <label className="form-label">{"Issuer"}</label>
+                  <input
+                    type="text"
+                    id={"certificates"}
+                    className="form-style"
+                    placeholder=""
+                    value={cert.issuer || ''}
+                    onChange={(e) => handleIssuerChange(e, index)}
+                    required 
+                  />
+                  <div className="py-2">
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DemoContainer components={['DatePicker', 'DatePicker']}>
+                    <DatePicker
+                      label="Date Issued"
+                      value={dayjs(cert.date)}
+                      onChange={(newValue: any) => {handleDateChange(newValue.toString(), index)}}
+                    />
+                  </DemoContainer>
+                </LocalizationProvider>
+                </div>
+                </div>
+                </div>
+                <div className="pl-2 content-center">
                   <button
                     className="remove-content-button"
                     onClick={() => handleCertificatesDelete(index)}
@@ -93,8 +125,6 @@ const Certificates: React.FC<CertificatesProps> = ({ initCertificates, aiLoading
                 </div>
               </div>
             ))}
-          </div>
-          <div className="flex justify-between">
           </div>
         </div>
       )}

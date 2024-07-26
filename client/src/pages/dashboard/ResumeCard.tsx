@@ -1,6 +1,6 @@
 import React from 'react';
 import ResumeContainer from 'templates/ResumeContainer';
-import { IBasicsType, IEducationType, IWorkType } from '../../types/types';
+import { IBasicsType, ICertificatesType, IEducationType, IWorkType } from '../../types/types';
 
 interface ResumeCardProps {
   resume: {
@@ -9,6 +9,7 @@ interface ResumeCardProps {
     education: IEducationType[];
     work: IWorkType[];
     skills: string[];
+    certificates: ICertificatesType[];
     theme: string;
   }
 }
@@ -22,6 +23,7 @@ const ResumeCard: React.FC<ResumeCardProps> = ({ resume }) => {
           education: resume.education,
           skills: resume.skills,
           summary: resume.basics.summary,
+          certificates: resume.certificates
         }}
         theme={resume.theme} 
       />

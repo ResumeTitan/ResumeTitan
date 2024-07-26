@@ -137,6 +137,27 @@ const EducationSchema = new mongoose.Schema(
   }
 );
 
+const CertificatesSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      description: "Name of the certificate",
+    },
+    date: {
+      type: String,
+      description: "Date certificate was issued",
+    },
+    issuer: {
+      type: String,
+      description: "Issuer of the certificate",
+    },
+    url: {
+      type: String,
+      description: "URL of the certificate",
+    },
+  }
+);
+
 const ResumeSchema = new mongoose.Schema(
   {
     basics: {
@@ -165,7 +186,9 @@ const ResumeSchema = new mongoose.Schema(
     },
     certificates: {
       type: Array,
-      default: []
+      items: {
+        type: CertificatesSchema
+      },
     },
     theme: {
       type: String,

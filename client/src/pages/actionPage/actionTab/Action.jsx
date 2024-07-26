@@ -128,7 +128,7 @@ function ActionTab({
       <Jobs jobs={work} onSave={handleSaveWork} onDelete={handleDeleteWork} onSwap={handleSwapJobs}/>      
       <Summary summary={basics?.summary || ""} aiLoading={aiSummaryLoading} onUpdate={onUpdateSummary} onAiCall={handleSummaryAiCall} />
       <Skills initSkills={skills} aiLoading={aiSkillsLoading} onUpdate={onUpdateSkills} onAiCall={handleSkillsAiCall}/>
-      <Certificates initCertificates={[]} aiLoading={aiSkillsLoading} onUpdate={onUpdateSkills} onAiCall={handleSkillsAiCall}/>
+      <Certificates initCertificates={[]} onUpdate={onUpdateCertificates}/>
 
        {/* Popup */}
        {popupOpen && <Popup message={`These fields will be filled in when clicking "Generate Resume"`} handleOk={() => setPopupOpen(false)} />}

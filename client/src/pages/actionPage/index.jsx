@@ -34,6 +34,7 @@ const ResumeComponent = React.forwardRef((props, ref) => (
       work: props.work,
       education: props.education,
       skills: props.skills,
+      certificates: props.certificates,
     }} theme={props.theme} />
   </div>
 ));
@@ -47,6 +48,7 @@ function ActionPage() {
   const [education, setEducation] = useState([]);
   const [work, setWork] = useState([]);
   const [skills, setSkills] = useState([]);
+  const [certificates, setCertificates] = useState([]);
   const [theme, setTheme] = useState('harvard');
   const currentUser = useSelector((state) => state.user);
   const isAuth = Boolean(useSelector((state) => state.token));
@@ -80,6 +82,7 @@ function ActionPage() {
       setEducation(resume.education);
       setWork(resume.work);
       setSkills(resume.skills);
+      setCertificates(resume.certificates);
       setTheme(resume.theme);
       setResumeName(resume.name);
       setResumeLoading(false);
@@ -186,6 +189,7 @@ function ActionPage() {
       education: education,
       basics: basics,
       skills: skills,
+      certificates: certificates,
       theme: theme,
       name: resumeName
     };
@@ -196,6 +200,7 @@ function ActionPage() {
       setEducation(savedResume.resume.education);
       setWork(savedResume.resume.work);
       setSkills(savedResume.resume.skills);
+      setCertificates(savedResume.resume.certificates);
       setResumeId(savedResume.resume._id);
       setResumeLoading(false);
       if (exit) {
@@ -232,6 +237,7 @@ function ActionPage() {
             work={work}
             education={education}
             skills={skills}
+            certificates={certificates}
             summary={basics.summary}
             resumeName={resumeName}
             onUpdateResumeName={setResumeName}
@@ -239,6 +245,7 @@ function ActionPage() {
             onUpdateWork={(jobsIn) => setWork(jobsIn)}
             onUpdateEducation={(schoolsIn) => setEducation(schoolsIn)}
             onUpdateSkills={(skillsIn) => setSkills(skillsIn)}
+            onUpdateCertificates={(certificatesIn) => setCertificates(certificatesIn)}
             onUpdateSummary={(sum) => {
               setBasics({
                 ...basics,
@@ -275,6 +282,7 @@ function ActionPage() {
           education={education}
           work={work}
           skills={skills}
+          certificates={certificates}
           theme={theme}
           ref={resumeRef}
         />
@@ -288,6 +296,7 @@ function ActionPage() {
             education={education} 
             work={work}
             skills={skills}
+            certificates={certificates}
             theme={theme}
             ref={resumeRef}
           />

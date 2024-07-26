@@ -1,6 +1,5 @@
 import { ChatOpenAI } from "@langchain/openai";
 import { z } from "zod";
-import User from "../models/User.js";
 
 const EducationSchema = z.object({
   institution: z.string(),
@@ -86,20 +85,17 @@ const getPrompt = (section, data) => {
   }
 };
 
-// export const postPersonalInfo = async (req, res) => {
-//   const { personalInfo } = req.body;
-//   resumeData.personal = personalInfo;
-
-//   const gptResponse = await personalModel.invoke(getPrompt('personal', personalInfo));
-
-//   res.status(200).json({ message: 'Personal information added successfully', response: gptResponse });
-// };
-
 export const postSummary = async (req, res) => {
-  const { summary, work, education, skills } = req.body;
+  const { summary, work, education, skills, certificates } = req.body;
   resumeData.summary = summary;
 
-  const gptResponse = await summaryModel.invoke(getPrompt('summary', {  extraNotes: summary, work, education, skills }));
+  const gptResponse = await summaryModel.invoke(getPrompt('summary', {
+    extraNotes: summary,
+    work,
+    education,
+    skills,
+    certificates
+  }));
 
   res.status(200).json({ message: 'Summary information added successfully', response: gptResponse });
 };

@@ -33,6 +33,13 @@ export interface IResumeType {
   basics: IBasicsType;
   education?: IEducationType[];
   work?: IWorkType[];
+  certificates?: ICertificatesType[];
   skills?: string[];
   summary?: string;
+}
+
+export interface ICertificatesType {
+  name: string;
+  issuer: string;
+  date: string;
 }

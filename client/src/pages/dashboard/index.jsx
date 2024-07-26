@@ -112,7 +112,7 @@ export const Dashboard = () => {
     ));
 
   return (
-    <div className="bg-white text-white">
+    <div className="bg-white text-white min-h-screen">
       <div className="dashboard-container">
         <div className="dashboard-header">My Resumes:</div>
         <button className="dashboard-button" onClick={() => navigate('/resume')}>Add New</button>
@@ -155,6 +155,39 @@ export const Dashboard = () => {
           </div>
         </div>
       </div>
+
+      {/* <div className="dashboard-container">
+        <div className="dashboard-header">My Cover Letters:</div>
+        <button className="dashboard-button" onClick={() => navigate('/interview')}>Add New</button>
+        <div className="overflow-x-scroll hide-scrollbar">
+          <div className="flex p-2 origin-top-left">
+            {interviews.map((interview, index) => (
+              <div className="border border-4 m-2 rounded-lg border-black hover:bg-lightest-green relative group">
+                <div className="text-black w-40 h-40 p-2 m-2 rounded-lg">
+                  <div className="text-xl font-bold">{interview.jobTitle}</div>
+                  <div className="">{`Questions: ${interview.interview.length}`}</div>
+                  <div className="">{`${formatDateFull(interview.createdAt)}`}</div>
+                </div>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleClickInterview(interview._id);
+                  }}
+                  className="dashboard-edit-button top-3 left-3 w-16 h-16"
+                >
+                  <EditIcon style={{ fontSize: 48 }}/>
+                </button>
+                <button
+                  onClick={(e) => handleDeleteInterview(e, interviews[index]._id)}
+                  className="dashboard-delete-button top-3 right-3 w-16 h-16"
+                >
+                  <CloseIcon style={{ fontSize: 48 }} />
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div> */}
 
       {/* Popup */}
       {showPopup && <Popup message={`Are you sure you want to delete this resume?`} handleDelete={handleDeleteResume} handleCancel={() => setShowPopup(false)} />}
