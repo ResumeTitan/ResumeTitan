@@ -222,9 +222,10 @@ body {
 
 /* clerk css */
 
-.auth-container{
+.cl-rootBox{
   background-color: #115e59;
   height: 100vh;
+  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -241,4 +242,8 @@ body {
 .cl-formButtonPrimary{
   background-color: #115e59;
   color: white;
+}
+
+.hidden{
+  display: none;
 }
