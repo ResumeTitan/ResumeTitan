@@ -15,26 +15,32 @@ import Work from "./partials/work";
 // import Interests from "./Interests";
 // import References from "./References";
 
-// Define the Resume component
-export function OnePageResume({ resume }) {
-  // Destructure resume object
-  const { basics } = resume;
+// Define the mapping of component keys to components
+const componentMap = {
+  basics: Basics,
+  education: Education,
+  work: Work,
+  skills: Skills,
+  // publications: Publications,
+  // projects: Projects,
+  // certificates: Certificates,
+  // awards: Awards,
+  // volunteer: Volunteer,
+  // languages: Languages,
+  // interests: Interests,
+  // references: References,
+};
 
+// Define the Resume component
+export function OnePageResume({ resume, order }) {
   // Render the Resume component
   return (
     <div id="resume">
-      <Basics basics={basics} />
-      <Education education={resume.education} />
-      <Work work={resume.work} />
-      <Skills skills={resume.skills} />
-      {/* <Publications publications={resume.publications} />
-      <Projects projects={resume.projects} />
-      <Certificates certificates={resume.certificates} />
-      <Awards awards={resume.awards} />
-      <Volunteer volunteer={resume.volunteer} />
-      <Languages languages={resume.languages} />
-      <Interests interests={resume.interests} />
-      <References references={resume.references} /> */}
+      {order.map((key) => {
+        const Component = componentMap[key];
+        if (!Component) return null;
+        return <Component key={key} {...resume} />;
+      })}
     </div>
   );
 };

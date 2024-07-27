@@ -23,7 +23,7 @@ interface BasicsProps {
   };
 }
 
-const BasicsComponent: React.FC<BasicsProps> = ({ basics }) => {
+const BasicsComponent: React.FC<BasicsProps> = ({ basics }: BasicsProps) => {
   // Destructure basics object
   const { name, label, email, phone, location, profiles, summary } = basics;
 
@@ -59,7 +59,7 @@ const BasicsComponent: React.FC<BasicsProps> = ({ basics }) => {
           </div>
           {profiles && profiles.length > 0 && (
             <div id="profilesBlock">
-              {profiles.map((profile, index) => (
+              {profiles.map((profile: any, index: number) => (
                 <span key={index} className="url">
                   <b>{profile.network}:</b>{" "}
                   <a href={profile.url}>{profile.url}</a>
