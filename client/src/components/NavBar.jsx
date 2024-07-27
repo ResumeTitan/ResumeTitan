@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { setLogout } from 'state/authReducer';
 import WhiteLogo from '../assets/logo-white.png';
 import TextLogo from '../assets/text-logo-white.png';
 import { LoginForm } from './LoginForm';
 import 'styles/index.css';
 import { UserButton , useUser} from '@clerk/clerk-react';
+
+
 
 const NavBar = () => {
   const user = useSelector((state) => state.user);
@@ -15,6 +17,11 @@ const NavBar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation(); 
+  const isAuthRoute = location.pathname.includes("/sign-in") || location.pathname.includes("/sign-up"); // Determine if it's an auth route
+
+
+  
   // let clerkUserId = "";
   // let name = "";
   // let email = "";
@@ -54,6 +61,12 @@ const NavBar = () => {
     handleResize();
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  if (isAuthRoute) {
+    return null;
+  }
+
+  
 
   const mobileNavbar = (
     <div className="lg:hidden">
