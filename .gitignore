@@ -6,7 +6,7 @@ server/.cache
 client/node_modules
 client/build
 client/src/templates/layouts/from-hbs
-client/.env.development
-client/.env.production
+client/src/.env.development
+client/src/.env.production
 .env.local
 client/.env.local

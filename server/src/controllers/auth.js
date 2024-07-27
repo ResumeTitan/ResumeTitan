@@ -121,11 +121,10 @@ export const handleClerk = async (req, res) => {
     const token = jwt.sign({ id: data.id }, process.env.JWT_SECRET);
     const savedUser = await User.findById({ clerkId: data.id });
     if (!savedUser) {
+      // TODO make new user
       return res.status(400).json({ msg: "User not found." });
     }
     res.status(201).json({ token, user: savedUser, msg: "Clerk handled." });
-    
-    res.status(200).json({  });
   } catch (err) {
     res.status(500).json({ msg: err.message });
   }
