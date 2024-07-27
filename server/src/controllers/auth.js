@@ -98,3 +98,35 @@ export const forgotPassword = async (req, res) => {
     res.status(500).json({ msg: err.message });
   }
 }
+
+/**
+ * @function handleClerk
+ * @param {Request} req
+ * @param {Response} res
+ * @returns {Response} 
+ */
+export const handleClerk = async (req, res) => {
+  try {
+    const { data, type } = req.body;
+    if (type === "user.created") {
+      console.log(`New clerk user created: ${data}`);
+    } else if (type === "user.updated") {
+      console.log(`Clerk user updated: ${data}`);
+    } else if (type === "user.deleted") {
+      console.log(`Clerk user deleted: ${data}`);
+    } else {
+      console.log(`Unknown type: ${type}`);
+    }
+
+    const token = jwt.sign({ id: data.id }, process.env.JWT_SECRET);
+    const savedUser = await User.findById({ clerkId: data.id });
+    if (!savedUser) {
+      return res.status(400).json({ msg: "User not found." });
+    }
+    res.status(201).json({ token, user: savedUser, msg: "Clerk handled." });
+    
+    res.status(200).json({  });
+  } catch (err) {
+    res.status(500).json({ msg: err.message });
+  }
+}

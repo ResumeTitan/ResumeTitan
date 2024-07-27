@@ -6,7 +6,7 @@ import WhiteLogo from '../assets/logo-white.png';
 import TextLogo from '../assets/text-logo-white.png';
 import { LoginForm } from './LoginForm';
 import 'styles/index.css';
-import { UserButton , useUser} from '@clerk/clerk-react';
+import { UserButton , SignIn } from '@clerk/clerk-react';
 
 const NavBar = () => {
   const user = useSelector((state) => state.user);
@@ -170,21 +170,22 @@ const NavBar = () => {
             </button>
           </div>
         )}
-        <UserButton 
-        afterSignOutUrl='/'
-        />
+        <UserButton afterSwitchSessionUrl='/' />
       </nav>
       {/* <h1>Clerk user id: {user?.id || "Not logged in"}</h1>
       <h1>Name: {user?.firstName || "Not logged in"}</h1>
       <h1>Email: {user?.email || "Not logged in"}</h1> */}
       {isLoginOpen && (
-        <LoginForm
-          registerOpen={false}
-          onCloseLogin={() => {
-            console.log('Closing login');
-            setIsLoginOpen(false);
-          }}
-        />
+        // <LoginForm
+        //   registerOpen={false}
+        //   onCloseLogin={() => {
+        //     console.log('Closing login');
+        //     setIsLoginOpen(false);
+        //   }}
+        // />
+        <div className="layover-container">
+          <SignIn path="/sign-in" />
+        </div>
       )}
     </div>
   );
