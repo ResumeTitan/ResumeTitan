@@ -137,6 +137,9 @@ const EducationSchema = new mongoose.Schema(
   }
 );
 
+/**
+ * Schema for Certificates
+ */
 const CertificatesSchema = new mongoose.Schema(
   {
     name: {
@@ -158,6 +161,53 @@ const CertificatesSchema = new mongoose.Schema(
   }
 );
 
+/**
+ * Schema for Volunteer
+ */
+const VolunteerSchema = new mongoose.Schema(
+  {
+    organization: {
+      type: String,
+      description: "Name of the organization",
+    },
+    position: {
+      type: String,
+      description: "Position at the organization",
+    },
+    url: {
+      type: String,
+      description: "URL of the organization",
+    },
+    startDate: {
+      type: String,
+      description: "Start date",
+    },
+    endDate: {
+      type: String,
+      description: "End date",
+    },
+    endDateCurrent: {
+      type: Boolean,
+      description: "Is this volunteer position current",
+      default: false
+    },
+    summary: {
+      type: String,
+      description: "Summary of the volunteer position",
+    },
+    highlights: {
+      type: Array,
+      items: {
+        type: String
+      },
+      description: "Highlights from the volunteer position (AI gen)",
+    },
+  }
+);
+
+/**
+ * Complete schema for resume
+ */
 const ResumeSchema = new mongoose.Schema(
   {
     basics: {
@@ -188,6 +238,12 @@ const ResumeSchema = new mongoose.Schema(
       type: Array,
       items: {
         type: CertificatesSchema
+      },
+    },
+    volunteer: {
+      type: Array,
+      items: {
+        type: VolunteerSchema
       },
     },
     theme: {

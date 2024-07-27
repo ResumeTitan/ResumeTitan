@@ -6,6 +6,7 @@ import Jobs from './Jobs';
 import Skills from './Skills';
 import Summary from './Summary';
 import Certificates from './Certificates';
+import Volunteer from './Volunteer';
 import Popup from '../Popup';
 import api from 'api/actions';
 import { swapArrayElements } from 'utils';
@@ -61,6 +62,9 @@ function ActionTab({
     setAiSkillsLoading(false);
   }
 
+  /**
+   * @function handleSaveWork
+   */
   const handleSaveWork = (workForm) => {
     if (workForm.id) {
       const updatedWork = work.map((job) => {
@@ -125,10 +129,11 @@ function ActionTab({
       <PersonalInfo initialInfo={basics} key={basics} onUpdate={onUpdateBasics} />
 
       <Schools key={education} education={education} onSave={handleSaveEducation} onDelete={handleDeleteEducation} onReorder={handleSwapEducation}/>
-      <Jobs jobs={work} onSave={handleSaveWork} onDelete={handleDeleteWork} onSwap={handleSwapJobs}/>      
+      <Jobs jobs={work} onSave={handleSaveWork} onDelete={handleDeleteWork} onSwap={handleSwapJobs}/>
       <Summary summary={basics?.summary || ""} aiLoading={aiSummaryLoading} onUpdate={onUpdateSummary} onAiCall={handleSummaryAiCall} />
       <Skills initSkills={skills} aiLoading={aiSkillsLoading} onUpdate={onUpdateSkills} onAiCall={handleSkillsAiCall}/>
       <Certificates initCertificates={[]} onUpdate={onUpdateCertificates}/>
+      <Volunteer volunteering={[]}/>
 
        {/* Popup */}
        {popupOpen && <Popup message={`These fields will be filled in when clicking "Generate Resume"`} handleOk={() => setPopupOpen(false)} />}

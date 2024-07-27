@@ -50,10 +50,10 @@ function Jobs({ jobs, onSave, onDelete, onSwap }) {
             <div key={`job-${index}`} className="form-secondary-area" onClick={() => handleEditJob(job.id)}>
               <div className="w-full">
                 <div className="font-bold">
-                  {job?.position}
+                  Job Title: {job?.position}
                 </div>
                 <div>
-                  {job?.name}
+                  Employer: {job?.name}
                 </div>
               </div>
               {/* <div className="flex">
