@@ -11,7 +11,7 @@ import User from 'models/User';
 export const reload = async (req: Request, res: Response): Promise<Response> => {
   try {
     // @ts-ignore
-    const id = req.user.id;
+    const id = req.auth.id;
     const user = await User.findById(id);
     if (!user) {
       return res.status(400).json({ msg: "User not found." });

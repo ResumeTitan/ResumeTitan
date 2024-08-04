@@ -14,11 +14,10 @@ const CoverLetterSchema = new mongoose.Schema(
       type: String,
       description: "Description of the job being interviewed for"
     },
-    userId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+    clerkId: {
+      type: String,
       required: true,
-      description: "The user who created the interview question",
+      description: "The clerk id of the user who created the interview question",
     },
     resumeId: {
       type: mongoose.Schema.Types.ObjectId,

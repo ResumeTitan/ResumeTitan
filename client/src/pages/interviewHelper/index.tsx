@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useUser } from "@clerk/clerk-react";
+import {  } from 'react-router-dom';
 import DetailsExpand from './Details';
 import Spinner from 'components/Spinner';
-import { getInterview } from 'api/interview';
 import api from 'api/actions';
 import 'styles/index.css';
 
@@ -15,8 +15,10 @@ interface Interview {
 }
 
 const InterviewPage: React.FC = () => {
+  const { user } = useUser();
+
+  const navigate = useNavigate();
   const location = useLocation();
-  const token = useSelector((state: any) => state.token);
   const [jobTitle, setJobTitle] = useState('');
   const [jobDescription, setJobDescription] = useState('');
   const [interview, setInterview] = useState<Interview[]>([]);
@@ -34,7 +36,10 @@ const InterviewPage: React.FC = () => {
       if (!id) {
         return;
       }
-      const { interview } = await getInterview(token, id);
+
+      const response = await api.get(`/interview/${id}`);
+
+      const interview = response.data.interview;
       setInterview(interview.interview);
       setJobTitle(interview.jobTitle);
       setJobDescription(interview.jobDescription);
@@ -64,12 +69,20 @@ const InterviewPage: React.FC = () => {
 
   const handleGenerateInterview = async () => {
     try {
+      if (!user) {
+        throw new Error("User not found");
+      }
       setIsLoading(true);
       let interviewId = '';
       if (location.state?.interviewId) {
         interviewId = location.state.interviewId;
       }
-      const response = await api.post("interview", { jobTitle, jobDescription, interviewId });
+      const response = await api.post("interview", { 
+        jobTitle, 
+        jobDescription, 
+        interviewId, 
+        clerkId: user.id 
+      });
       //@ts-ignore
       setInterview(response.data.interview.interview);
       setIsLoading(false);
@@ -179,7 +192,7 @@ const InterviewPage: React.FC = () => {
         <div className="py-4 flex justify-between">
           <button
             className="remove-button"
-            onClick={() => window.location.replace('/dashboard')}
+            onClick={() => navigate('/dashboard')}
           >
             {"Exit to Dashboard"}
           </button>

@@ -2,20 +2,18 @@ import React, { useEffect, useState } from 'react';
 import ResumeCard from './ResumeCard';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { deleteResume } from 'api/resume';
 import { deleteInterview } from 'api/interview';
 import Spinner from 'components/Spinner';
 import EditIcon from '@mui/icons-material/Edit';
 import CloseIcon from '@mui/icons-material/Close';
 import Popup from './Popup';
 import { formatDateFull } from '../../utils/index';
-import { useUser, useAuth } from '@clerk/clerk-react';
+import { useUser } from '@clerk/clerk-react';
 import api from 'api/actions';
 import { IResumeType } from 'types/types';
 
 export const Dashboard: React.FC = () => {
   const { user } = useUser();
-  const { getToken, isLoaded, isSignedIn } = useAuth();
 
   const token = useSelector((state: any) => state.token);
   const [isLoading, setIsLoading] = useState(false);
@@ -23,14 +21,19 @@ export const Dashboard: React.FC = () => {
   const [interviews, setInterviews] = useState<any[]>([]);
   const navigate = useNavigate();
   const [showPopup, setShowPopup] = useState(false);
-  const [deleteId, setDeleteId] = useState<number | null>(null);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
 
+  /**
+   * @function loadResumes
+   * @description Load resumes from the database, sets state
+   */
   const loadResumes = async () => {
     if (!user) {
       return null;
     }
     const userId = user.id;
     const response = await api.get(`/resume/user?userId=${userId}`);
+    console.log(response.data.resumes);
     setResumes(response.data.resumes);
   }
 
@@ -42,15 +45,16 @@ export const Dashboard: React.FC = () => {
     if (!user) {
       return;
     }
-    const userId = user.id;
-    const token = await getToken();
-    console.log(token);
+    const response = await api.get(`/interview`);
+    setInterviews(response.data.interviews);
   }
 
-  // Scroll to top of page on load
   useEffect(() => {
     window.scrollTo(0, 0);
+    setIsLoading(true);
     loadResumes();
+    loadInterviews();
+    setIsLoading(false);
   }, []);
 
 
@@ -63,16 +67,16 @@ export const Dashboard: React.FC = () => {
   };
 
   const handleClickedDelete = (resumeId: string) => {
-    setDeleteId(Number(resumeId));
+    setDeleteId(resumeId);
     setShowPopup(true);
   };
 
   const handleDeleteResume = async () => {
     if (deleteId !== null) {
       try {
-        await deleteResume(token, deleteId);
+        await api.delete(`/resume/delete?id=${deleteId}`);
         setShowPopup(false);
-        // const resumesUpd = getResumes(user.id);
+        await loadResumes()
       } catch (error) {
         console.error('Error deleting resume:', error);
       }
@@ -82,8 +86,9 @@ export const Dashboard: React.FC = () => {
   const handleDeleteInterview = async (event: React.MouseEvent, id: string) => {
     event.stopPropagation();
     try {
+      await api.delete(`/interview/${id}`);
       await deleteInterview(token, id);
-      // await loadInterviews();
+      await loadInterviews();
     } catch (error) {
       console.error('Error deleting interview:', error);
     }
@@ -110,6 +115,16 @@ export const Dashboard: React.FC = () => {
     </div>
   ));
 
+  const resumePlaceholder = (
+    <div className="relative group mx-16 my-8 border-8 border-black rounded-2xl hover:bg-lightest-green">
+      <div className="bg-gray w-[210mm] h-[296mm] bg-gray-200 my-0 mx-auto">
+        <div className="text-black text-9xl">
+          No resumes made yet, click "Add New" to get started
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <div className="bg-white text-white">
       <div className="dashboard-container">
@@ -117,7 +132,7 @@ export const Dashboard: React.FC = () => {
         <button className="dashboard-button" onClick={() => navigate('/resume')}>Add New</button>
         <div className="overflow-x-scroll overflow-y-hidden h-80 hide-scrollbar">
           <div className="transform scale-25 flex origin-top-left">
-            {resumeWidgets}
+            { resumes && resumes.length > 0 ? resumeWidgets : resumePlaceholder }
           </div>
         </div>
       </div>

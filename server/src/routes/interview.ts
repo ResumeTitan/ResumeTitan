@@ -7,22 +7,13 @@ import {
   deleteInterview 
 } from "../controllers/interview";
 import verifyToken from "../middleware/auth";
-import { ClerkExpressWithAuth } from '@clerk/clerk-sdk-node';
-
 
 const router = express.Router();
 
-
-const verify = ClerkExpressWithAuth({
-  jwtKey: process.env.CLERK_JWT_SECRET,
-  authorizedParties: ["http://localhost:3000"],
-  signInUrl: "/"
-});
-
-router.post("/", verify, createUpdateInterview);
-router.get("/", verify, getInterviews);
-router.get("/:id", verify, getInterview);
-router.delete("/:id", verify, deleteInterview);
-router.put("/:id", verify, updateInterview);
+router.post("/", verifyToken, createUpdateInterview);
+router.get("/", verifyToken, getInterviews);
+router.get("/:id", verifyToken, getInterview);
+router.delete("/:id", verifyToken, deleteInterview);
+router.put("/:id", verifyToken, updateInterview);
 
 export default router;

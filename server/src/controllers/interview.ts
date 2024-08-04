@@ -37,22 +37,19 @@ const getPrompt = (jobTitle: string, jobDescription: string) => {
  */
 export const createUpdateInterview = async (req: Request, res: Response) => {
   try {
-    const { jobTitle, jobDescription, interviewId } = req.body;
+    const { jobTitle, jobDescription, interviewId, clerkId } = req.body;
     const gptResponse = await interviewModel.invoke(getPrompt(jobTitle, jobDescription));
 
     const interview = gptResponse.interview;
 
     // Save the interview to the database
-    // @ts-ignore
-    const userId = req.user.id;
     const interviewIn = {
       interview,
       jobTitle,
       jobDescription,
-      userId,
+      clerkId,
     }
-    // @ts-ignore
-    interview.userId = req.user.id;
+
     if (interviewId) {
       const interviewOut = await Interview.findOneAndUpdate({ _id: interviewId }, interviewIn);
       res.status(200).json({ interview: interviewOut });
@@ -77,7 +74,7 @@ export const createUpdateInterview = async (req: Request, res: Response) => {
 export const getInterviews = async (req: Request, res: Response) => {
   try {
     // @ts-ignore
-    const userId = req.user.id;
+    const userId = req.auth.id;
     const interviews = await Interview.find({ userId });
     res.status(200).json({ interviews });
   } catch (error: any) {

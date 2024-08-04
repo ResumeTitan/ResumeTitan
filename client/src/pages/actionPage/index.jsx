@@ -40,7 +40,7 @@ const ResumeComponent = React.forwardRef((props, ref) => (
 ));
 
 function ActionPage() {
-  const { isSignedIn, user, isLoaded } = useUser();
+  const { isSignedIn, user } = useUser();
 
   const location = useLocation();
   const token = useSelector((state) => state.token);
