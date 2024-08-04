@@ -16,7 +16,6 @@ import DescriptionIcon from '@mui/icons-material/Description';
 import { saveAs } from 'file-saver';
 import { useUser } from "@clerk/clerk-react";
 
-
 const CustomDocumentIcon = styled(DescriptionIcon)({
   backgroundColor: '#0b3733',
   color: 'white',
@@ -52,9 +51,11 @@ function ActionPage() {
   const [work, setWork] = useState([]);
   const [skills, setSkills] = useState([]);
   const [theme, setTheme] = useState('harvard');
-  const isAuth = Boolean(useSelector((state) => state.token));
   const [isLoginOpen, setIsLoginOpen] = useState(false);
-  const [basics, setBasics] = useState({});
+  const [basics, setBasics] = useState({
+    name: "",
+    email: ""
+  });
   const [resumeLoading, setResumeLoading] = useState(false);
   const navigate = useNavigate();
   const resumeRef = React.useRef();
@@ -69,10 +70,10 @@ function ActionPage() {
    */
   React.useEffect(() => {
     const loadResumeChange = async () => {
-      if (isSignedIn) {
+      if (user) {
         setBasics({
           name: user.fullName,
-          email: user.emailAddresses.at(0)
+          email: user.emailAddresses.at(0).toString()
         })
       }
 
@@ -150,7 +151,7 @@ function ActionPage() {
    *    Start loading spinner
    */
   const handleGenerateResume = async () => {
-    if (!isAuth) {
+    if (!isSignedIn) {
       setIsLoginOpen(true);
       return;
     }
@@ -182,13 +183,14 @@ function ActionPage() {
    * @param {boolean} exit If true, redirect to dashboard
    */
   const handleSaveResume = async (exit) => {
-    if (!isAuth) {
+    if (!isSignedIn) {
+      // TODO redirect to login
       setIsLoginOpen(true);
       return;
     }
     const resume = {
       _id: resumeId,
-      userId: user.id,
+      clerkId: user.id,
       work: work,
       education: education,
       basics: basics,

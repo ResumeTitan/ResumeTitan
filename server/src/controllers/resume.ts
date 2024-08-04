@@ -210,7 +210,7 @@ export const getResumeAsPdf = async (req: Request, res: Response) => {
   if (!resume) {
     return res.status(400).send('Resume not found, cannot authenticate print');
   }
-  if (!resume.userId) {
+  if (!resume.clerkId) {
     return res.status(401).send('User not known, cannot authenticate print');
   }
 
