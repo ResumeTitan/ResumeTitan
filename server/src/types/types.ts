@@ -29,10 +29,8 @@ export interface IBasicsType {
 }
 
 export interface IResumeType {
-  _id: string;
-  name?: string;
   theme?: string;
-  basics: IBasicsType;
+  basics?: IBasicsType;
   education?: IEducationType[];
   work?: IWorkType[];
   skills?: string[];

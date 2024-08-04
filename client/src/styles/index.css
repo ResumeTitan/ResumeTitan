@@ -222,19 +222,6 @@ body {
 
 /* clerk css */
 
-.cl-rootBox{
-  background-color: #115e59;
-  height: 100vh;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.cl-internal-b3fm6y{
-  display: none !important;
-}
-
 .cl-card{
   border-radius: 4px !important;
 }
@@ -242,6 +229,15 @@ body {
 .cl-formButtonPrimary{
   background-color: #115e59;
   color: white;
+}
+
+.cl-signIn-root{
+  background-color: #115e59;
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .hidden{

@@ -1,10 +1,10 @@
 import { SignIn } from "@clerk/clerk-react"
-// import './signinsignup.css'
+import 'styles/index.css'
 
 export default function SignInPage() {
   return (
-    <div className="auth-container">
-      <SignIn path="/sign-in" />;
+    <div>
+      <SignIn path="/sign-in" redirectUrl={"/dashboard"} />;
     </div>
   )
 }

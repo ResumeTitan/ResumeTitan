@@ -1,29 +1,23 @@
 import React from 'react';
 import ResumeContainer from 'templates/ResumeContainer';
-import { IBasicsType, IEducationType, IWorkType } from '../../types/types';
+import { IResumeType } from '../../types/types';
 
 interface ResumeCardProps {
-  resume: {
-    basics: IBasicsType;
-    summary: string;
-    education: IEducationType[];
-    work: IWorkType[];
-    skills: string[];
-    theme: string;
-  }
+  resume: IResumeType
 }
 
 const ResumeCard: React.FC<ResumeCardProps> = ({ resume }) => {
   return (
     <div>
       <ResumeContainer resume={{
+          _id: '', // ID does not matter for display
           basics: resume.basics,
           work: resume.work,
           education: resume.education,
           skills: resume.skills,
           summary: resume.basics.summary,
         }}
-        theme={resume.theme} 
+        theme={resume.theme || 'onepage'} 
       />
       <div>
 

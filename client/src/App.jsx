@@ -18,8 +18,7 @@ import AboutUs from 'pages/aboutUs';
 import AOS from 'aos';
 import 'aos/dist/aos.css'; // You can also use <link> for styles
 import { SignIn, SignUp } from '@clerk/clerk-react';
-// import { index.js } from 'client/src/index.js';
-// ..
+
 AOS.init({
   duration: 500
 });

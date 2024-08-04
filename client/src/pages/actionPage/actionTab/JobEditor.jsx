@@ -77,7 +77,7 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
    */
   const handleAiCall = async () => {
     setAiLoading(true);
-    const jobResponse = await api.post("/new/job", { job: jobForm });
+    const jobResponse = await api.post("/resume/job", { job: jobForm });
     setJobForm({ ...jobForm, content: jobResponse.data.response.responsibilities });
     setAiLoading(false);
   }

@@ -6,9 +6,7 @@ import WhiteLogo from '../assets/logo-white.png';
 import TextLogo from '../assets/text-logo-white.png';
 import { LoginForm } from './LoginForm';
 import 'styles/index.css';
-import { UserButton , SignIn } from '@clerk/clerk-react';
-
-
+import { SignedIn, SignedOut, UserButton } from "@clerk/clerk-react";
 
 const NavBar = () => {
   const user = useSelector((state) => state.user);
@@ -65,8 +63,6 @@ const NavBar = () => {
   if (isAuthRoute) {
     return null;
   }
-
-  
 
   const mobileNavbar = (
     <div className="lg:hidden">
@@ -159,46 +155,50 @@ const NavBar = () => {
           mobileNavbar
         ) : (
           <div className="flex items-center">
-            {user && (
+            <SignedOut>
+              <a
+                className="text-white font-bold pr-8"
+                href='/pricing'
+              >
+                {'Pricing'}
+              </a>
+              <a
+                id="loginBtn"
+                href="/sign-in"
+                className="login-button"
+              >
+                {'Login'}
+              </a>
+            </SignedOut>
+            <SignedIn>
               <button
                 className="text-white font-bold pr-8"
                 onClick={() => navigate('/dashboard')}
               >
                 {'Dashboard'}
               </button>
-            )}
-            <button
-              className="text-white font-bold pr-8"
-              onClick={() => navigate('/pricing')}
-            >
-              {'Pricing'}
-            </button>
-            <button
-              id="loginBtn"
-              href="/login"
-              className="login-button"
-              onClick={handleLoginLogout}
-            >
-              {user ? 'Logout' : 'Login'}
-            </button>
+              <button
+                className="text-white font-bold pr-8"
+                onClick={() => navigate('/pricing')}
+              >
+                {'Pricing'}
+              </button>
+              <UserButton afterSignOutUrl='/' />
+            </SignedIn>
           </div>
         )}
-        <UserButton afterSwitchSessionUrl='/' />
       </nav>
       {/* <h1>Clerk user id: {user?.id || "Not logged in"}</h1>
       <h1>Name: {user?.firstName || "Not logged in"}</h1>
       <h1>Email: {user?.email || "Not logged in"}</h1> */}
       {isLoginOpen && (
-        // <LoginForm
-        //   registerOpen={false}
-        //   onCloseLogin={() => {
-        //     console.log('Closing login');
-        //     setIsLoginOpen(false);
-        //   }}
-        // />
-        <div className="layover-container">
-          <SignIn path="/sign-in" />
-        </div>
+        <LoginForm
+          registerOpen={false}
+          onCloseLogin={() => {
+            console.log('Closing login');
+            setIsLoginOpen(false);
+          }}
+        />
       )}
     </div>
   );

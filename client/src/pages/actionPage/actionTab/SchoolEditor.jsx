@@ -88,7 +88,7 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
    */
   const handleAiCall = async () => {
     setAiLoading(true);
-    const schoolResponse = await api.post("/new/education", { education: schoolForm });
+    const schoolResponse = await api.post("/resume/education", { education: schoolForm });
     setSchoolForm({ ...schoolForm, content: schoolResponse.data.response.accomplishments });
     setAiLoading(false);
   }

@@ -27,25 +27,19 @@ const Hero: React.FC = () => {
           </p>
 
           <div className="flex space-x-8">
-            <button
-              onClick={() => {
-                setIsLoginOpen(true)
-                setIsRegistering(true)
-              }}
+            <a
               className="secondary-action-button text-lg"
+              href="/sign-up"
             >
               Sign Up
-            </button>
+            </a>
 
-            <button
-              onClick={() => {
-                setIsLoginOpen(true)
-                setIsRegistering(false)
-              }}
+            <a
               className="action-button text-lg"
+              href="/sign-in"
             >
               Log In
-            </button>
+            </a>
           </div>
         </div>
 

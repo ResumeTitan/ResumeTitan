@@ -1,4 +1,5 @@
 import { ChatOpenAI } from "@langchain/openai";
+import { Request, Response } from 'express';
 import { z } from "zod";
 import Interview from "../models/Interview.js";
 
@@ -14,7 +15,7 @@ const interviewModel = model.withStructuredOutput(z.object({
   }))
 }));
 
-const getPrompt = (jobTitle, jobDescription) => {
+const getPrompt = (jobTitle: string, jobDescription: string) => {
   const prompt = `
   You are a hiring manager and you are interviewing me for the position of ${jobTitle}.
   The job description is as follows: ${jobDescription}
@@ -34,7 +35,7 @@ const getPrompt = (jobTitle, jobDescription) => {
  * @param {string} id The resume id
  * @returns 
  */
-export const createUpdateInterview = async (req, res) => {
+export const createUpdateInterview = async (req: Request, res: Response) => {
   try {
     const { jobTitle, jobDescription, interviewId } = req.body;
     const gptResponse = await interviewModel.invoke(getPrompt(jobTitle, jobDescription));
@@ -42,12 +43,15 @@ export const createUpdateInterview = async (req, res) => {
     const interview = gptResponse.interview;
 
     // Save the interview to the database
+    // @ts-ignore
+    const userId = req.user.id;
     const interviewIn = {
       interview,
       jobTitle,
       jobDescription,
-      userId: req.user.id,
+      userId,
     }
+    // @ts-ignore
     interview.userId = req.user.id;
     if (interviewId) {
       const interviewOut = await Interview.findOneAndUpdate({ _id: interviewId }, interviewIn);
@@ -57,7 +61,7 @@ export const createUpdateInterview = async (req, res) => {
 
     const interviewOut = await Interview.create(interviewIn);
     res.status(200).json({ interview: interviewOut });
-  } catch (error) {
+  } catch (error: any) {
     console.log("Error: ", error);
     res.status(500).json({ error: error.message });
   }
@@ -70,11 +74,13 @@ export const createUpdateInterview = async (req, res) => {
  * @param {string} userId The user id
  * @returns 
  */
-export const getInterviews = async (req, res) => {
+export const getInterviews = async (req: Request, res: Response) => {
   try {
-    const interviews = await Interview.find({ userId: req.user.id });
+    // @ts-ignore
+    const userId = req.user.id;
+    const interviews = await Interview.find({ userId });
     res.status(200).json({ interviews });
-  } catch (error) {
+  } catch (error: any) {
     console.log("Error: ", error);
     res.status(500).json({ error: error.message });
   }
@@ -86,11 +92,11 @@ export const getInterviews = async (req, res) => {
  * @param {Request} req
  * @param {Response} res
  */
-export const getInterview = async (req, res) => {
+export const getInterview = async (req: Request, res: Response) => {
   try {
     const interview = await Interview.findById(req.params.id);
     res.status(200).json({ interview });
-  } catch (error) {
+  } catch (error: any) {
     console.log("Error: ", error);
     res.status(500).json({ error: error.message });
   }
@@ -102,12 +108,12 @@ export const getInterview = async (req, res) => {
  * @param {Request} req
  * @param {Response} res
  */
-export const deleteInterview = async (req, res) => {
+export const deleteInterview = async (req: Request, res: Response) => {
   const id = req.params.id;
   try {
     await Interview.findOneAndDelete({ _id: id });
     res.status(204).send();
-  } catch (err) {
+  } catch (err: any) {
     res.status(500).json({ error: err.message });
   }
 }
@@ -118,13 +124,13 @@ export const deleteInterview = async (req, res) => {
  * @param {Request} req
  * @param {Response} res
  */
-export const updateInterview = async (req, res) => {
+export const updateInterview = async (req: Request, res: Response) => {
   const id = req.params.id;
   const interview = req.body;
   try {
     await Interview.findOneAndUpdate({ _id: id }, interview);
     res.status(200).json({ interview });
-  } catch (err) {
+  } catch (err: any) {
     res.status(500).json({ error: err.message });
   }
 }

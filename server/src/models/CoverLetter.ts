@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const CoverLetterSchema = new mongoose.Schema(
   {
     coverLetter: {
-      type: string,
+      type: String,
       description: "The interview questions",
     },
     jobTitle: {
@@ -29,5 +29,5 @@ const CoverLetterSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const Interview = mongoose.model("Interview", InterviewSchema);
-export default Interview;
+const CoverLetter = mongoose.model("CoverLetter", CoverLetterSchema);
+export default CoverLetter;
