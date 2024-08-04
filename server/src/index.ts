@@ -7,16 +7,14 @@ import multer from 'multer';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import path from 'path';
-import { fileURLToPath } from 'url';
 import authRoutes from './routes/auth';
 import resumeRoutes from './routes/resume';
 import interviewRoutes from './routes/interview';
 import stripeRoutes from './routes/stripe';
+import coverLetterRoutes from './routes/coverLetter';
 
 /* CONFIGURATIONS */
 // @ts-ignore
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 dotenv.config();
 const app = express();
 app.use(express.json());
@@ -49,8 +47,7 @@ app.use('/auth', authRoutes);
 app.use('/resume', resumeRoutes);
 app.use('/interview', interviewRoutes);
 app.use('/checkout', stripeRoutes);
-// app.use('/posts', postRoutes);
-// app.use('/search', searchRoutes);
+app.use('/cover-letter', coverLetterRoutes);
 
 /* MONGOOSE SETUP */
 const HOST = process.env.HOST || 'localhost';

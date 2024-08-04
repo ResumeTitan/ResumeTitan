@@ -1,8 +1,8 @@
 import { ChatOpenAI } from "@langchain/openai";
 import { Response, Request } from 'express';
-import Resume from 'models/Resume';
+import Resume from '../models/Resume';
 import { z } from "zod";
-import { IResumeType } from "types/types";
+import { IResumeType } from "../types/types";
 import puppeteer from 'puppeteer';
 
 const EducationSchema = z.object({

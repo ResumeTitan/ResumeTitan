@@ -2,20 +2,14 @@ import { Request, Response } from 'express';
 import { ChatOpenAI } from '@langchain/openai';
 import { z } from 'zod';
 import CoverLetter from '../models/CoverLetter';
-
-import dotenv from 'dotenv';
-dotenv.config();
+import 'dotenv/config';
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY as string;
 
 const model = new ChatOpenAI({ model: 'gpt-4o', apiKey: OPENAI_API_KEY });
 
 const coverLetterSchema = z.object({
-  coverLetter: z.array(z.object({
-    question: z.string(),
-    example: z.string(),
-    guidance: z.string(),
-  })),
+  coverLetter: z.string(),
 });
 
 const coverLetterModel = model.withStructuredOutput(coverLetterSchema);
@@ -23,23 +17,19 @@ const coverLetterModel = model.withStructuredOutput(coverLetterSchema);
 const getPrompt = (jobTitle: string, jobDescription: string): string => {
   return `
   Create a professional cover letter for the position of ${jobTitle}.
-  The job description is as follows: ${jobDescription}
-  Please provide me with a list of questions you would ask me during the cover letter.
-  Along with the list of questions, please provide me with an example answer to each question.
-  Along with the list of questions, please provide guidance on what you are looking for in the answer and how I should respond.
-  Your response must be in JSON format. The format shall have a key called "coverLetter" with an array of questions. Each question shall have the following keys: question, example, guidance.
-  Give at least 10 questions.`;
+  The job description is as follows: ${jobDescription}.
+  `;
 };
 
-interface CustomRequest extends Request {
-  user?: {
-    id: string;
-  };
-}
-
-export const createUpdateCoverLetter = async (req: CustomRequest, res: Response): Promise<Response> => {
+/**
+ * @function createUpdateCoverLetter
+ * @param {Req} req 
+ * @param {Res} res 
+ * @returns 
+ */
+export const createUpdateCoverLetter = async (req: Request, res: Response): Promise<Response> => {
   try {
-    const { jobTitle, jobDescription, coverLetterId } = req.body;
+    const { jobTitle, jobDescription, coverLetterId, clerkId } = req.body;
     const gptResponse = await coverLetterModel.invoke(getPrompt(jobTitle, jobDescription));
 
     const coverLetter = gptResponse.coverLetter;
@@ -49,7 +39,7 @@ export const createUpdateCoverLetter = async (req: CustomRequest, res: Response)
       coverLetter,
       jobTitle,
       jobDescription,
-      userId: req.user?.id,
+      clerkId,
     };
 
     if (coverLetterId) {
@@ -58,6 +48,7 @@ export const createUpdateCoverLetter = async (req: CustomRequest, res: Response)
     }
 
     const coverLetterOut = await CoverLetter.create(coverLetterIn);
+    console.log(coverLetterOut);
     return res.status(200).json({ coverLetter: coverLetterOut });
   } catch (error: any) {
     console.log('Error: ', error);
@@ -65,9 +56,17 @@ export const createUpdateCoverLetter = async (req: CustomRequest, res: Response)
   }
 };
 
-export const getCoverLetters = async (req: CustomRequest, res: Response): Promise<Response> => {
+/**
+ * @function getCoverLetters
+ * @param {Req} req 
+ * @param {Res} res 
+ * @returns 
+ */
+export const getCoverLetters = async (req: Request, res: Response): Promise<Response> => {
   try {
-    const coverLetters = await CoverLetter.find({ userId: req.user?.id });
+    // @ts-ignore
+    const id = req.auth.id
+    const coverLetters = await CoverLetter.find({ userId: id });
     return res.status(200).json({ coverLetters });
   } catch (error: any) {
     console.log('Error: ', error);
@@ -75,6 +74,12 @@ export const getCoverLetters = async (req: CustomRequest, res: Response): Promis
   }
 };
 
+/**
+ * @function getCoverLetter
+ * @param {Req} req 
+ * @param {Res} res 
+ * @returns 
+ */
 export const getCoverLetter = async (req: Request, res: Response): Promise<Response> => {
   try {
     const coverLetter = await CoverLetter.findById(req.params.id);

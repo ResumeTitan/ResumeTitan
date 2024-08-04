@@ -12,9 +12,11 @@
      "esModuleInterop": true,
      "experimentalDecorators": true,
      "sourceMap": true,
+     "skipLibCheck": true,
+     "baseUrl": ".",
      "paths": {
-      "models/*": ["./src/models/*"],
-      "types/*": ["./src/types/*"],
+      "@/*": ["./src/*"],
+      "*": ["node_modules/*"]
     },
   },
   "include": ["src/**/*.ts"],

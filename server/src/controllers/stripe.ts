@@ -1,4 +1,4 @@
-import User from "models/User";
+import User from "../models/User";
 import Stripe from "stripe";
 import { Response, Request } from 'express';
 
