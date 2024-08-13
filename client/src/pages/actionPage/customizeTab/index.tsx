@@ -36,8 +36,16 @@ const CustomizeTab: React.FC<Props> = ({description,
 
   return (
     <>
-    <div className="form-section p-2">
-      <div>
+    <div className="form-container font-bold">
+      <div className="form-text-main">{"Theme"}</div>
+      <ThemeSelector images={[
+        {id: "harvard", url: HarvardImg}, 
+        {id: "one-page", url: OnepageImg}
+      ]} onSelect={(image) => onChangeTheme(image.id)} />
+    </div>
+    <div className="form-container">
+      <div className="form-text-main">{"Job Specific Content"}</div>
+      <div className="p-2">
         <input 
           id="jobDescription"
           type="checkbox"
@@ -70,13 +78,6 @@ const CustomizeTab: React.FC<Props> = ({description,
           />
         </div>
       </div>
-    </div>
-    <div className="form-section p-2 my-2 font-bold">
-      Theme
-      <ThemeSelector images={[
-        {id: "harvard", url: HarvardImg}, 
-        {id: "one-page", url: OnepageImg}
-      ]} onSelect={(image) => onChangeTheme(image.id)} />
     </div>
     </>
   );

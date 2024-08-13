@@ -33,7 +33,7 @@ function ActionTab({
    */
   const handleSummaryAiCall = async () => {
     setAiSummaryLoading(true);
-    const summaryResponse = await api.post("/new/summary", { 
+    const summaryResponse = await api.post("/resume/summary", { 
       summary: basics.summary,
       work: work,
       education: education,
@@ -48,7 +48,7 @@ function ActionTab({
    */
   const handleSkillsAiCall = async () => {
     setAiSkillsLoading(true);
-    const summaryResponse = await api.post("/new/skills", { 
+    const summaryResponse = await api.post("/resume/skills", { 
       summary: basics.summary,
       work: work,
       education: education,

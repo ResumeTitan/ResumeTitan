@@ -16,8 +16,9 @@ import { Survey } from './pages/survey';
 import { Dashboard } from './pages/dashboard';
 import AboutUs from 'pages/aboutUs';
 import AOS from 'aos';
-import 'aos/dist/aos.css'; // You can also use <link> for styles
-// ..
+import 'aos/dist/aos.css';
+import { SignIn, SignUp } from '@clerk/clerk-react';
+
 AOS.init({
   duration: 500
 });
@@ -43,6 +44,8 @@ export default function App() {
           <Route path="/pricing" element={<PricingPage />} />
           <Route path="/cover-letter" element={<CoverLetterPage />} />
           <Route path="*" element={<Navigate to="/" />} />
+          <Route path="/sign-in" element={<SignIn />} />
+          <Route path="/sign-up" element={<SignUp />} />
         </Routes>
         {!window.location.pathname.includes('/print-resume') && <Footer />}
       </BrowserRouter>

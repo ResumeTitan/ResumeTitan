@@ -44,14 +44,16 @@ const ThemeSelector: React.FC<ImageSelectorProps> = ({ images, onSelect }) => {
   };
 
   return (
-    <div className="grid grid-cols-3 gap-4">
+    <div className="p-2 grid grid-cols-3 gap-4">
       {images.map((image) => (
-        <Image
-          key={image.id}
-          image={image}
-          isSelected={selectedImage?.id === image.id}
-          onClick={() => handleImageClick(image)}
-        />
+        <div className="border-2 border-black">
+          <Image
+            key={image.id}
+            image={image}
+            isSelected={selectedImage?.id === image.id}
+            onClick={() => handleImageClick(image)}
+          />
+        </div>
       ))}
     </div>
   );

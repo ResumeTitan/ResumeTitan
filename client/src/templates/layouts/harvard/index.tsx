@@ -12,7 +12,7 @@ interface HarvardResumeProps {
 
 export default function HarvardResume({ resume }: HarvardResumeProps) {
   return (
-    <div className="p-2 text-black">
+    <div className="p-2 text-black font-[Times]">
       <PersonalInfo
         basics={resume.basics}
       />

@@ -29,7 +29,8 @@ export const updateResume = async (token, resume) => {
 
 export const getResumes = async (token, userId) => {
   console.log(`Getting resumes for user ${userId}`);
-  const response = await fetch(`${API_URL}/resume/user?userId=${userId}`, {
+  const userIdRaw = userId.replace(/^user_/, '');
+  const response = await fetch(`${API_URL}/resume/user?userId=${userIdRaw}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',

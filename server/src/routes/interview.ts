@@ -1,6 +1,13 @@
 import express from "express";
-import { createUpdateInterview, getInterviews, getInterview, updateInterview, deleteInterview } from "../controllers/interview.js";
-import { verifyToken } from "../middleware/auth.js";
+import { 
+  createUpdateInterview, 
+  getInterviews, 
+  getInterview, 
+  updateInterview, 
+  deleteInterview 
+} from "../controllers/interview";
+import verifyToken from "../middleware/auth";
+
 const router = express.Router();
 
 router.post("/", verifyToken, createUpdateInterview);

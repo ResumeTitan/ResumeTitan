@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const CoverLetterSchema = new mongoose.Schema(
   {
     coverLetter: {
-      type: string,
+      type: String,
       description: "The interview questions",
     },
     jobTitle: {
@@ -14,11 +14,10 @@ const CoverLetterSchema = new mongoose.Schema(
       type: String,
       description: "Description of the job being interviewed for"
     },
-    userId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+    clerkId: {
+      type: String,
       required: true,
-      description: "The user who created the interview question",
+      description: "The clerk id of the user who created the interview question",
     },
     resumeId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -29,5 +28,5 @@ const CoverLetterSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const Interview = mongoose.model("Interview", InterviewSchema);
-export default Interview;
+const CoverLetter = mongoose.model("CoverLetter", CoverLetterSchema);
+export default CoverLetter;

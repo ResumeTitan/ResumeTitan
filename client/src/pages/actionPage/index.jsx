@@ -14,6 +14,7 @@ import 'styles/index.css';
 import { styled } from '@mui/system';
 import DescriptionIcon from '@mui/icons-material/Description';
 import { saveAs } from 'file-saver';
+import { useUser } from "@clerk/clerk-react";
 
 const CustomDocumentIcon = styled(DescriptionIcon)({
   backgroundColor: '#0b3733',
@@ -39,6 +40,8 @@ const ResumeComponent = React.forwardRef((props, ref) => (
 ));
 
 function ActionPage() {
+  const { isSignedIn, user } = useUser();
+
   const location = useLocation();
   const token = useSelector((state) => state.token);
   const [resumeId, setResumeId] = useState(null);
@@ -48,12 +51,10 @@ function ActionPage() {
   const [work, setWork] = useState([]);
   const [skills, setSkills] = useState([]);
   const [theme, setTheme] = useState('harvard');
-  const currentUser = useSelector((state) => state.user);
-  const isAuth = Boolean(useSelector((state) => state.token));
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [basics, setBasics] = useState({
-    name: `${currentUser.firstName} ${currentUser.lastName}`,
-    email: currentUser.email,
+    name: "",
+    email: ""
   });
   const [resumeLoading, setResumeLoading] = useState(false);
   const navigate = useNavigate();
@@ -62,6 +63,30 @@ function ActionPage() {
   const [jobDescription, setJobDescription] = useState('');
   const [useJobDescription, setUseJobDescription] = useState(false);
   const [showPrintError, setShowPrintError] = useState(false);
+
+  /**
+   * @function useEffect
+   * @description hook for if resumeId changes (refresh)
+   */
+  React.useEffect(() => {
+    const loadResumeChange = async () => {
+      if (user) {
+        setBasics({
+          name: user.fullName,
+          email: user.emailAddresses.at(0).toString()
+        })
+      }
+
+      if (location.state) {
+        setResumeId(location.state.resumeId);
+        await loadResume(location.state.resumeId);
+      }
+    }
+    loadResumeChange().catch((err) => {
+      console.log(err);
+      throw err;
+    });
+  }, [location.state]);
 
   /**
    * @function loadResume
@@ -91,32 +116,15 @@ function ActionPage() {
   };
 
   /**
-   * @function useEffect
-   * @description hook for if resumeId changes (refresh)
-   */
-  React.useEffect(() => {
-    const loadResumeChange = async () => {
-      if (location.state) {
-        setResumeId(location.state.resumeId);
-        await loadResume(location.state.resumeId);
-      }
-    }
-    loadResumeChange().catch((err) => {
-      console.log(err);
-      throw err;
-    });
-  }, [location.state]);
-
-  /**
    * @function handleSaveToPdf
    * @description Called when clicking Print to PDF button, calls react-to-print library
    * @todo Fix printing for mobile, gets too many notifications, generate on backend
    */
   const handleSaveToPdf = async () => {
-    if (!currentUser.premiumUntil || new Date(currentUser.premiumUntil) < new Date()) {
-      setShowPrintError(true);
-      return;
-    }
+    // if (!currentUser.premiumUntil || new Date(currentUser.premiumUntil) < new Date()) {
+    //   setShowPrintError(true);
+    //   return;
+    // }
 
     try {
       setResumeLoading(true);
@@ -143,7 +151,7 @@ function ActionPage() {
    *    Start loading spinner
    */
   const handleGenerateResume = async () => {
-    if (!isAuth) {
+    if (!isSignedIn) {
       setIsLoginOpen(true);
       return;
     }
@@ -175,13 +183,14 @@ function ActionPage() {
    * @param {boolean} exit If true, redirect to dashboard
    */
   const handleSaveResume = async (exit) => {
-    if (!isAuth) {
+    if (!isSignedIn) {
+      // TODO redirect to login
       setIsLoginOpen(true);
       return;
     }
     const resume = {
       _id: resumeId,
-      userId: currentUser._id,
+      clerkId: user.id,
       work: work,
       education: education,
       basics: basics,

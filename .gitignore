@@ -8,3 +8,5 @@ client/build
 client/src/templates/layouts/from-hbs
 client/.env.development
 client/.env.production
+.env.local
+client/.env.local

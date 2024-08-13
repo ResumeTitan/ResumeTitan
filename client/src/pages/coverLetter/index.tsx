@@ -1,26 +1,76 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useLocation } from 'react-router-dom';
+import { useUser } from '@clerk/clerk-react';
+import Spinner from 'components/Spinner';
 import api from 'api/actions';
 import CoverLetterTemplate from './CoverLetterHolder';
 import 'styles/index.css';
 
 const CoverLetter: React.FC = () => {
-  const currentUser = useSelector((state: any) => state.user);
+  const { user } = useUser();
+  const location = useLocation();
+  const [name, setName] = React.useState('');
+  const [email, setEmail] = React.useState('');
+  const [coverLetterId, setCoverLetterId] = React.useState(null);
   const [userResumes, setUserResumes] = React.useState([]);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [jobTitle, setJobTitle] = React.useState('');
+  const [jobDescription, setJobDescription] = React.useState('');
   const [selectedResume, setSelectedResume] = React.useState('');
   const [coverLetter, setCoverLetter] = React.useState('');
 
-  const loadResumes = async () => {
-    const response = await api.get(`/resume/user?userId=${currentUser._id}`);
-    console.log(response);
-    const resumes = response.data.resumes;
-    console.log(resumes);
-    setUserResumes(resumes);
+  /**
+   * @function loadCoverLetter
+   */
+  const loadCoverLetter = async (id: string) => {
+    const response = await api.get(`/cover-letter/${id}`);
+    setCoverLetter(response.data.coverLetter);
   }
 
+  /**
+   * @function useEffect
+   * @description Called when page loads
+   */
   React.useEffect(() => {
-    loadResumes();
+    if (location.state) {
+      const id = location.state.coverLetterId;
+      setCoverLetterId(id);
+      loadCoverLetter(id);
+    }
+    if (user) {
+      console.log(user.fullName)
+      setName(user.fullName || 'Your Name');
+      setEmail(user.emailAddresses[0].emailAddress || 'Your Email')
+    }
   }, []);
+
+  /**
+   * @function handleGenerateCoverLetter
+   * @description Call AI to generate cover letter
+   */
+  const handleGenerateCoverLetter = async () => {
+    try {
+      if (!user) {
+        throw new Error("User not found");
+      }
+      setIsLoading(true);
+      const response = await api.post("cover-letter", { 
+        jobTitle, 
+        jobDescription, 
+        coverLetterId,
+        clerkId: user.id 
+      });
+
+      setCoverLetter(response.data.coverLetter.coverLetter);
+      setIsLoading(false);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  if (!user) {
+    return null;
+  }
 
   return (
     <div className="cover-letter-container">
@@ -36,12 +86,14 @@ const CoverLetter: React.FC = () => {
               id={"jobTitle"}
               className="form-style" 
               placeholder="Enter job title..."
+              onChange={(event) => setJobTitle(event.target.value)}
             />
             <label htmlFor={"description"} className="form-label-text">Job Description</label>
             <textarea 
               id={"description"}
               className="form-style" 
               rows={10}
+              onChange={(event) => setJobDescription(event.target.value)}
             />
             <span className="form-label-text">Select Resume</span>
             <select 
@@ -54,33 +106,33 @@ const CoverLetter: React.FC = () => {
               ))}
             </select>
           </div>
-        </div>
-        {coverLetter && (
-          <div className='form-container'>
-            <div className="form-text-main">
-              Cover Letter Preview
-            </div>
-            <div className="p-4">
-              <textarea 
-                id={"description"}
-                className="form-style" 
-                rows={30}
-                value={coverLetter}
-                onChange={
-                  (e: React.ChangeEvent<HTMLTextAreaElement>) => setCoverLetter(e.target.value)
-                }
-              />
-            </div>
+          <div className="p-4">
+            <button
+              className="interview-button"
+              onClick={handleGenerateCoverLetter}
+            >
+              {"Generate Cover Letter"}
+            </button>
           </div>
-        )}
+        </div>
       </div>
+
       <div className="right-section">
         <div className="form-container border-transparent">
-          <div className="origin-top md:scale-50 lg:scale-60 xl:scale-75 2xl:scale-95">
-            <CoverLetterTemplate />
-          </div>          
+          <div className="origin-top md:scale-50 lg:scale-60 xl:scale-70 2xl:scale-90">
+            <CoverLetterTemplate 
+              name={name} 
+              email={email}
+              coverLetter={coverLetter}
+            />
+          </div>
         </div>
       </div>
+
+      { isLoading && (
+        <Spinner />
+      )}
+
     </div>
   );
 };

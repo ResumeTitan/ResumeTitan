@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
 import { createStripeSession } from 'api/stripe';
-import { LoginForm } from './LoginForm';
+import { useNavigate } from 'react-router-dom';
+import { useUser } from "@clerk/clerk-react";
+import Spinner from 'components/Spinner';
 
 interface Tier {
   name: string;
@@ -55,26 +56,33 @@ const tiers: Tier[] = [
 ];
 
 const Pricing: React.FC = () => {
-  const currentUser = useSelector((state: any) => state.user);
-  const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const { user, isLoaded } = useUser();
+  const navigate = useNavigate();
+  const [stripeLoading, setStripeLoading] = useState(false);
 
   const handleBuyButtonClick = async (planId: string) => {
-    if (!currentUser) {
-      setIsLoginOpen(true);
+    console.log(user);
+    if (!isLoaded || !user) {
+      navigate("/sign-in");
       return;
     }
     try {
-      const response = await createStripeSession(currentUser.email, planId);
-      console.log(response);
+      setStripeLoading(true);
+      const response = await createStripeSession(user.emailAddresses[0].emailAddress, planId);
       const url = response.sessionUrl;
       if (url) window.open(url, '_self');
     } catch (error) {
       alert('Something went wrong. Please try again');
     }
+
+    setStripeLoading(false);
   };
 
   return (
     <div className="mx-auto mt-12 max-w-7xl px-4 sm:mt-16 sm:px-6 lg:mt-20 lg:px-8">
+      {stripeLoading && (
+        <Spinner />
+      )}
       <div className="mx-auto flex max-w-4xl flex-col space-y-7 text-center">
         <h2 className="text-4xl font-bold leading-tight tracking-wide text-neutral-900 xl:text-5xl">
           Upgrade for Full Access
@@ -135,15 +143,6 @@ const Pricing: React.FC = () => {
           </div>
         ))}
       </div>
-
-      {isLoginOpen && (
-        <LoginForm
-          registerOpen={false}
-          onCloseLogin={() => {
-            setIsLoginOpen(false);
-          }}
-        />
-      )}
     </div>
   );
 }
