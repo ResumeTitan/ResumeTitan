@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { setLogout } from 'state/authReducer';
 import WhiteLogo from '../assets/logo-white.png';
 import TextLogo from '../assets/text-logo-white.png';
 import { LoginForm } from './LoginForm';
@@ -9,17 +7,13 @@ import 'styles/index.css';
 import { SignedIn, SignedOut, UserButton } from "@clerk/clerk-react";
 
 const NavBar = () => {
-  const user = useSelector((state) => state.user);
   const [mobileScreen, setMobileScreen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation(); 
   const isAuthRoute = location.pathname.includes("/sign-in") || location.pathname.includes("/sign-up"); // Determine if it's an auth route
 
-
-  
   // let clerkUserId = "";
   // let name = "";
   // let email = "";
@@ -30,18 +24,6 @@ const NavBar = () => {
   //   name = userClerk.firstName + " " + userClerk.lastName;
   //   email = userClerk.emailAddresses[0].emailAddress;
   // }
-
-
-  const handleLoginLogout = () => {
-    console.log("clicked login/logout", user)
-    setIsMobileMenuOpen(false);
-    if (user) {
-      dispatch(setLogout());
-      navigate('/');
-    } else {
-      setIsLoginOpen(true);
-    }
-  };
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -96,31 +78,39 @@ const NavBar = () => {
       </button>
 
       {isMobileMenuOpen && (
-        <div className="absolute top-16 rounded right-0 bg-gray-800 py-2 px-4">
-          <button
-            onClick={handleLoginLogout}
-            className="block text-white py-2"
-          >
-            {user ? 'Logout' : 'Login'}
-          </button>
-          {/* insert clerk info */}
-          <button
-            className="text-white pr-8"
-            onClick={() => navigate('/pricing')}
-          >
-            {'Pricing'}
-          </button>
-          {user && (
+        <div className="flex flex-col absolute top-16 rounded items-start right-0 bg-gray-800">
+          <SignedOut>
+            <a
+              className="text-white font-bold p-4 w-full border-b border-white text-left"
+              href='/pricing'
+            >
+              {'Pricing'}
+            </a>
+            <a
+              id="loginBtn"
+              href="/sign-in"
+              className="text-white font-bold p-4 w-full border-b border-white text-left"
+            >
+              {'Login'}
+            </a>
+          </SignedOut>
+          <SignedIn>
             <button
-              className="block text-white py-2"
-              onClick={() => {
-                toggleMobileMenu();
-                navigate('/dashboard')
-              }}
+              className="text-white font-bold p-4 w-full border-b border-white text-left"
+              onClick={() => navigate('/dashboard')}
             >
               {'Dashboard'}
             </button>
-          )}
+            <button
+              className="text-white font-bold p-4 w-full border-b border-white text-left "
+              onClick={() => navigate('/pricing')}
+            >
+              {'Pricing'}
+            </button>
+            <div className="p-2">
+              <UserButton afterSignOutUrl='/'/>
+            </div>
+          </SignedIn>
         </div>
       )}
     </div>
@@ -188,9 +178,6 @@ const NavBar = () => {
           </div>
         )}
       </nav>
-      {/* <h1>Clerk user id: {user?.id || "Not logged in"}</h1>
-      <h1>Name: {user?.firstName || "Not logged in"}</h1>
-      <h1>Email: {user?.email || "Not logged in"}</h1> */}
       {isLoginOpen && (
         <LoginForm
           registerOpen={false}

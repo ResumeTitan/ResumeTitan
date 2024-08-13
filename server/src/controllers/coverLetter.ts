@@ -5,19 +5,31 @@ import CoverLetter from '../models/CoverLetter';
 import 'dotenv/config';
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY as string;
-
 const model = new ChatOpenAI({ model: 'gpt-4o', apiKey: OPENAI_API_KEY });
 
 const coverLetterSchema = z.object({
   coverLetter: z.string(),
+  companyName: z.string(),
+  companyAddress: z.string(),
 });
 
 const coverLetterModel = model.withStructuredOutput(coverLetterSchema);
 
+/**
+ * @function getPrompt
+ * @description Build text prompt to send to AI model
+ * @param {string} jobTitle 
+ * @param {string} jobDescription 
+ * @returns 
+ */
 const getPrompt = (jobTitle: string, jobDescription: string): string => {
   return `
   Create a professional cover letter for the position of ${jobTitle}.
   The job description is as follows: ${jobDescription}.
+  Only include the content of the cover letter, do not add anything for entering a users name, email, etc.
+  Just return the cover letter. Do not include the salutations or closings.
+  Do not include personal information in the cover letter, even as placeholders.
+  This means in your response for the coverLetter, do not include things like [Your Name], [Your Address], [Date], etc
   `;
 };
 
@@ -90,6 +102,12 @@ export const getCoverLetter = async (req: Request, res: Response): Promise<Respo
   }
 };
 
+/**
+ * @function deleteCoverLetter
+ * @param {Req} req 
+ * @param {Res} res 
+ * @returns 
+ */
 export const deleteCoverLetter = async (req: Request, res: Response): Promise<Response> => {
   const id = req.params.id;
   try {
@@ -100,6 +118,12 @@ export const deleteCoverLetter = async (req: Request, res: Response): Promise<Re
   }
 };
 
+/**
+ * @function deleteCoverLetter
+ * @param {Req} req 
+ * @param {Res} res 
+ * @returns 
+ */
 export const updateCoverLetter = async (req: Request, res: Response): Promise<Response> => {
   const id = req.params.id;
   const coverLetter = req.body;

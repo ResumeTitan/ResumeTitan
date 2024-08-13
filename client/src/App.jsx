@@ -16,7 +16,7 @@ import { Survey } from './pages/survey';
 import { Dashboard } from './pages/dashboard';
 import AboutUs from 'pages/aboutUs';
 import AOS from 'aos';
-import 'aos/dist/aos.css'; // You can also use <link> for styles
+import 'aos/dist/aos.css';
 import { SignIn, SignUp } from '@clerk/clerk-react';
 
 AOS.init({

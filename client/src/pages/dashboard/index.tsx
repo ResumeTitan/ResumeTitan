@@ -13,7 +13,7 @@ import api from 'api/actions';
 import { IResumeType } from 'types/types';
 
 export const Dashboard: React.FC = () => {
-  const { user } = useUser();
+  const { user, isLoaded } = useUser();
 
   const token = useSelector((state: any) => state.token);
   const [isLoading, setIsLoading] = useState(false);
@@ -50,12 +50,27 @@ export const Dashboard: React.FC = () => {
   }
 
   useEffect(() => {
+    const loadData = async () => {
+      setIsLoading(true);
+      await loadResumes();
+      await loadInterviews();
+      setIsLoading(false);
+    };
+    
     window.scrollTo(0, 0);
-    setIsLoading(true);
-    loadResumes();
-    loadInterviews();
-    setIsLoading(false);
+    loadData();
   }, []);
+
+  useEffect(() => {
+    if (isLoaded) {
+      setIsLoading(true);
+      loadResumes();
+      loadInterviews();
+      setIsLoading(false);
+    }
+
+    window.scrollTo(0, 0);
+  }, [isLoaded]);
 
 
   const handleClickResume = (resumeId: string) => {

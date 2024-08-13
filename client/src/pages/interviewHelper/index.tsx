@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useUser } from "@clerk/clerk-react";
-import {  } from 'react-router-dom';
 import DetailsExpand from './Details';
 import Spinner from 'components/Spinner';
 import api from 'api/actions';
@@ -67,6 +66,10 @@ const InterviewPage: React.FC = () => {
     });
   }, [location.state]);
 
+  /**
+   * @function handleGenerateInterview
+   * @description Create interview from backend when generate button clicked
+   */
   const handleGenerateInterview = async () => {
     try {
       if (!user) {

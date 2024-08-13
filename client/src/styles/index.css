@@ -240,6 +240,15 @@ body {
   align-items: center;
 }
 
+.cl-signUp-root{
+  background-color: #115e59;
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .hidden{
   display: none;
 }

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 import { useUser } from '@clerk/clerk-react';
+import Spinner from 'components/Spinner';
 import api from 'api/actions';
 import CoverLetterTemplate from './CoverLetterHolder';
 import 'styles/index.css';
@@ -8,6 +9,8 @@ import 'styles/index.css';
 const CoverLetter: React.FC = () => {
   const { user } = useUser();
   const location = useLocation();
+  const [name, setName] = React.useState('');
+  const [email, setEmail] = React.useState('');
   const [coverLetterId, setCoverLetterId] = React.useState(null);
   const [userResumes, setUserResumes] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(false);
@@ -34,6 +37,11 @@ const CoverLetter: React.FC = () => {
       setCoverLetterId(id);
       loadCoverLetter(id);
     }
+    if (user) {
+      console.log(user.fullName)
+      setName(user.fullName || 'Your Name');
+      setEmail(user.emailAddresses[0].emailAddress || 'Your Email')
+    }
   }, []);
 
   /**
@@ -53,12 +61,15 @@ const CoverLetter: React.FC = () => {
         clerkId: user.id 
       });
 
-      console.log(response.data.coverLetter.coverLetter)
       setCoverLetter(response.data.coverLetter.coverLetter);
       setIsLoading(false);
     } catch (error) {
       console.error(error);
     }
+  }
+
+  if (!user) {
+    return null;
   }
 
   return (
@@ -95,25 +106,33 @@ const CoverLetter: React.FC = () => {
               ))}
             </select>
           </div>
+          <div className="p-4">
+            <button
+              className="interview-button"
+              onClick={handleGenerateCoverLetter}
+            >
+              {"Generate Cover Letter"}
+            </button>
+          </div>
         </div>
-        
-        <div className="p-4">
-          <button
-            className="interview-button"
-            onClick={handleGenerateCoverLetter}
-          >
-            {"Generate Cover Letter"}
-          </button>
-        </div>
-
       </div>
+
       <div className="right-section">
         <div className="form-container border-transparent">
           <div className="origin-top md:scale-50 lg:scale-60 xl:scale-70 2xl:scale-90">
-            <CoverLetterTemplate coverLetter={coverLetter}/>
-          </div>          
+            <CoverLetterTemplate 
+              name={name} 
+              email={email}
+              coverLetter={coverLetter}
+            />
+          </div>
         </div>
       </div>
+
+      { isLoading && (
+        <Spinner />
+      )}
+
     </div>
   );
 };
