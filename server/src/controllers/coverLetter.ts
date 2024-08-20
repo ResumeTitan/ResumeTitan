@@ -1,11 +1,7 @@
 import { Request, Response } from 'express';
-import { ChatOpenAI } from '@langchain/openai';
+import { openAiClient } from '@/ext/clients';
 import { z } from 'zod';
 import CoverLetter from '../models/CoverLetter';
-import 'dotenv/config';
-
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY as string;
-const model = new ChatOpenAI({ model: 'gpt-4o', apiKey: OPENAI_API_KEY });
 
 const coverLetterSchema = z.object({
   coverLetter: z.string(),
@@ -13,7 +9,7 @@ const coverLetterSchema = z.object({
   companyAddress: z.string(),
 });
 
-const coverLetterModel = model.withStructuredOutput(coverLetterSchema);
+const coverLetterModel = openAiClient.withStructuredOutput(coverLetterSchema);
 
 /**
  * @function getPrompt

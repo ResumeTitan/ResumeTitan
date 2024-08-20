@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import WhiteLogo from '../assets/logo-white.png';
 import TextLogo from '../assets/text-logo-white.png';
-import { LoginForm } from './LoginForm';
 import 'styles/index.css';
 import { SignedIn, SignedOut, UserButton } from "@clerk/clerk-react";
 
@@ -178,15 +177,6 @@ const NavBar = () => {
           </div>
         )}
       </nav>
-      {isLoginOpen && (
-        <LoginForm
-          registerOpen={false}
-          onCloseLogin={() => {
-            console.log('Closing login');
-            setIsLoginOpen(false);
-          }}
-        />
-      )}
     </div>
   );
 };

@@ -1,10 +1,10 @@
 import React from 'react';
-import HarvardResume from './layouts/harvard';
 import { OnePageResume } from './layouts/onepage';
-import { IResumeType } from 'types/types';
+import ProfessionalResume from './layouts/professional/Resume';
+import { ResumeType } from 'types/types';
 
 interface Props {
-  resume: IResumeType;
+  resume: ResumeType;
   theme: string;
 }
 
@@ -13,14 +13,17 @@ export default function ResumeContainer({ resume, theme } : Props) {
     <div className="origin-top transition-all duration-300 ease-linear">
       <div className="w-[210mm] h-[296mm] bg-white my-0 mx-auto">
         { theme === "harvard" && (
-          <HarvardResume resume={ resume }/>
+          <ProfessionalResume resume={ resume }/>
         )}
         { theme === "one-page" && (
           <OnePageResume resume={ resume }/>
         )}
-        {/* Default, remove later */}
+        { theme === "professional" && (
+          <ProfessionalResume resume={ resume } />
+        )}
+        {/* Default */}
         { theme === "" && (
-          <HarvardResume resume={ resume }/>
+          <ProfessionalResume resume={ resume }/>
         )}
       </div>
     </div>

@@ -1,13 +1,9 @@
-import { ChatOpenAI } from "@langchain/openai";
 import { Request, Response } from 'express';
+import { openAiClient } from '@/ext/clients';
 import { z } from "zod";
-import Interview from "../models/Interview.js";
+import Interview from "@/models/Interview.js";
 
-import dotenv from "dotenv";
-dotenv.config();
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
-const model = new ChatOpenAI({ model: "gpt-4o", apiKey: OPENAI_API_KEY });
-const interviewModel = model.withStructuredOutput(z.object({
+const interviewModel = openAiClient.withStructuredOutput(z.object({
   interview: z.array(z.object({
     question: z.string(),
     example: z.string(),

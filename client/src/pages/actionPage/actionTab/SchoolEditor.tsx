@@ -4,69 +4,87 @@ import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import StatePicker from 'components/StatePicker';
 import DegreePicker from 'components/DegreePicker';
 import api from 'api/actions';
+import { EducationType } from 'types/types';
 import 'styles/index.css';
 
-function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
-  const [schoolForm, setSchoolForm] = useState(editingSchool);
-  const [aiLoading, setAiLoading] = useState(false);
-  const [startDate, setStartDate] = useState(new Date(editingSchool.startDate) || new Date());
-  const [endDate, setEndDate] = useState(new Date(editingSchool.endDate) || new Date());
-  const [endDateChecked, setEndDateChecked] = useState(editingSchool.endDateCurrent || false);
+const newEducation = {
+  id: -1,
+  institution: '',
+  area: '',
+  studyType: '',
+  startDate: '',
+  endDate: '',
+  endDateCurrent: false,
+  score: '',
+  courses: [],
+  highlights: []
+}
+
+interface SchoolEditorProps {
+  editingSchool: EducationType;
+  onSave: (school: EducationType) => void;
+  onDelete: (id: number) => void;
+  onCancel: () => void;
+}
+
+function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }: SchoolEditorProps) {
+  const [schoolForm, setSchoolForm] = useState<EducationType>(editingSchool);
+  const [aiLoading, setAiLoading] = useState<boolean>(false);
+  const [startDate, setStartDate] = useState<Dayjs>(dayjs(editingSchool.startDate || new Date()));
+  const [endDate, setEndDate] = useState<Dayjs>(dayjs(editingSchool.endDate || new Date()));
+  const [endDateChecked, setEndDateChecked] = useState<boolean>(editingSchool.endDateCurrent || false);
 
   const handleSaveSchool = () => {
-    schoolForm.startDate = startDate.toString();
-    if (endDateChecked) {
-      schoolForm.endDate = "";
-    } else {
-      schoolForm.endDate = endDate.toString();
-    }
-    onSave(schoolForm);
-    setSchoolForm({});
+    const updatedSchool = {
+      ...schoolForm,
+      startDate: startDate.toString(),
+      endDate: endDateChecked ? "" : endDate.toString(),
+    };
+    onSave(updatedSchool);
+    setSchoolForm(newEducation);
   }
 
   const handleDeleteSchool = () => {
     onDelete(schoolForm.id || -1);
-    setSchoolForm({});
+    setSchoolForm(newEducation);
   }
 
   const handleCancel = () => {
     onCancel();
-    setSchoolForm({});
+    setSchoolForm(newEducation);
   }
 
-  const handleSchoolChange = (e) => {
+  const handleSchoolChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
     setSchoolForm({ ...schoolForm, [id]: value });
   }
 
-  const handleStateChange = (state) => {
-    setSchoolForm({ ...schoolForm, state: state });
-  }
+  // const handleStateChange = (state: string) => {
+  //   setSchoolForm({ ...schoolForm, state: state });
+  // }
 
-  /**
-   * @function handleDegreeChange
-   * @description Handle the change of the degree type
-   * @param {string} degree Name of the study type/degree
-   * @returns {void}
-   */
-  const handleDegreeChange = (degree) => {
+  const handleDegreeChange = (degree: string) => {
     setSchoolForm({ ...schoolForm, studyType: degree });
   }
 
-  const handleSchoolContentChange = (content, index) => {
+  const handleSchoolHighlightsChange = (highlights: string, index: number) => {
     const newForm = { ...schoolForm };
-    newForm.content[index] = content;
-    setSchoolForm(newForm);
+    if (newForm.highlights) {
+      newForm.highlights[index] = highlights;
+      setSchoolForm(newForm);
+    }
   }
 
-  const handleContentDelete = (index) => {
+  const handleHighlightDelete = (index: number) => {
     const newForm = { ...schoolForm };
-    newForm.content.splice(index, 1);
-    setSchoolForm(newForm);
+    if (newForm.highlights) {
+      newForm.highlights.splice(index, 1);
+      setSchoolForm(newForm);
+    }
   }
 
   const handleEndDateCurrent = () => {
@@ -75,35 +93,36 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
     setEndDateChecked(endDateCurrent);
   }
 
-  const handleAccomplishmentAdd = () => {
-    if (!schoolForm.content) {
-      setSchoolForm({ ...schoolForm, content: [""] });
-    } else {
-      setSchoolForm({ ...schoolForm, content: [...schoolForm.content, ""] });
-    }
+  const handleHighlightAdd = () => {
+    setSchoolForm(prev => ({
+      ...prev,
+      highlights: prev.highlights ? [...prev.highlights, ""] : [""]
+    }));
   }
 
-  /**
-   * @function handleAiCall
-   */
   const handleAiCall = async () => {
     setAiLoading(true);
-    const schoolResponse = await api.post("/resume/education", { education: schoolForm });
-    setSchoolForm({ ...schoolForm, content: schoolResponse.data.response.accomplishments });
-    setAiLoading(false);
+    try {
+      const schoolResponse = await api.post("/resume/education", { education: schoolForm });
+      setSchoolForm(prev => ({ ...prev, highlights: schoolResponse.data.response.highlights }));
+    } catch (error) {
+      console.error("Error calling AI:", error);
+    } finally {
+      setAiLoading(false);
+    }
   }
 
   return (
     <div className={`${aiLoading ? "animate-pulse" : ""}`}>
       <div className="py-4">
-        <label htmlFor={"name"} className="form-label-text">School Name</label>
+        <label htmlFor={"institution"} className="form-label-text">School Name</label>
         <input 
           type="text"
-          id={"name"}
+          id={"institution"}
           className="form-style" 
           placeholder="Enter school name..."
           onChange={handleSchoolChange}
-          value={schoolForm.name || ''}
+          value={schoolForm.institution || ''}
           required 
         />
       </div>
@@ -125,7 +144,7 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
         <DegreePicker onChange={handleDegreeChange}/>
       </div>
 
-      <div className="mb-6 left-right-spacing phone-screen-stack">
+      {/* <div className="mb-6 left-right-spacing phone-screen-stack">
         <div className="w-full">
         <label htmlFor={"city"} className="form-label-text">City</label>
         <input 
@@ -141,7 +160,7 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
         <label htmlFor={"state"} className="form-label-text">State</label>
         <StatePicker onChange={handleStateChange} initState={schoolForm.state || ""}/>
         </div>
-      </div>
+      </div> */}
 
       <div className="mb-6 left-right-spacing phone-screen-stack">
         <div className="w-full">
@@ -150,7 +169,7 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
               <DatePicker
                 label="Start Date"
                 value={dayjs(startDate)}
-                onChange={(newValue) => setStartDate(newValue.toString())}
+                onChange={(newValue: Dayjs | null) => newValue && setStartDate(newValue)}
               />
             </DemoContainer>
           </LocalizationProvider>
@@ -161,7 +180,7 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
               <DatePicker
                 label="End Date"
                 value={dayjs(endDate)}
-                onChange={(newValue) => {setEndDate(newValue.toString())}}
+                onChange={(newValue: Dayjs | null) => newValue && setEndDate(newValue)}
                 disabled={endDateChecked}
               />
             </DemoContainer>
@@ -185,7 +204,7 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
       <div className="m-2">
         <div className="left-right-spacing flex my-2">
           <div className="flex items-center">
-            <label htmlFor={"schoolContent"} className="form-label-text">Accomplishments</label>
+            <label htmlFor={"schoolHighlights"} className="form-label-text">Highlights</label>
           </div>
 
           <div className="flex flex-col space-y-2 xs:flex-row xs:space-y-0 xs:space-x-2">
@@ -200,29 +219,28 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
             </button>
             <button
               className="green-button order-first xs:order-last p-2 my-1"
-              onClick={handleAccomplishmentAdd}
+              onClick={handleHighlightAdd}
             >
               Add
             </button>
           </div>
         </div>
-        {schoolForm.content ? schoolForm.content.map((item, index) => (
+        {schoolForm.highlights ? schoolForm.highlights.map((item, index) => (
           <div className="left-right-spacing">
             <div className="w-full pr-2 py-1">
               <textarea 
-                type="text"
-                id={"schoolContent"}
+                id={"schoolHighlights"}
                 className="form-style flex-wrap h-36 md:h-24 lg:h-16"
-                placeholder="Enter accomplishments or skills..."
+                placeholder="Enter highlights from school..."
                 value={item}
-                onChange={(e) => handleSchoolContentChange(e.target.value, index)}
+                onChange={(e) => handleSchoolHighlightsChange(e.target.value, index)}
                 required 
               />
             </div>
             <div className="flex items-center">
               <button
                 className="remove-content-button"
-                onClick={() => handleContentDelete(index)}
+                onClick={() => handleHighlightDelete(index)}
               >
                 {"X"}
               </button>
@@ -233,7 +251,6 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }) {
         <div className="left-right-spacing">
           <div className="w-full pr-2 py-1">
             <textarea 
-              type="text"
               className="form-style flex-wrap h-24 lg:h-16"
               placeholder="Click add to start adding accomplishments/skills..."
               disabled

@@ -5,41 +5,29 @@ import mongoose from "mongoose";
  * https://jsonresume.org/schema/
  */
 
-const BasicsSchema = new mongoose.Schema(
-  {
-    name: {
-      type: String,
-      description: "Name of the user",
+const BasicsSchema = new mongoose.Schema({
+  name: { type: String, required: true, default: '' },
+  label: { type: String, required: true, default: '' },
+  image: { type: String, required: false, default: '' },
+  email: { type: String, required: true, default: '' },
+  phone: { type: String, required: false, default: '' },
+  url: { type: String, required: false, default: '' },
+  summary: { type: String, required: false, default: '' },
+  location: {
+    address: { type: String, required: true, default: '' },
+    postalCode: { type: String, required: true, default: '' },
+    city: { type: String, required: true, default: '' },
+    countryCode: { type: String, required: true, default: '' },
+    region: { type: String, required: false, default: '' },
+  },
+  profiles: [
+    {
+      network: { type: String, required: true, default: '' },
+      username: { type: String, required: true, default: '' },
+      url: { type: String, required: false, default: '' },
     },
-    label: {
-      type: String,
-      description: "Label of the user",
-    },
-    image: {
-      type: String,
-      description: "Image of the user",
-    },
-    email: {
-      type: String,
-      description: "Email of the user",
-    },
-    phone: {
-      type: String,
-      description: "Phone number of the user",
-    },
-    url: {
-      type: String,
-      description: "URL of the user",
-    },
-    summary: {
-      type: String,
-      description: "Summary of the user",
-    },
-    location: {
-      type: String,
-      description: "Location of the user",
-    },
-  }
+  ],
+}
 )
 
 const WorkSchema = new mongoose.Schema(
@@ -49,11 +37,11 @@ const WorkSchema = new mongoose.Schema(
       default: 0,
       description: "Job ID from the current resume",
     },
-    title: {
+    position: {
       type: String,
       description: "Job title",
     },
-    employer: {
+    name: {
       type: String,
       description: "Name of employer",
     },
@@ -123,11 +111,7 @@ const EducationSchema = new mongoose.Schema(
       description: "Is this school the current school",
       default: false
     },
-    notes: {
-      type: String,
-      description: "Notes about the users time at school, should be comma separated",
-    },
-    content: {
+    highlights: {
       type: Array,
       items: {
         type: String
@@ -136,6 +120,26 @@ const EducationSchema = new mongoose.Schema(
     },
   }
 );
+
+const SkillsSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      description: "name of the skill"
+    },
+    level: {
+      type: String,
+      description: "Level of experience in that skill"
+    },
+    keywords: {
+      type: Array,
+      items: {
+        type: String
+      },
+      description: "Other keywords for the skill"
+    }
+  }
+)
 
 const ResumeSchema = new mongoose.Schema(
   {
@@ -148,12 +152,14 @@ const ResumeSchema = new mongoose.Schema(
       items: {
         type: WorkSchema
       },
+      default: []
     },
     education: {
       type: Array,
       items: {
         type: EducationSchema
       },
+      default: []
     },
     summary: {
       type: String,
@@ -161,12 +167,15 @@ const ResumeSchema = new mongoose.Schema(
     },
     skills: {
       type: Array,
+      items: {
+        type: SkillsSchema
+      },
       default: []
     },
     theme: {
       type: String,
       description: "Theme of the resume selected by the user",
-      default: "default"
+      default: "professional"
     },
     clerkId: {
       type: String,

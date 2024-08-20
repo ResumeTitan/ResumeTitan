@@ -42,9 +42,9 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
     setJobForm({ ...jobForm, [id]: value });
   }
 
-  const handleJobContentChange = (content, index) => {
+  const handleJobHighlightsChange = (highlights, index) => {
     const newForm = { ...jobForm };
-    newForm.content[index] = content;
+    newForm.highlights[index] = highlights;
     setJobForm(newForm);
   }
 
@@ -52,9 +52,9 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
     setJobForm({ ...jobForm, state: state });
   }
 
-  const handleContentDelete = (index) => {
+  const handleHighlightsDelete = (index) => {
     const newForm = { ...jobForm };
-    newForm.content.splice(index, 1);
+    newForm.highlights.splice(index, 1);
     setJobForm(newForm);
   }
 
@@ -64,11 +64,11 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
     setEndDateChecked(!endDateChecked);
   }
 
-  const handleResponsibilityAdd = () => {
-    if (!jobForm.content) {
-      setJobForm({ ...jobForm, content: [""] });
+  const handleHighlightAdd = () => {
+    if (!jobForm.highlights) {
+      setJobForm({ ...jobForm, highlights: [""] });
     } else {
-      setJobForm({ ...jobForm, content: [...jobForm.content, ""] });
+      setJobForm({ ...jobForm, highlights: [...jobForm.highlights, ""] });
     }
   }
 
@@ -78,7 +78,7 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
   const handleAiCall = async () => {
     setAiLoading(true);
     const jobResponse = await api.post("/resume/job", { job: jobForm });
-    setJobForm({ ...jobForm, content: jobResponse.data.response.responsibilities });
+    setJobForm({ ...jobForm, highlights: jobResponse.data.response.highlights });
     setAiLoading(false);
   }
 
@@ -168,7 +168,7 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
       <div className="m-2">
         <div className="left-right-spacing my-2">
           <div className="flex items-center">
-            <label htmlFor={"jobContent"} className="form-label-text">Responsibilities</label>
+            <label htmlFor={"jobHighlights"} className="form-label-text">Highlights</label>
           </div>
           
           <div className="phone-screen-stack">
@@ -183,29 +183,29 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
             </button>
             <button
               className="green-button order-first xs:order-last p-2 my-1"
-              onClick={handleResponsibilityAdd}
+              onClick={handleHighlightAdd}
             >
               Add
             </button>
           </div>
         </div>
-        {jobForm.content ? jobForm.content.map((item, index) => (
+        {jobForm.highlights ? jobForm.highlights.map((item, index) => (
           <div className="left-right-spacing">
             <div className="w-full pr-2 py-1">
               <textarea 
                 type="text"
-                id={"jobContent"}
+                id={"jobHighlights"}
                 className="form-style flex-wrap h-24 lg:h-16"
-                placeholder="Enter responsibilities or skills..."
+                placeholder="Enter highlights from work..."
                 value={item}
-                onChange={(e) => handleJobContentChange(e.target.value, index)}
+                onChange={(e) => handleJobHighlightsChange(e.target.value, index)}
                 required 
               />
             </div>
             <div className="flex items-center">
               <button
                 className="remove-content-button"
-                onClick={() => handleContentDelete(index)}
+                onClick={() => handleHighlightsDelete(index)}
               >
                 {"X"}
               </button>
@@ -218,7 +218,7 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
               <textarea 
                 type="text"
                 className="form-style flex-wrap h-24 lg:h-16 text-black"
-                placeholder="Click add to start adding responsibilities/skills..."
+                placeholder="Click add to start adding highlights..."
                 disabled
               />
             </div>

@@ -1,0 +1,36 @@
+import React from 'react';
+import styled from 'styled-components';
+
+const Name = styled.div`
+  font-weight: 600;
+  font-size: 1.1rem;
+`;
+
+const List = styled.div`
+  font-size: 1.0rem;
+  margin-left: 5px;
+`;
+
+const Container = styled.div`
+  margin-bottom: 5px;
+  display: flex;
+  align-items: baseline;
+`;
+
+interface OneLineListProps {
+  name: string;
+  items: string[];
+}
+
+const OneLineList: React.FC<OneLineListProps> = ({ name, items }) => {
+  return (
+    <Container>
+      <Name>{name}:</Name>
+      <List>
+        <div className="secondary">{items.join(' / ')}</div>
+      </List>
+    </Container>
+  );
+};
+
+export default OneLineList;

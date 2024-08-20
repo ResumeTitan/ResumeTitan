@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import ResumeName from './ResumeName';
 import PersonalInfo from './PersonalInfo';
 import Schools from './Schools';
@@ -48,13 +48,13 @@ function ActionTab({
    */
   const handleSkillsAiCall = async () => {
     setAiSkillsLoading(true);
-    const summaryResponse = await api.post("/resume/skills", { 
+    const skillsResponse = await api.post("/resume/skills", { 
       summary: basics.summary,
       work: work,
       education: education,
       skills: skills
     });
-    onUpdateSkills(summaryResponse.data.response.skills);
+    onUpdateSkills(skillsResponse.data.response);
     setAiSkillsLoading(false);
   }
 

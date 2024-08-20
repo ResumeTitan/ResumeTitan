@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { useUser } from '@clerk/clerk-react';
+import store from 'state';
 
 // configuration
 const API_URL = process.env.REACT_APP_API_URL;
@@ -11,24 +11,11 @@ const api = axios.create({
   }
 });
 
-// const setupInterceptors = () => {
-//   api.interceptors.request.use(
-//     async (config) => {
-//       const { getToken } = useUser();
-//       const token = await getToken();
+api.interceptors.request.use(function (config) {
+  const token = store.getState().token;
+  config.headers.Authorization =  token;
+   
+  return config;
+});
 
-//       if (token) {
-//         config.headers['Authorization'] = `Bearer ${token}`;
-//       }
-
-//       return config;
-//     },
-//     (error) => {
-//       return Promise.reject(error);
-//     }
-//   );
-// };
-
-// setupInterceptors();
-
-export default api
+export default api;

@@ -1,23 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import ResumeCard from './ResumeCard';
-import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { deleteInterview } from 'api/interview';
 import Spinner from 'components/Spinner';
 import EditIcon from '@mui/icons-material/Edit';
 import CloseIcon from '@mui/icons-material/Close';
 import Popup from './Popup';
 import { formatDateFull } from '../../utils/index';
-import { useUser } from '@clerk/clerk-react';
+import { useUser, useAuth } from '@clerk/clerk-react';
 import api from 'api/actions';
-import { IResumeType } from 'types/types';
+import { setToken } from '../../state/authReducer';
+import { useDispatch } from 'react-redux';
+import { ResumeType } from 'types/types';
 
 export const Dashboard: React.FC = () => {
   const { user, isLoaded } = useUser();
+  const { getToken } = useAuth();
 
-  const token = useSelector((state: any) => state.token);
+  const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
-  const [resumes, setResumes] = useState<IResumeType[]>([]);
+  const [resumes, setResumes] = useState<ResumeType[]>([]);
   const [interviews, setInterviews] = useState<any[]>([]);
   const navigate = useNavigate();
   const [showPopup, setShowPopup] = useState(false);
@@ -31,9 +32,13 @@ export const Dashboard: React.FC = () => {
     if (!user) {
       return null;
     }
+    const newToken = await getToken();
+    if (!newToken) {
+      return null;
+    }
     const userId = user.id;
+    dispatch(setToken(newToken));
     const response = await api.get(`/resume/user?userId=${userId}`);
-    console.log(response.data.resumes);
     setResumes(response.data.resumes);
   }
 
@@ -102,7 +107,6 @@ export const Dashboard: React.FC = () => {
     event.stopPropagation();
     try {
       await api.delete(`/interview/${id}`);
-      await deleteInterview(token, id);
       await loadInterviews();
     } catch (error) {
       console.error('Error deleting interview:', error);

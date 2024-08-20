@@ -1,12 +1,8 @@
-import React, { useState } from 'react';
-import { LoginForm } from 'components/LoginForm';
+import React from 'react';
 import heroImg from 'assets/heroImg.png';
 import 'styles/index.css';
 
 const Hero: React.FC = () => {
-  const [isLoginOpen, setIsLoginOpen] = useState(false);
-  const [isRegistering, setIsRegistering] = useState(false);
-
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <div className="grid grid-cols-1 items-center gap-14 lg:grid-cols-2" data-aos="fade-right">
@@ -30,16 +26,12 @@ const Hero: React.FC = () => {
             <a
               className="secondary-action-button text-lg"
               href="/sign-up"
-            >
-              Sign Up
-            </a>
+            >Sign Up</a>
 
             <a
               className="action-button text-lg"
               href="/sign-in"
-            >
-              Log In
-            </a>
+            >Log In</a>
           </div>
         </div>
 
@@ -47,12 +39,6 @@ const Hero: React.FC = () => {
           <img src={heroImg} alt="hero" className="rounded-lg md:order-last order-first" />
         </div>
       </div>
-      {isLoginOpen && (
-        <LoginForm
-          registerOpen={isRegistering}
-          onCloseLogin={() => setIsLoginOpen(false)} 
-        />
-      )}
     </div>
   );
 }

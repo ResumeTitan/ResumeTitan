@@ -1,31 +1,36 @@
-import { ChatOpenAI } from "@langchain/openai";
 import { Response, Request } from 'express';
-import Resume from '../models/Resume';
+import Resume from '@/models/Resume';
 import { z } from "zod";
-import { IResumeType } from "../types/types";
+import { IResumeType } from "@/types/types";
+import { openAiClient } from '@/ext/clients';
 import puppeteer from 'puppeteer';
 
 const EducationSchema = z.object({
   institution: z.string(),
-  degree: z.string(),
-  fieldOfStudy: z.string(),
+  studyType: z.string(),
+  area: z.string(),
   startDate: z.string(),
   endDate: z.string(),
-  accomplishments: z.array(z.string()),
-  extraAccomplishments: z.array(z.string())
+  highlights: z.array(z.string()),
+  extraHighlights: z.array(z.string())
 });
 
 const JobSchema = z.object({
-  title: z.string(),
-  company: z.string(),
+  position: z.string(),
+  name: z.string(),
   startDate: z.string(),
   endDate: z.string(),
-  responsibilities: z.array(z.string()),
-  extraResponsibilities: z.array(z.string())
+  highlights: z.array(z.string()),
+  summary: z.string(),
+  extraHighlights: z.array(z.string())
 });
 
 const SkillsSchema = z.object({
-  skills: z.array(z.string())
+  skills: z.array(z.object({
+    name: z.string(),
+    level: z.string(),
+    keywords: z.array(z.string())
+  }))
 });
 
 const SummarySchema = z.object({
@@ -41,17 +46,11 @@ const ResumeDataSchema = z.object({
 
 const resumeData: IResumeType = {};
 
-import dotenv from 'dotenv';
-dotenv.config();
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
-const CLIENT_URL = process.env.CLIENT_URL;
-
-const model = new ChatOpenAI({ model: "gpt-4o", apiKey: OPENAI_API_KEY });
-const summaryModel = model.withStructuredOutput(SummarySchema);
-const educationModel = model.withStructuredOutput(EducationSchema);
-const jobModel = model.withStructuredOutput(JobSchema);
-const skillsModel = model.withStructuredOutput(SkillsSchema);
-const resumeModel = model.withStructuredOutput(ResumeDataSchema);
+const summaryModel = openAiClient.withStructuredOutput(SummarySchema);
+const educationModel = openAiClient.withStructuredOutput(EducationSchema);
+const jobModel = openAiClient.withStructuredOutput(JobSchema);
+const skillsModel = openAiClient.withStructuredOutput(SkillsSchema);
+const resumeModel = openAiClient.withStructuredOutput(ResumeDataSchema);
 
 const getPrompt = (section: string, data: any) => {
   let prompt = 'You are a hiring manager at a company and you need to generate the perfect resume for a potential candidate.';
@@ -68,17 +67,17 @@ const getPrompt = (section: string, data: any) => {
     case 'education':
       return prompt + `Generate a JSON representation of the education section for a resume: ${JSON.stringify(data)}.
           Use this information only, and not previous information entered.
-          The response shall include an array of strings with accomplishments a student has.
-          Include at least 4 strings, in full sentences, in both accomplishments and extraAccomplishments that could be used on the resume for this person.
-          If no accomplishments are found, create some that would be associated with the major/area of study entered.
+          The response shall include an array of strings with highlights a student has.
+          Include at least 4 strings, in full sentences, in both highlights and extraHighlights that could be used on the resume for this person.
+          If no highlights are found, create some that would be associated with the major/area of study entered.
           These strings should include keywords that would score well on an ATS system.
           This content should not repeat the name of the school.
           Be sure to fix any spelling or grammar mistakes if there is existing content being passed in.`;
     case 'job':
       return prompt + `Generate a JSON representation of the job experience section for a resume using this information: ${JSON.stringify(data)}
           Use this information only, and not previous information entered.
-          The response shall include an array of strings with responsibilities an employee has.
-          Include at least 4 strings, in full sentences, in both responsibilities and extraResponsibilities that could be used on the resume for this person.
+          The response shall include an array of strings with highlights an employee has.
+          Include at least 4 strings, in full sentences, in both highlights and extraHighlights that could be used on the resume for this person.
           These strings should include keywords that would score well on an ATS system.
           This content should not repeat the name of the employer. 
           If content already exists, generate new content that would be associated with the job title entered.

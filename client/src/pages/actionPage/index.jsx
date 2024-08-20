@@ -8,7 +8,6 @@ import ResumeContainer from 'templates/ResumeContainer';
 import { getResume, createResume, updateResume } from 'api/resume';
 import Spinner from 'components/Spinner';
 import ErrorAlert from 'components/Alert/ErrorAlert';
-import { LoginForm } from 'components/LoginForm';
 import api from 'api/actions';
 import 'styles/index.css';
 import { styled } from '@mui/system';
@@ -53,8 +52,27 @@ function ActionPage() {
   const [theme, setTheme] = useState('harvard');
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [basics, setBasics] = useState({
-    name: "",
-    email: ""
+    name: '',
+    label: '',
+    image: '',
+    email: '',
+    phone: '',
+    url: '',
+    summary: '',
+    location: {
+      address: '',
+      postalCode: '',
+      city: '',
+      countryCode: '',
+      region: '',
+    },
+    profiles: [
+      {
+        network: '',
+        username: '',
+        url: '',
+      },
+    ],
   });
   const [resumeLoading, setResumeLoading] = useState(false);
   const navigate = useNavigate();
@@ -72,6 +90,7 @@ function ActionPage() {
     const loadResumeChange = async () => {
       if (user) {
         setBasics({
+          ...basics,
           name: user.fullName,
           email: user.emailAddresses.at(0).toString()
         })
@@ -121,10 +140,10 @@ function ActionPage() {
    * @todo Fix printing for mobile, gets too many notifications, generate on backend
    */
   const handleSaveToPdf = async () => {
-    // if (!currentUser.premiumUntil || new Date(currentUser.premiumUntil) < new Date()) {
-    //   setShowPrintError(true);
-    //   return;
-    // }
+    if (!user.publicMetadata.premiumUntil || new Date(user.publicMetadata.premiumUntil) < new Date()) {
+      setShowPrintError(true);
+      return;
+    }
 
     try {
       setResumeLoading(true);
@@ -302,15 +321,6 @@ function ActionPage() {
           />
         </div>
       </div>
-
-      {isLoginOpen && (
-        <LoginForm
-          registerOpen={true}
-          onCloseLogin={() => {
-            setIsLoginOpen(false);
-          }}
-        />
-      )}
     </div>
   );
 }
