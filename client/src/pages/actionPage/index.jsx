@@ -57,11 +57,14 @@ function ActionPage() {
         },
       ],
     },
+    education: [],
+    work: [],
+    skills: [],
+
     theme: "professional", 
     sections: ["Basics"],
     name: "Resume Name"
   });
-  const [resumeId, setResumeId] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
   const [resumeLoading, setResumeLoading] = useState(false);
   const navigate = useNavigate();
@@ -97,7 +100,6 @@ function ActionPage() {
       }
 
       if (location.state) {
-        setResumeId(location.state.resumeId);
         await loadResume(location.state.resumeId);
       }
     }
@@ -144,7 +146,7 @@ function ActionPage() {
 
     try {
       setResumeLoading(true);
-      
+
       // Save the resume first
       await handleSaveResume(false);
 
