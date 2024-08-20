@@ -1,13 +1,5 @@
-import React, { useState } from "react";
+import React from "react";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
-
-const tasks = [
-  { id: "1", content: "First task" },
-  { id: "2", content: "Second task" },
-  { id: "3", content: "Third task" },
-  { id: "4", content: "Fourth task" },
-  { id: "5", content: "Fifth task" }
-];
 
 const reorder = (list, startIndex, endIndex) => {
   const result = Array.from(list);
@@ -35,20 +27,20 @@ export function VerticalList({ items, onSave }) {
       <Droppable droppableId="droppable">
         {(provided, snapshot) => (
           <div
-            className={`${snapshot.isDraggingOver ? "bg-slate-800" : "bg-slate-700"}`}
+            className={`${snapshot.isDraggingOver ? "bg-white" : "bg-gray-200"}`}
             {...provided.droppableProps}
             ref={provided.innerRef}
           >
             {items.map((item, index) => (
-              <Draggable key={item.id} draggableId={String(item.id)} index={index}>
+              <Draggable key={item} draggableId={item} index={index}>
                 {(provided, snapshot) => (
                   <div
-                    className={`form-style ${snapshot.isDragging ? "bg-slate-600" : "bg-slate-800"}`}
+                    className={`form-style ${snapshot.isDragging ? "bg-white" : "bg-gray-200"}`}
                     ref={provided.innerRef}
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
                   >
-                    {item.content}
+                    {item}
                   </div>
                 )}
               </Draggable>

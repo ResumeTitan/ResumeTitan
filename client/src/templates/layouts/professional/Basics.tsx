@@ -10,6 +10,7 @@ import {
   FaLinkedin,
 } from 'react-icons/fa';
 import Section from './Section';
+import Summary from './Summary';
 import { BasicsType } from 'types/types';
 
 // Styled components
@@ -46,11 +47,11 @@ const Info = styled.div`
   }
 `;
 
-interface HeroComponentProps {
+interface BasicsComponentProps {
   basics: BasicsType;
 }
 
-const HeroComponent: React.FC<HeroComponentProps> = ({ basics }) => {
+const BasicsComponent: React.FC<BasicsComponentProps> = ({ basics }) => {
   const { name, url, location, profiles = [], phone, email } = basics;
 
   const linkedin = profiles.find(({ network }) => network === 'linkedin');
@@ -111,9 +112,10 @@ const HeroComponent: React.FC<HeroComponentProps> = ({ basics }) => {
             </Info>
           )}
         </BasicInfo>
+        <Summary basics={basics}/>
       </div>
     </Section>
   );
 };
 
-export default HeroComponent;
+export default BasicsComponent;

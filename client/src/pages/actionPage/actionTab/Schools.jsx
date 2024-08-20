@@ -55,7 +55,7 @@ function Schools({ education, onSave, onDelete, onReorder }) {
             >
               <div>
                 <div className="font-bold">
-                  {school.name}
+                  {school.institution}
                 </div>
                 <div>
                   {school.area}

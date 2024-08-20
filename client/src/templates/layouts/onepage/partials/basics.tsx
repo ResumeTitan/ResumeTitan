@@ -1,29 +1,11 @@
 import React from "react";
+import { BasicsType } from "types/types";
 
-interface Profile {
-  network: string;
-  url: string;
+interface BasicsComponentProps {
+  basics: BasicsType;
 }
 
-interface Location {
-  city?: string;
-  region?: string;
-  countryCode?: string;
-}
-
-interface BasicsProps {
-  basics: {
-    name?: string;
-    label?: string;
-    email?: string;
-    phone?: string;
-    location?: Location;
-    profiles?: Profile[];
-    summary?: string;
-  };
-}
-
-const BasicsComponent: React.FC<BasicsProps> = ({ basics }) => {
+const BasicsComponent: React.FC<BasicsComponentProps> = ({ basics }) => {
   // Destructure basics object
   const { name, label, email, phone, location, profiles, summary } = basics;
 
@@ -57,7 +39,7 @@ const BasicsComponent: React.FC<BasicsProps> = ({ basics }) => {
               </>
             )}
           </div>
-          {profiles && profiles.length > 0 && (
+          {profiles && profiles.length > 0 && profiles[0].network && (
             <div id="profilesBlock">
               {profiles.map((profile, index) => (
                 <span key={index} className="url">
@@ -75,7 +57,7 @@ const BasicsComponent: React.FC<BasicsProps> = ({ basics }) => {
 
       {summary && (
         <>
-          <div className="sectionLine"></div>
+          <div className="sectionLine" />
           <div id="summaryBlock" className="sectionBlock">
             <div className="sectionName">
               <span>SUMMARY</span>

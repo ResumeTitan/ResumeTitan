@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { BasicsType } from 'types/types';  // Adjust the import path based on your project structure
+import { BasicsType } from 'types/types';
 
 // Define the component's props using the BasicsType interface
 interface PersonalInfoProps {
@@ -12,6 +12,7 @@ const PersonalInfo: React.FC<PersonalInfoProps> = ({ initialInfo, onUpdate }) =>
   const [isEditing, setIsEditing] = useState<boolean>(false);
 
   const handleInfoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log("handling info change", infoForm);
     const { id, value } = e.target;
     setInfoForm({ ...infoForm, [id]: value });
   };
@@ -24,16 +25,16 @@ const PersonalInfo: React.FC<PersonalInfoProps> = ({ initialInfo, onUpdate }) =>
     });
   };
 
-  const handleProfileChange = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
-    const { id, value } = e.target;
-    const updatedProfiles = infoForm.profiles.map((profile, i) => 
-      i === index ? { ...profile, [id]: value } : profile
-    );
-    setInfoForm({
-      ...infoForm,
-      profiles: updatedProfiles
-    });
-  };
+  // const handleProfileChange = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const { id, value } = e.target;
+  //   const updatedProfiles = infoForm.profiles.map((profile, i) => 
+  //     i === index ? { ...profile, [id]: value } : profile
+  //   );
+  //   setInfoForm({
+  //     ...infoForm,
+  //     profiles: updatedProfiles
+  //   });
+  // };
 
   const handleSaveInfo = () => {
     setIsEditing(false);

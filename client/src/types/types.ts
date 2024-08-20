@@ -161,4 +161,10 @@ export interface ResumeType {
   _id: string;
   name: string;
   theme: string;
+  sections: string[];
+}
+
+// ResumeTypeProps for components
+export interface ResumeTypeProps {
+  resume: ResumeType;
 }

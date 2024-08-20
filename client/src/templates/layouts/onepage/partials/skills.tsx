@@ -1,32 +1,43 @@
 import React from "react";
+import { SkillType } from "types/types";
+import '../style.css';
 
 interface SkillsProps {
-  skills: string[];
+  skills: SkillType[];
 }
 
 const SkillsComponent: React.FC<SkillsProps> = ({ skills }) => {
   return (
-    <>
-      {skills.length > 0 && (
-        <>
-          <div className="sectionLine"></div>
-          <div id="skills" className="sectionBlock">
-            <div className="sectionName">
-              <span>SKILLS</span>
+    <div>
+      <div id="skills" className="sectionBlock">
+        <div className="sectionName">
+          <span>SKILLS</span>
+        </div>
+        <div className="sectionContent">
+          {skills.map((skill, index) => (
+            <div className="skillBlock" key={index}>
+              <div>
+                <span className="title">
+                  {skill.name && skill.name}
+                </span>
+              </div>
+              <div>
+                {skill.keywords.length > 0 && (
+                  <>
+                    {skill.keywords.map((keyword, idx) => (
+                      <span key={idx}>
+                        {keyword}
+                        {idx < skill.keywords.length - 1 ? ', ' : ''}
+                      </span>
+                    ))}
+                  </>
+                )}
+              </div>
             </div>
-            <div className="sectionContent">
-              <ul className="skillBlock">
-              {skills.map((skill, index) => (
-                  <span key={index}>
-                    <li className="skill">{skill}</li>
-                  </span>
-              ))}
-              </ul>
-            </div>
-          </div>
-        </>
-      )}
-    </>
+          ))}
+        </div>
+      </div>
+    </div>
   );
 };
 

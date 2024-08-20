@@ -3,7 +3,12 @@ import Resume from '@/models/Resume';
 import { z } from "zod";
 import { IResumeType } from "@/types/types";
 import { openAiClient } from '@/ext/clients';
+import { ServerStyleSheet } from 'styled-components';
 import puppeteer from 'puppeteer';
+import "dotenv/config";
+import { crossOriginResourcePolicy } from 'helmet';
+
+const CLIENT_URL = process.env.CLIENT_URL;
 
 const EducationSchema = z.object({
   institution: z.string(),
@@ -146,6 +151,15 @@ export const postResume = async (req: Request, res: Response) => {
 export const updateResume = async (req: Request, res: Response) => {
   try {
     const resume = req.body;
+    // @ts-ignore
+    const clerkId = req.auth.userId;
+    // @ts-ignore
+    console.log(req.auth);
+    resume.clerkId = clerkId;
+
+    if (!clerkId) {
+      return res.status(401).json({ msg: "User not authenticated"});
+    }
 
     let resumeOut;
     if (!resume._id) {
@@ -196,48 +210,134 @@ export const deleteResume = async (req: Request, res: Response) => {
 };
 
 /**
- * @function getResumeAsPdf
+ * @function render
+ * @description Build the html page to send to puppeteer to render
+ * @return {String} Page in html
+ */
+export const render = (name: string, html: string): string => {
+  const sheet = new ServerStyleSheet();
+  const styles = sheet.getStyleTags();
+  
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>${name} - Resume</title>
+  <style>
+    @font-face {
+      font-family: LatinModern;
+      font-style: normal;
+      font-weight: normal;
+      src: url("/fonts/lmroman10-regular.otf") format("opentype");
+    }
+    @font-face {
+      font-family: LatinModern;
+      font-weight: bold;
+      src: url("/fonts/lmroman10-bold.otf") format("opentype");
+    }
+    @font-face {
+      font-family: LatinModern;
+      font-style: italic;
+      src: url("/fonts/lmroman10-italic.otf") format("opentype");
+    }
+    @font-face {
+      font-family: LatinModernSans;
+      font-style: normal;
+      font-weight: normal;
+      src: url("/fonts/lmsans10-regular.otf") format("opentype");
+    }
+    @font-face {
+      font-family: LatinModernSans;
+      font-weight: bold;
+      src: url("/fonts/lmsans10-bold.otf") format("opentype");
+    }
+    @font-face {
+      font-family: LatinModernSans;
+      font-style: italic;
+      src: url("/fonts/lmsans10-italic.otf") format("opentype");
+    }
+    html {
+      font-family: LatinModern, "Courier New", monospace;
+      background: #fff;
+      font-size: 10px;
+    }
+    h2 {
+      font-size: 1.65rem;
+    }
+    p {
+      padding: 0;
+      margin: 0;
+    }
+    p, li {
+      font-size: 1.4rem;
+      line-height: 1.5rem;
+    }
+    .secondary {
+      color: #111;
+    }
+    a {
+      text-decoration: none;
+    }
+    ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+  </style>
+  ${styles}
+</head>
+<body>${html}</body>
+</html>`;
+};
+
+/**
+ * @function printResumeToPdf
  * @descripton Uses puppeteer library to render resume page then save as pdf
  * @param {Request} req
  * @param {Response} res
  */
-export const getResumeAsPdf = async (req: Request, res: Response) => {
-  const id = req.params.id;
-
-  // Authenticate data
-  const resume = await Resume.findById(id);
-  if (!resume) {
-    return res.status(400).send('Resume not found, cannot authenticate print');
-  }
-  if (!resume.clerkId) {
+export const printResumeToPdf = async (req: Request, res: Response) => {
+  // @ts-ignore
+  const clerkId = req.auth.userId;
+  if (!clerkId) {
     return res.status(401).send('User not known, cannot authenticate print');
   }
 
   try {
-    // TODO fix this, use html skeleton
-    // const executablePath = await new Promise(resolve => locateChrome((arg: any) => resolve(arg))) || '';
-    // const browser = await puppeteer.launch({ 
-    //   args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
-    //   headless: true,
-    //   executablePath,
-    //   ignoreHTTPSErrors: true
-    // });
-    // const page = await browser.newPage();
-    // await page.setViewport({ width: 1920, height: 1080 });
-    // await page.setExtraHTTPHeaders({ Authorization: req.headers['authorization'] });
-    // console.log('Authorization:', req.headers['authorization']);
-    // console.log("url", `${CLIENT_URL}/print-resume/${id}`);
-    // await page.goto(`${CLIENT_URL}/print-resume/${id}`, { waitUntil: 'networkidle0' });
-    // const pdfBuffer = await page.pdf();
-    // await browser.close();
+    const { name, html, id } = req.body;
+    console.log("id", id);
+    const htmlRaw = render(name, html);
+    const browser = await puppeteer.launch({ 
+      args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
+      headless: true,
+      ignoreHTTPSErrors: true
+    });
+    
+    const page = await browser.newPage();
+    await page.setViewport({ width: 1920, height: 1080 });
+    // @ts-ignore
+    const tokenOut = await req.auth.getToken();
+    await page.setExtraHTTPHeaders({ Authorization: tokenOut });
+    // Intercept and log network requests and console messages
+    page.on('console', msg => console.log('PAGE LOG:', msg.text()));
+    page.on('requestfailed', request => console.error('REQUEST FAILED:', request.url(), request.failure().errorText));
+    
+    await page.goto(`${CLIENT_URL}/print-resume/${id}`, { waitUntil: 'networkidle0' });
+    const pdfBuffer = await page.pdf();
+    await browser.close();
 
     // Return the PDF buffer
-    // res.set({
-    //   'Content-Type': 'application/pdf',
-    //   'Content-Disposition': 'attachment; filename="resume.pdf"',
-    // });
-    // res.send(pdfBuffer);
-    res.send(200);
+    res.set({
+      'Content-Type': 'application/pdf',
+      'Content-Disposition': 'attachment; filename="resume.pdf"',
+    });
+    res.send(pdfBuffer);
   } catch (error) {
     console.error('Error generating PDF:', error);
     res.status(500).send('Internal Server Error');

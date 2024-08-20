@@ -149,7 +149,7 @@ export const Dashboard: React.FC = () => {
       <div className="dashboard-container">
         <div className="dashboard-header">My Resumes:</div>
         <button className="dashboard-button" onClick={() => navigate('/resume')}>Add New</button>
-        <div className="overflow-x-scroll overflow-y-hidden h-80 hide-scrollbar">
+        <div className="overflow-x-scroll overflow-y-hidden h-[22rem] hide-scrollbar">
           <div className="transform scale-25 flex origin-top-left">
             { resumes && resumes.length > 0 ? resumeWidgets : resumePlaceholder }
           </div>

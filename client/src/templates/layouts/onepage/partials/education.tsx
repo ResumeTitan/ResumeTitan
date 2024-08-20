@@ -11,7 +11,6 @@ const EducationComponent: React.FC<Props> = ({ education }) => {
     <>
       {education.length > 0 && (
         <>
-          <div className="sectionLine"></div>
           <div id="education" className="sectionBlock">
             <div className="sectionName">
               <span>EDUCATION</span>

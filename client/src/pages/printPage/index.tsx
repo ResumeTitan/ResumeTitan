@@ -20,7 +20,7 @@ export const PrintToPdf = () => {
 
   return resume && (
     <div>
-      <ResumeContainer resume={resume} theme={resume.theme || ""} />
+      <ResumeContainer resume={resume} />
     </div>
   )
 }

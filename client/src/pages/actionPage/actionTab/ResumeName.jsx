@@ -57,7 +57,7 @@ function ResumeName({ initName, onPrint, onUpdateResumeName }) {
         </div>
         <div>
           <button onClick={handlePrint} className="submit-button px-5 py-2.5 m-1 h-12 w-full">
-            {"Save as PDF"}
+            {"Preview Resume"}
           </button>
         </div>
       </div>

@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 import Projects from './Projects';
-import Hero from './Hero';
-import Summary from './Summary';
+import Basics from './Basics';
 import Education from './Education';
 import Work from './Work';
 import Certificates from './Certificates';
@@ -11,12 +10,8 @@ import Skills from './Skills';
 import Interests from './Interests';
 import Languages from './Languages';
 import References from './References';
-import { ResumeType } from 'types/types';
+import { ResumeTypeProps } from 'types/types';
 import './styles.css';
-
-interface ResumeProps {
-  resume: ResumeType;
-}
 
 const Layout = styled.div`
   max-width: 660px;
@@ -24,23 +19,33 @@ const Layout = styled.div`
   line-height: calc(1ex / 0.32);
   margin-bottom: 40px;
   font-family: "Times New Roman", Times, serif;
+  color: black;
 `;
 
-const Resume: React.FC<ResumeProps> = ({ resume }) => {
+const sectionComponents = {
+  Basics: Basics,
+  Education: Education,
+  Work: Work,
+  Projects: Projects,
+  Certificates: Certificates,
+  Publications: Publications,
+  Awards: Awards,
+  Languages: Languages,
+  Skills: Skills,
+  Interests: Interests,
+  References: References,
+};
+
+const Resume: React.FC<ResumeTypeProps> = ({ resume }) => {
   return (
     <Layout>
-      <Hero basics={resume.basics} />
-      <Summary basics={resume.basics} />
-      <Education education={resume.education} />
-      <Work work={resume.work} />
-      <Projects projects={resume.projects} />
-      <Certificates certificates={resume.certificates} />
-      <Publications publications={resume.publications} />
-      <Awards awards={resume.awards} />
-      <Languages languages={resume.languages} />
-      <Skills skills={resume.skills} />
-      <Interests interests={resume.interests} />
-      <References references={resume.references} />
+      {resume.sections.map((section) => {
+        const SectionComponent = sectionComponents[section as keyof typeof sectionComponents];
+        if (SectionComponent) {
+          return <SectionComponent key={section} {...resume} />;
+        }
+        return null;
+      })}
     </Layout>
   );
 };

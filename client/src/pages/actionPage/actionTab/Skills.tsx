@@ -144,14 +144,14 @@ const Skills: React.FC<SkillsProps> = ({ initSkills, aiLoading, onUpdate, onAiCa
                 onChange={(e) => handleSkillsChange(e, skillIndex, 'name')}
                 required 
               />
-              <input 
+              {/* <input 
                 type="text"
                 className="form-style mb-2"
                 placeholder="Skill Level"
                 value={skill.level}
                 onChange={(e) => handleSkillsChange(e, skillIndex, 'level')}
                 required 
-              />
+              /> */}
               <div className="mb-2">
                 <div className="flex flex-wrap mb-2">
                   {skill.keywords.map((keyword, keywordIndex) => (

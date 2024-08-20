@@ -207,7 +207,7 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }: SchoolEdito
             <label htmlFor={"schoolHighlights"} className="form-label-text">Highlights</label>
           </div>
 
-          <div className="flex flex-col space-y-2 xs:flex-row xs:space-y-0 xs:space-x-2">
+          <div className="phone-screen-stack">
             <button
               className="green-button order-last xs:order-first p-2 my-1"
               onClick={handleAiCall}

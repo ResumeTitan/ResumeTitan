@@ -7,23 +7,23 @@ import mongoose from "mongoose";
 
 const BasicsSchema = new mongoose.Schema({
   name: { type: String, required: true, default: '' },
-  label: { type: String, required: true, default: '' },
+  label: { type: String, required: false, default: '' },
   image: { type: String, required: false, default: '' },
   email: { type: String, required: true, default: '' },
   phone: { type: String, required: false, default: '' },
   url: { type: String, required: false, default: '' },
   summary: { type: String, required: false, default: '' },
   location: {
-    address: { type: String, required: true, default: '' },
-    postalCode: { type: String, required: true, default: '' },
-    city: { type: String, required: true, default: '' },
-    countryCode: { type: String, required: true, default: '' },
+    address: { type: String, required: false, default: '' },
+    postalCode: { type: String, required: false, default: '' },
+    city: { type: String, required: false, default: '' },
+    countryCode: { type: String, required: false, default: '' },
     region: { type: String, required: false, default: '' },
   },
   profiles: [
     {
-      network: { type: String, required: true, default: '' },
-      username: { type: String, required: true, default: '' },
+      network: { type: String, required: false, default: '' },
+      username: { type: String, required: false, default: '' },
       url: { type: String, required: false, default: '' },
     },
   ],
@@ -185,6 +185,14 @@ const ResumeSchema = new mongoose.Schema(
       type: String,
       default: "Resume Name",
     },
+    sections: {
+      type: Array,
+      items: {
+        type: String
+      },
+      description: "Order of sections to show on resume",
+      default: ["Basics"]
+    }
   },
   { timestamps: true }
 );

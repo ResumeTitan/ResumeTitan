@@ -8,22 +8,22 @@ import Summary from './Summary';
 import Popup from '../Popup';
 import api from 'api/actions';
 import { swapArrayElements } from 'utils';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import ButtonGridComponent from './SectionSelector';
 import 'styles/index.css';
 
 function ActionTab({
-  basics,
-  work,
-  education,
-  skills,
-  resumeName,
+  resumeIn,
   onUpdateResumeName,
-  onPrint, 
+  onPrint,
   onUpdateWork, 
   onUpdateEducation, 
   onUpdateBasics, 
   onUpdateSkills,
-  onUpdateSummary 
+  onUpdateSummary,
+  onUpdateSections
 }) {
+  const [sectionPopupOpen, setSectionPopupOpen] = useState(false);
   const [popupOpen, setPopupOpen] = useState(false);
   const [aiSkillsLoading, setAiSkillsLoading] = useState(false);
   const [aiSummaryLoading, setAiSummaryLoading] = useState(false);
@@ -33,12 +33,7 @@ function ActionTab({
    */
   const handleSummaryAiCall = async () => {
     setAiSummaryLoading(true);
-    const summaryResponse = await api.post("/resume/summary", { 
-      summary: basics.summary,
-      work: work,
-      education: education,
-      skills: skills
-    });
+    const summaryResponse = await api.post("/resume/summary", resumeIn);
     onUpdateSummary(summaryResponse.data.response.summary);
     setAiSummaryLoading(false);
   }
@@ -48,19 +43,15 @@ function ActionTab({
    */
   const handleSkillsAiCall = async () => {
     setAiSkillsLoading(true);
-    const skillsResponse = await api.post("/resume/skills", { 
-      summary: basics.summary,
-      work: work,
-      education: education,
-      skills: skills
-    });
-    onUpdateSkills(skillsResponse.data.response);
+    const skillsResponse = await api.post("/resume/skills", resumeIn);
+    console.log(skillsResponse.data.response.skills);
+    onUpdateSkills(skillsResponse.data.response.skills);
     setAiSkillsLoading(false);
   }
 
   const handleSaveWork = (workForm) => {
     if (workForm.id) {
-      const updatedWork = work.map((job) => {
+      const updatedWork = resumeIn.work.map((job) => {
         if (job.id === workForm.id) {
           return workForm;
         } else { 
@@ -69,19 +60,19 @@ function ActionTab({
       });
       onUpdateWork(updatedWork);
     } else {
-      workForm.id = work.length + 1;
-      onUpdateWork([...work, workForm]);
+      workForm.id = resumeIn.work.length + 1;
+      onUpdateWork([...resumeIn.work, workForm]);
     }
   }
 
   const handleDeleteWork = (id) => {
-    const updatedWork = work.filter((job) => job.id !== id);
+    const updatedWork = resumeIn.work.filter((job) => job.id !== id);
     onUpdateWork(updatedWork);
   }
 
   const handleSaveEducation = (educationForm) => {
     if (educationForm.id) {
-      const updatedEducation = education.map((school) => {
+      const updatedEducation = resumeIn.education.map((school) => {
         if (school.id === educationForm.id) {
           return educationForm;
         } else {
@@ -90,18 +81,18 @@ function ActionTab({
       });
       onUpdateEducation(updatedEducation);
     } else {
-      educationForm.id = education.length + 1;
-      onUpdateEducation([...education, educationForm]);
+      educationForm.id = resumeIn.education.length + 1;
+      onUpdateEducation([...resumeIn.education, educationForm]);
     }
   }
 
   const handleDeleteEducation = (id) => {
-    const updatedEducation = education.filter((school) => school.id !== id);
+    const updatedEducation = resumeIn.education.filter((school) => school.id !== id);
     onUpdateEducation(updatedEducation);
   }
 
   const handleSwapJobs = (up, index) => {
-    const tempWork = work;
+    const tempWork = resumeIn.work;
     if (up) {
       swapArrayElements(tempWork, index, index - 1);
     } else {
@@ -111,20 +102,57 @@ function ActionTab({
   }
 
   const handleSwapEducation = (indexA, indexB) => {
-    const tempEducation = education;
+    const tempEducation = resumeIn.education;
     swapArrayElements(tempEducation, indexA, indexB);
     onUpdateEducation(tempEducation);
   }
 
   return (
     <div>
-      <ResumeName initName={resumeName} onPrint={ onPrint } onUpdateResumeName={onUpdateResumeName} />
-      <PersonalInfo initialInfo={basics} key={basics} onUpdate={onUpdateBasics} />
+      <ResumeName initName={resumeIn.name} onPrint={ onPrint } onUpdateResumeName={onUpdateResumeName} />
+      <PersonalInfo initialInfo={resumeIn.basics} key={resumeIn.basics} onUpdate={onUpdateBasics} />
+      <Summary summary={resumeIn.basics.summary} aiLoading={aiSummaryLoading} onUpdate={onUpdateSummary} onAiCall={handleSummaryAiCall} />
 
-      <Schools key={education} education={education} onSave={handleSaveEducation} onDelete={handleDeleteEducation} onReorder={handleSwapEducation}/>
-      <Jobs jobs={work} onSave={handleSaveWork} onDelete={handleDeleteWork} onSwap={handleSwapJobs}/>      
-      <Summary summary={basics?.summary || ""} aiLoading={aiSummaryLoading} onUpdate={onUpdateSummary} onAiCall={handleSummaryAiCall} />
-      <Skills initSkills={skills} aiLoading={aiSkillsLoading} onUpdate={onUpdateSkills} onAiCall={handleSkillsAiCall}/>
+      {resumeIn.sections.includes("Education") && (
+        <Schools 
+          key={resumeIn.education} 
+          education={resumeIn.education} 
+          onSave={handleSaveEducation} 
+          onDelete={handleDeleteEducation} 
+          onReorder={handleSwapEducation}
+        />
+      )}
+
+      {resumeIn.sections.includes("Work") && (
+        <Jobs 
+          key={resumeIn.work} 
+          jobs={resumeIn.work} 
+          onSave={handleSaveWork} 
+          onDelete={handleDeleteWork} 
+          onSwap={handleSwapJobs}
+      />)}
+
+      {resumeIn.sections.includes("Skills") && (
+        <Skills initSkills={resumeIn.skills} aiLoading={aiSkillsLoading} onUpdate={onUpdateSkills} onAiCall={handleSkillsAiCall}/>
+      )}
+      
+
+      <div className="form-container">
+        <div className={`p-4 flex flex-col items-center justify-center add-button`} onClick={() => {setSectionPopupOpen(!sectionPopupOpen)}}>
+          <AddCircleIcon fontSize="large"/>
+          <span>{"Add Section"}</span>
+        </div>
+      </div>
+
+      {sectionPopupOpen && (
+        <div>
+        <ButtonGridComponent onAdd={(sections) => {
+          onUpdateSections(sections);
+          setSectionPopupOpen(false);
+        }}
+          onClose={() => setSectionPopupOpen(false)}></ButtonGridComponent>
+        </div>
+      )}
 
        {/* Popup */}
        {popupOpen && <Popup message={`These fields will be filled in when clicking "Generate Resume"`} handleOk={() => setPopupOpen(false)} />}

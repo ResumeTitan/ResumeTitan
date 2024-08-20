@@ -3,7 +3,10 @@ import styled from 'styled-components';
 import Section from './Section';
 
 // Styled component
-const Summary = styled.p``;
+const Summary = styled.p`
+  padding-top: 0.4rem;
+  font-size: 1.0rem;
+`;
 
 // Define types for the props
 interface Basics {

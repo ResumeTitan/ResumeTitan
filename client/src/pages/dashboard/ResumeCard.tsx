@@ -1,15 +1,11 @@
 import React from 'react';
 import ResumeContainer from 'templates/ResumeContainer';
-import { ResumeType } from '../../types/types';
+import { ResumeTypeProps } from '../../types/types';
 
-interface ResumeCardProps {
-  resume: ResumeType;
-}
-
-const ResumeCard: React.FC<ResumeCardProps> = ({ resume }) => {
+const ResumeCard: React.FC<ResumeTypeProps> = ({ resume }) => {
   return (
     <div>
-      <ResumeContainer resume={resume} theme={resume.theme || 'onepage'} />
+      <ResumeContainer resume={resume} />
       <div>
         {resume.name}
       </div>
