@@ -42,7 +42,7 @@ const ButtonGridComponent: React.FC<ButtonGridProps> = ({ onAdd, onClose }) => {
     { label: 'Work', icon: <WorkIcon fontSize="large" /> },
     { label: 'Certificates', icon: <CardMembershipIcon fontSize="large" /> },
     { label: 'Languages', icon: <TranslateIcon fontSize="large" /> },
-    { label: 'Volunteering', icon: <VolunteerActivismIcon fontSize="large" /> },
+    { label: 'Volunteer', icon: <VolunteerActivismIcon fontSize="large" /> },
     { label: 'Awards', icon: <EmojiEventsIcon fontSize="large" /> },
     { label: 'Publications', icon: <LibraryBooksIcon fontSize="large" /> },
     { label: 'Projects', icon: <AssessmentIcon fontSize="large" /> },

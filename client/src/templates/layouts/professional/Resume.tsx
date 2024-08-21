@@ -3,6 +3,7 @@ import Projects from './Projects';
 import Basics from './Basics';
 import Education from './Education';
 import Work from './Work';
+import Volunteer from './Volunteer';
 import Certificates from './Certificates';
 import Publications from './Publications';
 import Awards from './Awards';
@@ -26,6 +27,7 @@ const sectionComponents = {
   Basics: Basics,
   Education: Education,
   Work: Work,
+  Volunteer: Volunteer,
   Projects: Projects,
   Certificates: Certificates,
   Publications: Publications,

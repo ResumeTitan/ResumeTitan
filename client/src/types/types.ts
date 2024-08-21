@@ -1,49 +1,5 @@
 import React from 'react';
 
-// TODO remove - Deprecated
-export interface IEducationType {
-  name: string;
-  area: string;
-  studyType: string;
-  startDate: string;
-  endDate: string;
-  endDateCurrent: boolean;
-  content?: string[];
-}
-
-export interface IWorkType {
-  name: string;
-  position: string;
-  startDate: string;
-  endDate: string;
-  endDateCurrent: boolean;
-  notes?: string;
-  content?: string[];
-}
-
-export interface IBasicsType {
-  name: string;
-  label?: string;
-  email?: string;
-  phone?: string;
-  city?: string;
-  url?: string;
-  summary?: string;
-}
-
-export interface IResumeType {
-  _id: string;
-  name?: string;
-  theme?: string;
-  basics: IBasicsType;
-  education?: IEducationType[];
-  work?: IWorkType[];
-  skills?: string[];
-  summary?: string;
-}
-
-// STOP TODO
-
 // Define the types for each section of the resume
 export interface BasicsType {
   name: string;
@@ -87,6 +43,17 @@ export interface WorkType {
   startDate: string;
   endDate: string;
   summary: string;
+  highlights: string[];
+}
+
+export interface VolunteerType {
+  id: number;
+  organization: string;
+  position: string;
+  url: string;
+  startDate: string;
+  endDate: string;
+  endDateCurrent: boolean;
   highlights: string[];
 }
 
@@ -151,6 +118,7 @@ export interface ResumeType {
   basics: BasicsType;
   education: EducationType[];
   work: WorkType[];
+  volunteer: VolunteerType[];
   projects: ProjectType[];
   certificates: CertificateType[];
   publications: PublicationType[];

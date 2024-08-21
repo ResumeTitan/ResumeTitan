@@ -121,6 +121,47 @@ const EducationSchema = new mongoose.Schema(
   }
 );
 
+const VolunteerSchema = new mongoose.Schema(
+  {
+    id: {
+      type: Number,
+      description: "School ID from the current resume",
+    },
+    organization: {
+      type: String,
+      description: "Name of the organization",
+    },
+    position: {
+      type: String,
+      description: "Position name",
+    },
+    url: {
+      type: String,
+      description: "Type of degree",
+    },
+    startDate: {
+      type: String,
+      description: "Start date",
+    },
+    endDate: {
+      type: String,
+      description: "End date",
+    },
+    endDateCurrent: {
+      type: Boolean,
+      description: "Is this school the current school",
+      default: false
+    },
+    highlights: {
+      type: Array,
+      items: {
+        type: String
+      },
+      description: "Highlights with AI generated content"
+    },
+  }
+);
+
 const SkillsSchema = new mongoose.Schema(
   {
     name: {
@@ -139,7 +180,7 @@ const SkillsSchema = new mongoose.Schema(
       description: "Other keywords for the skill"
     }
   }
-)
+);
 
 const ResumeSchema = new mongoose.Schema(
   {
@@ -158,6 +199,13 @@ const ResumeSchema = new mongoose.Schema(
       type: Array,
       items: {
         type: EducationSchema
+      },
+      default: []
+    },
+    volunteer: {
+      type: Array,
+      items: {
+        type: VolunteerSchema
       },
       default: []
     },

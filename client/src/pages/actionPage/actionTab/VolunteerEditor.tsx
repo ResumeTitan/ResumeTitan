@@ -6,108 +6,110 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import dayjs from 'dayjs';
 import StatePicker from 'components/StatePicker';
+import { VolunteerType } from 'types/types';
 import api from 'api/actions';
 import 'styles/index.css';
 
-function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
-  const [jobForm, setJobForm] = useState(editingJob);
-  const [aiLoading, setAiLoading] = useState(false);
-  const [startDate, setStartDate] = useState(new Date(editingJob.startDate) || new Date());
-  const [endDate, setEndDate] = useState(new Date(editingJob.endDate) || new Date());
-  const [endDateChecked, setEndDateChecked] = useState(editingJob.endDateCurrent || false);
+interface VolunteerEditorProps {
+  editingVolunteer: VolunteerType;
+  onSave: (volunteer: VolunteerType) => void;
+  onDelete: (id: number) => void;
+  onCancel: () => void;
+}
 
-  const handleSaveJob = () => {
-    jobForm.startDate = startDate.toString();
+const VolunteerEditor: React.FC<VolunteerEditorProps> = ({ editingVolunteer, onSave, onDelete, onCancel }) => {
+  const [volunteerForm, setVolunteerForm] = useState(editingVolunteer);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [startDate, setStartDate] = useState(new Date(editingVolunteer.startDate) || new Date());
+  const [endDate, setEndDate] = useState(new Date(editingVolunteer.endDate) || new Date());
+  const [endDateChecked, setEndDateChecked] = useState(editingVolunteer.endDateCurrent || false);
+
+  const handleSaveVolunteer = () => {
+    volunteerForm.startDate = startDate.toString();
     if (endDateChecked) {
-      jobForm.endDate = "";
+      volunteerForm.endDate = "";
     } else {
-      jobForm.endDate = endDate.toString();
+      volunteerForm.endDate = endDate.toString();
     }
-    onSave(jobForm);
-    setJobForm({});
+    onSave(volunteerForm);
   }
 
-  const handleDeleteJob = () => {
-    onDelete(jobForm.id || -1);
-    setJobForm({});
+  const handleDeleteVolunteer = () => {
+    onDelete(volunteerForm.id || -1);
   }
 
   const handleCancel = () => {
     onCancel();
-    setJobForm({});
   }
 
-  const handleJobChange = (e) => {
+  const handleVolunteerChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { id, value } = e.target;
-    setJobForm({ ...jobForm, [id]: value });
+    setVolunteerForm({ ...volunteerForm, [id]: value });
   }
 
-  const handleJobHighlightsChange = (highlights, index) => {
-    const newForm = { ...jobForm };
+  const handleVolunteerHighlightsChange = (highlights: string, index: number) => {
+    const newForm = { ...volunteerForm };
     newForm.highlights[index] = highlights;
-    setJobForm(newForm);
+    setVolunteerForm(newForm);
   }
 
-  const handleStateChange = (state) => {
-    setJobForm({ ...jobForm, state: state });
-  }
+  // const handleStateChange = (state: string) => {
+  //   setVolunteerForm({ ...volunteerForm, state: state });
+  // }
 
-  const handleHighlightsDelete = (index) => {
-    const newForm = { ...jobForm };
+  const handleHighlightsDelete = (index: number) => {
+    const newForm = { ...volunteerForm };
     newForm.highlights.splice(index, 1);
-    setJobForm(newForm);
+    setVolunteerForm(newForm);
   }
 
   const handleEndDateCurrent = () => {
     const endDateCurrent = !endDateChecked;
-    setJobForm({ ...jobForm, endDateCurrent: endDateCurrent });
+    setVolunteerForm({ ...volunteerForm, endDateCurrent: endDateCurrent });
     setEndDateChecked(!endDateChecked);
   }
 
   const handleHighlightAdd = () => {
-    if (!jobForm.highlights) {
-      setJobForm({ ...jobForm, highlights: [""] });
+    if (!volunteerForm.highlights) {
+      setVolunteerForm({ ...volunteerForm, highlights: [""] });
     } else {
-      setJobForm({ ...jobForm, highlights: [...jobForm.highlights, ""] });
+      setVolunteerForm({ ...volunteerForm, highlights: [...volunteerForm.highlights, ""] });
     }
   }
 
-  /**
-   * @function handleAiCall
-   */
   const handleAiCall = async () => {
     setAiLoading(true);
-    const jobResponse = await api.post("/resume/work", { job: jobForm });
-    setJobForm({ ...jobForm, highlights: jobResponse.data.response.highlights });
+    const volunteerResponse = await api.post("/resume/volunteer", { volunteer: volunteerForm });
+    setVolunteerForm({ ...volunteerForm, highlights: volunteerResponse.data.response.highlights });
     setAiLoading(false);
   }
 
   return (
     <div className={`${aiLoading ? "animate-pulse" : ""}`}>
       <div className="py-4">
-        <label htmlFor={"position"} className="form-label-text">Job Title</label>
+        <label htmlFor={"position"} className="form-label-text">Position</label>
         <input 
           type="text"
           id={"position"}
           className="form-style" 
-          placeholder="Enter job title..."
-          onChange={handleJobChange}
-          value={jobForm.position || ''}
+          placeholder="Enter volunteer position..."
+          onChange={handleVolunteerChange}
+          value={volunteerForm.position || ''}
           required />
       </div>
       <div className="my-6">
-        <label htmlFor={"name"} className="form-label-text">Employer/Organization</label>
+        <label htmlFor={"organization"} className="form-label-text">Organization</label>
         <input 
           type="text"
-          id={"name"}
+          id={"organization"}
           className="form-style"
-          placeholder="Enter name of employer..."
-          value={jobForm.name || ''}
-          onChange={handleJobChange}
+          placeholder="Enter organization name..."
+          value={volunteerForm.organization || ''}
+          onChange={handleVolunteerChange}
           required 
         />
       </div> 
-      <div className="mb-6 left-right-spacing phone-screen-stack">
+      {/* <div className="mb-6 left-right-spacing phone-screen-stack">
         <div className="w-full">
         <label htmlFor={"city"} className="form-label-text">City</label>
         <input 
@@ -115,24 +117,24 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
           id={"city"}
           className="form-style"
           placeholder="Enter city..."
-          value={jobForm.city || ''}
-          onChange={handleJobChange}
+          value={volunteerForm.city || ''}
+          onChange={handleVolunteerChange}
           required />
         </div>
         <div className="w-full">
         <label htmlFor={"state"} className="form-label-text">State</label>
-        <StatePicker onChange={handleStateChange} initState={jobForm.state || ""}/>
+        <StatePicker onChange={handleStateChange} initState={volunteerForm.state || ""}/>
         </div>
-      </div>
+      </div> */}
 
-      <div className="mb-6 justify-between phone-screen-stack">
+      {/* <div className="mb-6 justify-between phone-screen-stack">
         <div className="w-full">
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DemoContainer components={['DatePicker', 'DatePicker']}>
               <DatePicker
                 label="Start Date"
                 value={dayjs(startDate)}
-                onChange={(newValue) => {setStartDate(newValue.toString())}}
+                onChange={(newValue) => {setStartDate(newValue?.toString() || "");}}
               />
             </DemoContainer>
           </LocalizationProvider>
@@ -144,7 +146,7 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
               <DatePicker
                 label="End Date"
                 value={dayjs(endDate)}
-                onChange={(newValue) => {setEndDate(newValue.toString())}}
+                onChange={(newValue) => {setEndDate(newValue?.toString() || "");}}
                 disabled={endDateChecked}
               />
             </DemoContainer>
@@ -163,12 +165,12 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
             </label>
           </div>
         </div>
-      </div>
+      </div> */}
 
       <div className="m-2">
         <div className="left-right-spacing my-2">
           <div className="flex items-center">
-            <label htmlFor={"jobHighlights"} className="form-label-text">Highlights</label>
+            <label htmlFor={"volunteerHighlights"} className="form-label-text">Highlights</label>
           </div>
           
           <div className="phone-screen-stack">
@@ -189,16 +191,15 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
             </button>
           </div>
         </div>
-        {jobForm.highlights ? jobForm.highlights.map((item, index) => (
+        {volunteerForm.highlights ? volunteerForm.highlights.map((item, index) => (
           <div className="left-right-spacing">
             <div className="w-full pr-2 py-1">
               <textarea 
-                type="text"
-                id={"jobHighlights"}
+                id={"volunteerHighlights"}
                 className="form-style flex-wrap h-24 lg:h-16"
-                placeholder="Enter highlights from work..."
+                placeholder="Enter highlights from volunteer work..."
                 value={item}
-                onChange={(e) => handleJobHighlightsChange(e.target.value, index)}
+                onChange={(e) => handleVolunteerHighlightsChange(e.target.value, index)}
                 required 
               />
             </div>
@@ -216,7 +217,6 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
           <div className="left-right-spacing">
             <div className="w-full pr-2 py-1">
               <textarea 
-                type="text"
                 className="form-style flex-wrap h-24 lg:h-16 text-black"
                 placeholder="Click add to start adding highlights..."
                 disabled
@@ -228,9 +228,9 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
 
       <div className="left-right-spacing">
         <button
-          disabled={!jobForm.id}
-          className={`${jobForm.id ? "remove-button" : "disabled-button"}`}
-          onClick={handleDeleteJob}
+          disabled={!volunteerForm.id}
+          className={`${volunteerForm.id ? "remove-button" : "disabled-button"}`}
+          onClick={handleDeleteVolunteer}
         >
           {"Delete"}
         </button>
@@ -242,7 +242,7 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
         </button>
         <button
           className="add-button-small"
-          onClick={handleSaveJob}
+          onClick={handleSaveVolunteer}
         >
           {"Save"}
         </button>
@@ -251,4 +251,4 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
   );
 }
 
-export default JobEditor;
+export default VolunteerEditor;

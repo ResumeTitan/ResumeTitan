@@ -1,7 +1,7 @@
 import { Response, Request } from 'express';
 import Resume from '../models/Resume';
 import { z } from "zod";
-import { IResumeType } from "../types/types";
+import { ResumeType } from "../types/types";
 import { openAiClient } from '../ext/clients';
 import { ServerStyleSheet } from 'styled-components';
 import puppeteer from 'puppeteer';
@@ -19,7 +19,17 @@ const EducationSchema = z.object({
   extraHighlights: z.array(z.string())
 });
 
-const JobSchema = z.object({
+const VolunteerSchema = z.object({
+  organization: z.string(),
+  position: z.string(),
+  url: z.string(),
+  startDate: z.string(),
+  endDate: z.string(),
+  highlights: z.array(z.string()),
+  extraHighlights: z.array(z.string())
+});
+
+const WorkSchema = z.object({
   position: z.string(),
   name: z.string(),
   startDate: z.string(),
@@ -44,15 +54,16 @@ const SummarySchema = z.object({
 const ResumeDataSchema = z.object({
   summary: z.string(),
   education: z.array(EducationSchema).optional(),
-  jobs: z.array(JobSchema).optional(),
+  work: z.array(WorkSchema).optional(),
   skills: SkillsSchema.optional()
 });
 
-const resumeData: IResumeType = {};
+const resumeData: ResumeType = {};
 
 const summaryModel = openAiClient.withStructuredOutput(SummarySchema);
 const educationModel = openAiClient.withStructuredOutput(EducationSchema);
-const jobModel = openAiClient.withStructuredOutput(JobSchema);
+const volunteerModel = openAiClient.withStructuredOutput(VolunteerSchema);
+const workModel = openAiClient.withStructuredOutput(WorkSchema);
 const skillsModel = openAiClient.withStructuredOutput(SkillsSchema);
 const resumeModel = openAiClient.withStructuredOutput(ResumeDataSchema);
 
@@ -78,30 +89,41 @@ const getPrompt = (section: string, data: any) => {
           These strings should include keywords that would score well on an ATS system.
           This content should not repeat the name of the school.
           Be sure to fix any spelling or grammar mistakes if there is existing content being passed in.`;
-    case 'job':
-      return prompt + `Generate a JSON representation of the job experience section for a resume using this information: ${JSON.stringify(data)}
+    case 'work':
+      return prompt + `Generate a JSON representation of the work experience section for a resume using this information: ${JSON.stringify(data)}
           Use this information only, and not previous information entered.
           The response shall include an array of strings with highlights an employee has.
           Include at least 4 strings, in full sentences, in both highlights and extraHighlights that could be used on the resume for this person.
           These strings should include keywords that would score well on an ATS system.
           This content should not repeat the name of the employer. 
-          If content already exists, generate new content that would be associated with the job title entered.
-          Be sure to fix any spelling or grammar mistakes if there is existing content being passed in.`;
+          If highlights already exists, generate new highlights that would be associated with the job title entered.
+          Be sure to fix any spelling or grammar mistakes if there is existing highlights being passed in.`;
+    case 'volunteer':
+      return prompt + `Generate a JSON representation of the volunteer section for a resume using this information: ${JSON.stringify(data)}
+          Use this information only, and not previous information entered.
+          The response shall include an array of strings with highlights a volunteer has.
+          Include at least 4 strings, in full sentences, in both highlights and extraHighlights that could be used on the resume for this person.
+          These strings should include keywords that would score well on an ATS system.
+          This content should not repeat the name of the volunteer opportunity. 
+          If highlights already exists, generate new highlights that would be associated with the job title entered.
+          Be sure to fix any spelling or grammar mistakes if there is existing highlights being passed in.`;
     case 'skills':
       return prompt + `Generate a JSON representation of the skills section for a resume: ${JSON.stringify(data)}.
           Use this information only, and not previous information entered.
           Provide relevant skills given the data provided.
-          Return between 4 and 8 skills that would be associated with the job titles, education, and summary entered.`;
+          Return between 4 and 8 skills that would be associated with the work titles, education, volunteer, and summary entered.`;
     default:
       return '';
   }
 };
 
 export const postSummary = async (req: Request, res: Response) => {
-  const { summary, work, education, skills } = req.body;
-  resumeData.summary = summary;
+  const { summary, work, education, skills, volunteer } = req.body;
+  resumeData.basics.summary = summary;
 
-  const gptResponse = await summaryModel.invoke(getPrompt('summary', {  extraNotes: summary, work, education, skills }));
+  const gptResponse = await summaryModel.invoke(getPrompt('summary', { 
+    extraNotes: summary, work, education, skills, volunteer
+  }));
 
   res.status(200).json({ message: 'Summary information added successfully', response: gptResponse });
 };
@@ -122,34 +144,65 @@ export const postEducation = async (req: Request, res: Response) => {
   }
 };
 
-export const postJob = async (req: Request, res: Response) => {
+/**
+ * @function postWork
+ * @description POST Handle AI call for work highlights
+ * @param {Request} req
+ * @param {Response} res
+ */
+export const postWork = async (req: Request, res: Response) => {
   const { job } = req.body;
   if (!resumeData.work) {
     resumeData.work = [];
   }
   resumeData.work.push(job);
 
-  const gptResponse = await jobModel.invoke(getPrompt('job', job));
+  const gptResponse = await workModel.invoke(getPrompt('work', job));
 
   res.status(200).json({ message: 'Job information added successfully', response: gptResponse });
 }
 
+/**
+ * @function postVolunteer
+ * @description POST Handle AI call for volunteer highlights
+ * @param {Request} req
+ * @param {Response} res
+ */
+export const postVolunteer = async (req: Request, res: Response) => {
+  const { vol } = req.body;
+  if (!resumeData.volunteer) {
+    resumeData.volunteer = [];
+  }
+  resumeData.volunteer.push(vol);
+
+  const gptResponse = await workModel.invoke(getPrompt('volunteer', vol));
+
+  res.status(200).json({ message: 'Volunteer information added successfully', response: gptResponse });
+}
+
 export const postSkills = async (req: Request, res: Response) => {
-  const { skills, work, education, summary } = req.body;
+  const { skills, work, education, summary, volunteer } = req.body;
   resumeData.skills = skills;
 
-  const gptResponse = await skillsModel.invoke(getPrompt('skills', { skills, work, education, summary }));
+  const gptResponse = await skillsModel.invoke(getPrompt('skills', { skills, work, education, summary, volunteer }));
 
   res.status(200).json({ message: 'Skills information added successfully', response: gptResponse });
 }
 
 export const postResume = async (req: Request, res: Response) => {
-  const gptResponse = await resumeModel.invoke(`Generate a complete JSON resume with the following information: ${JSON.stringify(resumeData)}`);
+  const gptResponse = await resumeModel.invoke(
+    `Generate a complete JSON resume with the following information: ${JSON.stringify(resumeData)}`
+  );
 
   res.status(200).json({ resume: gptResponse });
 };
 
-/* Update resume from input */
+/**
+ * @function updateResume
+ * @description PUT Update resume from user edits
+ * @param {Request} req
+ * @param {Response} res
+ */
 export const updateResume = async (req: Request, res: Response) => {
   try {
     const resume = req.body;

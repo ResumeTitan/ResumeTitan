@@ -60,6 +60,7 @@ function ActionPage() {
     education: [],
     work: [],
     skills: [],
+    volunteer: [],
 
     theme: "professional", 
     sections: ["Basics"],
@@ -251,6 +252,10 @@ function ActionPage() {
             onUpdateEducation={(schoolsIn) => setCurrentResume({
               ...currentResume,
               education: schoolsIn
+            })}
+            onUpdateVolunteer={(volunteerIn) => setCurrentResume({
+              ...currentResume,
+              volunteer: volunteerIn
             })}
             onUpdateSkills={(skillsIn) => setCurrentResume({
               ...currentResume,

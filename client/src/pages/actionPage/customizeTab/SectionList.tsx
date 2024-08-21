@@ -24,7 +24,7 @@ const SectionList: React.FC<SectionListProps> = ({ sections, saveSections }) => 
     Projects: <AssessmentIcon fontSize="large" />,
     Certificates: <CardMembershipIcon fontSize="large" />,
     Publications: <LibraryBooksIcon fontSize="large" />,
-    Volunteering: <VolunteerActivismIcon fontSize="large" />,
+    Volunteer: <VolunteerActivismIcon fontSize="large" />,
     Awards: <EmojiEventsIcon fontSize="large" />,
     Languages: <TranslateIcon fontSize="large" />,
     Skills: <BuildIcon fontSize="large" />,

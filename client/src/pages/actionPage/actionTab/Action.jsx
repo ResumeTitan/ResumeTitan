@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import ResumeName from './ResumeName';
 import PersonalInfo from './PersonalInfo';
 import Schools from './Schools';
+import Volunteers from './Volunteer';
 import Jobs from './Jobs';
 import Skills from './Skills';
 import Summary from './Summary';
@@ -17,6 +18,7 @@ function ActionTab({
   onUpdateResumeName,
   onPrint,
   onUpdateWork, 
+  onUpdateVolunteer,
   onUpdateEducation, 
   onUpdateBasics, 
   onUpdateSkills,
@@ -65,9 +67,32 @@ function ActionTab({
     }
   }
 
+  const handleSaveVolunteer = (volunteerForm) => {
+    if (volunteerForm.id) {
+      const updatedVolunteer = resumeIn.volunteer.map((vol) => {
+        if (vol.id === volunteerForm.id) {
+          return volunteerForm;
+        } else { 
+          return vol;
+        }
+      });
+
+      console.log(updatedVolunteer);
+      onUpdateVolunteer(updatedVolunteer);
+    } else {
+      volunteerForm.id = resumeIn.work.length + 1;
+      onUpdateVolunteer([...resumeIn.volunteer, volunteerForm]);
+    }
+  }
+
   const handleDeleteWork = (id) => {
     const updatedWork = resumeIn.work.filter((job) => job.id !== id);
     onUpdateWork(updatedWork);
+  }
+
+  const handleDeleteVolunteer = (id) => {
+    const updatedVolunteer = resumeIn.volunteer.filter((volunteer) => volunteer.id !== id);
+    onUpdateVolunteer(updatedVolunteer);
   }
 
   const handleSaveEducation = (educationForm) => {
@@ -115,7 +140,6 @@ function ActionTab({
 
       {resumeIn.sections.includes("Education") && (
         <Schools 
-          key={resumeIn.education} 
           education={resumeIn.education} 
           onSave={handleSaveEducation} 
           onDelete={handleDeleteEducation} 
@@ -125,11 +149,17 @@ function ActionTab({
 
       {resumeIn.sections.includes("Work") && (
         <Jobs 
-          key={resumeIn.work} 
           jobs={resumeIn.work} 
           onSave={handleSaveWork} 
           onDelete={handleDeleteWork} 
           onSwap={handleSwapJobs}
+      />)}
+
+      {resumeIn.sections.includes("Volunteer") && (
+        <Volunteers 
+          volunteerExperience={resumeIn.volunteer} 
+          onSave={handleSaveVolunteer}
+          onDelete={handleDeleteVolunteer}
       />)}
 
       {resumeIn.sections.includes("Skills") && (

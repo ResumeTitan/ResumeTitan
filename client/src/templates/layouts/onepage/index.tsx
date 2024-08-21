@@ -10,7 +10,7 @@ import Work from "./partials/work";
 // import Projects from "./Projects";
 // import Certificates from "./Certificates";
 // import Awards from "./Awards";
-// import Volunteer from "./Volunteer";
+import Volunteer from "./partials/Volunteer";
 // import Languages from "./Languages";
 // import Interests from "./Interests";
 // import References from "./References";
@@ -30,6 +30,7 @@ const sectionComponents = {
   Basics: Basics,
   Education: Education,
   Work: Work,
+  Volunteer: Volunteer,
   // Projects: Projects,
   // Certificates: Certificates,
   // Publications: Publications,
