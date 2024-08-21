@@ -63,7 +63,7 @@ const BasicsComponent: React.FC<BasicsComponentProps> = ({ basics }) => {
       <Title>{name}</Title>
       <div className="secondary">
         <BasicInfo>
-          {location.city && (
+          {location && location.city && (
             <Info>
               <FaMapPin />
               {location.city}, {location.countryCode}
