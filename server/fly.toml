@@ -16,7 +16,7 @@ primary_region = "iad"
 
 [[vm]]
   size = "shared-cpu-2x"
-  memory = "8gb"
+  memory = "4gb"
   cpus = 4
   cpu_kind = "performance"
   kernel_args = ["no-hlt=true"]

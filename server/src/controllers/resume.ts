@@ -5,9 +5,8 @@ import { IResumeType } from "@/types/types";
 import { openAiClient } from '@/ext/clients';
 import { ServerStyleSheet } from 'styled-components';
 import puppeteer from 'puppeteer';
-import "dotenv/config";
-import { crossOriginResourcePolicy } from 'helmet';
 
+import "dotenv/config";
 const CLIENT_URL = process.env.CLIENT_URL;
 
 const EducationSchema = z.object({
