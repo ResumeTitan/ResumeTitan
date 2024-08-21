@@ -31,12 +31,38 @@ interface SchoolEditorProps {
   onCancel: () => void;
 }
 
+const suggestions = [
+  "Keep the top two highlights the same, but change the bottom two",
+  "Make the first highlight longer",
+  "Check the spelling and grammer in the third highlight",
+];
+
 function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }: SchoolEditorProps) {
   const [schoolForm, setSchoolForm] = useState<EducationType>(editingSchool);
   const [aiLoading, setAiLoading] = useState<boolean>(false);
   const [startDate, setStartDate] = useState<Dayjs>(dayjs(editingSchool.startDate || new Date()));
   const [endDate, setEndDate] = useState<Dayjs>(dayjs(editingSchool.endDate || new Date()));
+  const [aiAssistant, showAiAssistant] = useState<boolean>(false);
+  const [aiAssistantMsg, setAiAssistantMsg] = useState<string>('');
   const [endDateChecked, setEndDateChecked] = useState<boolean>(editingSchool.endDateCurrent || false);
+  const [placeholder, setPlaceholder] = useState<string>("");
+  const [isPlaceholderActive, setIsPlaceholderActive] = useState<boolean>(false);
+
+  React.useEffect(() => {
+    if (aiAssistant) {
+      let index = 0;
+      const interval = setInterval(() => {
+        setIsPlaceholderActive(false); // Trigger the roll-up animation
+        setTimeout(() => {
+          setPlaceholder(suggestions[index]); // Change the placeholder text
+          setIsPlaceholderActive(true); // Trigger the roll-down animation
+          index = (index + 1) % suggestions.length;
+        }, 300); // Delay to sync with roll-up animation
+      }, 3000); // Change placeholder every 3 seconds
+
+      return () => clearInterval(interval); // Cleanup on unmount
+    }
+  }, [aiAssistant]);
 
   const handleSaveSchool = () => {
     const updatedSchool = {
@@ -103,7 +129,29 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }: SchoolEdito
   const handleAiCall = async () => {
     setAiLoading(true);
     try {
+      console.log(schoolForm.highlights);
       const schoolResponse = await api.post("/resume/education", { education: schoolForm });
+      setSchoolForm(prev => ({ ...prev, highlights: schoolResponse.data.response.highlights }));
+    } catch (error) {
+      console.error("Error calling AI:", error);
+    } finally {
+      setAiLoading(false);
+    }
+  }
+
+  const handleAiAssistCall = async () => {
+    const newForm = { ...schoolForm };
+
+    if (newForm.highlights) {
+      newForm.highlights = [...newForm.highlights, aiAssistantMsg];
+    } else {
+      newForm.highlights = [aiAssistantMsg];
+    }
+  
+    setAiLoading(true);
+    try {
+      console.log(schoolForm.highlights);
+      const schoolResponse = await api.post("/resume/education", { education: newForm });
       setSchoolForm(prev => ({ ...prev, highlights: schoolResponse.data.response.highlights }));
     } catch (error) {
       console.error("Error calling AI:", error);
@@ -120,7 +168,7 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }: SchoolEdito
           type="text"
           id={"institution"}
           className="form-style" 
-          placeholder="Enter school name..."
+          placeholder={"Enter school name..."}
           onChange={handleSchoolChange}
           value={schoolForm.institution || ''}
           required 
@@ -201,7 +249,7 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }: SchoolEdito
         </div>
       </div>
 
-      <div className="m-2">
+      <div>
         <div className="left-right-spacing flex my-2">
           <div className="flex items-center">
             <label htmlFor={"schoolHighlights"} className="form-label-text">Highlights</label>
@@ -209,7 +257,16 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }: SchoolEdito
 
           <div className="phone-screen-stack">
             <button
-              className="green-button order-last xs:order-first p-2 my-1"
+              className="green-button flex items-center justify-center h-12 px-4 py-2 rounded-lg cursor-pointer"
+              onClick={() => showAiAssistant(!aiAssistant)}
+            >
+              <div>
+                <AutoAwesomeIcon className="pr-2"/>
+                <span>AI Assistant</span>
+              </div>
+            </button>
+            <button
+              className="green-button flex items-center justify-center h-12 px-4 py-2 rounded-lg cursor-pointer"
               onClick={handleAiCall}
             >
               <div>
@@ -218,7 +275,7 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }: SchoolEdito
               </div>
             </button>
             <button
-              className="green-button order-first xs:order-last p-2 my-1"
+              className="green-button flex items-center justify-center h-12 px-4 py-2 rounded-lg cursor-pointer"
               onClick={handleHighlightAdd}
             >
               Add
@@ -255,6 +312,29 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }: SchoolEdito
               placeholder="Click add to start adding accomplishments/skills..."
               disabled
             />
+          </div>
+        </div>
+        )}
+
+        {aiAssistant && (
+        <div className="flex flex-col my-4 animate-fade-in">
+          <div className="section-line" />
+          <div className="flex-center">
+            <div className={`w-full input-placeholder ${isPlaceholderActive ? 'active' : ''}`}>
+              <input 
+                type="text"
+                className="form-style flex-grow mr-2"
+                placeholder={placeholder}
+                value={aiAssistantMsg}
+                onChange={(e) => setAiAssistantMsg(e.target.value)}
+              />
+            </div>
+          <button
+            className="green-button p-1"
+            onClick={handleAiAssistCall}
+          >
+            Edit with AI
+          </button>
           </div>
         </div>
         )}

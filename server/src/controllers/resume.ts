@@ -74,6 +74,7 @@ const getPrompt = (section: string, data: any) => {
           The response shall include an array of strings with highlights a student has.
           Include at least 4 strings, in full sentences, in both highlights and extraHighlights that could be used on the resume for this person.
           If no highlights are found, create some that would be associated with the major/area of study entered.
+          If highlights include instructions on how to create the other highlights, use those instructions as well as you can.
           These strings should include keywords that would score well on an ATS system.
           This content should not repeat the name of the school.
           Be sure to fix any spelling or grammar mistakes if there is existing content being passed in.`;
@@ -109,6 +110,8 @@ export const postEducation = async (req: Request, res: Response) => {
   try {
     const { education } = req.body;
     resumeData.education = education;
+
+    console.log(education);
 
     const gptResponse = await educationModel.invoke(getPrompt('education', education));
 

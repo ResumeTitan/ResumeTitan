@@ -79,7 +79,7 @@ body {
 }
 
 .green-button {
-  @apply text-white text-center font-medium rounded-lg text-sm font-bold sm:py-1 sm:px-4 sm:mx-1 border-2 border-black text-black
+  @apply text-white text-center font-medium rounded-lg text-sm font-bold sm:py-1 sm:px-4 border-2 border-black text-black mx-1
     hover:bg-teal-800 hover:cursor-pointer hover:border-main-green hover:text-white
     transition ease-in-out duration-300;
 }
@@ -200,7 +200,7 @@ body {
 }
 
 .phone-screen-stack {
-  @apply flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-4
+  @apply flex flex-col sm:flex-row items-center align-middle;
 }
 
 .cover-letter-container {
@@ -279,4 +279,22 @@ body {
 
 .animate-slideUp {
   animation: slideUp 0.5s ease-out forwards;
+}
+
+.section-line {
+  border-width: 1px;
+  border-color: #000000;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+@keyframes rollDown {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
 }
