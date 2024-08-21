@@ -91,7 +91,7 @@ const getPrompt = (section: string, data: any) => {
       return prompt + `Generate a JSON representation of the skills section for a resume: ${JSON.stringify(data)}.
           Use this information only, and not previous information entered.
           Provide relevant skills given the data provided.
-          Return between 6 and 10 skills that would be associated with the job titles, education, and summary entered.`;
+          Return between 4 and 8 skills that would be associated with the job titles, education, and summary entered.`;
     default:
       return '';
   }

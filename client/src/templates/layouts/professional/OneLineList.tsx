@@ -3,18 +3,21 @@ import styled from 'styled-components';
 
 const Name = styled.div`
   font-weight: 600;
-  font-size: 1.1rem;
+  font-size: 1rem;
 `;
 
 const List = styled.div`
-  font-size: 1.0rem;
+  font-weight: 200;
+  font-size: 0.9rem;
   margin-left: 5px;
+  flex-grow: 1;
 `;
 
 const Container = styled.div`
   margin-bottom: 5px;
   display: flex;
   align-items: baseline;
+  justify-content: space-between;
 `;
 
 interface OneLineListProps {
@@ -25,10 +28,11 @@ interface OneLineListProps {
 const OneLineList: React.FC<OneLineListProps> = ({ name, items }) => {
   return (
     <Container>
-      <Name>{name}:</Name>
+      <Name>{name}:
       <List>
-        <div className="secondary">{items.join(' / ')}</div>
+        <div>{items.join(' / ')}</div>
       </List>
+      </Name>
     </Container>
   );
 };

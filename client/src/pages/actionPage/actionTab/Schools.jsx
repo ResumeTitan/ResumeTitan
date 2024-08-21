@@ -42,7 +42,7 @@ function Schools({ education, onSave, onDelete, onReorder }) {
 
   return (
     <div className="form-container">
-      <div className="form-text-main">{"School Info"}</div>
+      <div className="form-text-main">{"Education"}</div>
       {isEditing && editingForm}
 
       {!isEditing && (

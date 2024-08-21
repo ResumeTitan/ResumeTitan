@@ -24,7 +24,7 @@ interface SkillsProps {
 const Skills: React.FC<SkillsProps> = ({ initSkills, aiLoading, onUpdate, onAiCall }) => {
   const [skills, setSkills] = useState<SkillType[]>([]);
   const [isEditing, setIsEditing] = useState<boolean>(false);
-  const [newKeyword, setNewKeyword] = useState<string>('');
+  const [newKeywords, setNewKeywords] = useState<string[]>([]);
 
   /**
    * @function handleSkillsChange
@@ -65,11 +65,12 @@ const Skills: React.FC<SkillsProps> = ({ initSkills, aiLoading, onUpdate, onAiCa
    * @param {number} skillIndex - The index of the skill to add the keyword to.
    */
   const handleAddKeyword = (skillIndex: number) => {
-    if (newKeyword.trim()) {
+    const keyword = newKeywords[skillIndex];
+    if (keyword.trim()) {
       const newSkills = [...skills];
-      newSkills[skillIndex].keywords.push(newKeyword.trim());
+      newSkills[skillIndex].keywords.push(keyword.trim());
       setSkills(newSkills);
-      setNewKeyword('');
+      setNewKeywords([...newKeywords, keyword]);
     }
   }
 
@@ -106,24 +107,24 @@ const Skills: React.FC<SkillsProps> = ({ initSkills, aiLoading, onUpdate, onAiCa
     <div className={`${aiLoading ? "animate-pulse" : ""} form-container`}>
       <div className="form-single-header" onClick={() => {setIsEditing(true)}}>{"Skills"}</div>
 
-      {isEditing && (
+      {isEditing ? (
         <div className="p-4">
           <div className="flex justify-between mb-4">
             <button
-              className="green-button p-1"
+              className="green-button p-4 text-xl"
               onClick={handleSaveSkills}
             >
               {"Save"}
             </button>
             <div className="flex justify-center">
               <button
-                className="green-button p-1 mr-1"
+                className="green-button p-4"
                 onClick={handleAddSkills}
               >
                 {"Add Skill"}
               </button>
               <button
-                className="green-button p-1"
+                className="green-button p-4"
                 onClick={onAiCall}
               >
                 <div>
@@ -133,17 +134,61 @@ const Skills: React.FC<SkillsProps> = ({ initSkills, aiLoading, onUpdate, onAiCa
               </button>
             </div>
           </div>
-          <div className="w-full">
+          <div className="flex flex-col justify-between">
           {skills.map((skill, skillIndex) => (
-            <div key={skillIndex} className="mb-4 p-4 border rounded">
+            <div key={skillIndex} className="mb-2 p-4 border rounded">
+              <div className="flex flex-row">
               <input 
-                type="text"
-                className="form-style mb-2"
-                placeholder="Skill Name"
-                value={skill.name}
-                onChange={(e) => handleSkillsChange(e, skillIndex, 'name')}
-                required 
-              />
+                  type="text"
+                  className="form-style mb-1"
+                  placeholder="Skill Name"
+                  value={skill.name}
+                  onChange={(e) => handleSkillsChange(e, skillIndex, 'name')}
+                  required 
+                />
+
+              </div>
+              <div className="flex mb-4">
+                <input 
+                  type="text"
+                  className="form-style mr-2 p-2"
+                  placeholder="New Keyword"
+                  value={newKeywords[skillIndex]}
+                  onChange={(e) => {
+                    const keywordsIn = [...newKeywords];
+                    keywordsIn[skillIndex] = e.target.value
+                    console.log(keywordsIn[skillIndex]);
+                    setNewKeywords(keywordsIn);
+                    console.log(newKeywords[skillIndex]);
+                  }}
+                />
+                <button
+                  className="green-button whitespace-nowrap"
+                  onClick={() => handleAddKeyword(skillIndex)}
+                >
+                  Add Keyword
+                </button>
+              </div>
+              <div className="flex flex-wrap mb-1">
+              {skill.keywords.map((keyword, keywordIndex) => (
+                <div className="py-2 pr-2">
+                <span 
+                  key={keywordIndex} 
+                  className="bg-lighter-green text-dark-green px-2 py-1 rounded cursor-pointer"
+                  onClick={() => handleDeleteKeyword(skillIndex, keywordIndex)}
+                >
+                  {keyword} ✕
+                </span>
+                </div>
+              ))}
+              <button
+                  className="remove-content-button whitespace-nowrap my-2"
+                  onClick={() => handleSkillsDelete(skillIndex)}
+                >
+                  Delete Skill
+                </button>
+              </div>
+
               {/* <input 
                 type="text"
                 className="form-style mb-2"
@@ -152,44 +197,18 @@ const Skills: React.FC<SkillsProps> = ({ initSkills, aiLoading, onUpdate, onAiCa
                 onChange={(e) => handleSkillsChange(e, skillIndex, 'level')}
                 required 
               /> */}
-              <div className="mb-2">
-                <div className="flex flex-wrap mb-2">
-                  {skill.keywords.map((keyword, keywordIndex) => (
-                    <span 
-                      key={keywordIndex} 
-                      className="bg-lighter-green text-dark-green px-2 py-1 rounded mr-2 mb-2 cursor-pointer"
-                      onClick={() => handleDeleteKeyword(skillIndex, keywordIndex)}
-                    >
-                      {keyword} ✕
-                    </span>
-                  ))}
-                </div>
-                <div className="flex">
-                  <input 
-                    type="text"
-                    className="form-style flex-grow mr-2"
-                    placeholder="New Keyword"
-                    value={newKeyword}
-                    onChange={(e) => setNewKeyword(e.target.value)}
-                  />
-                  <button
-                    className="green-button p-1"
-                    onClick={() => handleAddKeyword(skillIndex)}
-                  >
-                    Add Keyword
-                  </button>
-                </div>
-              </div>
-              <button
-                className="remove-content-button"
-                onClick={() => handleSkillsDelete(skillIndex)}
-              >
-                Delete Skill
-              </button>
             </div>
           ))}
           </div>
         </div>
+      ) : (
+        <>
+          {skills && (
+            <div className="form-secondary-area" onClick={() => {setIsEditing(true)}}>
+              {skills.map(skill => skill.name).join(", ")}
+            </div>
+          )}
+        </>
       )}
     </div>
   );

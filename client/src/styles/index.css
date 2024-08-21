@@ -64,7 +64,7 @@ body {
 }
 
 .form-text-main {
-  @apply bg-main-green text-white font-bold border-b-2 border-black rounded-t p-4
+  @apply bg-main-green text-white font-bold border-b-2 border-black rounded-t p-4 text-2xl
 }
 
 .form-secondary-area {
@@ -73,13 +73,13 @@ body {
 }
 
 .form-single-header {
-  @apply bg-main-green text-white font-bold border-b-2 border-black rounded-t p-4
+  @apply bg-main-green text-white font-bold border-b-2 border-black rounded-t p-4 text-2xl
     hover:bg-gray-300 hover:text-main-green hover:cursor-pointer 
     transition ease-in-out duration-300;
 }
 
 .green-button {
-  @apply text-white text-center font-medium rounded-lg text-sm font-bold sm:py-1 sm:px-4 border-2 border-black text-black mx-1
+  @apply text-white text-center font-medium rounded-lg text-base font-bold sm:py-1 sm:px-4 border-2 border-black text-black mx-1
     hover:bg-teal-800 hover:cursor-pointer hover:border-main-green hover:text-white
     transition ease-in-out duration-300;
 }
@@ -98,13 +98,13 @@ body {
 }
 
 .remove-button {
-  @apply text-black border-2 border-black text-center font-medium rounded-lg text-sm px-5 py-2.5 m-1
+  @apply text-black border-2 border-black text-center font-medium rounded-lg text-xl px-5 py-2.5 m-1
     hover:bg-red-800 hover:text-white hover:cursor-pointer
     transition ease-in-out duration-300;
 }
 
 .disabled-button {
-  @apply text-slate-400 border-2 border-slate-400 text-center font-medium rounded-lg text-sm px-5 py-2.5 m-1;
+  @apply text-slate-400 border-2 border-slate-400 text-center font-medium rounded-lg text-xl px-5 py-2.5 m-1;
 }
 
 .add-button {
@@ -114,7 +114,7 @@ body {
 }
 
 .add-button-small {
-  @apply border-2 border-black text-black text-center font-medium rounded-lg text-sm px-5 py-2.5 m-1
+  @apply border-2 border-black text-black text-center font-medium rounded-lg text-xl px-5 py-2.5 m-1
   hover:bg-teal-800 hover:text-white hover:cursor-pointer
   transition ease-in-out duration-200;
 }
@@ -161,7 +161,7 @@ body {
 }
 
 .form-label-text {
-  @apply mb-2 text-base font-medium text-black
+  @apply mb-2 text-lg font-medium text-black
 }
 
 .login-button {
@@ -200,7 +200,7 @@ body {
 }
 
 .phone-screen-stack {
-  @apply flex flex-col sm:flex-row items-center align-middle;
+  @apply flex flex-row items-center align-middle;
 }
 
 .cover-letter-container {

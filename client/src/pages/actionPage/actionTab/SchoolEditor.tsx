@@ -32,9 +32,13 @@ interface SchoolEditorProps {
 }
 
 const suggestions = [
-  "Keep the top two highlights the same, but change the bottom two",
-  "Make the first highlight longer",
-  "Check the spelling and grammer in the third highlight",
+  "Check the spelling and grammar of the second highlight",
+  "Revise the top two highlights to make them more concise and impactful",
+  "Add quantifiable results to the first highlight to better showcase accomplishments",
+  "Remove any vague or non-specific terms from the third highlight",
+  "Add quantifiable results to the first highlight to better showcase accomplishments",
+  "Reorder the highlights to ensure the most impressive achievements are listed first",
+  "Shorten the second highlight while retaining its key points to improve readability"
 ];
 
 function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }: SchoolEditorProps) {
@@ -45,7 +49,7 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }: SchoolEdito
   const [aiAssistant, showAiAssistant] = useState<boolean>(false);
   const [aiAssistantMsg, setAiAssistantMsg] = useState<string>('');
   const [endDateChecked, setEndDateChecked] = useState<boolean>(editingSchool.endDateCurrent || false);
-  const [placeholder, setPlaceholder] = useState<string>("");
+  const [placeholder, setPlaceholder] = useState<string>("Ensure that all four highlights follow a consistent format and tone");
   const [isPlaceholderActive, setIsPlaceholderActive] = useState<boolean>(false);
 
   React.useEffect(() => {
@@ -58,7 +62,7 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }: SchoolEdito
           setIsPlaceholderActive(true); // Trigger the roll-down animation
           index = (index + 1) % suggestions.length;
         }, 300); // Delay to sync with roll-up animation
-      }, 3000); // Change placeholder every 3 seconds
+      }, 5000); // Change placeholder every 3 seconds
 
       return () => clearInterval(interval); // Cleanup on unmount
     }
@@ -163,7 +167,7 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }: SchoolEdito
   return (
     <div className={`${aiLoading ? "animate-pulse" : ""}`}>
       <div className="py-4">
-        <label htmlFor={"institution"} className="form-label-text">School Name</label>
+        <label htmlFor={"institution"} className="form-label-text">Institution Name</label>
         <input 
           type="text"
           id={"institution"}
@@ -210,7 +214,7 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }: SchoolEdito
         </div>
       </div> */}
 
-      <div className="mb-6 left-right-spacing phone-screen-stack">
+      <div className="mb-6 left-right-spacing">
         <div className="w-full">
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DemoContainer components={['DatePicker', 'DatePicker']}>
@@ -257,7 +261,7 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }: SchoolEdito
 
           <div className="phone-screen-stack">
             <button
-              className="green-button flex items-center justify-center h-12 px-4 py-2 rounded-lg cursor-pointer"
+              className="green-button flex items-center justify-center h-16 sm:h-12 px-4 py-2 rounded-lg cursor-pointer"
               onClick={() => showAiAssistant(!aiAssistant)}
             >
               <div>
@@ -266,7 +270,7 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }: SchoolEdito
               </div>
             </button>
             <button
-              className="green-button flex items-center justify-center h-12 px-4 py-2 rounded-lg cursor-pointer"
+              className="green-button flex items-center justify-center h-16 sm:h-12 px-4 py-2 rounded-lg cursor-pointer"
               onClick={handleAiCall}
             >
               <div>
@@ -275,7 +279,7 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }: SchoolEdito
               </div>
             </button>
             <button
-              className="green-button flex items-center justify-center h-12 px-4 py-2 rounded-lg cursor-pointer"
+              className="green-button flex items-center justify-center h-16 sm:h-12 px-4 py-2 rounded-lg cursor-pointer"
               onClick={handleHighlightAdd}
             >
               Add
@@ -321,8 +325,7 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }: SchoolEdito
           <div className="section-line" />
           <div className="flex-center">
             <div className={`w-full input-placeholder ${isPlaceholderActive ? 'active' : ''}`}>
-              <input 
-                type="text"
+              <textarea 
                 className="form-style flex-grow mr-2"
                 placeholder={placeholder}
                 value={aiAssistantMsg}
@@ -330,7 +333,7 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }: SchoolEdito
               />
             </div>
           <button
-            className="green-button p-1"
+            className="green-button w-48"
             onClick={handleAiAssistCall}
           >
             Edit with AI
