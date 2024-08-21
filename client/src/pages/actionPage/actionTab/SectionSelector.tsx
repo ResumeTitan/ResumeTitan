@@ -59,7 +59,7 @@ const ButtonGridComponent: React.FC<ButtonGridProps> = ({ onAdd, onClose }) => {
           <CloseIcon fontSize="small" />
         </button>
       </div>
-      <div className={`${selectedButtons.length > 0 ? 'animate-slideUp' : ''} bg-gray-200 p-6 rounded grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4`}>
+      <div className={`${selectedButtons.length > 0 ? 'animate-slideUp' : ''} bg-gray-200 p-6 rounded grid grid-cols-3 gap-4`}>
         {buttons.map((button, index) => (
           <div
             key={index}

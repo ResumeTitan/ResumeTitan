@@ -1,3 +1,5 @@
+import React from 'react';
+
 // TODO remove - Deprecated
 export interface IEducationType {
   name: string;
@@ -167,4 +169,9 @@ export interface ResumeType {
 // ResumeTypeProps for components
 export interface ResumeTypeProps {
   resume: ResumeType;
+}
+
+export interface IconDataType {
+  label: string;
+  icon: React.ReactElement;
 }

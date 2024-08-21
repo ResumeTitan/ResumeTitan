@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { openAiClient } from '@/ext/clients';
+import { openAiClient } from '../ext/clients';
 import { z } from 'zod';
 import CoverLetter from '../models/CoverLetter';
 

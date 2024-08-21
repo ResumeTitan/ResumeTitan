@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
-import { openAiClient } from '@/ext/clients';
+import { openAiClient } from '../ext/clients';
 import { z } from "zod";
-import Interview from "@/models/Interview.js";
+import Interview from "../models/Interview.js";
 
 const interviewModel = openAiClient.withStructuredOutput(z.object({
   interview: z.array(z.object({

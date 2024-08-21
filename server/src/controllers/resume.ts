@@ -1,8 +1,8 @@
 import { Response, Request } from 'express';
-import Resume from '@/models/Resume';
+import Resume from '../models/Resume';
 import { z } from "zod";
-import { IResumeType } from "@/types/types";
-import { openAiClient } from '@/ext/clients';
+import { IResumeType } from "../types/types";
+import { openAiClient } from '../ext/clients';
 import { ServerStyleSheet } from 'styled-components';
 import puppeteer from 'puppeteer';
 

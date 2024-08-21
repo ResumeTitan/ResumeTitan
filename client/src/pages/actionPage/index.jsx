@@ -79,7 +79,6 @@ function ActionPage() {
       return null;
     }
     dispatch(setToken(newToken));
-    setResumeLoading(true);
   }
 
   /**

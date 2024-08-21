@@ -15,9 +15,9 @@ primary_region = "iad"
   processes = ["app"]
 
 [[vm]]
-  size = "shared-cpu-2x"
+  size = "shared-cpu-1x"
   memory = "4gb"
-  cpus = 4
+  cpus = 2
   cpu_kind = "performance"
   kernel_args = ["no-hlt=true"]
   processes = ["app"]
