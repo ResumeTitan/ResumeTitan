@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom'; // or use react-router-dom's Link component
+import { useNavigate } from 'react-router-dom';
+import { useUser } from "@clerk/clerk-react";
 import RtAnimatedImg from 'assets/rtAnimated.gif';
 
 // Define the styled component that fills the entire page height
@@ -62,15 +63,20 @@ const FancyText = styled.span`
 
 // Create the component
 const LandingPage: React.FC = () => {
+  const { isSignedIn } = useUser();
   const navigate = useNavigate(); // Use history to navigate
 
   const handleButtonClick = () => {
-    navigate('/dashboard'); // Navigate to the dashboard page
+    if (isSignedIn) {
+      navigate('/dashboard');
+    } else {
+      navigate('/sign-in');
+    }
   };
 
   return (
     <FullPageContainer>
-      <LogoImage src={RtAnimatedImg} alt="Logo" /> {/* Replace with your image path */}
+      <LogoImage src={RtAnimatedImg} alt="Logo" />
       <LargeHeader><FancyText>Creating your resume with AI today</FancyText></LargeHeader>
       <LargeButton onClick={handleButtonClick}>Get Started Now</LargeButton>
     </FullPageContainer>
