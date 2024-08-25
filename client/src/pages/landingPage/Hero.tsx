@@ -4,7 +4,7 @@ import 'styles/index.css';
 
 const Hero: React.FC = () => {
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-7xl p-4 sm:p-6 lg:p-8">
       <div className="grid grid-cols-1 items-center gap-14 lg:grid-cols-2" data-aos="fade-right">
         <div className="mx-auto flex max-w-3xl flex-col gap-8">
           <h3 className="text-lg font-medium uppercase tracking-wide text-neutral-800">

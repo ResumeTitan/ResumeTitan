@@ -118,8 +118,8 @@ const getPrompt = (section: string, data: any) => {
 };
 
 export const postSummary = async (req: Request, res: Response) => {
-  const { summary, work, education, skills, volunteer } = req.body;
-  resumeData.basics.summary = summary;
+  const { summary, work, education, skills, volunteer, basics } = req.body;
+  resumeData.basics = basics;
 
   const gptResponse = await summaryModel.invoke(getPrompt('summary', { 
     extraNotes: summary, work, education, skills, volunteer
@@ -208,8 +208,6 @@ export const updateResume = async (req: Request, res: Response) => {
     const resume = req.body;
     // @ts-ignore
     const clerkId = req.auth.userId;
-    // @ts-ignore
-    console.log(req.auth);
     resume.clerkId = clerkId;
 
     if (!clerkId) {

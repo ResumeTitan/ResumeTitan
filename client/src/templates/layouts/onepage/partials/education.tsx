@@ -1,6 +1,7 @@
 import React from "react";
 import { formatDate } from '../../../../utils';
 import { EducationType } from "types/types";
+import { SectionContent, SectionBlock, SectionName } from './Partials';
 
 interface Props {
   education: EducationType[];
@@ -11,11 +12,11 @@ const EducationComponent: React.FC<Props> = ({ education }) => {
     <>
       {education.length > 0 && (
         <>
-          <div id="education" className="sectionBlock">
-            <div className="sectionName">
+          <SectionBlock>
+            <SectionName>
               <span>EDUCATION</span>
-            </div>
-            <div className="sectionContent">
+            </SectionName>
+            <SectionContent>
               {education.map((edu, index) => (
                 <div key={index} className="educationBlock">
                   <span className="title">{edu.institution}</span>
@@ -39,8 +40,8 @@ const EducationComponent: React.FC<Props> = ({ education }) => {
                   )}
                 </div>
               ))}
-            </div>
-          </div>
+            </SectionContent>
+          </SectionBlock>
         </>
       )}
     </>

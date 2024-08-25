@@ -2,7 +2,7 @@ import React, { ReactNode } from 'react';
 import styled from 'styled-components';
 
 const Section = styled.div`
-  max-width: 700px;
+  max-width: 760px;
   margin: 0 auto 18px;
 
   h2 {
@@ -10,7 +10,7 @@ const Section = styled.div`
     padding: 0;
     margin-bottom: 3px;
     font-weight: 600;
-    font-size: 1.65rem;
+    font-size: 20px;
   }
 
   hr {

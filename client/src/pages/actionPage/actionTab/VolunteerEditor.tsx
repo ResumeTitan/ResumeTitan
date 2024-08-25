@@ -6,6 +6,8 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import dayjs from 'dayjs';
 import StatePicker from 'components/StatePicker';
+import { FormContainer } from 'components/Form/styled';
+import DateInput from 'components/Form/DateInput';
 import { VolunteerType } from 'types/types';
 import api from 'api/actions';
 import 'styles/index.css';
@@ -20,16 +22,11 @@ interface VolunteerEditorProps {
 const VolunteerEditor: React.FC<VolunteerEditorProps> = ({ editingVolunteer, onSave, onDelete, onCancel }) => {
   const [volunteerForm, setVolunteerForm] = useState(editingVolunteer);
   const [aiLoading, setAiLoading] = useState(false);
-  const [startDate, setStartDate] = useState(new Date(editingVolunteer.startDate) || new Date());
-  const [endDate, setEndDate] = useState(new Date(editingVolunteer.endDate) || new Date());
   const [endDateChecked, setEndDateChecked] = useState(editingVolunteer.endDateCurrent || false);
 
   const handleSaveVolunteer = () => {
-    volunteerForm.startDate = startDate.toString();
     if (endDateChecked) {
       volunteerForm.endDate = "";
-    } else {
-      volunteerForm.endDate = endDate.toString();
     }
     onSave(volunteerForm);
   }
@@ -129,28 +126,6 @@ const VolunteerEditor: React.FC<VolunteerEditorProps> = ({ editingVolunteer, onS
 
       {/* <div className="mb-6 justify-between phone-screen-stack">
         <div className="w-full">
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DemoContainer components={['DatePicker', 'DatePicker']}>
-              <DatePicker
-                label="Start Date"
-                value={dayjs(startDate)}
-                onChange={(newValue) => {setStartDate(newValue?.toString() || "");}}
-              />
-            </DemoContainer>
-          </LocalizationProvider>
-        </div>
-        <div className="w-full">
-
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DemoContainer components={['DatePicker', 'DatePicker']}>
-              <DatePicker
-                label="End Date"
-                value={dayjs(endDate)}
-                onChange={(newValue) => {setEndDate(newValue?.toString() || "");}}
-                disabled={endDateChecked}
-              />
-            </DemoContainer>
-          </LocalizationProvider>
           <div className="left-right-spacing">
             <label htmlFor="endDateCheckbox" className="flex items-center">
               <div className="text-xs pr-2">Current</div>
@@ -166,6 +141,15 @@ const VolunteerEditor: React.FC<VolunteerEditorProps> = ({ editingVolunteer, onS
           </div>
         </div>
       </div> */}
+
+      <FormContainer >
+        <DateInput title='Start Date' value={volunteerForm.startDate} onChange={(event) => {
+          setVolunteerForm({...volunteerForm, startDate: event.target.value });
+        }} />
+        <DateInput title='End Date' onChange={(event) => {
+          setVolunteerForm({...volunteerForm, endDate: event.target.value });
+        }} />
+      </FormContainer>
 
       <div className="m-2">
         <div className="left-right-spacing my-2">

@@ -6,7 +6,7 @@ import DateComponent from './Date'; // Renamed to avoid name conflicts with Date
 const Range = styled.div`
   display: flex;
   font-style: italic;
-  font-size: 13px;
+  font-size: 14px;
 `;
 
 // Define the props interface

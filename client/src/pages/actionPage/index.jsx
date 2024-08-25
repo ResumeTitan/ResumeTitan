@@ -10,7 +10,6 @@ import api from 'api/actions';
 import 'styles/index.css';
 import { styled } from '@mui/system';
 import DescriptionIcon from '@mui/icons-material/Description';
-import { saveAs } from 'file-saver';
 import { useUser, useAuth } from "@clerk/clerk-react";
 import { useDispatch } from 'react-redux';
 import { setToken } from '../../state/authReducer';
@@ -236,46 +235,8 @@ function ActionPage() {
         {activeTab === 1 && (
           <ActionTab 
             resumeIn={currentResume}
-            onUpdateSections={(sections) => setCurrentResume({
-              ...currentResume,
-              sections: [...new Set([...currentResume.sections, ...sections])]
-            })}
-            onUpdateResumeName={(resumeName) => setCurrentResume({
-              ...currentResume,
-              name: resumeName
-            })}
+            onUpdateResume={(resumeIn) => setCurrentResume(resumeIn)}
             onPrint={handleSaveToPdf}
-            onUpdateWork={(jobsIn) => setCurrentResume({
-              ...currentResume,
-              work: jobsIn
-            })}
-            onUpdateEducation={(schoolsIn) => setCurrentResume({
-              ...currentResume,
-              education: schoolsIn
-            })}
-            onUpdateVolunteer={(volunteerIn) => setCurrentResume({
-              ...currentResume,
-              volunteer: volunteerIn
-            })}
-            onUpdateSkills={(skillsIn) => setCurrentResume({
-              ...currentResume,
-              skills: skillsIn
-            })}
-            onUpdateSummary={(sum) => {
-              setCurrentResume({
-                ...currentResume,
-                basics: {
-                  ...currentResume.basics,
-                  summary: sum
-                }
-              });
-            }}
-            onUpdateBasics={(basicsIn) => {
-              setCurrentResume({
-                ...currentResume,
-                basics: basicsIn
-              });
-            }}
             onGenerateResume={handleGenerateResume} 
           />
         )}
@@ -295,13 +256,13 @@ function ActionPage() {
           <button onClick={() => handleSaveResume(true)} className="save-button">Save and Exit</button>
         </div>
 
-        <div onClick={() => setIsOpen(true)} className="fixed bottom-8 right-8 hover:cursor-pointer lg:hidden">
+        <div onClick={() => setIsOpen(true)} className="fixed bottom-8 right-8 hover:cursor-pointer xl:hidden">
           <CustomDocumentIcon />
         </div>
 
       </div>
       {/* Desktop View */}
-      <div className="hidden lg:block m-2 p-2 origin-top-left lg:w-1/2 xl:w-3/5 ease-linear transform lg:scale-60 xl:scale-90">
+      <div className="overflow-hidden hidden xl:block w-full m-4">
         <div className="border-2 border-gray-400">
         <ResumeContainer resume={currentResume} />
         </div>
@@ -309,11 +270,13 @@ function ActionPage() {
       </div>
 
       {/* Mobile View */}
-      <div className={`${isOpen ? "fixed": "hidden"} bg-black bg-opacity-50 flex justify-center items-center w-full h-full top-0`} onClick={() => setIsOpen(false)}>
-        <div className="pt-4 transform scale-50 sm:scale-60 lg:scale-75 print:!scale-100">
-          <ResumeContainer resume={currentResume} />
+      {isOpen && (
+        <div className="layover-container" onClick={() => setIsOpen(false)}>
+          <div className="transform scale-60 sm:scale-70 md:scale-90">
+            <ResumeContainer resume={currentResume} />
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

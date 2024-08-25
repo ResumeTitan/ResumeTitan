@@ -11,7 +11,7 @@ module.exports = {
     },
     extend: {
       colors: {
-        'main-green': '#115e59',
+        'main-green': '#115E59',
         'dark-green': '#0e4a45',
         'darker-green': '#0b3733',
         'darkest-green': '#082421',
@@ -25,7 +25,10 @@ module.exports = {
       },
       scale: {
         '25': '0.25',
+        '40': '0.40',
+        '50': '0.50',
         '60': '0.60',
+        '70': '0.70',
         '90': '0.90',
       },
       animation: {

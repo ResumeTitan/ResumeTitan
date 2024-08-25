@@ -1,28 +1,35 @@
 import React from 'react';
 import Basics from './Basics';
+import Work from './Work';
+import Education from './Education';
 import ResumeHeader from './ResumeHeader';
+import Volunteer from './Volunteer';
+import Skills from './Skills';
 import styled from 'styled-components';
 import { ResumeTypeProps } from 'types/types';
 
 // Define styled components
 const Page = styled.main`
   width: 100%;
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
+  min-height: 100%;
+  border-top: 12px solid #56817A;
+  padding: 36px 22px 30px 34px;
   background-color: #fff;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 `;
 
 const ResumeContent = styled.div`
   display: flex;
   flex-wrap: wrap;
-  gap: 20px;
+  font-family: 'Lato', Helvetica, Arial, sans-serif;
 `;
 
 const LeftColumn = styled.aside`
+  float: left;
+  width: 160px;
+  margin-right: 20px;
+  word-wrap: break-word;
+
   flex: 1;
-  max-width: 30%;
   @media (max-width: 768px) {
     max-width: 100%;
   }
@@ -36,11 +43,19 @@ const RightColumn = styled.div`
   }
 `;
 
-const Skills = () => (
-  <section>
-    {/* Implement the skills content here */}
-  </section>
-);
+export const Container = styled.div`
+  padding: 20px;
+`;
+
+export const HighlightsList = styled.ul`
+  padding-left: 20px;
+  margin: 0;
+`;
+
+export const HighlightItem = styled.li`
+  margin-bottom: 8px;
+  font-size: 12px;
+`;
 
 const Languages = () => (
   <section>
@@ -60,27 +75,9 @@ const Summary = () => (
   </section>
 );
 
-const Work = () => (
-  <section>
-    {/* Implement the work content here */}
-  </section>
-);
-
 const Projects = () => (
   <section>
     {/* Implement the projects content here */}
-  </section>
-);
-
-const Education = () => (
-  <section>
-    {/* Implement the education content here */}
-  </section>
-);
-
-const Volunteer = () => (
-  <section>
-    {/* Implement the volunteer content here */}
   </section>
 );
 
@@ -104,21 +101,21 @@ const References = () => (
 
 const Resume: React.FC<ResumeTypeProps> = ({ resume }) => {
   return (
-    <Page id="resume" className="page">
+    <Page id="resume">
       <ResumeHeader basics={ resume.basics }/>
-      <ResumeContent className="resume-content">
-        <LeftColumn className="left-column">
+      <ResumeContent>
+        <LeftColumn>
           <Basics basics={ resume.basics }/>
-          <Skills />
+          <Skills skills={ resume.skills }/>
           <Languages />
           <Interests />
         </LeftColumn>
-        <RightColumn className="right-column">
+        <RightColumn>
           <Summary />
-          <Work />
+          <Work work={ resume.work } />
           <Projects />
-          <Education />
-          <Volunteer />
+          <Education education={ resume.education }/>
+          <Volunteer volunteer={ resume.volunteer }/>
           <Awards />
           <Publications />
           <References />

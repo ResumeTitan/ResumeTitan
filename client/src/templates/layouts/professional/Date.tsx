@@ -4,7 +4,6 @@ import styled from 'styled-components';
 // Styled component
 const Text = styled.div`
   font-style: italic;
-  font-size: 1.2rem;
 `;
 
 // Define the props interface

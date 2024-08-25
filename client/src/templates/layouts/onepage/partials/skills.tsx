@@ -1,21 +1,29 @@
 import React from "react";
 import { SkillType } from "types/types";
-import '../style.css';
+import styled from "styled-components";
+import { SectionContent, SectionBlock, SectionName } from './Partials';
 
 interface SkillsProps {
   skills: SkillType[];
 }
 
+const SkillBlock = styled.div`
+  margin-bottom: 0.1rem;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.1rem;
+`;
+
 const SkillsComponent: React.FC<SkillsProps> = ({ skills }) => {
   return (
     <div>
-      <div id="skills" className="sectionBlock">
-        <div className="sectionName">
+      <SectionBlock>
+        <SectionName>
           <span>SKILLS</span>
-        </div>
-        <div className="sectionContent">
+        </SectionName>
+        <SectionContent>
           {skills.map((skill, index) => (
-            <div className="skillBlock" key={index}>
+            <SkillBlock key={index}>
               <div>
                 <span className="title">
                   {skill.name && skill.name}
@@ -33,10 +41,10 @@ const SkillsComponent: React.FC<SkillsProps> = ({ skills }) => {
                   </>
                 )}
               </div>
-            </div>
+            </SkillBlock>
           ))}
-        </div>
-      </div>
+        </SectionContent>
+      </SectionBlock>
     </div>
   );
 };

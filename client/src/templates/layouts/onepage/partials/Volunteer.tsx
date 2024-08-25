@@ -1,5 +1,6 @@
 import React from 'react';
 import { VolunteerType } from 'types/types';
+import { SectionContent, SectionBlock, SectionName } from './Partials';
 
 interface VolunteerSectionProps {
   volunteer: VolunteerType[];
@@ -9,11 +10,11 @@ const VolunteerSection: React.FC<VolunteerSectionProps> = ({ volunteer }) => {
   return (
     <>
       {volunteer.length > 0 && (
-        <div id="volunteer" className="sectionBlock">
-          <div className="sectionName">
+        <SectionBlock>
+          <SectionName>
             <span>VOLUNTEER</span>
-          </div>
-          <div className="sectionContent">
+          </SectionName>
+          <SectionContent>
             {volunteer.map((vol, index) => (
               <React.Fragment key={index}>
                 <div className="blockHeader">
@@ -41,8 +42,8 @@ const VolunteerSection: React.FC<VolunteerSectionProps> = ({ volunteer }) => {
                 </div>
               </React.Fragment>
             ))}
-          </div>
-        </div>
+          </SectionContent>
+        </SectionBlock>
       )}
     </>
   );

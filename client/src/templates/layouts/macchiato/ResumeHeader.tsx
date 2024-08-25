@@ -9,42 +9,47 @@ interface ResumeHeaderProps {
 const Header = styled.header`
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-  clear: both;
 `;
 
 const ProfileHeader = styled.div`
-  h1 {
-    font-size: 2rem;
-    margin: 0;
-  }
+  display: flex;
+  flex-direction: column;
+`;
 
-  h2 {
-    font-size: 1.5rem;
-    margin: 0;
-    color: gray;
-  }
+const Name = styled.h1`
+  font-family: "Josefin Sans", Helvetica, Arial, sans-serif;
+  font-weight: 700;
+  font-size: 40px;
+  letter-spacing: 1.5px;
+`;
+
+const Label = styled.h2`
+  font-family: "Josefin Sans", Helvetica, Arial, sans-serif;
+  font-weight: 300;
+  font-size: 16px;
+  letter-spacing: 0.5px;
 `;
 
 const ProfilePic = styled.div`
   img {
+    height: 52px;
+    width: 52px;
     border-radius: 50%;
-    width: 100px;
-    height: 100px;
-    object-fit: cover;
+    border: 2px solid #56817A;
   }
 `;
 
 const ResumeHeader: React.FC<ResumeHeaderProps> = ({ basics }) => {
+  if (!basics) return null;
+
   return (
-    <Header className="resume-header">
-      <ProfileHeader className="profile-header">
-        <h1>{basics.name}</h1>
-        <h2>{basics.label}</h2>
+    <Header>
+      <ProfileHeader>
+        <Name>{basics.name}</Name>
+        <Label>{basics.label}</Label>
       </ProfileHeader>
       {/* {basics.picture && (
-        <ProfilePic className="profile-pic">
+        <ProfilePic>
           <img src={basics.picture} alt="profile-pic" />
         </ProfilePic>
       )} */}

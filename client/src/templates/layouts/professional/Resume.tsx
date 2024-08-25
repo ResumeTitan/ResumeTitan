@@ -12,13 +12,12 @@ import Interests from './Interests';
 import Languages from './Languages';
 import References from './References';
 import { ResumeTypeProps } from 'types/types';
-import './styles.css';
 
 const Layout = styled.div`
-  max-width: 660px;
   margin: 0 auto;
   line-height: calc(1ex / 0.32);
   margin-bottom: 40px;
+  margin-top: 20px;
   font-family: "Times New Roman", Times, serif;
   color: black;
 `;

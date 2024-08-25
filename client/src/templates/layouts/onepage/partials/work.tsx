@@ -1,6 +1,7 @@
 import React from "react";
 import { WorkType } from "types/types";
 import { formatDate } from '../../../../utils';
+import { SectionContent, SectionBlock, SectionName } from './Partials';
 
 interface WorkProps {
   work: WorkType[];
@@ -10,11 +11,11 @@ const WorkComponent: React.FC<WorkProps> = ({ work }) => {
   return (
     <>
       {work.length > 0 && (
-        <div id="workBlock" className="sectionBlock">
-          <div className="sectionName">
+        <SectionBlock>
+          <SectionName>
             <span>EXPERIENCE</span>
-          </div>
-          <div className="sectionContent">
+          </SectionName>
+          <SectionContent>
             {work.map((job, index) => (
               <div key={index} className="jobBlock">
                 <div className="blockHeader">
@@ -47,8 +48,8 @@ const WorkComponent: React.FC<WorkProps> = ({ work }) => {
                 {index !== work.length - 1 && <div className="separator"></div>}
               </div>
             ))}
-          </div>
-        </div>
+          </SectionContent>
+        </SectionBlock>
       )}
     </>
   );

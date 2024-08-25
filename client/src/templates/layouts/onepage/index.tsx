@@ -1,5 +1,4 @@
 import React from "react";
-import './style.css';
 
 // Import necessary components for each section
 import Basics from "./partials/basics";
@@ -9,7 +8,7 @@ import Work from "./partials/work";
 // import Publications from "./Publications";
 // import Projects from "./Projects";
 // import Certificates from "./Certificates";
-// import Awards from "./Awards";
+import Awards from "./partials/Awards";
 import Volunteer from "./partials/Volunteer";
 // import Languages from "./Languages";
 // import Interests from "./Interests";
@@ -26,6 +25,14 @@ const Layout = styled.div`
   color: black;
 `;
 
+const SectionLine = styled.div`
+  border-style: dashed;
+  border-width: 1px;
+  border-color: #CFCFCF;
+  margin-top: 10px;
+  margin-bottom: 10px;
+`;
+
 const sectionComponents = {
   Basics: Basics,
   Education: Education,
@@ -34,7 +41,7 @@ const sectionComponents = {
   // Projects: Projects,
   // Certificates: Certificates,
   // Publications: Publications,
-  // Awards: Awards,
+  Awards: Awards,
   // Languages: Languages,
   Skills: Skills,
   // Interests: Interests,
@@ -52,7 +59,7 @@ const OnePageResume: React.FC<ResumeTypeProps> = ({ resume }) => {
           return (
             <div>
               <SectionComponent key={section} {...resume} />
-              <div className="sectionLine" />
+              <SectionLine />
             </div>
           );
         }

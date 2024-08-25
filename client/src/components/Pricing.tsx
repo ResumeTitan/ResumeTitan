@@ -84,7 +84,7 @@ const Pricing: React.FC = () => {
   };
 
   return (
-    <div className="mx-auto mt-12 max-w-7xl px-4 sm:mt-16 sm:px-6 lg:mt-20 lg:px-8">
+    <div className="mx-auto mt-12 max-w-7xl p-4 sm:mt-16 sm:p-6 lg:mt-20 lg:p-8">
       {stripeLoading && (
         <Spinner />
       )}

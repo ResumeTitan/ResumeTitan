@@ -1,170 +1,112 @@
 import React from 'react';
 import styled from 'styled-components';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import EmailIcon from '@mui/icons-material/Email';
+import PhoneIcon from '@mui/icons-material/Phone';
+import LanguageIcon from '@mui/icons-material/Language';
+import { IconButton, Link } from '@mui/material';
 import { BasicsType } from 'types/types';
+import Section from './Section';
 
-interface BasicsProps {
+interface Location {
+  address?: string;
+  city?: string;
+  region?: string;
+  postalCode?: string;
+  countryCode?: string;
+}
+
+interface AboutProps {
   basics: BasicsType;
 }
 
-const Header = styled.header`
-  h1 {
-    font-size: 2rem;
-    margin-bottom: 0.5rem;
-  }
+const AboutContainer = styled.div`
+  font-size: 16px;
+  padding-top: 10px;
+  padding-right: 10px;
+  padding-bottom: 10px;
+`;
 
-  h2 {
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-    color: gray;
+const InfoTag = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 16px;
+
+  svg {
+    color: #39424B;
+    font-size: 20px;
   }
 `;
 
-const Section = styled.section`
-  margin-bottom: 1.5rem;
-`;
+const About: React.FC<AboutProps> = ({ basics }) => {
+  const formatAddress = (location: Location) => {
+    const { address, city, region, postalCode, countryCode } = location;
+    return `${address ? address + ', ' : ''}${city ? city + ', ' : ''}${region ? region + ', ' : ''}${postalCode ? postalCode + ', ' : ''}${countryCode}`;
+  };
 
-const Contact = styled.div`
-  margin-bottom: 1.5rem;
-  div {
-    margin-bottom: 0.5rem;
-  }
-
-  strong {
-    display: inline-block;
-    width: 80px;
-  }
-`;
-
-const Summary = styled.div`
-  p {
-    margin: 0;
-    line-height: 1.5;
-  }
-`;
-
-const LocationSection = styled.section`
-  h3 {
-    margin-bottom: 0.5rem;
-  }
-
-  div {
-    margin-bottom: 0.5rem;
-  }
-
-  strong {
-    display: inline-block;
-    width: 120px;
-  }
-`;
-
-const ProfilesSection = styled.section`
-  h3 {
-    margin-bottom: 0.5rem;
-  }
-
-  .item {
-    margin-bottom: 0.5rem;
-  }
-
-  .network {
-    display: inline-block;
-    width: 120px;
-    font-weight: bold;
-  }
-
-  .url a {
-    text-decoration: none;
-    color: blue;
-  }
-`;
-
-const BasicsComponent: React.FC<BasicsProps> = ({ basics }) => {
   return (
-    <div>
-      <Header>
-        <h1>{basics.name}</h1>
-        <h2>{basics.label}</h2>
-      </Header>
+    <AboutContainer>
+      <Section title={"About"} > 
+      {basics.location && (
+        <InfoTag>
+          <LocationOnIcon />
+          {formatAddress(basics.location)}
+        </InfoTag>
+      )}
 
-      <Section id="basics">
-        <Contact className="contact">
-          {basics.url && (
-            <div className="website">
-              <strong>Website:</strong> {basics.url}
-            </div>
-          )}
-          {basics.email && (
-            <div className="email">
-              <strong>Email:</strong> {basics.email}
-            </div>
-          )}
-          {basics.phone && (
-            <div className="phone">
-              <strong>Phone:</strong> {basics.phone}
-            </div>
-          )}
-        </Contact>
+      {/* {basics.birthday && (
+        <InfoTag>
+          <CalendarTodayIcon />
+          {`Born in ${basics.birthday}`}
+        </InfoTag>
+      )} */}
 
-        {basics.summary && (
-          <Summary className="summary">
-            <p>{basics.summary}</p>
-          </Summary>
-        )}
+      {basics.email && (
+        <InfoTag>
+          <a href={`mailto:${basics.email}`}>
+            <EmailIcon fontSize='small'/>
+          </a>
+          <div>
+            {basics.email}
+          </div>
+        </InfoTag>
+      )}
 
-        {basics.location && (
-          <LocationSection id="location">
-            <h3>Location</h3>
-            {basics.location.address && (
-              <div className="address">
-                <strong>Address:</strong> {basics.location.address}
-              </div>
-            )}
-            {basics.location.postalCode && (
-              <div className="postalCode">
-                <strong>Postal code:</strong> {basics.location.postalCode}
-              </div>
-            )}
-            {basics.location.city && (
-              <div className="city">
-                <strong>City:</strong> {basics.location.city}
-              </div>
-            )}
-            {basics.location.countryCode && (
-              <div className="countryCode">
-                <strong>Country code:</strong> {basics.location.countryCode}
-              </div>
-            )}
-            {basics.location.region && (
-              <div className="region">
-                <strong>Region:</strong> {basics.location.region}
-              </div>
-            )}
-          </LocationSection>
-        )}
+      {basics.phone && (
+        <InfoTag>
+          <PhoneIcon fontSize='small'/>
+          <div>
+            {basics.phone}
+          </div>
+        </InfoTag>
+      )}
 
-        {basics.profiles && basics.profiles.length > 0 && (
-          <ProfilesSection id="profiles">
-            <h3>Profiles</h3>
-            {basics.profiles.map((profile, index) => (
-              <div key={index} className="item">
-                {profile.network && (
-                  <strong className="network">{profile.network}</strong>
-                )}
-                {profile.username && (
-                  <div className="username">{profile.username}</div>
-                )}
-                {profile.url && (
-                  <div className="url">
-                    <a href={profile.url} target="_blank" rel="noopener noreferrer">Link</a>
-                  </div>
-                )}
-              </div>
-            ))}
-          </ProfilesSection>
-        )}
+      {basics.url && (
+        <InfoTag>
+          <a href={basics.url}>
+            <LanguageIcon fontSize='small' />
+            <Link href={basics.url} target="_blank" rel="noopener noreferrer">
+              {basics.url}
+            </Link>
+          </a>
+        </InfoTag>
+      )}
+
+      {basics.profiles && basics.profiles[0].network && basics.profiles.map((profile, index) => (
+        <InfoTag key={index}>
+          <IconButton component="a" href={profile.url}>
+            <LanguageIcon /> {/* Replace with appropriate social media icons */}
+          </IconButton>
+          <Link href={profile.url} target="_blank" rel="noopener noreferrer">
+            {profile.network}: {profile.username}
+          </Link>
+        </InfoTag>
+      ))}
       </Section>
-    </div>
+    </AboutContainer>
   );
 };
 
-export default BasicsComponent;
+export default About;

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import ThemeSelector from './themeSelector';
 import HarvardImg from 'assets/harvard.png';
 import OnepageImg from 'assets/onepage.png';
+import MacchiatoImg from 'assets/macchiato.png';
 import SectionList from './SectionList';
 import 'styles/index.css';
 import { ResumeType } from 'types/types';
@@ -50,8 +51,9 @@ const CustomizeTab: React.FC<Props> = ({
     <div className="form-container font-bold">
       <div className="form-text-main">{"Theme"}</div>
       <ThemeSelector images={[
-        {id: "harvard", url: HarvardImg}, 
-        {id: "one-page", url: OnepageImg}
+        {id: "professional", url: HarvardImg}, 
+        {id: "one-page", url: OnepageImg},
+        {id: "macchiato", url: MacchiatoImg}
       ]} onSelect={(image) => onChangeTheme(image.id)} />
     </div>
     <div className="form-container">

@@ -105,7 +105,7 @@ const Skills: React.FC<SkillsProps> = ({ initSkills, aiLoading, onUpdate, onAiCa
 
   return (
     <div className={`${aiLoading ? "animate-pulse" : ""} form-container`}>
-      <div className="form-single-header" onClick={() => {setIsEditing(true)}}>{"Skills"}</div>
+      <div className="form-single-header" onClick={() => {setIsEditing(!isEditing)}}>{"Skills"}</div>
 
       {isEditing ? (
         <div className="p-4">

@@ -13,13 +13,13 @@ const Meta = styled.div`
 
 const Title = styled.div`
   font-weight: 600;
-  font-size: 1.35rem;
+  font-size: 18px;
   margin-bottom: 3px;
 `;
 
 const SubTitle = styled.div`
   font-style: italic;
-  font-size: 1.2rem;
+  font-size: 16px;
   margin-bottom: 3px;
 `;
 
