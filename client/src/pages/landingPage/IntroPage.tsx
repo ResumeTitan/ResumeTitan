@@ -14,13 +14,13 @@ const FullPageContainer = styled.div`
   background-color: #115E59; /* Adjust background color as needed */
   font-size: 24px;
 
-  @media (min-width: 1024px) {
-    background-color: white; /* White background for desktop */
-    flex-direction: row; /* Horizontal layout on desktop */
-    justify-content: space-between;
-    align-items: flex-start;
-    position: relative;
-  }
+  // @media (min-width: 1024px) {
+  //   background-color: white; /* White background for desktop */
+  //   flex-direction: row; /* Horizontal layout on desktop */
+  //   justify-content: space-between;
+  //   align-items: flex-start;
+  //   position: relative;
+  // }
 
   @media (max-width: 1024px) {
     font-size: 20px; /* Slightly smaller font size for tablets and smaller laptops */
@@ -40,22 +40,22 @@ const LogoImage = styled.img`
   height: 50vh;
   margin-bottom: 10px;
 
-  @media (min-width: 1024px) {
-    height: auto; /* Let it scale naturally */
-    position: absolute;
-    top: 0;
-    right: 0;
-    background-color: #115E59; /* Green background for the logo */
-    border-radius: 0 0 0 50px; /* Round only the bottom-left corner */
-    width: 300px; /* Set a fixed width for the image */
-    height: 300px; /* Set a fixed height for the image */
-    padding: 20px; /* Add padding inside the image container */
-  }
+  // @media (min-width: 1024px) {
+  //   height: auto; /* Let it scale naturally */
+  //   position: absolute;
+  //   top: 0;
+  //   right: 0;
+  //   background-color: #115E59; /* Green background for the logo */
+  //   border-radius: 0 0 0 50px; /* Round only the bottom-left corner */
+  //   width: 300px; /* Set a fixed width for the image */
+  //   height: 300px; /* Set a fixed height for the image */
+  //   padding: 20px; /* Add padding inside the image container */
+  // }
 `;
 
 // Style the header
 const LargeHeader = styled.h1`
-  margin-bottom: 20px;
+  margin-bottom: 20px;    
 
   @media (min-width: 1024px) {
     text-align: left; /* Align text to the left on desktop */
@@ -79,9 +79,9 @@ const LargeButton = styled.button`
     background-color: #082421; /* Darker shade on hover */
   }
 
-  @media (min-width: 1024px) {
-    align-self: flex-start; /* Align button to the left on desktop */
-  }
+  // @media (min-width: 1024px) {
+  //   align-self: flex-start; /* Align button to the left on desktop */
+  // }
 `;
 
 const FancyText = styled.span`
@@ -91,17 +91,15 @@ const FancyText = styled.span`
   background: linear-gradient(135deg, #FAF0CA, #FCFFFD); /* Gradient text */
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  
-  transition: transform 0.3s ease, color 0.3s ease;
 
   &:hover {
-    transform: scale(1.05); /* Slight scale on hover */
+    transform: scale(1.10); /* Slight scale on hover */
     color: #80cbc4; /* Change color on hover */
   }
 
-  @media (min-width: 1024px) {
-    color: #000;
-  }
+  // @media (min-width: 1024px) {
+  //   color: #000;
+  // }
 `;
 
 // Create the component
