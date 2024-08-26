@@ -13,6 +13,8 @@ import DescriptionIcon from '@mui/icons-material/Description';
 import { useUser, useAuth } from "@clerk/clerk-react";
 import { useDispatch } from 'react-redux';
 import { setToken } from '../../state/authReducer';
+import { jsPDF } from 'jspdf';
+
 
 const CustomDocumentIcon = styled(DescriptionIcon)({
   backgroundColor: '#0b3733',
@@ -263,16 +265,15 @@ function ActionPage() {
       </div>
       {/* Desktop View */}
       <div className="overflow-hidden hidden xl:block w-full m-4">
-        <div className="border-2 border-gray-400">
-        <ResumeContainer resume={currentResume} />
+        <div>
+          <ResumeContainer resume={currentResume} />
         </div>
-        
       </div>
 
       {/* Mobile View */}
       {isOpen && (
         <div className="layover-container" onClick={() => setIsOpen(false)}>
-          <div className="transform scale-60 sm:scale-70 md:scale-90">
+          <div className="transform scale-50 xs:scale-60 sm:scale-70 md:scale-80 lg:scale-90">
             <ResumeContainer resume={currentResume} />
           </div>
         </div>

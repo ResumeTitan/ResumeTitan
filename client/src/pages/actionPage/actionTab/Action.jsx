@@ -235,8 +235,9 @@ function ActionTab({
         <Skills initSkills={resumeIn.skills} aiLoading={aiSkillsLoading} onUpdate={handleUpdateSkills} onAiCall={handleSkillsAiCall}/>
       )}
       
-      {/* {resumeIn.sections.includes("Awards") && ( */}
+      {resumeIn.sections.includes("Awards") && (
         <Awards initAwards={resumeIn.awards} aiLoading={aiSkillsLoading} onUpdate={handleUpdateAwards} onAiCall={handleSkillsAiCall}/>
+      )}
 
       <div className="form-container">
         <div className={`p-4 flex flex-col items-center justify-center add-button`} onClick={() => {setSectionPopupOpen(!sectionPopupOpen)}}>

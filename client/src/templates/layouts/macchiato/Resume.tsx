@@ -15,6 +15,7 @@ const Page = styled.main`
   border-top: 12px solid #56817A;
   padding: 36px 22px 30px 34px;
   background-color: #fff;
+  color: #000;
 `;
 
 const ResumeContent = styled.div`

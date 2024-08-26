@@ -7,10 +7,11 @@ import styled from 'styled-components';
 
 // Define the styled component
 const StyledContainer = styled.div`
-  width: 210mm;
-  max-width: 210mm;
-  height: 296mm;
+  min-width: 210mm;
   min-height: 296mm;
+  size: 210mm 296mm;
+  border: solid;
+  border-width: 4px;
 
   background-color: white;
   margin: 0 auto;

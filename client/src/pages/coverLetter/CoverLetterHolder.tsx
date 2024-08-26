@@ -1,4 +1,5 @@
 import React from 'react';
+import styled from 'styled-components';
 
 interface Props {
   name: string;
@@ -6,40 +7,51 @@ interface Props {
   coverLetter: string;
 }
 
-const CoverLetterTemplate: React.FC<Props> = ({ 
-  name,
-  email,
+const CoverLetterContainer = styled.div`
+  flex: 2;
+  padding: 10px;
+  border: 1px solid #ccc;
+  min-height: 11in; /* to simulate letter size paper */
+  max-height: 11in;
+  width: 8.5in;
+`;
+
+const CoverLetter = styled.div`
+  padding: 20px;
+  font-family: 'Times New Roman', Times, serif;
+`;
+
+
+const CoverLetterTemplate: React.FC<Props> = ({
   coverLetter,
 }) => {
   return (
-    <div className="a4-size flex border-4 rounded border-black">
-      <div className="p-10 w-full max-w-3xl">
-        <header className="mb-8">
-          <h1 className="text-4xl font-bold">{name}</h1>
-          <p>Your Address</p>
-          <p>Your City, State ZIP Code</p>
-          <p>{email}</p>
-          <p>Your Phone Number</p>
-        </header>
-        <main>
-          <section className="mb-8">
-            <p>Date: <span>{new Date().toLocaleDateString()}</span></p>
-          </section>
-          {/* <section className="mb-8">
-            <p>Recipient Name</p>
-            <p>Recipient Title</p>
-            <p>Company Name</p>
-            <p>Company Address</p>
-            <p>City, State ZIP Code</p>
-          </section> */}
-          <section>
-          {coverLetter.split('\n').map((line, index) => (
-            <p className="pb-4" key={index}>{line}</p>
-          ))}
-          </section>
-        </main>
-      </div>
-    </div>
+    <CoverLetterContainer>
+      <CoverLetter>
+        <p>John Doe</p>
+        <p>123 Main Street</p>
+        <p>City, State, ZIP</p>
+        <p>Date</p>
+        <br />
+        <p>Recipient Name</p>
+        <p>Company</p>
+        <p>Company Address</p>
+        <br />
+        <p>Dear Recipient Name,</p>
+        <p>
+          I am writing to express my interest in the position at Company. I believe my
+          experience and skills align well with the requirements of the job, and I am confident
+          I can contribute positively to your team.
+        </p>
+        <p>
+          Thank you for considering my application. I look forward to the opportunity to
+          discuss how I can contribute to your team.
+        </p>
+        <br />
+        <p>Sincerely,</p>
+        <p>John Doe</p>
+      </CoverLetter>
+    </CoverLetterContainer>
   );
 };
 
