@@ -10,7 +10,7 @@ const CoverLetterSchema = new mongoose.Schema(
       type: Date,
       description: "Date of writing cover letter"
     },
-    coverLetter: {
+    letter: {
       type: String,
       description: "The content of the cover letter",
     },

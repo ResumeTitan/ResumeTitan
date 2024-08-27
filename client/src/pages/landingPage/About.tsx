@@ -1,19 +1,18 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useUser } from '@clerk/clerk-react';
 import interviewImg from 'assets/interview.png';
 import 'styles/index.css';
 
 const About: React.FC = () => {
-  const [isLoginOpen, setIsLoginOpen] = useState(false);
-  const user = useSelector((state: any) => state.user);
+  const { user } = useUser();
   const navigate = useNavigate();
 
   const handleActionButton = () => {
     if (user) {
       navigate('/dashboard');
     } else {
-      setIsLoginOpen(true);
+      navigate('/sign-in');
     }
   }
 

@@ -1,5 +1,15 @@
 import styled from 'styled-components';
 
+export const FormDiv = styled.div`
+  flex: 1;
+  margin: 10px;
+
+  // Optional: Add some styling for the divs
+  // padding: 20px;
+  // border: 1px solid #ccc;
+  // background-color: #f8f8f8;
+`;
+
 export const Form = styled.form`
   background-color: #f4f4f4;
   padding: 1.2rem;
@@ -31,6 +41,22 @@ export const FormLabel = styled.label`
 `;
 
 export const FormInput = styled.input`
+  width: 100%;
+  padding: 0.8rem;
+  border: 0.2rem solid #ccc;
+  border-radius: 0.2rem;
+  margin-bottom: 0.4rem;
+`;
+
+export const FormTextArea = styled.textarea`
+  width: 100%;
+  padding: 0.8rem;
+  border: 0.2rem solid #ccc;
+  border-radius: 0.2rem;
+  margin-bottom: 0.4rem;
+`;
+
+export const FormSelect = styled.select`
   width: 100%;
   padding: 0.8rem;
   border: 0.2rem solid #ccc;

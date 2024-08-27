@@ -24,4 +24,14 @@ body {
   }
 }
 
+@media print {
+  .no-print {
+    display: none;
+  }
+
+  .print-me {
+    display: block;
+  }
+}
+
 

@@ -4,27 +4,52 @@ import { useUser } from '@clerk/clerk-react';
 import Spinner from 'components/Spinner';
 import api from 'api/actions';
 import CoverLetterTemplate from './CoverLetterHolder';
+import { FormContainer } from 'components/Form/styled';
+import FormField from 'components/Form/FormField';
+import FormArea from 'components/Form/FormArea';
+import FormDropdown from 'components/Form/FormDropdown';
 import 'styles/index.css';
+import { CoverLetterType, ResumeType } from 'types/types';
 
 const CoverLetter: React.FC = () => {
   const { user } = useUser();
   const location = useLocation();
-  const [name, setName] = React.useState('');
-  const [email, setEmail] = React.useState('');
-  const [coverLetterId, setCoverLetterId] = React.useState(null);
   const [userResumes, setUserResumes] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(false);
-  const [jobTitle, setJobTitle] = React.useState('');
-  const [jobDescription, setJobDescription] = React.useState('');
-  const [selectedResume, setSelectedResume] = React.useState('');
-  const [coverLetter, setCoverLetter] = React.useState('');
+  const [coverLetter, setCoverLetter] = React.useState<CoverLetterType>({
+    _id: '',
+    letter: '',
+    name: '',
+    date: new Date(),
+    jobDescription: '',
+    jobTitle: '',
+    address: '',
+    city: '',
+    state: '',
+    zip: '',
+    companyName: '',
+    companyAddress: '',
+    companyCity: '',
+    companyState: '',
+    companyZip: '',
+    hiringManager: 'Hiring Manager',
+    resumeId: ''
+  });
 
   /**
    * @function loadCoverLetter
    */
   const loadCoverLetter = async (id: string) => {
     const response = await api.get(`/cover-letter/${id}`);
-    setCoverLetter(response.data.coverLetter);
+    setCoverLetter({...coverLetter, letter: response.data.coverLetter.letter});
+  }
+
+  /**
+   * @function loadResumes
+   */
+  const loadResumes = async (id: string) => {
+    const response = await api.get(`/resume/user?userId=${id}`);
+    setUserResumes(response.data.resumes);
   }
 
   /**
@@ -32,17 +57,21 @@ const CoverLetter: React.FC = () => {
    * @description Called when page loads
    */
   React.useEffect(() => {
-    if (location.state) {
-      const id = location.state.coverLetterId;
-      setCoverLetterId(id);
-      loadCoverLetter(id);
+    async function load() {
+      if (user) {
+        setCoverLetter({...coverLetter, name: user.fullName || 'Your Name'});
+        await loadResumes(user.id);
+      }
+  
+      if (location.state) {
+        const id = location.state.coverLetterId;
+        setCoverLetter({...coverLetter, _id: id})
+        await loadCoverLetter(id);
+      }
     }
-    if (user) {
-      console.log(user.fullName)
-      setName(user.fullName || 'Your Name');
-      setEmail(user.emailAddresses[0].emailAddress || 'Your Email')
-    }
-  }, []);
+
+    load();
+  }, [user]);
 
   /**
    * @function handleGenerateCoverLetter
@@ -55,13 +84,11 @@ const CoverLetter: React.FC = () => {
       }
       setIsLoading(true);
       const response = await api.post("cover-letter", { 
-        jobTitle, 
-        jobDescription, 
-        coverLetterId,
+        coverLetter,
         clerkId: user.id 
       });
 
-      setCoverLetter(response.data.coverLetter.coverLetter);
+      setCoverLetter(response.data.coverLetter);
       setIsLoading(false);
     } catch (error) {
       console.error(error);
@@ -74,37 +101,69 @@ const CoverLetter: React.FC = () => {
 
   return (
     <div className="cover-letter-container">
-      <div className="left-section">
+      <div className="left-section no-print">
         <div className="form-container">
           <div className="form-text-main">
             Cover Letter Information
           </div>
-          <div className="p-4">
-            <label htmlFor='jobTitle' className="form-label-text">Job Title</label>
-            <input 
-              type="text"
-              id={"jobTitle"}
-              className="form-style" 
-              placeholder="Enter job title..."
-              onChange={(event) => setJobTitle(event.target.value)}
+          <div>
+            <FormField 
+              title={"Name"}
+              value={coverLetter.name}
+              onChange={(event) => setCoverLetter({...coverLetter, name: event.target.value})}
             />
-            <label htmlFor={"description"} className="form-label-text">Job Description</label>
-            <textarea 
-              id={"description"}
-              className="form-style" 
-              rows={10}
-              onChange={(event) => setJobDescription(event.target.value)}
+            <FormField 
+              title={"Hiring Manager (Optional)"}
+              value={coverLetter.hiringManager}
+              onChange={(event) => setCoverLetter({...coverLetter, hiringManager: event.target.value})}
             />
-            <span className="form-label-text">Select Resume</span>
-            <select 
-              className="form-style" 
-              value={selectedResume} 
-              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {setSelectedResume(e.target.value)}}
+            <FormField 
+              title={"Job Title"}
+              value={coverLetter.jobTitle}
+              onChange={(event) => setCoverLetter({...coverLetter, jobTitle: event.target.value})}
+            />
+            <FormArea 
+              title={"Job Description"}
+              onChange={(event) => setCoverLetter({...coverLetter, jobDescription: event.target.value})}
+            />
+            <FormContainer>
+              <FormField 
+                title={"Address"}
+                value={coverLetter.address}
+                onChange={(event) => setCoverLetter({...coverLetter, address: event.target.value})}
+              />
+              <FormField 
+                title={"City"}
+                value={coverLetter.city}
+                onChange={(event) => setCoverLetter({...coverLetter, city: event.target.value})}
+              />
+              <FormField 
+                title={"State"}
+                value={coverLetter.state}
+                onChange={(event) => setCoverLetter({...coverLetter, state: event.target.value})}
+              />
+            </FormContainer>
+            <FormDropdown 
+              title={"Select Resume"}
+              onChange={(event) => {
+                const resumeId = userResumes.find((res: ResumeType) => res.name === event.target.value);
+                if (resumeId) {
+                  setCoverLetter({...coverLetter, resumeId})}
+                }
+              }
             >
               {userResumes && userResumes.map((resume: any) => (
                 <option value={resume.id}>{resume.name}</option>
               ))}
-            </select>
+            </FormDropdown>
+            {coverLetter.letter && (
+              <FormArea 
+                title={"Cover Letter"}
+                value={coverLetter.letter}
+                rows={10}
+                onChange={(event) => setCoverLetter({...coverLetter, letter: event.target.value})}
+              />
+            )}
           </div>
           <div className="p-4">
             <button
@@ -113,21 +172,19 @@ const CoverLetter: React.FC = () => {
             >
               {"Generate Cover Letter"}
             </button>
+            <button
+              className="interview-button"
+              onClick={() => window.print()}
+            >
+              {"Print Cover Letter"}
+            </button>
           </div>
         </div>
       </div>
 
-      <div className="right-section">
-        <div className="form-container border-transparent">
-          <div className="origin-top md:scale-50 lg:scale-60 xl:scale-70 2xl:scale-90">
-            <CoverLetterTemplate 
-              name={name} 
-              email={email}
-              coverLetter={coverLetter}
-            />
-          </div>
-        </div>
-      </div>
+      <CoverLetterTemplate 
+        coverLetter={coverLetter}
+      />
 
       { isLoading && (
         <Spinner />

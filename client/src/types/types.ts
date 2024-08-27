@@ -143,3 +143,24 @@ export interface IconDataType {
   label: string;
   icon: React.ReactElement;
 }
+
+export interface CoverLetterType {
+  letter: string;
+  name: string;
+  date: Date;
+  address: string;
+  city: string;
+  state: string;
+  zip: string;
+  companyName: string;
+  companyAddress: string;
+  companyCity: string;
+  companyState: string;
+  companyZip: string;
+  hiringManager: string;
+  jobTitle: string;
+  jobDescription: string;
+
+  _id: string;
+  resumeId: string;
+}
