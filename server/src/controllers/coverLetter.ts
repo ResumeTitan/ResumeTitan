@@ -54,6 +54,7 @@ export const createUpdateCoverLetter = async (req: Request, res: Response): Prom
   try {
     const { coverLetter, clerkId } = req.body;
     const resumeId = coverLetter.resumeId;
+    console.log(coverLetter);
     if (!resumeId) {
       return res.status(404).json({ msg: "Resume not found" });
     }
@@ -129,6 +130,7 @@ export const getCoverLetter = async (req: Request, res: Response): Promise<Respo
  */
 export const deleteCoverLetter = async (req: Request, res: Response): Promise<Response> => {
   const id = req.params.id;
+  console.log(id);
   try {
     await CoverLetter.findOneAndDelete({ _id: id });
     return res.status(204).send();
@@ -138,7 +140,7 @@ export const deleteCoverLetter = async (req: Request, res: Response): Promise<Re
 };
 
 /**
- * @function deleteCoverLetter
+ * @function updateCoverLetter
  * @param {Req} req 
  * @param {Res} res 
  * @returns 
@@ -147,6 +149,7 @@ export const updateCoverLetter = async (req: Request, res: Response): Promise<Re
   const id = req.params.id;
   const coverLetter = req.body;
   try {
+    console.log(id);
     const updatedCoverLetter = await CoverLetter.findOneAndUpdate({ _id: id }, coverLetter, { new: true });
     return res.status(200).json({ coverLetter: updatedCoverLetter });
   } catch (err: any) {

@@ -20,7 +20,7 @@ router.get("/", verifyToken, getResume);
 router.get("/user", verifyToken, getResumes);
 router.post("/print", verifyToken, printResumeToPdf);
 router.put("/update", verifyToken, updateResume);
-router.delete("/delete", verifyToken, deleteResume);
+router.delete("/delete/:id", verifyToken, deleteResume);
 router.post("/summary", verifyToken, postSummary);
 router.post("/education", verifyToken, postEducation);
 router.post("/work", verifyToken, postWork);

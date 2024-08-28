@@ -10,3 +10,4 @@ client/.env.development
 client/.env.production
 .env.local
 client/.env.local
+.vscode

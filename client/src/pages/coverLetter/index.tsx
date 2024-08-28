@@ -1,5 +1,5 @@
 import React from 'react';
-import { useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useUser } from '@clerk/clerk-react';
 import Spinner from 'components/Spinner';
 import api from 'api/actions';
@@ -14,6 +14,7 @@ import { CoverLetterType, ResumeType } from 'types/types';
 const CoverLetter: React.FC = () => {
   const { user } = useUser();
   const location = useLocation();
+  const navigate = useNavigate();
   const [userResumes, setUserResumes] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(false);
   const [coverLetter, setCoverLetter] = React.useState<CoverLetterType>({
@@ -23,16 +24,12 @@ const CoverLetter: React.FC = () => {
     date: new Date(),
     jobDescription: '',
     jobTitle: '',
-    address: '',
-    city: '',
-    state: '',
-    zip: '',
-    companyName: '',
-    companyAddress: '',
-    companyCity: '',
-    companyState: '',
-    companyZip: '',
-    hiringManager: 'Hiring Manager',
+    location: {
+      address: '',
+      city: '',
+      state: '',
+      postalCode: ''
+    },
     resumeId: ''
   });
 
@@ -41,7 +38,9 @@ const CoverLetter: React.FC = () => {
    */
   const loadCoverLetter = async (id: string) => {
     const response = await api.get(`/cover-letter/${id}`);
-    setCoverLetter({...coverLetter, letter: response.data.coverLetter.letter});
+    if (response.status !== 404) {
+      return response.data.coverLetter;
+    }
   }
 
   /**
@@ -49,7 +48,13 @@ const CoverLetter: React.FC = () => {
    */
   const loadResumes = async (id: string) => {
     const response = await api.get(`/resume/user?userId=${id}`);
-    setUserResumes(response.data.resumes);
+    const resumesIn = response.data.resumes;
+
+    if (resumesIn.length >= 0) {
+      return resumesIn[0]._id;
+    } else {
+      return 0;
+    }
   }
 
   /**
@@ -58,16 +63,21 @@ const CoverLetter: React.FC = () => {
    */
   React.useEffect(() => {
     async function load() {
-      if (user) {
-        setCoverLetter({...coverLetter, name: user.fullName || 'Your Name'});
-        await loadResumes(user.id);
-      }
-  
+      let newCoverLetter = coverLetter;
       if (location.state) {
-        const id = location.state.coverLetterId;
-        setCoverLetter({...coverLetter, _id: id})
-        await loadCoverLetter(id);
+        console.log("loading cover letter");
+        const id = location.state.id;
+        newCoverLetter = await loadCoverLetter(id);
+        newCoverLetter["_id"] = id;
       }
+
+      if (user) {
+        newCoverLetter["name"] = user.fullName || 'Your Name';
+        const resumeId = await loadResumes(user.id);
+        newCoverLetter["resumeId"] = resumeId;
+      }
+
+      setCoverLetter(newCoverLetter);
     }
 
     load();
@@ -95,6 +105,25 @@ const CoverLetter: React.FC = () => {
     }
   }
 
+  const handleSaveCoverLetter = async () => {
+    try {
+      if (!user) {
+        throw new Error("User not found");
+      }
+      setIsLoading(true);
+      const response = await api.put(`cover-letter/${coverLetter._id}`, { 
+        coverLetter,
+        clerkId: user.id 
+      });
+
+      setCoverLetter(response.data.coverLetter);
+      setIsLoading(false);
+      navigate("/dashboard");
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   if (!user) {
     return null;
   }
@@ -113,11 +142,6 @@ const CoverLetter: React.FC = () => {
               onChange={(event) => setCoverLetter({...coverLetter, name: event.target.value})}
             />
             <FormField 
-              title={"Hiring Manager (Optional)"}
-              value={coverLetter.hiringManager}
-              onChange={(event) => setCoverLetter({...coverLetter, hiringManager: event.target.value})}
-            />
-            <FormField 
               title={"Job Title"}
               value={coverLetter.jobTitle}
               onChange={(event) => setCoverLetter({...coverLetter, jobTitle: event.target.value})}
@@ -129,18 +153,27 @@ const CoverLetter: React.FC = () => {
             <FormContainer>
               <FormField 
                 title={"Address"}
-                value={coverLetter.address}
-                onChange={(event) => setCoverLetter({...coverLetter, address: event.target.value})}
+                value={coverLetter.location?.address}
+                onChange={(event) => {
+                  const newLocation = {...coverLetter.location, address: event.target.value};
+                  setCoverLetter({...coverLetter, location: newLocation});
+                }}
               />
               <FormField 
                 title={"City"}
-                value={coverLetter.city}
-                onChange={(event) => setCoverLetter({...coverLetter, city: event.target.value})}
+                value={coverLetter.location?.city}
+                onChange={(event) => {
+                  const newLocation = {...coverLetter.location, city: event.target.value};
+                  setCoverLetter({...coverLetter, location: newLocation});
+                }}
               />
               <FormField 
                 title={"State"}
-                value={coverLetter.state}
-                onChange={(event) => setCoverLetter({...coverLetter, state: event.target.value})}
+                value={coverLetter.location?.state}
+                onChange={(event) => {
+                  const newLocation = {...coverLetter.location, state: event.target.value};
+                  setCoverLetter({...coverLetter, location: newLocation});
+                }}
               />
             </FormContainer>
             <FormDropdown 
@@ -178,6 +211,14 @@ const CoverLetter: React.FC = () => {
             >
               {"Print Cover Letter"}
             </button>
+            {coverLetter.letter && (
+              <button
+                className="interview-button"
+                onClick={handleSaveCoverLetter}
+              >
+                {"Save Cover Letter"}
+              </button>
+            )}
           </div>
         </div>
       </div>

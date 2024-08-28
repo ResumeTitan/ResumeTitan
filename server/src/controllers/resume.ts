@@ -177,7 +177,7 @@ export const postVolunteer = async (req: Request, res: Response) => {
 
   const gptResponse = await workModel.invoke(getPrompt('volunteer', vol));
 
-  res.status(200).json({ message: 'Volunteer information added successfully', response: gptResponse });
+  res.status(200).json({ msg: 'Volunteer information added successfully', response: gptResponse });
 }
 
 export const postSkills = async (req: Request, res: Response) => {
@@ -186,7 +186,7 @@ export const postSkills = async (req: Request, res: Response) => {
 
   const gptResponse = await skillsModel.invoke(getPrompt('skills', { skills, work, education, summary, volunteer }));
 
-  res.status(200).json({ message: 'Skills information added successfully', response: gptResponse });
+  res.status(200).json({ msg: 'Skills information added successfully', response: gptResponse });
 }
 
 export const postResume = async (req: Request, res: Response) => {
@@ -225,7 +225,7 @@ export const updateResume = async (req: Request, res: Response) => {
     res.status(200).json( { resume: resumeOut });
   } catch (err: any) {
     console.log(err);
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ msg: err.message });
   }
 };
 
@@ -236,7 +236,7 @@ export const getResumes = async (req: Request, res: Response) => {
     const resumes = await Resume.find({ clerkId: userId }).sort({ createdAt: -1 });
     res.status(200).json({ resumes });
   } catch (err: any) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ msg: err.message });
   }
 };
 
@@ -247,18 +247,18 @@ export const getResume = async (req: Request, res: Response) => {
     const resume = await Resume.findOne({ _id: id });
     res.status(200).json({ resume: resume });
   } catch (err: any) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ msg: err.message });
   }
 };
 
 /* Delete resume by id */
 export const deleteResume = async (req: Request, res: Response) => {
-  const id = req.query.id;
+  const id = req.params.id;
   try {
     const resume = await Resume.findOneAndDelete({ _id: id });
     res.status(200).json({ resume: resume });
   } catch (err: any) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ msg: err.message });
   }
 };
 

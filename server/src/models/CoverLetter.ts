@@ -28,9 +28,13 @@ const CoverLetterSchema = new mongoose.Schema(
       description: "The clerk id of the user who created the interview question",
     },
     resumeId: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: String,
       ref: "Resume",
       description: "The resume used to generate the cover letter",
+    },
+    location: {
+      type: Object,
+      description: "Location object"
     }
   },
   { timestamps: true }

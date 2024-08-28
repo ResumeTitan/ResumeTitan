@@ -11,6 +11,7 @@ import api from 'api/actions';
 import { setToken } from '../../state/authReducer';
 import { useDispatch } from 'react-redux';
 import { ResumeType } from 'types/types';
+import DashboardContainer from './DashboardContainer';
 
 export const Dashboard: React.FC = () => {
   const { user, isLoaded } = useUser();
@@ -20,6 +21,7 @@ export const Dashboard: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [resumes, setResumes] = useState<ResumeType[]>([]);
   const [interviews, setInterviews] = useState<any[]>([]);
+  const [coverLetters, setCoverLetters] = useState<any[]>([]);
   const navigate = useNavigate();
   const [showPopup, setShowPopup] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
@@ -32,12 +34,7 @@ export const Dashboard: React.FC = () => {
     if (!user) {
       return null;
     }
-    const newToken = await getToken();
-    if (!newToken) {
-      return null;
-    }
     const userId = user.id;
-    dispatch(setToken(newToken));
     const response = await api.get(`/resume/user?userId=${userId}`);
     setResumes(response.data.resumes);
   }
@@ -54,11 +51,29 @@ export const Dashboard: React.FC = () => {
     setInterviews(response.data.interviews);
   }
 
+  /**
+   * @function loadInterviews
+   * @description Load interviews from the database, sets state
+   */
+  const loadCoverLetters = async () => {
+    if (!user) {
+      return;
+    }
+    const response = await api.get(`/cover-letter`);
+    setCoverLetters(response.data.coverLetters);
+  }
+
   useEffect(() => {
     const loadData = async () => {
+      const newToken = await getToken();
+      if (!newToken) {
+        return null;
+      }
+      dispatch(setToken(newToken));
       setIsLoading(true);
       await loadResumes();
       await loadInterviews();
+      await loadCoverLetters();
       setIsLoading(false);
     };
     
@@ -94,7 +109,7 @@ export const Dashboard: React.FC = () => {
   const handleDeleteResume = async () => {
     if (deleteId !== null) {
       try {
-        await api.delete(`/resume/delete?id=${deleteId}`);
+        await api.delete(`/resume/delete/${deleteId}`);
         setShowPopup(false);
         await loadResumes()
       } catch (error) {
@@ -110,6 +125,15 @@ export const Dashboard: React.FC = () => {
       await loadInterviews();
     } catch (error) {
       console.error('Error deleting interview:', error);
+    }
+  };
+
+  const handleDeleteCoverLetter = async (id: string) => {
+    try {
+      await api.delete(`/cover-letter/${id}`);
+      await loadCoverLetters();
+    } catch (error) {
+      console.error('Error deleting cover-letter:', error);
     }
   };
 
@@ -188,6 +212,15 @@ export const Dashboard: React.FC = () => {
           </div>
         </div>
       </div>
+
+      <DashboardContainer 
+        title={"My Cover Letters:"} 
+        items={coverLetters}
+        onEdit={(id) => navigate('/cover-letter', { state: { id } })}
+        onDelete={handleDeleteCoverLetter}
+      >
+
+      </DashboardContainer>
 
       {/* Popup */}
       {showPopup && <Popup message="Are you sure you want to delete this resume?" handleDelete={handleDeleteResume} handleCancel={() => setShowPopup(false)} />}
