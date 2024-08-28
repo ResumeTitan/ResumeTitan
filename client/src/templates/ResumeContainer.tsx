@@ -15,6 +15,10 @@ const StyledContainer = styled.div`
 
   background-color: white;
   margin: 0 auto;
+
+  @media print {
+    border-width: 0px;
+  }
 `;
 
 const ScaledContainer = styled.div`
