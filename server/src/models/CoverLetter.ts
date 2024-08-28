@@ -32,9 +32,17 @@ const CoverLetterSchema = new mongoose.Schema(
       ref: "Resume",
       description: "The resume used to generate the cover letter",
     },
-    location: {
-      type: Object,
-      description: "Location object"
+    city: {
+      type: String,
+      description: "User city"
+    },
+    state: {
+      type: String,
+      description: "User state"
+    },
+    companyName: {
+      type: String,
+      description: "Name of the company sending a cover letter to"
     }
   },
   { timestamps: true }

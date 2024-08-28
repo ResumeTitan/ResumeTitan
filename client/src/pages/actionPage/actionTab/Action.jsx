@@ -196,6 +196,10 @@ function ActionTab({
     onUpdateResume({...resumeIn, awards});
   }
 
+  const handleUpdateBasics = (basics) => {
+    onUpdateResume({...resumeIn, basics});
+  }
+
   const handleAddSection = (sections) => {
     onUpdateResume({...resumeIn, sections});
     setSectionPopupOpen(false);
@@ -204,7 +208,7 @@ function ActionTab({
   return (
     <div>
       <ResumeName initName={resumeIn.name} onPrint={ onPrint } onUpdateResumeName={handleUpdateResumeName} />
-      <PersonalInfo initialInfo={resumeIn.basics} key={resumeIn.basics} />
+      <PersonalInfo initialInfo={resumeIn.basics} onUpdate={handleUpdateBasics} />
       <Summary summary={resumeIn.basics.summary} aiLoading={aiSummaryLoading} onUpdate={handleUpdateSummary} onAiCall={handleSummaryAiCall} />
 
       {resumeIn.sections.includes("Education") && (

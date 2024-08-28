@@ -8,10 +8,9 @@ interface Props {
 
 const CoverLetterContainer = styled.div`
   flex: 2;
-  font-size: 18px;
+  font-size: 16px;
   padding: 10px;
   border: 1px solid #ccc;
-  height: 11in;
   width: 100%;
 
   @media print {
@@ -42,17 +41,17 @@ const CoverLetterTemplate: React.FC<Props> = ({ coverLetter }) => {
     <p key={index}>{text.trim() !== '' ? text : <>&nbsp;</>}</p>
   )) : null;
 
+  console.log(coverLetter.date);
+
   return (
     <CoverLetterContainer>
       <CoverLetter>
         <p>{coverLetter.name}</p>
-        {coverLetter.location && (
-          <>
-            <p>{coverLetter.location.address || '[Address]'}</p>
-            <p>{`${coverLetter.location.city || '[City]'}, ${coverLetter.location.state || '[State]'}, ${coverLetter.location.postalCode || '[Zip Code]'}`}</p>
-          </>
-        )}
-        <p>{coverLetter.date.toString()}</p>
+        <p>{`${coverLetter.city || '[City]'}, ${coverLetter.state || '[State]'}`}</p>
+        <p>{new Date(coverLetter.date).toDateString()}</p>
+        <br />
+        <p>{`${coverLetter.jobTitle || '[Job Title]'}`}</p>
+        <p>{`${coverLetter.companyName || '[Company Name]'}`}</p>
         <br />
         {paragraphs}
       </CoverLetter>

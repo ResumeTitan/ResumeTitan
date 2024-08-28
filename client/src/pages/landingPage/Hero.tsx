@@ -7,13 +7,13 @@ const Hero: React.FC = () => {
     <div className="mx-auto max-w-7xl p-4 sm:p-6 lg:p-8">
       <div className="grid grid-cols-1 items-center gap-14 lg:grid-cols-2" data-aos="fade-right">
         <div className="mx-auto flex max-w-3xl flex-col gap-8">
-          <h3 className="text-lg font-medium uppercase tracking-wide text-neutral-800">
+          <h2 className="text-lg font-medium uppercase tracking-wide text-neutral-800">
             Empower Your Career
-          </h3>
-
-          <h2 className="text-4xl font-bold leading-tight tracking-wide text-neutral-900 xl:text-5xl">
-            Create Professional Resumes in Minutes
           </h2>
+
+          <h1 className="text-4xl font-bold leading-tight tracking-wide text-neutral-900 xl:text-5xl">
+            Create Professional Resumes in Minutes
+          </h1>
 
           <p className="text-lg text-neutral-600">
             Looking for a job can be stressful, but creating your resume doesn't have to be. 

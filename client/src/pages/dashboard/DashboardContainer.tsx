@@ -7,7 +7,7 @@ import { CoverLetterType } from 'types/types';
 interface DashboardContainerProps {
   title?: string;
   items: CoverLetterType[];
-  onAdd?: () => void;
+  onAdd: () => void;
   onEdit: (id: string) => void;
   onDelete: (id: string) => void;
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -34,7 +34,7 @@ const AddNewButton = styled.button`
   margin-right: 1rem; /* mx-4 */
   margin-top: 0.5rem; /* mt-2 */
   border-radius: 0.5rem; /* rounded-lg */
-  background-color: #004d00; /* bg-darker-green (replace with your actual color) */
+  background-color: #0b3733;
   color: white; /* text-white */
   font-weight: bold; /* font-bold */
   padding: 0.5rem 1rem; /* py-2 px-4 */
@@ -42,7 +42,7 @@ const AddNewButton = styled.button`
   transition: background-color 0.3s ease-in-out; /* transition ease-in-out duration-300 */
 
   &:hover {
-    background-color: #66ff66; /* hover:bg-light-green (replace with your actual color) */
+    background-color: #80cbc4;
   }
 `;
 
@@ -54,7 +54,7 @@ const ItemCard = styled.div`
   transition: background-color 0.3s ease; /* Add transition for hover effect */
 
   &:hover {
-    background-color: #e0f7e0; /* hover:bg-lightest-green (replace with your actual color) */
+    background-color: #e0f2f1; /* hover:bg-lightest-green (replace with your actual color) */
   }
 `;
 
@@ -95,9 +95,9 @@ const EditButton = styled.button`
 const DeleteButton = styled.button`
   position: absolute;
   background-color: red; /* Dynamic background color */
-  color: white; /* text-white */
+  color: white;
   border-radius: 9999px;
-  display: flex; /* flex */
+  display: flex;
   align-items: center; /* items-center */
   justify-content: center; /* justify-center */
   width: 4rem;
@@ -127,7 +127,7 @@ const ScrollContainer = styled.div`
   }
 `;
 
-const DashboardContainer: React.FC<DashboardContainerProps> = ({ title, items, onEdit, onDelete, onChange, children }) => {
+const DashboardContainer: React.FC<DashboardContainerProps> = ({ title, items, onEdit, onDelete, onAdd, onChange, children }) => {
   return (
     <Container>
       <Header>
@@ -137,7 +137,7 @@ const DashboardContainer: React.FC<DashboardContainerProps> = ({ title, items, o
           </div>
         )}
       </Header>
-      <AddNewButton>Add New</AddNewButton>
+      <AddNewButton onClick={onAdd}>Add New</AddNewButton>
       <ScrollContainer>
         {items && items.map((item) => (
           <ItemCard>

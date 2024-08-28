@@ -10,9 +10,22 @@ import FormArea from 'components/Form/FormArea';
 import FormDropdown from 'components/Form/FormDropdown';
 import 'styles/index.css';
 import { CoverLetterType, ResumeType } from 'types/types';
+import styled from 'styled-components';
+
+const Container = styled.div`
+  background-color: white;
+  color: black; /* Change to your desired text color */
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+
+  @media (min-width: 1024px) {
+    flex-direction: row;
+  }
+`;
 
 const CoverLetter: React.FC = () => {
-  const { user } = useUser();
+  const { user, isSignedIn } = useUser();
   const location = useLocation();
   const navigate = useNavigate();
   const [userResumes, setUserResumes] = React.useState([]);
@@ -24,12 +37,9 @@ const CoverLetter: React.FC = () => {
     date: new Date(),
     jobDescription: '',
     jobTitle: '',
-    location: {
-      address: '',
-      city: '',
-      state: '',
-      postalCode: ''
-    },
+    city: '',
+    state: '',
+    companyName: '',
     resumeId: ''
   });
 
@@ -51,6 +61,7 @@ const CoverLetter: React.FC = () => {
     const resumesIn = response.data.resumes;
 
     if (resumesIn.length >= 0) {
+      setUserResumes(resumesIn);
       return resumesIn[0]._id;
     } else {
       return 0;
@@ -62,6 +73,10 @@ const CoverLetter: React.FC = () => {
    * @description Called when page loads
    */
   React.useEffect(() => {
+    if (!isSignedIn) {
+      navigate("/sign-in");
+    }
+
     async function load() {
       let newCoverLetter = coverLetter;
       if (location.state) {
@@ -72,7 +87,9 @@ const CoverLetter: React.FC = () => {
       }
 
       if (user) {
-        newCoverLetter["name"] = user.fullName || 'Your Name';
+        if (newCoverLetter.name === '') {
+          newCoverLetter["name"] = user.fullName || 'Your Name';
+        }
         const resumeId = await loadResumes(user.id);
         newCoverLetter["resumeId"] = resumeId;
       }
@@ -129,7 +146,7 @@ const CoverLetter: React.FC = () => {
   }
 
   return (
-    <div className="cover-letter-container">
+    <Container>
       <div className="left-section no-print">
         <div className="form-container">
           <div className="form-text-main">
@@ -148,34 +165,26 @@ const CoverLetter: React.FC = () => {
             />
             <FormArea 
               title={"Job Description"}
+              value={coverLetter.jobDescription}
               onChange={(event) => setCoverLetter({...coverLetter, jobDescription: event.target.value})}
             />
             <FormContainer>
               <FormField 
-                title={"Address"}
-                value={coverLetter.location?.address}
-                onChange={(event) => {
-                  const newLocation = {...coverLetter.location, address: event.target.value};
-                  setCoverLetter({...coverLetter, location: newLocation});
-                }}
-              />
-              <FormField 
                 title={"City"}
-                value={coverLetter.location?.city}
-                onChange={(event) => {
-                  const newLocation = {...coverLetter.location, city: event.target.value};
-                  setCoverLetter({...coverLetter, location: newLocation});
-                }}
+                value={coverLetter.city}
+                onChange={(event) => {setCoverLetter({...coverLetter, city: event.target.value})}}
               />
               <FormField 
                 title={"State"}
-                value={coverLetter.location?.state}
-                onChange={(event) => {
-                  const newLocation = {...coverLetter.location, state: event.target.value};
-                  setCoverLetter({...coverLetter, location: newLocation});
-                }}
+                value={coverLetter.state}
+                onChange={(event) => {setCoverLetter({...coverLetter, state: event.target.value})}}
               />
             </FormContainer>
+            <FormField 
+                title={"Company Name"}
+                value={coverLetter.companyName}
+                onChange={(event) => {setCoverLetter({...coverLetter, companyName: event.target.value})}}
+              />
             <FormDropdown 
               title={"Select Resume"}
               onChange={(event) => {
@@ -231,7 +240,7 @@ const CoverLetter: React.FC = () => {
         <Spinner />
       )}
 
-    </div>
+    </Container>
   );
 };
 

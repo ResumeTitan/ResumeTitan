@@ -12,9 +12,10 @@ import { setToken } from '../../state/authReducer';
 import { useDispatch } from 'react-redux';
 import { ResumeType } from 'types/types';
 import DashboardContainer from './DashboardContainer';
+import { FormContainer } from 'components/Form/styled';
 
 export const Dashboard: React.FC = () => {
-  const { user, isLoaded } = useUser();
+  const { user, isLoaded, isSignedIn } = useUser();
   const { getToken } = useAuth();
 
   const dispatch = useDispatch();
@@ -76,22 +77,16 @@ export const Dashboard: React.FC = () => {
       await loadCoverLetters();
       setIsLoading(false);
     };
-    
-    window.scrollTo(0, 0);
-    loadData();
-  }, []);
 
-  useEffect(() => {
+    window.scrollTo(0, 0);
     if (isLoaded) {
-      setIsLoading(true);
-      loadResumes();
-      loadInterviews();
-      setIsLoading(false);
+      if (!isSignedIn) {
+        navigate("/sign-in");
+      } else {
+        loadData();
+      }
     }
-
-    window.scrollTo(0, 0);
-  }, [isLoaded]);
-
+  }, [isLoaded, isSignedIn]);
 
   const handleClickResume = (resumeId: string) => {
     navigate(`/resume`, { state: { resumeId } });
@@ -180,6 +175,15 @@ export const Dashboard: React.FC = () => {
         </div>
       </div>
 
+      <DashboardContainer 
+        title={"My Cover Letters:"} 
+        items={coverLetters}
+        onAdd={() => navigate('/cover-letter')}
+        onEdit={(id) => navigate('/cover-letter', { state: { id } })}
+        onDelete={handleDeleteCoverLetter}
+      >
+      </DashboardContainer>
+
       <div className="dashboard-container">
         <div className="dashboard-header">My Interviews:</div>
         <button className="dashboard-button" onClick={() => navigate('/interview')}>Add New</button>
@@ -212,15 +216,6 @@ export const Dashboard: React.FC = () => {
           </div>
         </div>
       </div>
-
-      <DashboardContainer 
-        title={"My Cover Letters:"} 
-        items={coverLetters}
-        onEdit={(id) => navigate('/cover-letter', { state: { id } })}
-        onDelete={handleDeleteCoverLetter}
-      >
-
-      </DashboardContainer>
 
       {/* Popup */}
       {showPopup && <Popup message="Are you sure you want to delete this resume?" handleDelete={handleDeleteResume} handleCancel={() => setShowPopup(false)} />}

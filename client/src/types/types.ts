@@ -148,14 +148,11 @@ export interface CoverLetterType {
   letter: string;
   name: string;
   date: Date;
-  location: {
-    address: string;
-    postalCode: string;
-    city: string;
-    state: string;
-  };
+  city: string;
+  state: string;
   jobTitle: string;
   jobDescription: string;
+  companyName: string;
 
   _id: string;
   resumeId: string;

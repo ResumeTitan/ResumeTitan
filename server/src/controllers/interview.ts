@@ -70,8 +70,8 @@ export const createUpdateInterview = async (req: Request, res: Response) => {
 export const getInterviews = async (req: Request, res: Response) => {
   try {
     // @ts-ignore
-    const userId = req.auth.id;
-    const interviews = await Interview.find({ userId });
+    const userId = req.auth.userId;
+    const interviews = await Interview.find({ clerkId: userId });
     res.status(200).json({ interviews });
   } catch (error: any) {
     console.log("Error: ", error);

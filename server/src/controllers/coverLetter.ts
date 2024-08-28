@@ -41,6 +41,7 @@ const getPrompt = (jobTitle: string, jobDescription: string, resume: ResumeType)
     4. **Closing**: End with a confident closing statement that reiterates the candidate's interest in the role and willingness to discuss how they can add value to the team.
 
     The cover letter should be professional, concise, and no more than one page long.
+    Start the response with "Dear Hiring Manager,"
   `;
 };
 
@@ -54,7 +55,6 @@ export const createUpdateCoverLetter = async (req: Request, res: Response): Prom
   try {
     const { coverLetter, clerkId } = req.body;
     const resumeId = coverLetter.resumeId;
-    console.log(coverLetter);
     if (!resumeId) {
       return res.status(404).json({ msg: "Resume not found" });
     }
@@ -80,7 +80,6 @@ export const createUpdateCoverLetter = async (req: Request, res: Response): Prom
     }
 
     const coverLetterOut = await CoverLetter.create(coverLetterIn);
-    console.log(coverLetterOut);
     return res.status(200).json({ coverLetter: coverLetterOut });
   } catch (error: any) {
     console.log('Error: ', error);
@@ -97,8 +96,8 @@ export const createUpdateCoverLetter = async (req: Request, res: Response): Prom
 export const getCoverLetters = async (req: Request, res: Response): Promise<Response> => {
   try {
     // @ts-ignore
-    const id = req.auth.id
-    const coverLetters = await CoverLetter.find({ userId: id });
+    const id = req.auth.userId;
+    const coverLetters = await CoverLetter.find({ clerkId: id });
     return res.status(200).json({ coverLetters });
   } catch (error: any) {
     console.log('Error: ', error);
@@ -130,7 +129,6 @@ export const getCoverLetter = async (req: Request, res: Response): Promise<Respo
  */
 export const deleteCoverLetter = async (req: Request, res: Response): Promise<Response> => {
   const id = req.params.id;
-  console.log(id);
   try {
     await CoverLetter.findOneAndDelete({ _id: id });
     return res.status(204).send();
@@ -149,7 +147,6 @@ export const updateCoverLetter = async (req: Request, res: Response): Promise<Re
   const id = req.params.id;
   const coverLetter = req.body;
   try {
-    console.log(id);
     const updatedCoverLetter = await CoverLetter.findOneAndUpdate({ _id: id }, coverLetter, { new: true });
     return res.status(200).json({ coverLetter: updatedCoverLetter });
   } catch (err: any) {
