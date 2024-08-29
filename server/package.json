@@ -37,7 +37,7 @@
         "@types/cors": "^2.8.17",
         "@types/morgan": "^1.9.9",
         "@types/multer": "^1.4.11",
-        "axios": "^1.7.2",
+        "axios": "^1.7.4",
         "bcrypt": "^5.1.0",
         "chatgpt": "^5.0.10",
         "chatgpt-prompts": "^2.0.1",
