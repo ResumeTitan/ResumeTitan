@@ -1,46 +1,43 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import ResumeName from './ResumeName';
 import PersonalInfo from './PersonalInfo';
 import Schools from './Schools';
+import Volunteers from './Volunteer';
 import Jobs from './Jobs';
 import Skills from './Skills';
+import Awards from './Awards';
 import Summary from './Summary';
 import Popup from '../Popup';
 import api from 'api/actions';
 import { swapArrayElements } from 'utils';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import ButtonGridComponent from './SectionSelector';
 import 'styles/index.css';
 
 function ActionTab({
-  basics,
-  work,
-  education,
-  skills,
-  resumeName,
-  onUpdateResumeName,
-  onPrint, 
-  onUpdateWork, 
-  onUpdateEducation, 
-  onUpdateBasics, 
-  onUpdateSkills,
-  onUpdateSummary 
+  resumeIn,
+  onPrint,
+  onUpdateResume
 }) {
+  const [sectionPopupOpen, setSectionPopupOpen] = useState(false);
   const [popupOpen, setPopupOpen] = useState(false);
   const [aiSkillsLoading, setAiSkillsLoading] = useState(false);
   const [aiSummaryLoading, setAiSummaryLoading] = useState(false);
+
 
   /**
    * @function handleSummaryAiCall
    */
   const handleSummaryAiCall = async () => {
     setAiSummaryLoading(true);
-    const summaryResponse = await api.post("/resume/summary", { 
-      summary: basics.summary,
-      work: work,
-      education: education,
-      skills: skills
-    });
-    onUpdateSummary(summaryResponse.data.response.summary);
+    const summaryResponse = await api.post("/resume/summary", resumeIn);
     setAiSummaryLoading(false);
+    onUpdateResume({
+      ...resumeIn, basics: {
+        ...resumeIn.basics,
+        summary: summaryResponse.data.response.summary
+      }
+    });
   }
 
   /**
@@ -48,83 +45,217 @@ function ActionTab({
    */
   const handleSkillsAiCall = async () => {
     setAiSkillsLoading(true);
-    const summaryResponse = await api.post("/resume/skills", { 
-      summary: basics.summary,
-      work: work,
-      education: education,
-      skills: skills
-    });
-    onUpdateSkills(summaryResponse.data.response.skills);
+    const skillsResponse = await api.post("/resume/skills", resumeIn);
     setAiSkillsLoading(false);
+    onUpdateResume({
+      ...resumeIn,
+      skills: skillsResponse.data.response.skills
+    });
   }
 
   const handleSaveWork = (workForm) => {
     if (workForm.id) {
-      const updatedWork = work.map((job) => {
+      const updatedWork = resumeIn.work.map((job) => {
         if (job.id === workForm.id) {
           return workForm;
         } else { 
           return job;
         }
       });
-      onUpdateWork(updatedWork);
+      onUpdateResume({
+        ...resumeIn,
+        work: updatedWork
+      });
     } else {
-      workForm.id = work.length + 1;
-      onUpdateWork([...work, workForm]);
+      workForm.id = resumeIn.work.length + 1;
+      onUpdateResume({
+        ...resumeIn,
+        work: [...resumeIn.work, workForm]
+      });
     }
   }
 
+  const handleSaveVolunteer = (volunteerForm) => {
+    console.log("saving volunteer: ", volunteerForm);
+    if (volunteerForm.id) {
+      const updatedVolunteer = resumeIn.volunteer.map((vol) => {
+        if (vol.id === volunteerForm.id) {
+          return volunteerForm;
+        } else { 
+          return vol;
+        }
+      });
+
+      onUpdateResume({
+        ...resumeIn,
+        volunteer: updatedVolunteer
+      });
+    } else {
+      volunteerForm.id = resumeIn.work.length + 1;
+      onUpdateResume({
+        ...resumeIn,
+        volunteer: [...resumeIn.volunteer, volunteerForm]
+      });
+    }
+  }
+
+  /**
+   * @function handleDeleteWork
+   * @param {string} id Idetifier of work item
+   */
   const handleDeleteWork = (id) => {
-    const updatedWork = work.filter((job) => job.id !== id);
-    onUpdateWork(updatedWork);
+    const updatedWork = resumeIn.work.filter((job) => job.id !== id);
+    onUpdateResume({
+      ...resumeIn,
+      work: updatedWork
+    })
+  }
+
+  /**
+   * @function handleDeleteVolunteer
+   * @param {string} id Idetifier of volunteer item
+   */
+  const handleDeleteVolunteer = (id) => {
+    const updatedVolunteer = resumeIn.volunteer.filter((volunteer) => volunteer.id !== id);
+    onUpdateResume({
+      ...resumeIn,
+      volunteer: updatedVolunteer
+    });
   }
 
   const handleSaveEducation = (educationForm) => {
     if (educationForm.id) {
-      const updatedEducation = education.map((school) => {
+      const updatedEducation = resumeIn.education.map((school) => {
         if (school.id === educationForm.id) {
           return educationForm;
         } else {
           return school;
         }
       });
-      onUpdateEducation(updatedEducation);
+      onUpdateResume({
+        ...resumeIn,
+        education: updatedEducation
+      });
     } else {
-      educationForm.id = education.length + 1;
-      onUpdateEducation([...education, educationForm]);
+      educationForm.id = resumeIn.education.length + 1;
+      onUpdateResume({
+        ...resumeIn,
+        education: [...resumeIn.education, educationForm]
+      });
     }
   }
 
   const handleDeleteEducation = (id) => {
-    const updatedEducation = education.filter((school) => school.id !== id);
-    onUpdateEducation(updatedEducation);
+    const updatedEducation = resumeIn.education.filter((school) => school.id !== id);
+    onUpdateResume({
+      ...resumeIn,
+      education: updatedEducation
+    });
   }
 
   const handleSwapJobs = (up, index) => {
-    const tempWork = work;
+    const tempWork = resumeIn.work;
     if (up) {
       swapArrayElements(tempWork, index, index - 1);
     } else {
       swapArrayElements(tempWork, index, index + 1);
     }
-    onUpdateWork(tempWork);
+    onUpdateResume({
+      ...resumeIn,
+      work: tempWork
+    });
   }
 
   const handleSwapEducation = (indexA, indexB) => {
-    const tempEducation = education;
+    const tempEducation = resumeIn.education;
     swapArrayElements(tempEducation, indexA, indexB);
-    onUpdateEducation(tempEducation);
+    onUpdateResume({
+      ...resumeIn,
+      education: tempEducation
+    });
+  }
+
+  const handleUpdateResumeName = (name) => {
+    onUpdateResume({...resumeIn, name});
+  }
+
+  const handleUpdateSummary = (summary) => {
+    onUpdateResume({
+      ...resumeIn, basics: {
+        ...resumeIn.basics,
+        summary
+      }
+    });
+  }
+
+  const handleUpdateSkills = (skills) => {
+    onUpdateResume({...resumeIn, skills});
+  }
+
+  const handleUpdateAwards = (awards) => {
+    onUpdateResume({...resumeIn, awards});
+  }
+
+  const handleUpdateBasics = (basics) => {
+    onUpdateResume({...resumeIn, basics});
+  }
+
+  const handleAddSection = (sections) => {
+    onUpdateResume({...resumeIn, sections});
+    setSectionPopupOpen(false);
   }
 
   return (
     <div>
-      <ResumeName initName={resumeName} onPrint={ onPrint } onUpdateResumeName={onUpdateResumeName} />
-      <PersonalInfo initialInfo={basics} key={basics} onUpdate={onUpdateBasics} />
+      <ResumeName initName={resumeIn.name} onPrint={ onPrint } onUpdateResumeName={handleUpdateResumeName} />
+      <PersonalInfo initialInfo={resumeIn.basics} onUpdate={handleUpdateBasics} />
+      <Summary summary={resumeIn.basics.summary} aiLoading={aiSummaryLoading} onUpdate={handleUpdateSummary} onAiCall={handleSummaryAiCall} />
 
-      <Schools key={education} education={education} onSave={handleSaveEducation} onDelete={handleDeleteEducation} onReorder={handleSwapEducation}/>
-      <Jobs jobs={work} onSave={handleSaveWork} onDelete={handleDeleteWork} onSwap={handleSwapJobs}/>      
-      <Summary summary={basics?.summary || ""} aiLoading={aiSummaryLoading} onUpdate={onUpdateSummary} onAiCall={handleSummaryAiCall} />
-      <Skills initSkills={skills} aiLoading={aiSkillsLoading} onUpdate={onUpdateSkills} onAiCall={handleSkillsAiCall}/>
+      {resumeIn.sections.includes("Education") && (
+        <Schools 
+          education={resumeIn.education} 
+          onSave={handleSaveEducation} 
+          onDelete={handleDeleteEducation} 
+          onReorder={handleSwapEducation}
+        />
+      )}
+
+      {resumeIn.sections.includes("Work") && (
+        <Jobs 
+          jobs={resumeIn.work} 
+          onSave={handleSaveWork} 
+          onDelete={handleDeleteWork} 
+          onSwap={handleSwapJobs}
+      />)}
+
+      {resumeIn.sections.includes("Volunteer") && (
+        <Volunteers 
+          volunteerExperience={resumeIn.volunteer} 
+          onSave={handleSaveVolunteer}
+          onDelete={handleDeleteVolunteer}
+      />)}
+
+      {resumeIn.sections.includes("Skills") && (
+        <Skills initSkills={resumeIn.skills} aiLoading={aiSkillsLoading} onUpdate={handleUpdateSkills} onAiCall={handleSkillsAiCall}/>
+      )}
+      
+      {resumeIn.sections.includes("Awards") && (
+        <Awards initAwards={resumeIn.awards} aiLoading={aiSkillsLoading} onUpdate={handleUpdateAwards} onAiCall={handleSkillsAiCall}/>
+      )}
+
+      <div className="form-container">
+        <div className={`p-4 flex flex-col items-center justify-center add-button`} onClick={() => {setSectionPopupOpen(!sectionPopupOpen)}}>
+          <AddCircleIcon fontSize="large"/>
+          <span>{"Add Section"}</span>
+        </div>
+      </div>
+
+      {sectionPopupOpen && (
+        <div>
+        <ButtonGridComponent onAdd={handleAddSection}
+          onClose={() => setSectionPopupOpen(false)}></ButtonGridComponent>
+        </div>
+      )}
 
        {/* Popup */}
        {popupOpen && <Popup message={`These fields will be filled in when clicking "Generate Resume"`} handleOk={() => setPopupOpen(false)} />}

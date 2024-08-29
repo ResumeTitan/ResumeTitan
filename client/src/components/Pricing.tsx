@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { createStripeSession } from 'api/stripe';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from "@clerk/clerk-react";
+import api from "api/actions";
 import Spinner from 'components/Spinner';
 
 interface Tier {
@@ -61,15 +61,20 @@ const Pricing: React.FC = () => {
   const [stripeLoading, setStripeLoading] = useState(false);
 
   const handleBuyButtonClick = async (planId: string) => {
-    console.log(user);
     if (!isLoaded || !user) {
       navigate("/sign-in");
       return;
     }
     try {
       setStripeLoading(true);
-      const response = await createStripeSession(user.emailAddresses[0].emailAddress, planId);
-      const url = response.sessionUrl;
+      const response = await api.post("/checkout/session", {
+        email: user.emailAddresses[0].emailAddress, 
+        plan: planId
+      });
+      console.log(response);
+      // @ts-ignore
+      const url = response.data.sessionUrl;
+      console.log(url);
       if (url) window.open(url, '_self');
     } catch (error) {
       alert('Something went wrong. Please try again');
@@ -79,7 +84,7 @@ const Pricing: React.FC = () => {
   };
 
   return (
-    <div className="mx-auto mt-12 max-w-7xl px-4 sm:mt-16 sm:px-6 lg:mt-20 lg:px-8">
+    <div className="mx-auto mt-12 max-w-7xl p-4 sm:mt-16 sm:p-6 lg:mt-20 lg:p-8">
       {stripeLoading && (
         <Spinner />
       )}

@@ -1,31 +1,50 @@
-import { ChatOpenAI } from "@langchain/openai";
 import { Response, Request } from 'express';
 import Resume from '../models/Resume';
 import { z } from "zod";
-import { IResumeType } from "../types/types";
+import { ResumeType } from "../types/types";
+import { openAiClient } from '../ext/clients';
+import { ServerStyleSheet } from 'styled-components';
 import puppeteer from 'puppeteer';
+
+import "dotenv/config";
+const CLIENT_URL = process.env.CLIENT_URL;
 
 const EducationSchema = z.object({
   institution: z.string(),
-  degree: z.string(),
-  fieldOfStudy: z.string(),
+  studyType: z.string(),
+  area: z.string(),
   startDate: z.string(),
   endDate: z.string(),
-  accomplishments: z.array(z.string()),
-  extraAccomplishments: z.array(z.string())
+  highlights: z.array(z.string()),
+  extraHighlights: z.array(z.string())
 });
 
-const JobSchema = z.object({
-  title: z.string(),
-  company: z.string(),
+const VolunteerSchema = z.object({
+  organization: z.string(),
+  position: z.string(),
+  url: z.string(),
   startDate: z.string(),
   endDate: z.string(),
-  responsibilities: z.array(z.string()),
-  extraResponsibilities: z.array(z.string())
+  highlights: z.array(z.string()),
+  extraHighlights: z.array(z.string())
+});
+
+const WorkSchema = z.object({
+  position: z.string(),
+  name: z.string(),
+  startDate: z.string(),
+  endDate: z.string(),
+  highlights: z.array(z.string()),
+  summary: z.string(),
+  extraHighlights: z.array(z.string())
 });
 
 const SkillsSchema = z.object({
-  skills: z.array(z.string())
+  skills: z.array(z.object({
+    name: z.string(),
+    level: z.string(),
+    keywords: z.array(z.string())
+  }))
 });
 
 const SummarySchema = z.object({
@@ -35,23 +54,18 @@ const SummarySchema = z.object({
 const ResumeDataSchema = z.object({
   summary: z.string(),
   education: z.array(EducationSchema).optional(),
-  jobs: z.array(JobSchema).optional(),
+  work: z.array(WorkSchema).optional(),
   skills: SkillsSchema.optional()
 });
 
-const resumeData: IResumeType = {};
+const resumeData: ResumeType = {};
 
-import dotenv from 'dotenv';
-dotenv.config();
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
-const CLIENT_URL = process.env.CLIENT_URL;
-
-const model = new ChatOpenAI({ model: "gpt-4o", apiKey: OPENAI_API_KEY });
-const summaryModel = model.withStructuredOutput(SummarySchema);
-const educationModel = model.withStructuredOutput(EducationSchema);
-const jobModel = model.withStructuredOutput(JobSchema);
-const skillsModel = model.withStructuredOutput(SkillsSchema);
-const resumeModel = model.withStructuredOutput(ResumeDataSchema);
+const summaryModel = openAiClient.withStructuredOutput(SummarySchema);
+const educationModel = openAiClient.withStructuredOutput(EducationSchema);
+const volunteerModel = openAiClient.withStructuredOutput(VolunteerSchema);
+const workModel = openAiClient.withStructuredOutput(WorkSchema);
+const skillsModel = openAiClient.withStructuredOutput(SkillsSchema);
+const resumeModel = openAiClient.withStructuredOutput(ResumeDataSchema);
 
 const getPrompt = (section: string, data: any) => {
   let prompt = 'You are a hiring manager at a company and you need to generate the perfect resume for a potential candidate.';
@@ -68,36 +82,48 @@ const getPrompt = (section: string, data: any) => {
     case 'education':
       return prompt + `Generate a JSON representation of the education section for a resume: ${JSON.stringify(data)}.
           Use this information only, and not previous information entered.
-          The response shall include an array of strings with accomplishments a student has.
-          Include at least 4 strings, in full sentences, in both accomplishments and extraAccomplishments that could be used on the resume for this person.
-          If no accomplishments are found, create some that would be associated with the major/area of study entered.
+          The response shall include an array of strings with highlights a student has.
+          Include at least 4 strings, in full sentences, in both highlights and extraHighlights that could be used on the resume for this person.
+          If no highlights are found, create some that would be associated with the major/area of study entered.
+          If highlights include instructions on how to create the other highlights, use those instructions as well as you can.
           These strings should include keywords that would score well on an ATS system.
           This content should not repeat the name of the school.
           Be sure to fix any spelling or grammar mistakes if there is existing content being passed in.`;
-    case 'job':
-      return prompt + `Generate a JSON representation of the job experience section for a resume using this information: ${JSON.stringify(data)}
+    case 'work':
+      return prompt + `Generate a JSON representation of the work experience section for a resume using this information: ${JSON.stringify(data)}
           Use this information only, and not previous information entered.
-          The response shall include an array of strings with responsibilities an employee has.
-          Include at least 4 strings, in full sentences, in both responsibilities and extraResponsibilities that could be used on the resume for this person.
+          The response shall include an array of strings with highlights an employee has.
+          Include at least 4 strings, in full sentences, in both highlights and extraHighlights that could be used on the resume for this person.
           These strings should include keywords that would score well on an ATS system.
           This content should not repeat the name of the employer. 
-          If content already exists, generate new content that would be associated with the job title entered.
-          Be sure to fix any spelling or grammar mistakes if there is existing content being passed in.`;
+          If highlights already exists, generate new highlights that would be associated with the job title entered.
+          Be sure to fix any spelling or grammar mistakes if there is existing highlights being passed in.`;
+    case 'volunteer':
+      return prompt + `Generate a JSON representation of the volunteer section for a resume using this information: ${JSON.stringify(data)}
+          Use this information only, and not previous information entered.
+          The response shall include an array of strings with highlights a volunteer has.
+          Include at least 4 strings, in full sentences, in both highlights and extraHighlights that could be used on the resume for this person.
+          These strings should include keywords that would score well on an ATS system.
+          This content should not repeat the name of the volunteer opportunity. 
+          If highlights already exists, generate new highlights that would be associated with the job title entered.
+          Be sure to fix any spelling or grammar mistakes if there is existing highlights being passed in.`;
     case 'skills':
       return prompt + `Generate a JSON representation of the skills section for a resume: ${JSON.stringify(data)}.
           Use this information only, and not previous information entered.
           Provide relevant skills given the data provided.
-          Return between 6 and 10 skills that would be associated with the job titles, education, and summary entered.`;
+          Return between 4 and 8 skills that would be associated with the work titles, education, volunteer, and summary entered.`;
     default:
       return '';
   }
 };
 
 export const postSummary = async (req: Request, res: Response) => {
-  const { summary, work, education, skills } = req.body;
-  resumeData.summary = summary;
+  const { summary, work, education, skills, volunteer, basics } = req.body;
+  resumeData.basics = basics;
 
-  const gptResponse = await summaryModel.invoke(getPrompt('summary', {  extraNotes: summary, work, education, skills }));
+  const gptResponse = await summaryModel.invoke(getPrompt('summary', { 
+    extraNotes: summary, work, education, skills, volunteer
+  }));
 
   res.status(200).json({ message: 'Summary information added successfully', response: gptResponse });
 };
@@ -106,6 +132,8 @@ export const postEducation = async (req: Request, res: Response) => {
   try {
     const { education } = req.body;
     resumeData.education = education;
+
+    console.log(education);
 
     const gptResponse = await educationModel.invoke(getPrompt('education', education));
 
@@ -116,37 +144,75 @@ export const postEducation = async (req: Request, res: Response) => {
   }
 };
 
-export const postJob = async (req: Request, res: Response) => {
+/**
+ * @function postWork
+ * @description POST Handle AI call for work highlights
+ * @param {Request} req
+ * @param {Response} res
+ */
+export const postWork = async (req: Request, res: Response) => {
   const { job } = req.body;
   if (!resumeData.work) {
     resumeData.work = [];
   }
   resumeData.work.push(job);
 
-  const gptResponse = await jobModel.invoke(getPrompt('job', job));
+  const gptResponse = await workModel.invoke(getPrompt('work', job));
 
   res.status(200).json({ message: 'Job information added successfully', response: gptResponse });
 }
 
+/**
+ * @function postVolunteer
+ * @description POST Handle AI call for volunteer highlights
+ * @param {Request} req
+ * @param {Response} res
+ */
+export const postVolunteer = async (req: Request, res: Response) => {
+  const { vol } = req.body;
+  if (!resumeData.volunteer) {
+    resumeData.volunteer = [];
+  }
+  resumeData.volunteer.push(vol);
+
+  const gptResponse = await workModel.invoke(getPrompt('volunteer', vol));
+
+  res.status(200).json({ msg: 'Volunteer information added successfully', response: gptResponse });
+}
+
 export const postSkills = async (req: Request, res: Response) => {
-  const { skills, work, education, summary } = req.body;
+  const { skills, work, education, summary, volunteer } = req.body;
   resumeData.skills = skills;
 
-  const gptResponse = await skillsModel.invoke(getPrompt('skills', { skills, work, education, summary }));
+  const gptResponse = await skillsModel.invoke(getPrompt('skills', { skills, work, education, summary, volunteer }));
 
-  res.status(200).json({ message: 'Skills information added successfully', response: gptResponse });
+  res.status(200).json({ msg: 'Skills information added successfully', response: gptResponse });
 }
 
 export const postResume = async (req: Request, res: Response) => {
-  const gptResponse = await resumeModel.invoke(`Generate a complete JSON resume with the following information: ${JSON.stringify(resumeData)}`);
+  const gptResponse = await resumeModel.invoke(
+    `Generate a complete JSON resume with the following information: ${JSON.stringify(resumeData)}`
+  );
 
   res.status(200).json({ resume: gptResponse });
 };
 
-/* Update resume from input */
+/**
+ * @function updateResume
+ * @description PUT Update resume from user edits
+ * @param {Request} req
+ * @param {Response} res
+ */
 export const updateResume = async (req: Request, res: Response) => {
   try {
     const resume = req.body;
+    // @ts-ignore
+    const clerkId = req.auth.userId;
+    resume.clerkId = clerkId;
+
+    if (!clerkId) {
+      return res.status(401).json({ msg: "User not authenticated"});
+    }
 
     let resumeOut;
     if (!resume._id) {
@@ -159,7 +225,7 @@ export const updateResume = async (req: Request, res: Response) => {
     res.status(200).json( { resume: resumeOut });
   } catch (err: any) {
     console.log(err);
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ msg: err.message });
   }
 };
 
@@ -170,7 +236,7 @@ export const getResumes = async (req: Request, res: Response) => {
     const resumes = await Resume.find({ clerkId: userId }).sort({ createdAt: -1 });
     res.status(200).json({ resumes });
   } catch (err: any) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ msg: err.message });
   }
 };
 
@@ -181,64 +247,150 @@ export const getResume = async (req: Request, res: Response) => {
     const resume = await Resume.findOne({ _id: id });
     res.status(200).json({ resume: resume });
   } catch (err: any) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ msg: err.message });
   }
 };
 
 /* Delete resume by id */
 export const deleteResume = async (req: Request, res: Response) => {
-  const id = req.query.id;
+  const id = req.params.id;
   try {
     const resume = await Resume.findOneAndDelete({ _id: id });
     res.status(200).json({ resume: resume });
   } catch (err: any) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ msg: err.message });
   }
 };
 
 /**
- * @function getResumeAsPdf
+ * @function render
+ * @description Build the html page to send to puppeteer to render
+ * @return {String} Page in html
+ */
+export const render = (name: string, html: string): string => {
+  const sheet = new ServerStyleSheet();
+  const styles = sheet.getStyleTags();
+  
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>${name} - Resume</title>
+  <style>
+    @font-face {
+      font-family: LatinModern;
+      font-style: normal;
+      font-weight: normal;
+      src: url("/fonts/lmroman10-regular.otf") format("opentype");
+    }
+    @font-face {
+      font-family: LatinModern;
+      font-weight: bold;
+      src: url("/fonts/lmroman10-bold.otf") format("opentype");
+    }
+    @font-face {
+      font-family: LatinModern;
+      font-style: italic;
+      src: url("/fonts/lmroman10-italic.otf") format("opentype");
+    }
+    @font-face {
+      font-family: LatinModernSans;
+      font-style: normal;
+      font-weight: normal;
+      src: url("/fonts/lmsans10-regular.otf") format("opentype");
+    }
+    @font-face {
+      font-family: LatinModernSans;
+      font-weight: bold;
+      src: url("/fonts/lmsans10-bold.otf") format("opentype");
+    }
+    @font-face {
+      font-family: LatinModernSans;
+      font-style: italic;
+      src: url("/fonts/lmsans10-italic.otf") format("opentype");
+    }
+    html {
+      font-family: LatinModern, "Courier New", monospace;
+      background: #fff;
+      font-size: 10px;
+    }
+    h2 {
+      font-size: 1.65rem;
+    }
+    p {
+      padding: 0;
+      margin: 0;
+    }
+    p, li {
+      font-size: 1.4rem;
+      line-height: 1.5rem;
+    }
+    .secondary {
+      color: #111;
+    }
+    a {
+      text-decoration: none;
+    }
+    ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+  </style>
+  ${styles}
+</head>
+<body>${html}</body>
+</html>`;
+};
+
+/**
+ * @function printResumeToPdf
  * @descripton Uses puppeteer library to render resume page then save as pdf
  * @param {Request} req
  * @param {Response} res
  */
-export const getResumeAsPdf = async (req: Request, res: Response) => {
-  const id = req.params.id;
-
-  // Authenticate data
-  const resume = await Resume.findById(id);
-  if (!resume) {
-    return res.status(400).send('Resume not found, cannot authenticate print');
-  }
-  if (!resume.clerkId) {
+export const printResumeToPdf = async (req: Request, res: Response) => {
+  // @ts-ignore
+  const clerkId = req.auth.userId;
+  if (!clerkId) {
     return res.status(401).send('User not known, cannot authenticate print');
   }
 
   try {
-    // TODO fix this, use html skeleton
-    // const executablePath = await new Promise(resolve => locateChrome((arg: any) => resolve(arg))) || '';
-    // const browser = await puppeteer.launch({ 
-    //   args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
-    //   headless: true,
-    //   executablePath,
-    //   ignoreHTTPSErrors: true
-    // });
-    // const page = await browser.newPage();
-    // await page.setViewport({ width: 1920, height: 1080 });
-    // await page.setExtraHTTPHeaders({ Authorization: req.headers['authorization'] });
-    // console.log('Authorization:', req.headers['authorization']);
-    // console.log("url", `${CLIENT_URL}/print-resume/${id}`);
-    // await page.goto(`${CLIENT_URL}/print-resume/${id}`, { waitUntil: 'networkidle0' });
-    // const pdfBuffer = await page.pdf();
-    // await browser.close();
+    const { name, html, id } = req.body;
+    console.log("id", id);
+    const htmlRaw = render(name, html);
+    const browser = await puppeteer.launch({ 
+      args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
+      headless: true,
+      ignoreHTTPSErrors: true
+    });
+    
+    const page = await browser.newPage();
+    await page.setViewport({ width: 1920, height: 1080 });
+    // @ts-ignore
+    const tokenOut = await req.auth.getToken();
+    await page.setExtraHTTPHeaders({ Authorization: tokenOut });
+    // Intercept and log network requests and console messages
+    page.on('console', msg => console.log('PAGE LOG:', msg.text()));
+    page.on('requestfailed', request => console.error('REQUEST FAILED:', request.url(), request.failure().errorText));
+    
+    await page.goto(`${CLIENT_URL}/print-resume/${id}`, { waitUntil: 'networkidle0' });
+    const pdfBuffer = await page.pdf();
+    await browser.close();
 
     // Return the PDF buffer
-    // res.set({
-    //   'Content-Type': 'application/pdf',
-    //   'Content-Disposition': 'attachment; filename="resume.pdf"',
-    // });
-    // res.send(pdfBuffer);
-    res.send(200);
+    res.set({
+      'Content-Type': 'application/pdf',
+      'Content-Disposition': 'attachment; filename="resume.pdf"',
+    });
+    res.send(pdfBuffer);
   } catch (error) {
     console.error('Error generating PDF:', error);
     res.status(500).send('Internal Server Error');

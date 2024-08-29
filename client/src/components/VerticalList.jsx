@@ -1,13 +1,5 @@
-import React, { useState } from "react";
+import React from "react";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
-
-const tasks = [
-  { id: "1", content: "First task" },
-  { id: "2", content: "Second task" },
-  { id: "3", content: "Third task" },
-  { id: "4", content: "Fourth task" },
-  { id: "5", content: "Fifth task" }
-];
 
 const reorder = (list, startIndex, endIndex) => {
   const result = Array.from(list);
@@ -17,7 +9,7 @@ const reorder = (list, startIndex, endIndex) => {
   return result;
 };
 
-export function VerticalList({ items, onSave }) {
+export function VerticalList({ items, icons, onSave }) {
   const onDragEnd = (result) => {
     const { source, destination } = result;
 
@@ -30,25 +22,31 @@ export function VerticalList({ items, onSave }) {
     onSave(newItems);
   };
 
+
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <Droppable droppableId="droppable">
         {(provided, snapshot) => (
           <div
-            className={`${snapshot.isDraggingOver ? "bg-slate-800" : "bg-slate-700"}`}
+            className={`${snapshot.isDraggingOver ? "bg-gray-200" : "bg-white"} w-full sm:w-5/6 md:w-1/2`}
             {...provided.droppableProps}
             ref={provided.innerRef}
           >
             {items.map((item, index) => (
-              <Draggable key={item.id} draggableId={String(item.id)} index={index}>
+              <Draggable key={item} draggableId={item} index={index}>
                 {(provided, snapshot) => (
                   <div
-                    className={`form-style ${snapshot.isDragging ? "bg-slate-600" : "bg-slate-800"}`}
+                    className={`form-style ${snapshot.isDragging ? "bg-white" : "bg-gray-200"} flex flex-row flex-center`}
                     ref={provided.innerRef}
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
                   >
-                    {item.content}
+                    <div className="p-1 items-center">
+                      {icons[item]}
+                    </div>
+                    <div className="p-1 text-right text-2xl">
+                      {item}
+                    </div>
                   </div>
                 )}
               </Draggable>

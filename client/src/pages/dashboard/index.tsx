@@ -1,24 +1,28 @@
 import React, { useEffect, useState } from 'react';
 import ResumeCard from './ResumeCard';
-import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { deleteInterview } from 'api/interview';
 import Spinner from 'components/Spinner';
 import EditIcon from '@mui/icons-material/Edit';
 import CloseIcon from '@mui/icons-material/Close';
 import Popup from './Popup';
 import { formatDateFull } from '../../utils/index';
-import { useUser } from '@clerk/clerk-react';
+import { useUser, useAuth } from '@clerk/clerk-react';
 import api from 'api/actions';
-import { IResumeType } from 'types/types';
+import { setToken } from '../../state/authReducer';
+import { useDispatch } from 'react-redux';
+import { ResumeType } from 'types/types';
+import DashboardContainer from './DashboardContainer';
+import { FormContainer } from 'components/Form/styled';
 
 export const Dashboard: React.FC = () => {
-  const { user, isLoaded } = useUser();
+  const { user, isLoaded, isSignedIn } = useUser();
+  const { getToken } = useAuth();
 
-  const token = useSelector((state: any) => state.token);
+  const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
-  const [resumes, setResumes] = useState<IResumeType[]>([]);
+  const [resumes, setResumes] = useState<ResumeType[]>([]);
   const [interviews, setInterviews] = useState<any[]>([]);
+  const [coverLetters, setCoverLetters] = useState<any[]>([]);
   const navigate = useNavigate();
   const [showPopup, setShowPopup] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
@@ -33,7 +37,6 @@ export const Dashboard: React.FC = () => {
     }
     const userId = user.id;
     const response = await api.get(`/resume/user?userId=${userId}`);
-    console.log(response.data.resumes);
     setResumes(response.data.resumes);
   }
 
@@ -49,29 +52,41 @@ export const Dashboard: React.FC = () => {
     setInterviews(response.data.interviews);
   }
 
+  /**
+   * @function loadInterviews
+   * @description Load interviews from the database, sets state
+   */
+  const loadCoverLetters = async () => {
+    if (!user) {
+      return;
+    }
+    const response = await api.get(`/cover-letter`);
+    setCoverLetters(response.data.coverLetters);
+  }
+
   useEffect(() => {
     const loadData = async () => {
+      const newToken = await getToken();
+      if (!newToken) {
+        return null;
+      }
+      dispatch(setToken(newToken));
       setIsLoading(true);
       await loadResumes();
       await loadInterviews();
+      await loadCoverLetters();
       setIsLoading(false);
     };
-    
-    window.scrollTo(0, 0);
-    loadData();
-  }, []);
 
-  useEffect(() => {
+    window.scrollTo(0, 0);
     if (isLoaded) {
-      setIsLoading(true);
-      loadResumes();
-      loadInterviews();
-      setIsLoading(false);
+      if (!isSignedIn) {
+        navigate("/sign-in");
+      } else {
+        loadData();
+      }
     }
-
-    window.scrollTo(0, 0);
-  }, [isLoaded]);
-
+  }, [isLoaded, isSignedIn]);
 
   const handleClickResume = (resumeId: string) => {
     navigate(`/resume`, { state: { resumeId } });
@@ -89,7 +104,7 @@ export const Dashboard: React.FC = () => {
   const handleDeleteResume = async () => {
     if (deleteId !== null) {
       try {
-        await api.delete(`/resume/delete?id=${deleteId}`);
+        await api.delete(`/resume/delete/${deleteId}`);
         setShowPopup(false);
         await loadResumes()
       } catch (error) {
@@ -102,10 +117,18 @@ export const Dashboard: React.FC = () => {
     event.stopPropagation();
     try {
       await api.delete(`/interview/${id}`);
-      await deleteInterview(token, id);
       await loadInterviews();
     } catch (error) {
       console.error('Error deleting interview:', error);
+    }
+  };
+
+  const handleDeleteCoverLetter = async (id: string) => {
+    try {
+      await api.delete(`/cover-letter/${id}`);
+      await loadCoverLetters();
+    } catch (error) {
+      console.error('Error deleting cover-letter:', error);
     }
   };
 
@@ -145,12 +168,21 @@ export const Dashboard: React.FC = () => {
       <div className="dashboard-container">
         <div className="dashboard-header">My Resumes:</div>
         <button className="dashboard-button" onClick={() => navigate('/resume')}>Add New</button>
-        <div className="overflow-x-scroll overflow-y-hidden h-80 hide-scrollbar">
+        <div className="overflow-x-scroll overflow-y-hidden h-[22rem] hide-scrollbar">
           <div className="transform scale-25 flex origin-top-left">
             { resumes && resumes.length > 0 ? resumeWidgets : resumePlaceholder }
           </div>
         </div>
       </div>
+
+      <DashboardContainer 
+        title={"My Cover Letters:"} 
+        items={coverLetters}
+        onAdd={() => navigate('/cover-letter')}
+        onEdit={(id) => navigate('/cover-letter', { state: { id } })}
+        onDelete={handleDeleteCoverLetter}
+      >
+      </DashboardContainer>
 
       <div className="dashboard-container">
         <div className="dashboard-header">My Interviews:</div>

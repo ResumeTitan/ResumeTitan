@@ -1,7 +1,7 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { setUser } from '../../state/authReducer';
+import { setUserId } from '../../state/authReducer';
 import { reloadUser } from 'api/resume';
 
 const SuccessPage = () => {
@@ -17,9 +17,7 @@ const SuccessPage = () => {
         if (response.ok) {
           const data = await response.json();
           console.log(data);
-          dispatch(
-            setUser(data),
-          );
+          dispatch(setUserId(data.userId));
         }
       } catch (error) {
         console.error(error);

@@ -1,20 +1,20 @@
 import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
 import ActionTab from './actionTab/Action';
 import CustomizeTab from './customizeTab';
 import Tabs from './Tabs';
 import ResumeContainer from 'templates/ResumeContainer';
-import { getResume, createResume, updateResume } from 'api/resume';
 import Spinner from 'components/Spinner';
 import ErrorAlert from 'components/Alert/ErrorAlert';
-import { LoginForm } from 'components/LoginForm';
 import api from 'api/actions';
 import 'styles/index.css';
 import { styled } from '@mui/system';
 import DescriptionIcon from '@mui/icons-material/Description';
-import { saveAs } from 'file-saver';
-import { useUser } from "@clerk/clerk-react";
+import { useUser, useAuth } from "@clerk/clerk-react";
+import { useDispatch } from 'react-redux';
+import { setToken } from '../../state/authReducer';
+import { jsPDF } from 'jspdf';
+
 
 const CustomDocumentIcon = styled(DescriptionIcon)({
   backgroundColor: '#0b3733',
@@ -27,42 +27,61 @@ const CustomDocumentIcon = styled(DescriptionIcon)({
 
 // This page should do all loading, other pages do rendering
 
-// The resume reference
-const ResumeComponent = React.forwardRef((props, ref) => (
-  <div className="border-2 border-gray-700" ref={ref}>
-    <ResumeContainer resume={{
-      basics: props.basics,
-      work: props.work,
-      education: props.education,
-      skills: props.skills,
-    }} theme={props.theme} />
-  </div>
-));
-
 function ActionPage() {
   const { isSignedIn, user } = useUser();
+  const { getToken } = useAuth();
+
+  const dispatch = useDispatch();
 
   const location = useLocation();
-  const token = useSelector((state) => state.token);
-  const [resumeId, setResumeId] = useState(null);
-  const [resumeName, setResumeName] = useState('Resume Name');
-  const [isOpen, setIsOpen] = useState(false);
-  const [education, setEducation] = useState([]);
-  const [work, setWork] = useState([]);
-  const [skills, setSkills] = useState([]);
-  const [theme, setTheme] = useState('harvard');
-  const [isLoginOpen, setIsLoginOpen] = useState(false);
-  const [basics, setBasics] = useState({
-    name: "",
-    email: ""
+  const [currentResume, setCurrentResume] = useState({
+    basics: {
+      name: '',
+      label: '',
+      image: '',
+      email: '',
+      phone: '',
+      url: '',
+      summary: '',
+      location: {
+        address: '',
+        postalCode: '',
+        city: '',
+        countryCode: '',
+        region: '',
+      },
+      profiles: [
+        {
+          network: '',
+          username: '',
+          url: '',
+        },
+      ],
+    },
+    education: [],
+    work: [],
+    skills: [],
+    volunteer: [],
+
+    theme: "professional", 
+    sections: ["Basics"],
+    name: "Resume Name"
   });
+  const [isOpen, setIsOpen] = useState(false);
   const [resumeLoading, setResumeLoading] = useState(false);
   const navigate = useNavigate();
-  const resumeRef = React.useRef();
   const [activeTab, setActiveTab] = useState(1);
   const [jobDescription, setJobDescription] = useState('');
   const [useJobDescription, setUseJobDescription] = useState(false);
   const [showPrintError, setShowPrintError] = useState(false);
+
+  const refreshToken = async () => {
+    const newToken = await getToken();
+    if (!newToken) {
+      return null;
+    }
+    dispatch(setToken(newToken));
+  }
 
   /**
    * @function useEffect
@@ -71,14 +90,17 @@ function ActionPage() {
   React.useEffect(() => {
     const loadResumeChange = async () => {
       if (user) {
-        setBasics({
-          name: user.fullName,
-          email: user.emailAddresses.at(0).toString()
-        })
+        setCurrentResume({
+          ...currentResume,
+          basics: {
+            ...currentResume.basics,
+            name: user.fullName,
+            email: user.emailAddresses.at(0).toString()
+          }
+        });
       }
 
       if (location.state) {
-        setResumeId(location.state.resumeId);
         await loadResume(location.state.resumeId);
       }
     }
@@ -100,13 +122,10 @@ function ActionPage() {
       if (!id) {
         return;
       }
-      const { resume } = await getResume(token, id);
-      setBasics(resume.basics);
-      setEducation(resume.education);
-      setWork(resume.work);
-      setSkills(resume.skills);
-      setTheme(resume.theme);
-      setResumeName(resume.name);
+      await refreshToken();
+      const response = await api.get(`/resume?id=${id}`);
+      const resume = response.data.resume;
+      setCurrentResume(resume);
       setResumeLoading(false);
     } catch (err) {
       console.log(err);
@@ -121,21 +140,20 @@ function ActionPage() {
    * @todo Fix printing for mobile, gets too many notifications, generate on backend
    */
   const handleSaveToPdf = async () => {
-    // if (!currentUser.premiumUntil || new Date(currentUser.premiumUntil) < new Date()) {
-    //   setShowPrintError(true);
-    //   return;
-    // }
+    if (!user.publicMetadata.premiumUntil || new Date(user.publicMetadata.premiumUntil) < new Date()) {
+      setShowPrintError(true);
+      return;
+    }
 
     try {
       setResumeLoading(true);
 
       // Save the resume first
       await handleSaveResume(false);
-  
-      const response = await api.get(`/resume/print/${resumeId}`, { responseType: 'blob' });
-      const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
-      const resumeNameClean = resumeName.replace(' ', '_');
-      saveAs(pdfBlob, `${resumeNameClean}.pdf`);
+
+      // Construct the URL you want to open
+      const newPageUrl = `${window.location.origin}/../print-resume/${currentResume._id}`; // Replace '/new-page' with your route
+      window.open(newPageUrl, '_blank');
 
       setResumeLoading(false);
     } catch (error) {
@@ -152,24 +170,19 @@ function ActionPage() {
    */
   const handleGenerateResume = async () => {
     if (!isSignedIn) {
-      setIsLoginOpen(true);
-      return;
+      return navigate('/dashboard');
     }
-    const resume = {
-      _id: resumeId,
-      work: work,
-      education: education,
-      basics: basics,
-      theme: theme,
-      name: resumeName
-    };
-    setResumeLoading(true);
     try {
+      await refreshToken();
       const jobDescriptionStr = useJobDescription ? jobDescription : '';
-      const newResume = await createResume(token, resume, jobDescriptionStr);
+      const response = await api.post("/resume/create", {
+        resume: currentResume,
+        jobDescription: jobDescriptionStr
+      });
+      const newResume = response.data;
       setResumeLoading(false);
-      setResumeId(newResume.resume._id);
-      await loadResume(newResume.resume._id);
+      setCurrentResume(newResume);
+      await loadResume(newResume._id);
     } catch (err) {
       console.log(err);
       throw err;
@@ -184,28 +197,14 @@ function ActionPage() {
    */
   const handleSaveResume = async (exit) => {
     if (!isSignedIn) {
-      // TODO redirect to login
-      setIsLoginOpen(true);
-      return;
+      navigate('/sign-in');
     }
-    const resume = {
-      _id: resumeId,
-      clerkId: user.id,
-      work: work,
-      education: education,
-      basics: basics,
-      skills: skills,
-      theme: theme,
-      name: resumeName
-    };
     setResumeLoading(true);
     try {
-      const savedResume = await updateResume(token, resume);
-      setBasics(savedResume.resume.basics);
-      setEducation(savedResume.resume.education);
-      setWork(savedResume.resume.work);
-      setSkills(savedResume.resume.skills);
-      setResumeId(savedResume.resume._id);
+      await refreshToken();
+      const response = await api.put("/resume/update", currentResume);
+      const savedResume = response.data.resume;
+      setCurrentResume(savedResume);
       setResumeLoading(false);
       if (exit) {
         navigate('/dashboard');
@@ -237,34 +236,21 @@ function ActionPage() {
         <Tabs openTab={activeTab} setOpenTab={(tab) => setActiveTab(tab)} />
         {activeTab === 1 && (
           <ActionTab 
-            basics={basics}
-            work={work}
-            education={education}
-            skills={skills}
-            summary={basics.summary}
-            resumeName={resumeName}
-            onUpdateResumeName={setResumeName}
+            resumeIn={currentResume}
+            onUpdateResume={(resumeIn) => setCurrentResume(resumeIn)}
             onPrint={handleSaveToPdf}
-            onUpdateWork={(jobsIn) => setWork(jobsIn)}
-            onUpdateEducation={(schoolsIn) => setEducation(schoolsIn)}
-            onUpdateSkills={(skillsIn) => setSkills(skillsIn)}
-            onUpdateSummary={(sum) => {
-              setBasics({
-                ...basics,
-                summary: sum
-              });
-            }}
-            onUpdateBasics={(basicsIn) => setBasics(basicsIn)}
             onGenerateResume={handleGenerateResume} 
           />
         )}
         {activeTab === 2 && (
           <CustomizeTab 
+            resume={currentResume}
             description={jobDescription}
             descriptionUsed={useJobDescription}
             onUpdateJobDescription={(description) => setJobDescription(description)}
             isJobDescriptionUsed={(checked) => setUseJobDescription(checked)}
-            onChangeTheme={(theme) => setTheme(theme)}
+            onChangeTheme={(theme) => setCurrentResume({...currentResume, theme: theme})}
+            onUpdateSections={(sections) => setCurrentResume({...currentResume, sections})}
           />
         )}
         <div className="w-full">
@@ -272,44 +258,25 @@ function ActionPage() {
           <button onClick={() => handleSaveResume(true)} className="save-button">Save and Exit</button>
         </div>
 
-        <div onClick={() => setIsOpen(true)} className="fixed bottom-8 right-8 hover:cursor-pointer lg:hidden">
+        <div onClick={() => setIsOpen(true)} className="fixed bottom-8 right-8 hover:cursor-pointer xl:hidden">
           <CustomDocumentIcon />
         </div>
 
       </div>
       {/* Desktop View */}
-      <div className="hidden lg:block p-2 origin-top-left lg:w-1/2 xl:w-3/5 ease-linear transform lg:scale-60 xl:scale-90">
-        <ResumeComponent 
-          basics={basics}
-          education={education}
-          work={work}
-          skills={skills}
-          theme={theme}
-          ref={resumeRef}
-        />
-      </div>
-
-      {/* Mobile View */}
-      <div className={`${isOpen ? "fixed": "hidden"} bg-black bg-opacity-50 flex justify-center items-center w-full h-full top-0`} onClick={() => setIsOpen(false)}>
-        <div className="pt-4 transform scale-50 sm:scale-60 lg:scale-75 print:!scale-100">
-          <ResumeComponent 
-            basics={basics}
-            education={education} 
-            work={work}
-            skills={skills}
-            theme={theme}
-            ref={resumeRef}
-          />
+      <div className="overflow-hidden hidden xl:block w-full m-4">
+        <div>
+          <ResumeContainer resume={currentResume} />
         </div>
       </div>
 
-      {isLoginOpen && (
-        <LoginForm
-          registerOpen={true}
-          onCloseLogin={() => {
-            setIsLoginOpen(false);
-          }}
-        />
+      {/* Mobile View */}
+      {isOpen && (
+        <div className="layover-container" onClick={() => setIsOpen(false)}>
+          <div className="transform scale-50 xs:scale-60 sm:scale-70 md:scale-80 lg:scale-90">
+            <ResumeContainer resume={currentResume} />
+          </div>
+        </div>
       )}
     </div>
   );

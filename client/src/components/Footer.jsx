@@ -4,7 +4,7 @@ import XIcon from '@mui/icons-material/X';
 
 export default function Footer() {
   return (
-    <footer className="bg-main-green text-white p-2">
+    <footer className="bg-main-green text-white p-2 no-print">
       <div className="w-full mx-auto max-w-screen-xl sm:p-2 p-4 md:flex md:items-center md:justify-between">
         <div>
           <span className="text-md sm:text-center">&#169; ResumeTitan {new Date().getFullYear()}</span>

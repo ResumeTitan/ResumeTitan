@@ -2,9 +2,17 @@ import mongoose from "mongoose";
 
 const CoverLetterSchema = new mongoose.Schema(
   {
-    coverLetter: {
+    name: {
       type: String,
-      description: "The interview questions",
+      description: "Name of the cover letter writer"
+    },
+    date: {
+      type: Date,
+      description: "Date of writing cover letter"
+    },
+    letter: {
+      type: String,
+      description: "The content of the cover letter",
     },
     jobTitle: {
       type: String,
@@ -20,9 +28,21 @@ const CoverLetterSchema = new mongoose.Schema(
       description: "The clerk id of the user who created the interview question",
     },
     resumeId: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: String,
       ref: "Resume",
       description: "The resume used to generate the cover letter",
+    },
+    city: {
+      type: String,
+      description: "User city"
+    },
+    state: {
+      type: String,
+      description: "User state"
+    },
+    companyName: {
+      type: String,
+      description: "Name of the company sending a cover letter to"
     }
   },
   { timestamps: true }

@@ -1,45 +1,61 @@
 import React from 'react';
+import styled from 'styled-components';
+import { CoverLetterType } from 'types/types';
 
 interface Props {
-  name: string;
-  email: string;
-  coverLetter: string;
+  coverLetter: CoverLetterType;
 }
 
-const CoverLetterTemplate: React.FC<Props> = ({ 
-  name,
-  email,
-  coverLetter,
-}) => {
+const CoverLetterContainer = styled.div`
+  flex: 2;
+  font-size: 16px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  width: 100%;
+
+  @media print {
+    border: 0px solid #ccc;
+    height: 11in;
+  }
+
+  // width: 100%; /* Set width to 100% of its container */
+  // padding-top: 141.4%; /* The height is set as a percentage of the width to maintain the aspect ratio */
+  // position: relative; /* This is necessary for the content inside the container */
+  
+  // @media (max-width: 768px) {
+  //   padding-top: 141.4%;
+  // }
+  
+  // @media (min-width: 768px) {
+  //   width: 210mm; /* Set the width explicitly for larger screens */
+  //   height: 297mm; /* Set the height explicitly for larger screens */
+`;
+
+const CoverLetter = styled.div`
+  padding: 20px;
+  font-family: 'Times New Roman', Times, serif;
+`;
+
+const CoverLetterTemplate: React.FC<Props> = ({ coverLetter }) => {
+  const paragraphs = coverLetter.letter ? coverLetter.letter.split('\n').map((text, index) => (
+    <p key={index}>{text.trim() !== '' ? text : <>&nbsp;</>}</p>
+  )) : null;
+
+  console.log(coverLetter.date);
+
   return (
-    <div className="a4-size flex border-4 rounded border-black">
-      <div className="p-10 w-full max-w-3xl">
-        <header className="mb-8">
-          <h1 className="text-4xl font-bold">{name}</h1>
-          <p>Your Address</p>
-          <p>Your City, State ZIP Code</p>
-          <p>{email}</p>
-          <p>Your Phone Number</p>
-        </header>
-        <main>
-          <section className="mb-8">
-            <p>Date: <span>{new Date().toLocaleDateString()}</span></p>
-          </section>
-          {/* <section className="mb-8">
-            <p>Recipient Name</p>
-            <p>Recipient Title</p>
-            <p>Company Name</p>
-            <p>Company Address</p>
-            <p>City, State ZIP Code</p>
-          </section> */}
-          <section>
-          {coverLetter.split('\n').map((line, index) => (
-            <p className="pb-4" key={index}>{line}</p>
-          ))}
-          </section>
-        </main>
-      </div>
-    </div>
+    <CoverLetterContainer>
+      <CoverLetter>
+        <p>{coverLetter.name}</p>
+        <p>{`${coverLetter.city || '[City]'}, ${coverLetter.state || '[State]'}`}</p>
+        <p>{new Date(coverLetter.date).toDateString()}</p>
+        <br />
+        <p>{`${coverLetter.jobTitle || '[Job Title]'}`}</p>
+        <p>{`${coverLetter.companyName || '[Company Name]'}`}</p>
+        <br />
+        {paragraphs}
+      </CoverLetter>
+    </CoverLetterContainer>
   );
 };
 

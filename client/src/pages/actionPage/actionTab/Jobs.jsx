@@ -40,7 +40,7 @@ function Jobs({ jobs, onSave, onDelete, onSwap }) {
 
   return (
     <div className="form-container">
-      <div className="form-text-main">{"Job Info"}</div>
+      <div className="form-text-main">{"Work"}</div>
       {isEditing && editingForm}
 
       {!isEditing && (

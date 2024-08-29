@@ -22,9 +22,15 @@ body {
   .text-custom-green {
     color: #00cc66;
   }
+}
 
-  .a4-size {
-    @apply w-[21cm] h-[29.7cm];
+@media print {
+  .no-print {
+    display: none;
+  }
+
+  .print-me {
+    display: block;
   }
 }
 

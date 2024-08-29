@@ -7,6 +7,13 @@
 @tailwind components;
 @tailwind utilities;
 
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
+
 body {
   @apply font-sans;
 }
@@ -30,7 +37,7 @@ body {
 }
 
 .tab-text-base {
-  @apply text-xs font-bold uppercase px-5 py-3 shadow-lg rounded block leading-normal
+  @apply text-xs lg:text-xl font-bold uppercase px-5 py-3 shadow-lg rounded block leading-normal
 }
 
 .tab-active {
@@ -55,8 +62,7 @@ body {
 
 .form-style {
   @apply border border-black text-base rounded-lg block w-full p-2.5
-    bg-gray-100 text-black
-    ;
+    bg-gray-100 text-black;
 }
 
 .form-style:disabled {
@@ -64,7 +70,7 @@ body {
 }
 
 .form-text-main {
-  @apply bg-main-green text-white font-bold border-b-2 border-black rounded-t p-4
+  @apply bg-main-green text-white font-bold border-b-2 border-black rounded-t p-4 text-2xl
 }
 
 .form-secondary-area {
@@ -73,13 +79,13 @@ body {
 }
 
 .form-single-header {
-  @apply bg-main-green text-white font-bold border-b-2 border-black rounded-t p-4
+  @apply bg-main-green text-white font-bold border-b-2 border-black rounded-t p-4 text-2xl
     hover:bg-gray-300 hover:text-main-green hover:cursor-pointer 
     transition ease-in-out duration-300;
 }
 
 .green-button {
-  @apply text-white text-center font-medium rounded-lg text-sm font-bold sm:py-1 sm:px-4 sm:mx-1 border-2 border-black text-black
+  @apply text-white text-center font-medium rounded-lg text-base font-bold sm:py-1 sm:px-4 border-2 border-black text-black mx-1
     hover:bg-teal-800 hover:cursor-pointer hover:border-main-green hover:text-white
     transition ease-in-out duration-300;
 }
@@ -98,23 +104,23 @@ body {
 }
 
 .remove-button {
-  @apply text-black border-2 border-black text-center font-medium rounded-lg text-sm px-5 py-2.5 m-1
+  @apply text-black border-2 border-black text-center font-medium rounded-lg text-xl px-5 py-2.5 m-1
     hover:bg-red-800 hover:text-white hover:cursor-pointer
     transition ease-in-out duration-300;
 }
 
 .disabled-button {
-  @apply text-slate-400 border-2 border-slate-400 text-center font-medium rounded-lg text-sm px-5 py-2.5 m-1;
+  @apply text-slate-400 border-2 border-slate-400 text-center font-medium rounded-lg text-xl px-5 py-2.5 m-1;
 }
 
 .add-button {
-  @apply text-black text-center font-medium rounded-lg text-sm px-5 py-2.5 m-1
+  @apply text-black text-center font-medium rounded-lg text-sm lg:text-xl px-5 py-2.5 m-1
     hover:bg-teal-800 hover:text-white hover:cursor-pointer
     transition ease-in-out duration-200;
 }
 
 .add-button-small {
-  @apply border-2 border-black text-black text-center font-medium rounded-lg text-sm px-5 py-2.5 m-1
+  @apply border-2 border-black text-black text-center font-medium rounded-lg text-xl px-5 py-2.5 m-1
   hover:bg-teal-800 hover:text-white hover:cursor-pointer
   transition ease-in-out duration-200;
 }
@@ -126,7 +132,7 @@ body {
 }
 
 .submit-button {
-  @apply bg-gray-200 text-black text-center font-medium rounded-lg text-sm border-2
+  @apply bg-gray-200 text-black text-center font-medium rounded-lg text-sm sm:text-lg md:text-xl border-2
     hover:bg-light-green hover:cursor-pointer
     transition ease-in-out duration-300;
 }
@@ -161,7 +167,7 @@ body {
 }
 
 .form-label-text {
-  @apply mb-2 text-base font-medium text-black
+  @apply text-lg lg:text-2xl font-medium text-black
 }
 
 .login-button {
@@ -200,7 +206,7 @@ body {
 }
 
 .phone-screen-stack {
-  @apply flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-4
+  @apply flex flex-row items-center align-middle;
 }
 
 .cover-letter-container {
@@ -251,4 +257,50 @@ body {
 
 .hidden{
   display: none;
+}
+
+@keyframes slideUpAndFadeIn {
+  0% {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  0% {
+    transform: translateY(20px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.animate-slideUpFadeIn {
+  animation: slideUpAndFadeIn 0.5s ease-out forwards;
+}
+
+.animate-slideUp {
+  animation: slideUp 0.5s ease-out forwards;
+}
+
+.section-line {
+  border-width: 1px;
+  border-color: #000000;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+@keyframes rollDown {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
 }

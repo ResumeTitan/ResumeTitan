@@ -2,13 +2,11 @@ import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import WhiteLogo from '../assets/logo-white.png';
 import TextLogo from '../assets/text-logo-white.png';
-import { LoginForm } from './LoginForm';
 import 'styles/index.css';
 import { SignedIn, SignedOut, UserButton } from "@clerk/clerk-react";
 
 const NavBar = () => {
   const [mobileScreen, setMobileScreen] = useState(false);
-  const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation(); 
@@ -80,30 +78,41 @@ const NavBar = () => {
       {isMobileMenuOpen && (
         <div className="flex flex-col absolute top-16 rounded items-start right-0 bg-gray-800">
           <SignedOut>
-            <a
-              className="text-white font-bold p-4 w-full border-b border-white text-left"
-              href='/pricing'
+            <button
+              className="text-white font-bold p-4 w-full border-b border-white text-left "
+              onClick={() => {
+                setIsMobileMenuOpen(false);
+                navigate('/pricing');
+              }}
             >
               {'Pricing'}
-            </a>
-            <a
-              id="loginBtn"
-              href="/sign-in"
+            </button>
+            <button
               className="text-white font-bold p-4 w-full border-b border-white text-left"
+              onClick={() => {
+                setIsMobileMenuOpen(false);
+                navigate('/sign-in');
+              }}
             >
-              {'Login'}
-            </a>
+              {'Sign In'}
+            </button>
           </SignedOut>
           <SignedIn>
             <button
               className="text-white font-bold p-4 w-full border-b border-white text-left"
-              onClick={() => navigate('/dashboard')}
+              onClick={() => {
+                setIsMobileMenuOpen(false);
+                navigate('/dashboard');
+              }}
             >
               {'Dashboard'}
             </button>
             <button
               className="text-white font-bold p-4 w-full border-b border-white text-left "
-              onClick={() => navigate('/pricing')}
+              onClick={() => {
+                setIsMobileMenuOpen(false);
+                navigate('/pricing');
+              }}
             >
               {'Pricing'}
             </button>
@@ -117,7 +126,7 @@ const NavBar = () => {
   );
 
   return (
-    <div>
+    <div className="no-print">
       <nav className="flex justify-between w-full items-center bg-main-green py-2 px-8">
         <div
           className={`flex items-center w-full ${
@@ -178,15 +187,6 @@ const NavBar = () => {
           </div>
         )}
       </nav>
-      {isLoginOpen && (
-        <LoginForm
-          registerOpen={false}
-          onCloseLogin={() => {
-            console.log('Closing login');
-            setIsLoginOpen(false);
-          }}
-        />
-      )}
     </div>
   );
 };

@@ -1,20 +1,18 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { LoginForm } from 'components/LoginForm';
+import { useUser } from '@clerk/clerk-react';
 import interviewImg from 'assets/interview.png';
 import 'styles/index.css';
 
 const About: React.FC = () => {
-  const [isLoginOpen, setIsLoginOpen] = useState(false);
-  const user = useSelector((state: any) => state.user);
+  const { user } = useUser();
   const navigate = useNavigate();
 
   const handleActionButton = () => {
     if (user) {
       navigate('/dashboard');
     } else {
-      setIsLoginOpen(true);
+      navigate('/sign-in');
     }
   }
 
@@ -58,15 +56,6 @@ const About: React.FC = () => {
       <div className="my-8 order-last mx-auto max-w-lg ">
         <img src={interviewImg} alt="hero" className="rounded-lg md:order-last order-first" />
       </div>
-
-      {isLoginOpen && (
-        <LoginForm
-          registerOpen={false}
-          onCloseLogin={() => {
-            setIsLoginOpen(false);
-          }}
-        />
-      )}
     </div>
   );
 }

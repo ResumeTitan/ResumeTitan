@@ -2,21 +2,29 @@ import React, { useState } from 'react';
 import ThemeSelector from './themeSelector';
 import HarvardImg from 'assets/harvard.png';
 import OnepageImg from 'assets/onepage.png';
+import MacchiatoImg from 'assets/macchiato.png';
+import SectionList from './SectionList';
 import 'styles/index.css';
+import { ResumeType } from 'types/types';
 
 interface Props {
+  resume: ResumeType;
   description: string;
   descriptionUsed: boolean;
   onUpdateJobDescription: (jobDescription: string) => void;
   isJobDescriptionUsed: (isJobDescriptionUsed: boolean) => void;
   onChangeTheme: (theme: string) => void;
+  onUpdateSections: (sections: string[]) => void;
 }
 
-const CustomizeTab: React.FC<Props> = ({description, 
-  descriptionUsed, 
+const CustomizeTab: React.FC<Props> = ({
+  resume,
+  description, 
+  descriptionUsed,
   onUpdateJobDescription, 
   isJobDescriptionUsed, 
-  onChangeTheme
+  onChangeTheme,
+  onUpdateSections
 }) => {
   const [isJobDescriptionChecked, setIsJobDescriptionChecked] = useState(descriptionUsed);
   const [jobTitle, setJobTitle] = useState("");
@@ -36,11 +44,16 @@ const CustomizeTab: React.FC<Props> = ({description,
 
   return (
     <>
+    <div className="form-container" >
+      <div className="form-text-main">{"Section Order"}</div>
+        <SectionList sections={resume.sections} saveSections={onUpdateSections}/>
+    </div>
     <div className="form-container font-bold">
       <div className="form-text-main">{"Theme"}</div>
       <ThemeSelector images={[
-        {id: "harvard", url: HarvardImg}, 
-        {id: "one-page", url: OnepageImg}
+        {id: "professional", url: HarvardImg}, 
+        {id: "one-page", url: OnepageImg},
+        {id: "macchiato", url: MacchiatoImg}
       ]} onSelect={(image) => onChangeTheme(image.id)} />
     </div>
     <div className="form-container">

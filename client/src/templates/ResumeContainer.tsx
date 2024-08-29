@@ -1,28 +1,75 @@
 import React from 'react';
-import HarvardResume from './layouts/harvard';
-import { OnePageResume } from './layouts/onepage';
-import { IResumeType } from 'types/types';
+import OnePageResume from './layouts/onepage';
+import ProfessionalResume from './layouts/professional/Resume';
+import MacchiatoResume from './layouts/macchiato/Resume';
+import { ResumeTypeProps } from 'types/types';
+import styled from 'styled-components';
 
-interface Props {
-  resume: IResumeType;
-  theme: string;
-}
+// Define the styled component
+const StyledContainer = styled.div`
+  min-width: 210mm;
+  min-height: 296mm;
+  size: 210mm 296mm;
+  border: solid;
+  border-width: 4px;
 
-export default function ResumeContainer({ resume, theme } : Props) {
+  background-color: white;
+  margin: 0 auto;
+
+  @media print {
+    border-width: 0px;
+  }
+`;
+
+const ScaledContainer = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  position: relative;
+
+  & > ${StyledContainer} {
+    transform-origin: top left;
+    transform: scale(1);
+  }
+
+  /* Automatically scale the Paper component to fit */
+  @media (max-width: 850px) {
+    & > ${StyledContainer} {
+      transform: scale(calc(100vw / 850));
+    }
+  }
+
+  @media (max-height: 1100px) {
+    & > ${StyledContainer} {
+      transform: scale(calc(100vh / 1100));
+    }
+  }
+`;
+
+export default function ResumeContainer({ resume } : ResumeTypeProps) {
   return (
-    <div className="origin-top transition-all duration-300 ease-linear">
-      <div className="w-[210mm] h-[296mm] bg-white my-0 mx-auto">
-        { theme === "harvard" && (
-          <HarvardResume resume={ resume }/>
+    <ScaledContainer>
+      <StyledContainer id={"resume-container-master"}>
+        { resume.theme === "harvard" && (
+          <ProfessionalResume resume={ resume } />
         )}
-        { theme === "one-page" && (
+        { resume.theme === "one-page" && (
           <OnePageResume resume={ resume }/>
         )}
-        {/* Default, remove later */}
-        { theme === "" && (
-          <HarvardResume resume={ resume }/>
+        { resume.theme === "professional" && (
+          <ProfessionalResume resume={ resume } />
         )}
-      </div>
-    </div>
+        { resume.theme === "macchiato" && (
+          <MacchiatoResume resume={ resume } />
+        )}
+        {/* Default */}
+        { resume.theme === "" && (
+          <ProfessionalResume resume={ resume } />
+        )}
+      </StyledContainer>
+    </ScaledContainer>
   );
 };

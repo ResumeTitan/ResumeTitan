@@ -1,54 +1,60 @@
 import React from "react";
+import styled from "styled-components";
+import { BasicsType } from "types/types";
+import { SectionContent, SectionBlock, SectionName } from './Partials';
 
-interface Profile {
-  network: string;
-  url: string;
+interface BasicsComponentProps {
+  basics: BasicsType;
 }
 
-interface Location {
-  city?: string;
-  region?: string;
-  countryCode?: string;
-}
+const Name = styled.span`
+  font-size: 26px;
+`;
 
-interface BasicsProps {
-  basics: {
-    name?: string;
-    label?: string;
-    email?: string;
-    phone?: string;
-    location?: Location;
-    profiles?: Profile[];
-    summary?: string;
-  };
-}
+const SectionLine = styled.div`
+  border-style: dashed;
+  border-width: 1px;
+  border-color: #CFCFCF;
+  margin-top: 10px;
+  margin-bottom: 10px;
+`;
 
-const BasicsComponent: React.FC<BasicsProps> = ({ basics }) => {
+const SmallFont = styled.div`
+  font-size: 1.0rem;
+`;
+
+const Divider = styled.span`
+  font-weight: bold;
+  margin-left: 5px;
+  margin-right: 5px;
+`;
+
+const BasicsComponent: React.FC<BasicsComponentProps> = ({ basics }) => {
   // Destructure basics object
   const { name, label, email, phone, location, profiles, summary } = basics;
 
   return (
     <div>
       {name && (
-        <div id="nameBlock" className="largeFont">
-          <span className="name">{name}</span>
-          {label && <span className="label">{label}</span>}
-        </div>
+        <>
+          <Name>{name}</Name>
+          {label && <span>{label}</span>}
+        </>
       )}
 
       {email || phone || location ? (
-        <div id="basicsBlock" className="smallFont">
+        <SmallFont id="basicsBlock">
           <div className="contactBlock">
             {email && <span className="email">{email}</span>}
             {phone && (
               <>
-                <span className="divider">|</span>
+                <Divider>|</Divider>
                 <span className="phone">{phone}</span>
               </>
             )}
             {location && (
               <>
-                <span className="divider">|</span>
+                <Divider>|</Divider>
                 <span className="address">
                   {location.city && location.city}
                   {location.region && `, ${location.region}`}
@@ -57,7 +63,7 @@ const BasicsComponent: React.FC<BasicsProps> = ({ basics }) => {
               </>
             )}
           </div>
-          {profiles && profiles.length > 0 && (
+          {profiles && profiles.length > 0 && profiles[0].network && (
             <div id="profilesBlock">
               {profiles.map((profile, index) => (
                 <span key={index} className="url">
@@ -70,20 +76,20 @@ const BasicsComponent: React.FC<BasicsProps> = ({ basics }) => {
               ))}
             </div>
           )}
-        </div>
+        </SmallFont>
       ) : null}
 
       {summary && (
         <>
-          <div className="sectionLine"></div>
-          <div id="summaryBlock" className="sectionBlock">
-            <div className="sectionName">
+          <SectionLine />
+          <SectionBlock>
+            <SectionName>
               <span>SUMMARY</span>
-            </div>
-            <div className="sectionContent">
+            </SectionName>
+            <SectionContent>
               <span>{summary}</span>
-            </div>
-          </div>
+            </SectionContent>
+          </SectionBlock>
         </>
       )}
     </div>

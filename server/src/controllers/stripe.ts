@@ -1,11 +1,11 @@
-import User from "../models/User";
-import Stripe from "stripe";
+import { clerkClient, stripeClient } from "../ext/clients";
 import { Response, Request } from 'express';
 
-if (!process.env.STRIPE_SECRET_KEY) {
-  throw new Error("Stripe Secret not found")
+const STRIPE_SECRET = process.env.STRIPE_WEBHOOK_SECRET;
+
+if (!STRIPE_SECRET) {
+  throw new Error("Stripe Webhook secret not found")
 }
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 /**
  * @function createCheckoutSession
@@ -32,11 +32,9 @@ export const createCheckoutSession = async (req: Request, res: Response) => {
     default:
       return res.status(400).json({ message: 'Invalid plan' });
   }
-  const user = await User.findOne({ email });
-  if (!user) {
-    return res.status(404).json({ message: 'User not found' });
-  }
-  const session = await stripe.checkout.sessions.create({
+
+  // Send session to frontend, await user payment before calling webhook
+  const session = await stripeClient.checkout.sessions.create({
     line_items: [
       {
         price_data: {
@@ -59,10 +57,23 @@ export const createCheckoutSession = async (req: Request, res: Response) => {
     }
   });
 
-  res.json({ 
-    sessionId: session.id, 
-    sessionUrl: session.url
-  });
+  // Update clerk client metadata, to be verified on webhook call
+  // @ts-ignore
+  const userId = req.auth.userId
+  try {
+    await clerkClient.users.updateUserMetadata(userId, {
+      privateMetadata: {
+        stripeId: session.id,
+      }
+    })
+    res.status(200).json({
+      sessionId: session.id, 
+      sessionUrl: session.url
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(400).json({ msg: e.msg });
+  }
 };
 
 
@@ -73,19 +84,17 @@ export const createCheckoutSession = async (req: Request, res: Response) => {
 export const webhook = async (req: Request, res: Response) => {
   const payload = req.body;
   const payloadString = JSON.stringify(payload, null, 2);
-  const secret = process.env.STRIPE_WEBHOOK_SECRET;
-  if (!secret) {
-    throw new Error("Stripe Webhook secret not found")
-  }
-  const header = stripe.webhooks.generateTestHeaderString({
+
+
+  const header = stripeClient.webhooks.generateTestHeaderString({
     payload: payloadString,
-    secret,
+    secret: STRIPE_SECRET,
   });
 
   let event;
 
   try {
-    event = stripe.webhooks.constructEvent(payloadString, header, secret);
+    event = stripeClient.webhooks.constructEvent(payloadString, header, STRIPE_SECRET);
     // Handle the event
     switch (event.type) {
       case 'checkout.session.completed':
@@ -93,7 +102,6 @@ export const webhook = async (req: Request, res: Response) => {
         if (!session.metadata) {
           throw new Error("Metadata not found in session");
         }
-        console.log('session', session.metadata.subscription);
 
         // Update user with new premium end date
         let premiumEndDate = new Date();
@@ -110,8 +118,24 @@ export const webhook = async (req: Request, res: Response) => {
           default:
             console.log(`Unhandled subscription type ${session.metadata.subscription}`);
         }
-        // @ts-ignore
-        await User.findOneAndUpdate({ email: session.customer_details.email }, { $set: { premiumUntil: premiumEndDate } });
+
+        // TODO update metadata
+        const data = await clerkClient.users.getUserList({ emailAddress: [session.customer_details.email] });
+        if (data.totalCount === 0) {
+          throw new Error("Could not find user by email");
+        }
+
+        const customerId = session.id;
+        const clerkId = data.data[0].id;
+
+        await clerkClient.users.updateUser(clerkId, {
+          publicMetadata: {
+            premiumUntil: premiumEndDate.toString()
+          },
+          privateMetadata: {
+            stripeId: customerId
+          }
+        });
         break;
       default:
         console.log(`Unhandled event type ${event.type}`);

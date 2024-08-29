@@ -1,19 +1,17 @@
 import { Request, Response } from 'express';
-import { ChatOpenAI } from '@langchain/openai';
+import { openAiClient } from '../ext/clients';
 import { z } from 'zod';
 import CoverLetter from '../models/CoverLetter';
-import 'dotenv/config';
-
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY as string;
-const model = new ChatOpenAI({ model: 'gpt-4o', apiKey: OPENAI_API_KEY });
+import Resume from '../models/Resume';
+import { ResumeType } from '../types/types';
 
 const coverLetterSchema = z.object({
-  coverLetter: z.string(),
+  letter: z.string(),
   companyName: z.string(),
   companyAddress: z.string(),
 });
 
-const coverLetterModel = model.withStructuredOutput(coverLetterSchema);
+const coverLetterModel = openAiClient.withStructuredOutput(coverLetterSchema);
 
 /**
  * @function getPrompt
@@ -22,14 +20,28 @@ const coverLetterModel = model.withStructuredOutput(coverLetterSchema);
  * @param {string} jobDescription 
  * @returns 
  */
-const getPrompt = (jobTitle: string, jobDescription: string): string => {
+const getPrompt = (jobTitle: string, jobDescription: string, resume: ResumeType): string => {
   return `
-  Create a professional cover letter for the position of ${jobTitle}.
-  The job description is as follows: ${jobDescription}.
-  Only include the content of the cover letter, do not add anything for entering a users name, email, etc.
-  Just return the cover letter. Do not include the salutations or closings.
-  Do not include personal information in the cover letter, even as placeholders.
-  This means in your response for the coverLetter, do not include things like [Your Name], [Your Address], [Date], etc
+    You are an AI language model tasked with writing a personalized and compelling cover letter. Use the information provided below to craft a cover letter that not only addresses the job requirements but also showcases the candidate's enthusiasm for the role.
+
+    **Job Title:** ${jobTitle}
+
+    **Job Description:** ${jobDescription}
+
+    **Candidate's Resume Highlights:**
+    ${resume}
+
+    **Instructions:**
+    1. **Introduction**: Start the cover letter with a strong introduction that captures the hiring manager's attention. Mention the job title and where the candidate found the job posting.
+    
+    2. **Align Skills with Job Requirements**: Highlight how the candidate's skills and experiences align with the specific requirements mentioned in the job description. Use concrete examples from the resume to demonstrate their qualifications.
+    
+    3. **Show Enthusiasm**: Convey genuine enthusiasm for the role and the company. Explain why the candidate is excited about this particular job and how they can contribute to the company's success.
+    
+    4. **Closing**: End with a confident closing statement that reiterates the candidate's interest in the role and willingness to discuss how they can add value to the team.
+
+    The cover letter should be professional, concise, and no more than one page long.
+    Start the response with "Dear Hiring Manager,"
   `;
 };
 
@@ -41,26 +53,33 @@ const getPrompt = (jobTitle: string, jobDescription: string): string => {
  */
 export const createUpdateCoverLetter = async (req: Request, res: Response): Promise<Response> => {
   try {
-    const { jobTitle, jobDescription, coverLetterId, clerkId } = req.body;
-    const gptResponse = await coverLetterModel.invoke(getPrompt(jobTitle, jobDescription));
+    const { coverLetter, clerkId } = req.body;
+    const resumeId = coverLetter.resumeId;
+    if (!resumeId) {
+      return res.status(404).json({ msg: "Resume not found" });
+    }
 
-    const coverLetter = gptResponse.coverLetter;
+    const resume = await Resume.findOne({ _id: resumeId }) as ResumeType;
+    const gptResponse = await coverLetterModel.invoke(getPrompt(coverLetter.jobTitle, coverLetter.jobDescription, resume));
+
+    const coverLetterResp = gptResponse.letter;
 
     // Save the coverLetter to the database
     const coverLetterIn = {
-      coverLetter,
-      jobTitle,
-      jobDescription,
+      ...coverLetter,
+      letter: coverLetterResp,
+      date: new Date(),
       clerkId,
     };
 
-    if (coverLetterId) {
-      const coverLetterOut = await CoverLetter.findOneAndUpdate({ _id: coverLetterId }, coverLetterIn, { new: true });
+    if (coverLetter._id && coverLetter._id !== "") {
+      const coverLetterOut = await CoverLetter.findOneAndUpdate({ _id: coverLetter._id }, coverLetterIn, { new: true });
       return res.status(200).json({ coverLetter: coverLetterOut });
+    } else {
+      delete coverLetterIn._id;
     }
 
     const coverLetterOut = await CoverLetter.create(coverLetterIn);
-    console.log(coverLetterOut);
     return res.status(200).json({ coverLetter: coverLetterOut });
   } catch (error: any) {
     console.log('Error: ', error);
@@ -77,8 +96,8 @@ export const createUpdateCoverLetter = async (req: Request, res: Response): Prom
 export const getCoverLetters = async (req: Request, res: Response): Promise<Response> => {
   try {
     // @ts-ignore
-    const id = req.auth.id
-    const coverLetters = await CoverLetter.find({ userId: id });
+    const id = req.auth.userId;
+    const coverLetters = await CoverLetter.find({ clerkId: id });
     return res.status(200).json({ coverLetters });
   } catch (error: any) {
     console.log('Error: ', error);
@@ -119,7 +138,7 @@ export const deleteCoverLetter = async (req: Request, res: Response): Promise<Re
 };
 
 /**
- * @function deleteCoverLetter
+ * @function updateCoverLetter
  * @param {Req} req 
  * @param {Res} res 
  * @returns 

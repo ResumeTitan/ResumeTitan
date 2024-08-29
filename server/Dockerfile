@@ -31,6 +31,7 @@ WORKDIR /app
 COPY . .
 
 RUN npm install --force --production
+RUN npm run build
 
 # Set up Puppeteer for PDF downloads
 RUN npx puppeteer browsers install chrome

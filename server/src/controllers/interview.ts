@@ -1,13 +1,9 @@
-import { ChatOpenAI } from "@langchain/openai";
 import { Request, Response } from 'express';
+import { openAiClient } from '../ext/clients';
 import { z } from "zod";
 import Interview from "../models/Interview.js";
 
-import dotenv from "dotenv";
-dotenv.config();
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
-const model = new ChatOpenAI({ model: "gpt-4o", apiKey: OPENAI_API_KEY });
-const interviewModel = model.withStructuredOutput(z.object({
+const interviewModel = openAiClient.withStructuredOutput(z.object({
   interview: z.array(z.object({
     question: z.string(),
     example: z.string(),
@@ -74,8 +70,8 @@ export const createUpdateInterview = async (req: Request, res: Response) => {
 export const getInterviews = async (req: Request, res: Response) => {
   try {
     // @ts-ignore
-    const userId = req.auth.id;
-    const interviews = await Interview.find({ userId });
+    const userId = req.auth.userId;
+    const interviews = await Interview.find({ clerkId: userId });
     res.status(200).json({ interviews });
   } catch (error: any) {
     console.log("Error: ", error);

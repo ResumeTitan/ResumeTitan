@@ -1,18 +1,10 @@
 import React from "react";
 import { formatDate } from '../../../../utils';
-
-interface Education {
-  name?: string;
-  startDate?: string;
-  endDate?: string;
-  studyType?: string;
-  area?: string;
-  gpa?: string;
-  content?: string[];
-}
+import { EducationType } from "types/types";
+import { SectionContent, SectionBlock, SectionName } from './Partials';
 
 interface Props {
-  education: Education[];
+  education: EducationType[];
 }
 
 const EducationComponent: React.FC<Props> = ({ education }) => {
@@ -20,15 +12,14 @@ const EducationComponent: React.FC<Props> = ({ education }) => {
     <>
       {education.length > 0 && (
         <>
-          <div className="sectionLine"></div>
-          <div id="education" className="sectionBlock">
-            <div className="sectionName">
+          <SectionBlock>
+            <SectionName>
               <span>EDUCATION</span>
-            </div>
-            <div className="sectionContent">
+            </SectionName>
+            <SectionContent>
               {education.map((edu, index) => (
                 <div key={index} className="educationBlock">
-                  <span className="title">{edu.name}</span>
+                  <span className="title">{edu.institution}</span>
                   {edu.startDate && (
                     <span className="date">
                       {formatDate(edu.startDate)} &mdash;{" "}
@@ -38,19 +29,19 @@ const EducationComponent: React.FC<Props> = ({ education }) => {
                   <div>
                     {edu.studyType && <>{edu.studyType} - </>}
                     {edu.area}
-                    {edu.gpa && `, GPA: ${edu.gpa}`}
+                    {edu.score && `, GPA: ${edu.score}`}
                   </div>
-                  {edu.content && edu.content.length > 0 && (
+                  {edu.highlights && edu.highlights.length > 0 && (
                     <ul className="highlights">
-                      {edu.content.map((highlight, idx) => (
+                      {edu.highlights.map((highlight, idx) => (
                         <li key={idx}>{highlight}</li>
                       ))}
                     </ul>
                   )}
                 </div>
               ))}
-            </div>
-          </div>
+            </SectionContent>
+          </SectionBlock>
         </>
       )}
     </>
