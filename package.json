@@ -17,6 +17,6 @@
   "license": "ISC",
   "dependencies": {
     "@clerk/clerk-react": "^5.4.2",
-    "concurrently": "^8.2.2"
+    "concurrently": "^9.0.1"
   }
 }
