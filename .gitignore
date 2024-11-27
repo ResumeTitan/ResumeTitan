@@ -3,11 +3,13 @@ server/node_modules
 server/dist
 server/.env
 server/.cache
+server/package-lock.json
 client/node_modules
 client/build
 client/src/templates/layouts/from-hbs
 client/.env.development
 client/.env.production
+client/package-lock.json
 .env.local
 client/.env.local
 .vscode
