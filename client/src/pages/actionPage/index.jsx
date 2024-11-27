@@ -13,7 +13,7 @@ import DescriptionIcon from '@mui/icons-material/Description';
 import { useUser, useAuth } from "@clerk/clerk-react";
 import { useDispatch } from 'react-redux';
 import { setToken } from '../../state/authReducer';
-import { jsPDF } from 'jspdf';
+import { isUserPremium } from 'utils';
 
 
 const CustomDocumentIcon = styled(DescriptionIcon)({
@@ -140,7 +140,7 @@ function ActionPage() {
    * @todo Fix printing for mobile, gets too many notifications, generate on backend
    */
   const handleSaveToPdf = async () => {
-    if (!user.publicMetadata.premiumUntil || new Date(user.publicMetadata.premiumUntil) < new Date()) {
+    if (isUserPremium(user)) {
       setShowPrintError(true);
       return;
     }

@@ -40,12 +40,12 @@ const ButtonGridComponent: React.FC<ButtonGridProps> = ({ onAdd, onClose }) => {
   const buttons: ButtonData[] = [
     { label: 'Education', icon: <SchoolIcon fontSize="large" /> },
     { label: 'Work', icon: <WorkIcon fontSize="large" /> },
-    { label: 'Certificates', icon: <CardMembershipIcon fontSize="large" /> },
-    { label: 'Languages', icon: <TranslateIcon fontSize="large" /> },
+    // { label: 'Certificates', icon: <CardMembershipIcon fontSize="large" /> },
+    // { label: 'Languages', icon: <TranslateIcon fontSize="large" /> },
     { label: 'Volunteer', icon: <VolunteerActivismIcon fontSize="large" /> },
-    { label: 'Awards', icon: <EmojiEventsIcon fontSize="large" /> },
-    { label: 'Publications', icon: <LibraryBooksIcon fontSize="large" /> },
-    { label: 'Projects', icon: <AssessmentIcon fontSize="large" /> },
+    // { label: 'Awards', icon: <EmojiEventsIcon fontSize="large" /> },
+    // { label: 'Publications', icon: <LibraryBooksIcon fontSize="large" /> },
+    // { label: 'Projects', icon: <AssessmentIcon fontSize="large" /> },
     { label: 'Skills', icon: <BuildIcon fontSize="large" /> },
   ];
 
@@ -59,7 +59,7 @@ const ButtonGridComponent: React.FC<ButtonGridProps> = ({ onAdd, onClose }) => {
           <CloseIcon fontSize="small" />
         </button>
       </div>
-      <div className={`${selectedButtons.length > 0 ? 'animate-slideUp' : ''} bg-gray-200 p-6 rounded grid grid-cols-3 gap-4`}>
+      <div className={`${selectedButtons.length > 0 ? 'animate-slideUp' : ''} bg-gray-200 p-6 rounded grid grid-cols-2 gap-4`}>
         {buttons.map((button, index) => (
           <div
             key={index}

@@ -1,3 +1,6 @@
+import { UserResource } from '@clerk/types';
+
+
 export function isObjectEmpty(obj: object) {
   return Object.keys(obj).length === 0;
 }
@@ -24,4 +27,16 @@ export const formatDateFull = (date: Date) => {
     day: 'numeric',
   });
   return formattedDate;
+}
+
+export const isUserPremium = (user: UserResource | null | undefined) => {
+  if (!user) {
+    // User not valid
+    return false;
+  } else if (!user.publicMetadata.premiumUntil) {
+    // User never bought premium
+    return false;
+  }
+
+  return new Date(user.publicMetadata.premiumUntil as string) > new Date()
 }

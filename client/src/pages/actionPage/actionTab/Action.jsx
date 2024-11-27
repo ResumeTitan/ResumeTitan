@@ -201,7 +201,8 @@ function ActionTab({
   }
 
   const handleAddSection = (sections) => {
-    onUpdateResume({...resumeIn, sections});
+    const currentSections = resumeIn.sections.concat(sections);
+    onUpdateResume({...resumeIn, sections: currentSections});
     setSectionPopupOpen(false);
   }
 

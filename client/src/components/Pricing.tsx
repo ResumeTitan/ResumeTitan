@@ -84,7 +84,7 @@ const Pricing: React.FC = () => {
   };
 
   return (
-    <div className="mx-auto mt-12 max-w-7xl p-4 sm:mt-16 sm:p-6 lg:mt-20 lg:p-8">
+    <div className="mx-auto mt-4 max-w-7xl p-4 sm:mt-8 sm:p-6 lg:mt-12 lg:p-8">
       {stripeLoading && (
         <Spinner />
       )}
@@ -99,7 +99,7 @@ const Pricing: React.FC = () => {
         </p>
       </div>
 
-      <div className="isolate mx-auto mt-14 grid max-w-md grid-cols-1 gap-8 lg:mx-0 lg:mt-24 lg:max-w-none lg:grid-cols-3">
+      <div className="isolate mx-auto mt-8 grid max-w-md grid-cols-1 gap-8 lg:mx-0 lg:mt-24 lg:max-w-none lg:grid-cols-3">
         {tiers.map((tier) => (
           <div
             key={tier.id}

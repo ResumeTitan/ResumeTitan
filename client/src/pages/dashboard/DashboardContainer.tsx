@@ -3,15 +3,20 @@ import styled from 'styled-components';
 import EditIcon from '@mui/icons-material/Edit';
 import CloseIcon from '@mui/icons-material/Close';
 import { CoverLetterType } from 'types/types';
+import { UserResource } from '@clerk/types';
+import { isUserPremium } from '../../utils/index';
+import LockIcon from '@mui/icons-material/Lock';
+
 
 interface DashboardContainerProps {
   title?: string;
   items: CoverLetterType[];
-  onAdd: () => void;
+  onAdd: (locked: boolean) => void;
   onEdit: (id: string) => void;
   onDelete: (id: string) => void;
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   children?: React.ReactNode;
+  user?: UserResource;
 }
 
 const Container = styled.div`
@@ -36,6 +41,23 @@ const AddNewButton = styled.button`
   border-radius: 0.5rem; /* rounded-lg */
   background-color: #0b3733;
   color: white; /* text-white */
+  font-weight: bold; /* font-bold */
+  padding: 0.5rem 1rem; /* py-2 px-4 */
+  
+  transition: background-color 0.3s ease-in-out; /* transition ease-in-out duration-300 */
+
+  &:hover {
+    background-color: #80cbc4;
+  }
+`;
+
+const AddNewLockedButton = styled.button`
+  margin-left: 1rem; /* mx-4 */
+  margin-right: 1rem; /* mx-4 */
+  margin-top: 0.5rem; /* mt-2 */
+  border-radius: 0.5rem; /* rounded-lg */
+  background-color: #D3D3D3;
+  color: gray;
   font-weight: bold; /* font-bold */
   padding: 0.5rem 1rem; /* py-2 px-4 */
   
@@ -127,7 +149,7 @@ const ScrollContainer = styled.div`
   }
 `;
 
-const DashboardContainer: React.FC<DashboardContainerProps> = ({ title, items, onEdit, onDelete, onAdd, onChange, children }) => {
+const DashboardContainer: React.FC<DashboardContainerProps> = ({ title, items, user, onEdit, onDelete, onAdd, onChange, children }) => {
   return (
     <Container>
       <Header>
@@ -137,7 +159,13 @@ const DashboardContainer: React.FC<DashboardContainerProps> = ({ title, items, o
           </div>
         )}
       </Header>
-      <AddNewButton onClick={onAdd}>Add New</AddNewButton>
+      {isUserPremium(user) ? (
+        <AddNewButton onClick={() => onAdd(false)}>Add New</AddNewButton>
+      ) : (
+        <AddNewLockedButton onClick={() => onAdd(true)}>
+          <span className="pr-2">Add New</span><LockIcon /></AddNewLockedButton>
+      )}
+      
       <ScrollContainer>
         {items && items.map((item) => (
           <ItemCard>

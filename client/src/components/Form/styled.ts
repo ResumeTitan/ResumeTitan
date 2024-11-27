@@ -1,5 +1,17 @@
 import styled from 'styled-components';
 
+export const FlexContainer = styled.div`
+  background-color: white;
+  color: black; /* Change to your desired text color */
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+
+  @media (min-width: 1024px) {
+    flex-direction: row;
+  }
+`;
+
 export const FormDiv = styled.div`
   flex: 1;
   margin: 10px;
