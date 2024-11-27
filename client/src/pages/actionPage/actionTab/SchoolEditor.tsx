@@ -261,7 +261,7 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }: SchoolEdito
 
           <div className="phone-screen-stack">
             <button
-              className="green-button flex items-center justify-center h-16 sm:h-12 px-4 py-2 rounded-lg cursor-pointer"
+              className="green-button flex items-center justify-center sm:h-12 rounded-lg cursor-pointer"
               onClick={() => showAiAssistant(!aiAssistant)}
             >
               <div>
@@ -270,7 +270,7 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }: SchoolEdito
               </div>
             </button>
             <button
-              className="green-button flex items-center justify-center h-16 sm:h-12 px-4 py-2 rounded-lg cursor-pointer"
+              className="green-button flex items-center justify-center sm:h-12 rounded-lg cursor-pointer"
               onClick={handleAiCall}
             >
               <div>
@@ -279,10 +279,10 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }: SchoolEdito
               </div>
             </button>
             <button
-              className="green-button flex items-center justify-center h-16 sm:h-12 px-4 py-2 rounded-lg cursor-pointer"
+              className="green-button flex items-center justify-center sm:h-12 rounded-lg cursor-pointer"
               onClick={handleHighlightAdd}
             >
-              Add
+              <span className="p-1">Add</span>
             </button>
           </div>
         </div>

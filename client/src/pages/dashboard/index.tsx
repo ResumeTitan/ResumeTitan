@@ -5,14 +5,14 @@ import Spinner from 'components/Spinner';
 import EditIcon from '@mui/icons-material/Edit';
 import CloseIcon from '@mui/icons-material/Close';
 import Popup from './Popup';
-import { formatDateFull } from '../../utils/index';
 import { useUser, useAuth } from '@clerk/clerk-react';
 import api from 'api/actions';
 import { setToken } from '../../state/authReducer';
 import { useDispatch } from 'react-redux';
 import { ResumeType } from 'types/types';
 import DashboardContainer from './DashboardContainer';
-import { FormContainer } from 'components/Form/styled';
+import Pricing from 'components/Pricing';
+import 'styles/index.css'
 
 export const Dashboard: React.FC = () => {
   const { user, isLoaded, isSignedIn } = useUser();
@@ -25,6 +25,7 @@ export const Dashboard: React.FC = () => {
   const [coverLetters, setCoverLetters] = useState<any[]>([]);
   const navigate = useNavigate();
   const [showPopup, setShowPopup] = useState(false);
+  const [showPricingPopup, setShowPricingPopup] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
   /**
@@ -92,10 +93,6 @@ export const Dashboard: React.FC = () => {
     navigate(`/resume`, { state: { resumeId } });
   };
 
-  const handleClickInterview = (interviewId: string) => {
-    navigate('/interview', { state: { interviewId } });
-  };
-
   const handleClickedDelete = (resumeId: string) => {
     setDeleteId(resumeId);
     setShowPopup(true);
@@ -113,8 +110,7 @@ export const Dashboard: React.FC = () => {
     }
   };
 
-  const handleDeleteInterview = async (event: React.MouseEvent, id: string) => {
-    event.stopPropagation();
+  const handleDeleteInterview = async (id: string) => {
     try {
       await api.delete(`/interview/${id}`);
       await loadInterviews();
@@ -131,6 +127,14 @@ export const Dashboard: React.FC = () => {
       console.error('Error deleting cover-letter:', error);
     }
   };
+
+  const handleContentAdd = (url: string, locked = false) => {
+    if (locked) {
+      setShowPricingPopup(true);
+    } else {
+      navigate(url);
+    }
+  }
 
   const resumeWidgets = resumes.map((resume, index) => (
     <div key={resume._id} className="relative group mx-16 my-8 border-8 border-black rounded-2xl hover:bg-lightest-green">
@@ -178,47 +182,40 @@ export const Dashboard: React.FC = () => {
       <DashboardContainer 
         title={"My Cover Letters:"} 
         items={coverLetters}
-        onAdd={() => navigate('/cover-letter')}
+        user={user!}
+        onAdd={(locked: boolean) => handleContentAdd('/cover-letter', locked)}
         onEdit={(id) => navigate('/cover-letter', { state: { id } })}
         onDelete={handleDeleteCoverLetter}
       >
       </DashboardContainer>
 
-      <div className="dashboard-container">
-        <div className="dashboard-header">My Interviews:</div>
-        <button className="dashboard-button" onClick={() => navigate('/interview')}>Add New</button>
-        <div className="overflow-x-scroll hide-scrollbar">
-          <div className="flex p-2 origin-top-left">
-            {interviews.map((interview) => (
-              <div key={interview._id} className="border border-4 m-2 rounded-lg border-black hover:bg-lightest-green relative group">
-                <div className="text-black w-40 h-40 p-2 m-2 rounded-lg">
-                  <div className="text-xl font-bold">{interview.jobTitle}</div>
-                  <div className="">Questions: {interview.interview.length}</div>
-                  <div className="">{formatDateFull(interview.createdAt)}</div>
-                </div>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleClickInterview(interview._id);
-                  }}
-                  className="dashboard-edit-button top-3 left-3 w-16 h-16"
-                >
-                  <EditIcon style={{ fontSize: 48 }} />
-                </button>
-                <button
-                  onClick={(e) => handleDeleteInterview(e, interview._id)}
-                  className="dashboard-delete-button top-3 right-3 w-16 h-16"
-                >
-                  <CloseIcon style={{ fontSize: 48 }} />
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
+      <DashboardContainer
+        title={"My Interviews: "}
+        items={interviews}
+        user={user!}
+        onAdd={(locked: boolean) => handleContentAdd('/interview', locked)}
+        onEdit={(id) => navigate('interview', {state: { id } })}
+        onDelete={handleDeleteInterview}
+      />
 
       {/* Popup */}
       {showPopup && <Popup message="Are you sure you want to delete this resume?" handleDelete={handleDeleteResume} handleCancel={() => setShowPopup(false)} />}
+
+      {/* Pricing Popup */}
+      {showPricingPopup && (
+        <div className="pricing-popup">
+          <div className="absolute top-2 right-4 p-2 bg-red-500 rounded-full">
+            <button
+              onClick={() => setShowPricingPopup(false)}
+            >
+              <CloseIcon fontSize="large" />
+            </button>
+          </div>
+          <div className="relative text-black bg-white p-6 rounded shadow-lg">
+            <Pricing />
+          </div>
+        </div>
+      )}
 
       {/* Spinner while loading */}
       {isLoading && <Spinner />}
