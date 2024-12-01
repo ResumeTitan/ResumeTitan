@@ -5,19 +5,30 @@ import MacchiatoResume from './layouts/macchiato/Resume';
 import { ResumeTypeProps } from 'types/types';
 import styled from 'styled-components';
 
-// Define the styled component
-const StyledContainer = styled.div`
-  min-width: 210mm;
-  min-height: 296mm;
-  size: 210mm 296mm;
-  border: solid;
-  border-width: 4px;
+const aspectRatio = 210 / 296;
 
+const StyledContainer = styled.div`
+  width: 100%;
+  min-width: 49.606em; /* 210mm -> ~13.125em (210mm = 793.7px, assuming 1em = 16px) */
+  min-height: 69.921em; /* 296mm -> ~18.5em */
+  size: 49.606em 69.921em;
   background-color: white;
   margin: 0 auto;
 
-  @media print {
-    border-width: 0px;
+  /* Preserve aspect ratio using a pseudo-element */
+  &::before {
+    content: "";
+    display: block;
+    padding-top: calc(100% / ${1 / aspectRatio}); /* Sets height based on width */
+  }
+
+  /* Content positioning */
+  & > * {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
   }
 `;
 
@@ -30,45 +41,30 @@ const ScaledContainer = styled.div`
   overflow: hidden;
   position: relative;
 
-  & > ${StyledContainer} {
-    transform-origin: top left;
-    transform: scale(1);
-  }
-
   /* Automatically scale the Paper component to fit */
-  @media (max-width: 850px) {
+  @media (max-width: 53.125em) { /* 850px -> 53.125em */
     & > ${StyledContainer} {
-      transform: scale(calc(100vw / 850));
+      /* Remove transform scaling and let the aspect ratio handle resizing */
     }
   }
 
-  @media (max-height: 1100px) {
+  @media (max-height: 68.75em) { /* 1100px -> 68.75em */
     & > ${StyledContainer} {
-      transform: scale(calc(100vh / 1100));
+      /* Remove transform scaling and let the aspect ratio handle resizing */
     }
   }
 `;
 
-export default function ResumeContainer({ resume } : ResumeTypeProps) {
+export default function ResumeContainer({ resume }: ResumeTypeProps) {
   return (
     <ScaledContainer>
       <StyledContainer id={"resume-container-master"}>
-        { resume.theme === "harvard" && (
-          <ProfessionalResume resume={ resume } />
-        )}
-        { resume.theme === "one-page" && (
-          <OnePageResume resume={ resume }/>
-        )}
-        { resume.theme === "professional" && (
-          <ProfessionalResume resume={ resume } />
-        )}
-        { resume.theme === "macchiato" && (
-          <MacchiatoResume resume={ resume } />
-        )}
+        {resume.theme === "harvard" && <ProfessionalResume resume={resume} />}
+        {resume.theme === "one-page" && <OnePageResume resume={resume} />}
+        {resume.theme === "professional" && <ProfessionalResume resume={resume} />}
+        {resume.theme === "macchiato" && <MacchiatoResume resume={resume} />}
         {/* Default */}
-        { resume.theme === "" && (
-          <ProfessionalResume resume={ resume } />
-        )}
+        {resume.theme === "" && <ProfessionalResume resume={resume} />}
       </StyledContainer>
     </ScaledContainer>
   );

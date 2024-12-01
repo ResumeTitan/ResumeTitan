@@ -1,6 +1,23 @@
+import React from 'react';
 import YouTubeIcon from '@mui/icons-material/YouTube';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import XIcon from '@mui/icons-material/X';
+
+const SaaSHubBadge: React.FC = () => {
+  return (
+    <a
+      href="https://www.saashub.com/resumetitan?utm_source=badge&utm_campaign=badge&utm_content=resumetitan&badge_variant=color&badge_kind=approved"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <img
+        src="https://cdn-b.saashub.com/img/badges/approved-color.png?v=1"
+        alt="ResumeTitan badge"
+        style={{ maxWidth: '150px' }}
+      />
+    </a>
+  );
+};
 
 export default function Footer() {
   return (
@@ -11,6 +28,7 @@ export default function Footer() {
           <YouTubeIcon className="m-2 text-white" />
           <LinkedInIcon className="text-white" />
           <XIcon className="m-2 text-white" />
+          <SaaSHubBadge />
         </div>
         <ul className="block md:flex md:flex-wrap items-center mt-3 text-sm font-medium text-gray-500 sm:mt-0 list-none">
           <li>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import ResumeCard from './ResumeCard';
+import ResumeContainer from 'templates/ResumeContainer';
 import { useNavigate } from 'react-router-dom';
 import Spinner from 'components/Spinner';
 import EditIcon from '@mui/icons-material/Edit';
@@ -138,7 +138,9 @@ export const Dashboard: React.FC = () => {
 
   const resumeWidgets = resumes.map((resume, index) => (
     <div key={resume._id} className="relative group mx-16 my-8 border-8 border-black rounded-2xl hover:bg-lightest-green">
-      <ResumeCard resume={resume} />
+      <div className="p-2">
+        <ResumeContainer resume={resume} />
+      </div>
       <div className="text-black my-4 flex justify-center items-center text-6xl">
         {resume.name}
       </div>
@@ -182,6 +184,8 @@ export const Dashboard: React.FC = () => {
       <DashboardContainer 
         title={"My Cover Letters:"} 
         items={coverLetters}
+        // TODO why is this erroring in typescript
+        // @ts-ignore
         user={user!}
         onAdd={(locked: boolean) => handleContentAdd('/cover-letter', locked)}
         onEdit={(id) => navigate('/cover-letter', { state: { id } })}
@@ -192,9 +196,11 @@ export const Dashboard: React.FC = () => {
       <DashboardContainer
         title={"My Interviews: "}
         items={interviews}
+        // TODO why is this erroring in typescript
+        // @ts-ignore
         user={user!}
         onAdd={(locked: boolean) => handleContentAdd('/interview', locked)}
-        onEdit={(id) => navigate('interview', {state: { id } })}
+        onEdit={(id) => navigate('/interview', {state: { id } })}
         onDelete={handleDeleteInterview}
       />
 
@@ -204,7 +210,7 @@ export const Dashboard: React.FC = () => {
       {/* Pricing Popup */}
       {showPricingPopup && (
         <div className="pricing-popup">
-          <div className="absolute top-2 right-4 p-2 bg-red-500 rounded-full">
+          <div className="absolute top-2 right-4 p-2 bg-red-500 text-white rounded-full">
             <button
               onClick={() => setShowPricingPopup(false)}
             >

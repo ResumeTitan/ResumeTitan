@@ -4,6 +4,12 @@ import { useUser } from "@clerk/clerk-react";
 import DetailsExpand from './Details';
 import Spinner from 'components/Spinner';
 import api from 'api/actions';
+import { isUserPremium } from '../../utils/index';
+import LockIcon from '@mui/icons-material/Lock';
+import { AddNewButton, AddNewLockedButton } from 'components/Styled';
+import CloseIcon from '@mui/icons-material/Close';
+import Pricing from 'components/Pricing';
+import { UserResource } from '@clerk/types';
 import 'styles/index.css';
 
 interface Interview {
@@ -22,6 +28,8 @@ const InterviewPage: React.FC = () => {
   const [jobDescription, setJobDescription] = useState('');
   const [interview, setInterview] = useState<Interview[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [showPricingPopup, setShowPricingPopup] = useState(false);
+
 
   /**
    * loadInterview
@@ -35,6 +43,8 @@ const InterviewPage: React.FC = () => {
       if (!id) {
         return;
       }
+
+      console.log("Loaded");
 
       const response = await api.get(`/interview/${id}`);
 
@@ -57,7 +67,8 @@ const InterviewPage: React.FC = () => {
   useEffect(() => {
     const loadInterviewChange = async () => {
       if (location.state) {
-        await loadInterview(location.state.interviewId);
+        console.log(location.state.id);
+        await loadInterview(location.state.id);
       }
     }
     loadInterviewChange().catch((err) => {
@@ -158,14 +169,14 @@ const InterviewPage: React.FC = () => {
             />
           </div>
 
-            <div className="p-4">
-              <button
-                className="interview-button"
-                onClick={handleGenerateInterview}
-              >
-                {"Generate Interview Questions"}
-              </button>
-            </div>
+          <div className="pb-4">
+          {isUserPremium(user as UserResource) ? (
+            <AddNewButton onClick={handleGenerateInterview}>Generate Interview Questions</AddNewButton>
+          ) : (
+            <AddNewLockedButton onClick={() => setShowPricingPopup(true)}>
+              <span className="pr-2">Generate Interview Questions</span><LockIcon /></AddNewLockedButton>
+          )}
+          </div>
         </div>
 
         {interview.length > 0 && (
@@ -207,6 +218,22 @@ const InterviewPage: React.FC = () => {
           </button>
         </div>
       </div>
+
+      {/* Pricing Popup */}
+      {showPricingPopup && (
+        <div className="pricing-popup">
+          <div className="absolute top-2 right-4 p-2 bg-red-500 text-white rounded-full">
+            <button
+              onClick={() => setShowPricingPopup(false)}
+            >
+              <CloseIcon fontSize="large" />
+            </button>
+          </div>
+          <div className="relative text-black bg-white p-6 rounded shadow-lg">
+            <Pricing />
+          </div>
+        </div>
+      )}
 
       { isLoading && (
         <Spinner />

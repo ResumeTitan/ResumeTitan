@@ -140,7 +140,7 @@ function ActionPage() {
    * @todo Fix printing for mobile, gets too many notifications, generate on backend
    */
   const handleSaveToPdf = async () => {
-    if (isUserPremium(user)) {
+    if (!isUserPremium(user)) {
       setShowPrintError(true);
       return;
     }
@@ -264,8 +264,8 @@ function ActionPage() {
 
       </div>
       {/* Desktop View */}
-      <div className="overflow-hidden hidden xl:block w-full m-4">
-        <div>
+      <div className="overflow-hidden p-2 hidden xl:block w-full">
+        <div className="w-full outline p-2">
           <ResumeContainer resume={currentResume} />
         </div>
       </div>
@@ -273,7 +273,7 @@ function ActionPage() {
       {/* Mobile View */}
       {isOpen && (
         <div className="layover-container" onClick={() => setIsOpen(false)}>
-          <div className="transform scale-50 xs:scale-60 sm:scale-70 md:scale-80 lg:scale-90">
+          <div>
             <ResumeContainer resume={currentResume} />
           </div>
         </div>
