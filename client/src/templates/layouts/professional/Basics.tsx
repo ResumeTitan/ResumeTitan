@@ -1,14 +1,12 @@
 import React from 'react';
 import styled from 'styled-components';
-import {
-  FaMapPin,
-  FaEnvelope,
-  FaGithub,
-  FaTwitter,
-  FaPhoneAlt,
-  FaLink,
-  FaLinkedin,
-} from 'react-icons/fa';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import EmailIcon from '@mui/icons-material/Email';
+import GitHubIcon from '@mui/icons-material/GitHub';
+import TwitterIcon from '@mui/icons-material/Twitter';
+import PhoneIcon from '@mui/icons-material/Phone';
+import LinkIcon from '@mui/icons-material/Link';
+import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import Section from './Section';
 import Summary from './Summary';
 import { BasicsType } from 'types/types';
@@ -65,31 +63,31 @@ const BasicsComponent: React.FC<BasicsComponentProps> = ({ basics }) => {
         <BasicInfo>
           {location && location.city && (
             <Info>
-              <FaMapPin />
+              <LocationOnIcon />
               {location.city}, {location.countryCode}
             </Info>
           )}
           {email && (
             <Info>
-              <FaEnvelope />
+              <EmailIcon />
               {email}
             </Info>
           )}
           {phone && (
             <Info>
-              <FaPhoneAlt />
+              <PhoneIcon />
               {phone}
             </Info>
           )}
           {url && (
             <Info>
-              <FaLink />
+              <LinkIcon />
               <a href={url}>{url}</a>
             </Info>
           )}
           {linkedin && (
             <Info>
-              <FaLinkedin />
+              <LinkedInIcon />
               <a href={`https://linkedin.com/${linkedin.username}`}>
                 {linkedin.username}
               </a>
@@ -97,7 +95,7 @@ const BasicsComponent: React.FC<BasicsComponentProps> = ({ basics }) => {
           )}
           {github && (
             <Info>
-              <FaGithub />
+              <GitHubIcon />
               <a href={`https://github.com/${github.username}`}>
                 {github.username}
               </a>
@@ -105,7 +103,7 @@ const BasicsComponent: React.FC<BasicsComponentProps> = ({ basics }) => {
           )}
           {twitter && (
             <Info>
-              <FaTwitter />
+              <TwitterIcon />
               <a href={`https://twitter.com/${twitter.username}`}>
                 {twitter.username}
               </a>

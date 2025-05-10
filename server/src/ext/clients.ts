@@ -1,5 +1,5 @@
 import { createClerkClient } from '@clerk/backend';
-import Stripe from 'stripe';
+// import Stripe from 'stripe';
 import { ChatOpenAI } from "@langchain/openai";
 import 'dotenv/config';
 
@@ -7,7 +7,7 @@ import 'dotenv/config';
 export const clerkClient = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY });
 
 // Setup Stripe Client
-export const stripeClient = new Stripe(process.env.STRIPE_SECRET_KEY);
+// export const stripeClient = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 // Setup ChatGPT Client
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;

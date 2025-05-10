@@ -10,7 +10,7 @@ import path from 'path';
 import authRoutes from './routes/auth';
 import resumeRoutes from './routes/resume';
 import interviewRoutes from './routes/interview';
-import stripeRoutes from './routes/stripe';
+// import stripeRoutes from './routes/stripe';
 import coverLetterRoutes from './routes/coverLetter';
 
 /* CONFIGURATIONS */
@@ -46,7 +46,7 @@ const upload = multer({ storage });
 app.use('/auth', authRoutes);
 app.use('/resume', resumeRoutes);
 app.use('/interview', interviewRoutes);
-app.use('/checkout', stripeRoutes);
+// app.use('/checkout', stripeRoutes);
 app.use('/cover-letter', coverLetterRoutes);
 
 /* MONGOOSE SETUP */
