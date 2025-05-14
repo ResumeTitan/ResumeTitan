@@ -9,12 +9,42 @@ import StatePicker from 'components/StatePicker';
 import api from 'api/actions';
 import 'styles/index.css';
 
+const suggestions = [
+  "Check the spelling and grammar of the second highlight",
+  "Revise the top two highlights to make them more concise and impactful",
+  "Add quantifiable results to the first highlight to better showcase accomplishments",
+  "Remove any vague or non-specific terms from the third highlight",
+  "Add quantifiable results to the first highlight to better showcase accomplishments",
+  "Reorder the highlights to ensure the most impressive achievements are listed first",
+  "Shorten the second highlight while retaining its key points to improve readability"
+];
+
 function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
   const [jobForm, setJobForm] = useState(editingJob);
   const [aiLoading, setAiLoading] = useState(false);
   const [startDate, setStartDate] = useState(new Date(editingJob.startDate) || new Date());
   const [endDate, setEndDate] = useState(new Date(editingJob.endDate) || new Date());
   const [endDateChecked, setEndDateChecked] = useState(editingJob.endDateCurrent || false);
+  const [aiAssistant, showAiAssistant] = useState(false);
+  const [aiAssistantMsg, setAiAssistantMsg] = useState('');
+  const [placeholder, setPlaceholder] = useState("Ensure that all highlights follow a consistent format and tone");
+  const [isPlaceholderActive, setIsPlaceholderActive] = useState(false);
+
+  React.useEffect(() => {
+    if (aiAssistant) {
+      let index = 0;
+      const interval = setInterval(() => {
+        setIsPlaceholderActive(false); // Trigger the roll-up animation
+        setTimeout(() => {
+          setPlaceholder(suggestions[index]); // Change the placeholder text
+          setIsPlaceholderActive(true); // Trigger the roll-down animation
+          index = (index + 1) % suggestions.length;
+        }, 300); // Delay to sync with roll-up animation
+      }, 5000); // Change placeholder every 5 seconds
+
+      return () => clearInterval(interval); // Cleanup on unmount
+    }
+  }, [aiAssistant]);
 
   const handleSaveJob = () => {
     jobForm.startDate = startDate.toString();
@@ -77,9 +107,36 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
    */
   const handleAiCall = async () => {
     setAiLoading(true);
-    const jobResponse = await api.post("/resume/work", { job: jobForm });
-    setJobForm({ ...jobForm, highlights: jobResponse.data.response.highlights });
-    setAiLoading(false);
+    try {
+      console.log(jobForm.highlights);
+      const jobResponse = await api.post("/resume/work", { job: jobForm });
+      setJobForm(prev => ({ ...prev, highlights: jobResponse.data.response.highlights }));
+    } catch (error) {
+      console.error("Error calling AI:", error);
+    } finally {
+      setAiLoading(false);
+    }
+  }
+
+  const handleAiAssistCall = async () => {
+    const newForm = { ...jobForm };
+
+    if (newForm.highlights) {
+      newForm.highlights = [...newForm.highlights, aiAssistantMsg];
+    } else {
+      newForm.highlights = [aiAssistantMsg];
+    }
+  
+    setAiLoading(true);
+    try {
+      console.log(jobForm.highlights);
+      const jobResponse = await api.post("/resume/work", { job: newForm });
+      setJobForm(prev => ({ ...prev, highlights: jobResponse.data.response.highlights }));
+    } catch (error) {
+      console.error("Error calling AI:", error);
+    } finally {
+      setAiLoading(false);
+    }
   }
 
   return (
@@ -187,8 +244,18 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
             >
               Add
             </button>
+            <button
+              className="green-button order-first xs:order-last p-2 my-1"
+              onClick={() => showAiAssistant(true)}
+            >
+              <div>
+                <AutoAwesomeIcon className="pr-2"/>
+                <span>AI Assistant</span>
+              </div>
+            </button>
           </div>
         </div>
+
         {jobForm.highlights ? jobForm.highlights.map((item, index) => (
           <div className="left-right-spacing">
             <div className="w-full pr-2 py-1">
@@ -199,7 +266,6 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
                 placeholder="Enter highlights from work..."
                 value={item}
                 onChange={(e) => handleJobHighlightsChange(e.target.value, index)}
-                required 
               />
             </div>
             <div className="flex items-center">
@@ -211,18 +277,39 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
               </button>
             </div>
           </div>
-          )
-        ) : (
-          <div className="left-right-spacing">
-            <div className="w-full pr-2 py-1">
-              <textarea 
-                type="text"
-                className="form-style flex-wrap h-24 lg:h-16 text-black"
-                placeholder="Click add to start adding highlights..."
-                disabled
-              />
+        )) : null}
+
+        {aiAssistant && (
+          <>
+            <div className="border-t border-gray-700 my-4"></div>
+            <div className="left-right-spacing">
+              <div className="w-full pr-2 py-1">
+                <textarea
+                  className={`form-style flex-wrap h-24 lg:h-16 ${isPlaceholderActive ? 'placeholder-roll-down' : 'placeholder-roll-up'}`}
+                  placeholder={placeholder}
+                  value={aiAssistantMsg}
+                  onChange={(e) => setAiAssistantMsg(e.target.value)}
+                />
+              </div>
+              <div className="phone-screen-stack">
+                <button
+                  className="green-button order-last xs:order-first p-2 my-1"
+                  onClick={handleAiAssistCall}
+                >
+                  <div>
+                    <AutoAwesomeIcon className="pr-2"/>
+                    <span>Write with AI</span>
+                  </div>
+                </button>
+                <button
+                  className="green-button order-first xs:order-last p-2 my-1"
+                  onClick={() => showAiAssistant(false)}
+                >
+                  Cancel
+                </button>
+              </div>
             </div>
-          </div>
+          </>
         )}
       </div>
 

@@ -2,7 +2,7 @@ import { Response, Request } from 'express';
 import Resume from '../models/Resume';
 import { z } from "zod";
 import { ResumeType } from "../types/types";
-import { openAiClient } from '../ext/clients';
+import { geminiClient } from '../ext/clients';
 import { ServerStyleSheet } from 'styled-components';
 import puppeteer from 'puppeteer';
 
@@ -68,58 +68,128 @@ const ResumeDataSchema = z.object({
 
 const resumeData: ResumeType = {};
 
-const summaryModel = openAiClient.withStructuredOutput(SummarySchema);
-const educationModel = openAiClient.withStructuredOutput(EducationSchema);
-const volunteerModel = openAiClient.withStructuredOutput(VolunteerSchema);
-const workModel = openAiClient.withStructuredOutput(WorkSchema);
-const skillsModel = openAiClient.withStructuredOutput(SkillsSchema);
-const resumeModel = openAiClient.withStructuredOutput(ResumeDataSchema);
+// Helper function to get structured output from Gemini
+const getStructuredOutput = async (prompt: string, schema: z.ZodType<any>) => {
+  const result = await geminiClient.generateContent(prompt);
+  const response = await result.response;
+  const text = response.text();
+  try {
+    // Remove markdown code block formatting if present
+    const cleanText = text.replace(/```json\n?|\n?```/g, '').trim();
+    const json = JSON.parse(cleanText);
+    return schema.parse(json);
+  } catch (error) {
+    console.error('Error parsing Gemini response:', error);
+    throw new Error('Failed to parse AI response');
+  }
+};
 
 const getPrompt = (section: string, data: any) => {
-  let prompt = 'You are a hiring manager at a company and you need to generate the perfect resume for a potential candidate.';
   switch (section) {
     case 'summary':
-      return prompt + `Generate a JSON representation of the summary for a resume: ${JSON.stringify(data)}.
-          Here is an example, "Experienced assistant store manager with strong leadership, problem-solving and organizational skills honed in a customer-focused retail environment. Skilled at hiring, training and mentoring employees into exceptional sales associates."
-          The summary must be 2-3 sentences long.
-          Use this information only, and not previous information entered.
-          Enhance the summary so that it would score well on an ATS system.
-          Use those keywords from the information provided and generate a new summary based on the information.
-          Be sure to fix any spelling or grammar mistakes if there is existing content being passed in.
-      `;
+      return `Generate a professional resume summary for:
+Data: ${JSON.stringify(data)}
+
+Requirements:
+1. 2-3 sentences
+2. Include key skills and experience
+3. Optimize for ATS
+4. Fix any grammar/spelling
+
+Format as JSON:
+{
+  "summary": "summary text"
+}`;
+
     case 'education':
-      return prompt + `Generate a JSON representation of the education section for a resume: ${JSON.stringify(data)}.
-          Use this information only, and not previous information entered.
-          The response shall include an array of strings with highlights a student has.
-          Include at least 4 strings, in full sentences, in both highlights and extraHighlights that could be used on the resume for this person.
-          If no highlights are found, create some that would be associated with the major/area of study entered.
-          If highlights include instructions on how to create the other highlights, use those instructions as well as you can.
-          These strings should include keywords that would score well on an ATS system.
-          This content should not repeat the name of the school.
-          Be sure to fix any spelling or grammar mistakes if there is existing content being passed in.`;
+      return `Generate education highlights for:
+Data: ${JSON.stringify(data)}
+
+Requirements:
+1. Generate 2-6 relevant highlights based on the education details
+2. Include academic achievements and key projects
+3. Optimize for ATS
+4. No school name repetition
+5. Each highlight should be unique and impactful
+
+Format as JSON:
+{
+  "institution": "school name",
+  "studyType": "degree type",
+  "area": "major",
+  "startDate": "start date",
+  "endDate": "end date",
+  "highlights": ["achievement 1", "achievement 2", ...],
+  "extraHighlights": ["extra 1", "extra 2", ...]
+}`;
+
     case 'work':
-      return prompt + `Generate a JSON representation of the work experience section for a resume using this information: ${JSON.stringify(data)}
-          Use this information only, and not previous information entered.
-          The response shall include an array of strings with highlights an employee has.
-          Include at least 4 strings, in full sentences, in both highlights and extraHighlights that could be used on the resume for this person.
-          These strings should include keywords that would score well on an ATS system.
-          This content should not repeat the name of the employer. 
-          If highlights already exists, generate new highlights that would be associated with the job title entered.
-          Be sure to fix any spelling or grammar mistakes if there is existing highlights being passed in.`;
+      return `Generate work experience highlights for:
+Data: ${JSON.stringify(data)}
+
+Requirements:
+1. Generate 3-7 relevant highlights based on the role and responsibilities
+2. Focus on quantifiable achievements and impact
+3. Optimize for ATS
+4. No company name repetition
+5. Each highlight should demonstrate unique value
+
+Format as JSON:
+{
+  "position": "job title",
+  "name": "company name",
+  "startDate": "start date",
+  "endDate": "end date",
+  "highlights": ["achievement 1", "achievement 2", ...],
+  "summary": "brief role description",
+  "extraHighlights": ["extra 1", "extra 2", ...]
+}`;
+
     case 'volunteer':
-      return prompt + `Generate a JSON representation of the volunteer section for a resume using this information: ${JSON.stringify(data)}
-          Use this information only, and not previous information entered.
-          The response shall include an array of strings with highlights a volunteer has.
-          Include at least 4 strings, in full sentences, in both highlights and extraHighlights that could be used on the resume for this person.
-          These strings should include keywords that would score well on an ATS system.
-          This content should not repeat the name of the volunteer opportunity. 
-          If highlights already exists, generate new highlights that would be associated with the job title entered.
-          Be sure to fix any spelling or grammar mistakes if there is existing highlights being passed in.`;
+      return `Generate volunteer experience highlights for:
+Data: ${JSON.stringify(data)}
+
+Requirements:
+1. Generate 2-5 relevant highlights based on the volunteer role
+2. Focus on impact and skills gained
+3. Optimize for ATS
+4. No organization name repetition
+5. Each highlight should show unique contribution
+
+Format as JSON:
+{
+  "organization": "org name",
+  "position": "role",
+  "url": "website",
+  "startDate": "start date",
+  "endDate": "end date",
+  "highlights": ["achievement 1", "achievement 2", ...],
+  "extraHighlights": ["extra 1", "extra 2", ...]
+}`;
+
     case 'skills':
-      return prompt + `Generate a JSON representation of the skills section for a resume: ${JSON.stringify(data)}.
-          Use this information only, and not previous information entered.
-          Provide relevant skills given the data provided.
-          Return between 4 and 8 skills that would be associated with the work titles, education, volunteer, and summary entered.`;
+      return `Generate relevant skills for:
+Data: ${JSON.stringify(data)}
+
+Requirements:
+1. If userInput is provided, generate 1-2 skills related to "${data.userInput}" with appropriate proficiency levels and keywords
+2. If no userInput is provided, generate 4-10 relevant skills based on work/education background
+3. Include proficiency levels for each skill
+4. Add relevant keywords for each skill
+5. Match work/education background
+6. Prioritize most important skills first
+
+Format as JSON:
+{
+  "skills": [
+    {
+      "name": "skill name",
+      "level": "proficiency",
+      "keywords": ["keyword1", "keyword2"]
+    }
+  ]
+}`;
+
     default:
       return '';
   }
@@ -129,11 +199,17 @@ export const postSummary = async (req: Request, res: Response) => {
   const { summary, work, education, skills, volunteer, basics } = req.body;
   resumeData.basics = basics;
 
-  const gptResponse = await summaryModel.invoke(getPrompt('summary', { 
+  const prompt = getPrompt('summary', { 
     extraNotes: summary, work, education, skills, volunteer
-  }));
+  });
 
-  res.status(200).json({ message: 'Summary information added successfully', response: gptResponse });
+  try {
+    const response = await getStructuredOutput(prompt, SummarySchema);
+    res.status(200).json({ message: 'Summary information added successfully', response });
+  } catch (error) {
+    console.error('Error generating summary:', error);
+    res.status(500).json({ error: 'Failed to generate summary' });
+  }
 };
 
 export const postEducation = async (req: Request, res: Response) => {
@@ -141,11 +217,10 @@ export const postEducation = async (req: Request, res: Response) => {
     const { education } = req.body;
     resumeData.education = education;
 
-    console.log(education);
+    const prompt = getPrompt('education', education);
+    const response = await getStructuredOutput(prompt, EducationSchema);
 
-    const gptResponse = await educationModel.invoke(getPrompt('education', education));
-
-    res.status(200).json({ message: 'Education information added successfully', response: gptResponse });
+    res.status(200).json({ message: 'Education information added successfully', response });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Error generating education information' });
@@ -159,16 +234,22 @@ export const postEducation = async (req: Request, res: Response) => {
  * @param {Response} res
  */
 export const postWork = async (req: Request, res: Response) => {
-  const { job } = req.body;
-  if (!resumeData.work) {
-    resumeData.work = [];
+  try {
+    const { job } = req.body;
+    if (!resumeData.work) {
+      resumeData.work = [];
+    }
+    resumeData.work.push(job);
+
+    const prompt = getPrompt('work', job);
+    const response = await getStructuredOutput(prompt, WorkSchema);
+
+    res.status(200).json({ message: 'Job information added successfully', response });
+  } catch (error) {
+    console.error('Error generating work information:', error);
+    res.status(500).json({ error: 'Failed to generate work information' });
   }
-  resumeData.work.push(job);
-
-  const gptResponse = await workModel.invoke(getPrompt('work', job));
-
-  res.status(200).json({ message: 'Job information added successfully', response: gptResponse });
-}
+};
 
 /**
  * @function postVolunteer
@@ -183,26 +264,42 @@ export const postVolunteer = async (req: Request, res: Response) => {
   }
   resumeData.volunteer.push(vol);
 
-  const gptResponse = await workModel.invoke(getPrompt('volunteer', vol));
+  try {
+    const prompt = getPrompt('volunteer', vol);
+    const response = await getStructuredOutput(prompt, VolunteerSchema);
 
-  res.status(200).json({ msg: 'Volunteer information added successfully', response: gptResponse });
-}
+    res.status(200).json({ msg: 'Volunteer information added successfully', response });
+  } catch (error) {
+    console.error('Error generating volunteer information:', error);
+    res.status(500).json({ error: 'Failed to generate volunteer information' });
+  }
+};
 
 export const postSkills = async (req: Request, res: Response) => {
   const { skills, work, education, summary, volunteer } = req.body;
   resumeData.skills = skills;
 
-  const gptResponse = await skillsModel.invoke(getPrompt('skills', { skills, work, education, summary, volunteer }));
+  try {
+    const prompt = getPrompt('skills', { skills, work, education, summary, volunteer });
+    const response = await getStructuredOutput(prompt, SkillsSchema);
 
-  res.status(200).json({ msg: 'Skills information added successfully', response: gptResponse });
-}
+    res.status(200).json({ msg: 'Skills information added successfully', response });
+  } catch (error) {
+    console.error('Error generating skills information:', error);
+    res.status(500).json({ error: 'Failed to generate skills information' });
+  }
+};
 
 export const postResume = async (req: Request, res: Response) => {
-  const gptResponse = await resumeModel.invoke(
-    `Generate a complete JSON resume with the following information: ${JSON.stringify(resumeData)}`
-  );
+  try {
+    const prompt = `Generate a complete JSON resume with the following information: ${JSON.stringify(resumeData)}`;
+    const response = await getStructuredOutput(prompt, ResumeDataSchema);
 
-  res.status(200).json({ resume: gptResponse });
+    res.status(200).json({ resume: response });
+  } catch (error) {
+    console.error('Error generating complete resume:', error);
+    res.status(500).json({ error: 'Failed to generate complete resume' });
+  }
 };
 
 /**
@@ -280,129 +377,6 @@ export const deleteResume = async (req: Request, res: Response) => {
 };
 
 /**
- * @function render
- * @description Build the html page to send to puppeteer to render
- * @return {String} Page in html
- */
-export const render = (name: string, html: string): string => {
-  const sheet = new ServerStyleSheet();
-  const styles = sheet.getStyleTags();
-  
-  return `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>${name} - Resume</title>
-  <style>
-    @font-face {
-      font-family: LatinModern;
-      font-style: normal;
-      font-weight: normal;
-      src: url("/fonts/lmroman10-regular.otf") format("opentype");
-    }
-    @font-face {
-      font-family: LatinModern;
-      font-weight: bold;
-      src: url("/fonts/lmroman10-bold.otf") format("opentype");
-    }
-    @font-face {
-      font-family: LatinModern;
-      font-style: italic;
-      src: url("/fonts/lmroman10-italic.otf") format("opentype");
-    }
-    @font-face {
-      font-family: LatinModernSans;
-      font-style: normal;
-      font-weight: normal;
-      src: url("/fonts/lmsans10-regular.otf") format("opentype");
-    }
-    @font-face {
-      font-family: LatinModernSans;
-      font-weight: bold;
-      src: url("/fonts/lmsans10-bold.otf") format("opentype");
-    }
-    @font-face {
-      font-family: LatinModernSans;
-      font-style: italic;
-      src: url("/fonts/lmsans10-italic.otf") format("opentype");
-    }
-    html {
-      font-family: LatinModern, "Courier New", monospace;
-      background: #fff;
-      font-size: 10px;
-    }
-    h2 {
-      font-size: 1.65rem;
-    }
-    p {
-      padding: 0;
-      margin: 0;
-    }
-    p, li {
-      font-size: 1.4rem;
-      line-height: 1.5rem;
-    }
-    .secondary {
-      color: #111;
-    }
-    a {
-      text-decoration: none;
-    }
-    ul {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-    }
-    *,
-    *::before,
-    *::after {
-      box-sizing: border-box;
-    }
-    /* Resume Container Styles */
-    .resume-container {
-      width: 210mm;
-      height: 297mm;
-      padding: 20mm;
-      margin: 0 auto;
-      background: white;
-      position: relative;
-    }
-    /* Icon Styles */
-    .MuiSvgIcon-root {
-      width: 1em !important;
-      height: 1em !important;
-      font-size: 1.5rem !important;
-    }
-    /* Material UI Icon Fixes */
-    .MuiSvgIcon-root {
-      width: 1em !important;
-      height: 1em !important;
-      font-size: 1.5rem !important;
-    }
-    /* Ensure proper scaling */
-    .resume-container * {
-      max-width: 100%;
-    }
-    /* Fix icon sizes */
-    svg {
-      width: 1em !important;
-      height: 1em !important;
-    }
-    /* Ensure proper text positioning */
-    .resume-container > div {
-      position: relative;
-      width: 100%;
-      height: 100%;
-    }
-  </style>
-  ${styles}
-</head>
-<body>${html}</body>
-</html>`;
-};
-
-/**
  * @function printResumeToPdf
  * @descripton Uses puppeteer library to render resume page then save as pdf
  * @param {Request} req
@@ -443,18 +417,12 @@ export const printResumeToPdf = async (req: Request, res: Response) => {
       timeout: 30000
     });
 
-    console.log("Waiting for resume content");
-
     // Wait for the resume container using data attribute
     await page.waitForSelector('[data-resume="print-container"]', { timeout: 5000 });
-
-    console.log("Resume content available");
     
     // Wait for any animations or dynamic content to settle
     await page.evaluate(() => new Promise(resolve => setTimeout(resolve, 1000)));
 
-    console.log("Rendering PDF");
-    
     const pdfBuffer = await page.pdf({
       format: 'A4',
       printBackground: true,

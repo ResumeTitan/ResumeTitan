@@ -28,7 +28,7 @@ interface OneLineListProps {
 const OneLineList: React.FC<OneLineListProps> = ({ name, items }) => {
   return (
     <Container>
-      <Name>{name}:
+      <Name>{name}
       <List>
         <div>{items.join(' / ')}</div>
       </List>

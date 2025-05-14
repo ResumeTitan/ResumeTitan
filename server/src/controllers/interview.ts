@@ -1,28 +1,105 @@
 import { Request, Response } from 'express';
-import { openAiClient } from '../ext/clients';
-import { z } from "zod";
-import Interview from "../models/Interview.js";
+import { geminiClient } from '../ext/clients';
+import { z } from 'zod';
+import Interview from '../models/Interview';
+import Resume from '../models/Resume';
+import { ResumeType } from '../types/types';
 
-const interviewModel = openAiClient.withStructuredOutput(z.object({
-  interview: z.array(z.object({
+const interviewQuestionsSchema = z.object({
+  questions: z.array(z.object({
     question: z.string(),
-    example: z.string(),
-    guidance: z.string()
+    answer: z.string(),
+    category: z.string()
   }))
-}));
+});
 
-const getPrompt = (jobTitle: string, jobDescription: string) => {
-  const prompt = `
-  You are a hiring manager and you are interviewing me for the position of ${jobTitle}.
-  The job description is as follows: ${jobDescription}
-  Please provide me with a list of questions you would ask me during the interview.
-  Along with the list of questions, please provide me with an example answer to each question.
-  Along with the list of questions, please provide guidance on what you are looking for in the answer and how I should respond.
-  Your response must be in JSON format. The format shall have a key called "interview" with an array of questions. Each question shall have the following keys: question, example, guidance.
-  Give at least 10 questions.`;
+// Helper function to get structured output from Gemini
+const getStructuredOutput = async (prompt: string, schema: z.ZodType<any>) => {
+  const result = await geminiClient.generateContent(prompt);
+  const response = await result.response;
+  const text = response.text();
+  try {
+    const json = JSON.parse(text);
+    return schema.parse(json);
+  } catch (error) {
+    console.error('Error parsing Gemini response:', error);
+    throw new Error('Failed to parse AI response');
+  }
+};
 
-  return prompt;
-}
+/**
+ * @function getPrompt
+ * @description Build text prompt to send to AI model
+ * @param {string} jobTitle 
+ * @param {string} jobDescription 
+ * @returns 
+ */
+const getPrompt = (jobTitle: string, jobDescription: string, resume: ResumeType): string => {
+  return `Generate 5-7 interview questions for:
+Job: ${jobTitle}
+Description: ${jobDescription}
+Resume: ${JSON.stringify(resume)}
+
+Requirements:
+1. Mix of technical and behavioral questions
+2. Each question should test specific skills from resume
+3. Include sample answers
+4. Categorize each question (Technical/Behavioral/Problem-Solving)
+
+Format response as JSON:
+{
+  "questions": [
+    {
+      "question": "interview question",
+      "answer": "sample answer",
+      "category": "question category"
+    }
+  ]
+}`;
+};
+
+export const generateInterviewQuestions = async (req: Request, res: Response) => {
+  try {
+    const { jobTitle, jobDescription, resumeId } = req.body;
+    const resume = await Resume.findById(resumeId);
+    
+    if (!resume) {
+      return res.status(404).json({ error: 'Resume not found' });
+    }
+
+    // Convert Mongoose document to plain object and ensure required fields
+    const resumeData = resume.toObject();
+    const basics = {
+      ...resumeData.basics,
+      label: resumeData.basics.label || '',
+      image: resumeData.basics.image || '',
+      phone: resumeData.basics.phone || '',
+      url: resumeData.basics.url || '',
+      summary: resumeData.basics.summary || '',
+      location: {
+        address: resumeData.basics.location?.address || '',
+        postalCode: resumeData.basics.location?.postalCode || '',
+        city: resumeData.basics.location?.city || '',
+        countryCode: resumeData.basics.location?.countryCode || '',
+        region: resumeData.basics.location?.region || '',
+      },
+      profiles: resumeData.basics.profiles || [],
+    };
+    const typedResume = {
+      ...resumeData,
+      _id: resumeData._id.toString(),
+      basics
+    } as unknown as ResumeType;
+
+    const prompt = getPrompt(jobTitle, jobDescription, typedResume);
+    const response = await getStructuredOutput(prompt, interviewQuestionsSchema);
+
+    res.status(200).json({ questions: response.questions });
+  } catch (error) {
+    console.error('Error generating interview questions:', error);
+    res.status(500).json({ error: 'Failed to generate interview questions' });
+  }
+};
 
 /**
  * createUpdateInterview
@@ -33,21 +110,50 @@ const getPrompt = (jobTitle: string, jobDescription: string) => {
  */
 export const createUpdateInterview = async (req: Request, res: Response) => {
   try {
-    const { jobTitle, jobDescription, interviewId, clerkId } = req.body;
-    const gptResponse = await interviewModel.invoke(getPrompt(jobTitle, jobDescription));
+    const { jobTitle, jobDescription, interviewId, clerkId, resumeId } = req.body;
+    const resume = await Resume.findById(resumeId);
+    
+    if (!resume) {
+      return res.status(404).json({ error: 'Resume not found' });
+    }
 
-    const interview = gptResponse.interview;
+    // Convert Mongoose document to plain object and ensure required fields
+    const resumeData = resume.toObject();
+    const basics = {
+      ...resumeData.basics,
+      label: resumeData.basics.label || '',
+      image: resumeData.basics.image || '',
+      phone: resumeData.basics.phone || '',
+      url: resumeData.basics.url || '',
+      summary: resumeData.basics.summary || '',
+      location: {
+        address: resumeData.basics.location?.address || '',
+        postalCode: resumeData.basics.location?.postalCode || '',
+        city: resumeData.basics.location?.city || '',
+        countryCode: resumeData.basics.location?.countryCode || '',
+        region: resumeData.basics.location?.region || '',
+      },
+      profiles: resumeData.basics.profiles || [],
+    };
+    const typedResume = {
+      ...resumeData,
+      _id: resumeData._id.toString(),
+      basics
+    } as unknown as ResumeType;
+
+    const prompt = getPrompt(jobTitle, jobDescription, typedResume);
+    const response = await getStructuredOutput(prompt, interviewQuestionsSchema);
 
     // Save the interview to the database
     const interviewIn = {
-      interview,
+      questions: response.questions,
       jobTitle,
       jobDescription,
       clerkId,
     }
 
     if (interviewId) {
-      const interviewOut = await Interview.findOneAndUpdate({ _id: interviewId }, interviewIn);
+      const interviewOut = await Interview.findOneAndUpdate({ _id: interviewId }, interviewIn, { new: true });
       res.status(200).json({ interview: interviewOut });
       return;
     }

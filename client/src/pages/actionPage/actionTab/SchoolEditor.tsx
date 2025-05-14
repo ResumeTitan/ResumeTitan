@@ -6,7 +6,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import dayjs, { Dayjs } from 'dayjs';
 import StatePicker from 'components/StatePicker';
-import DegreePicker from 'components/DegreePicker';
+import { DegreePicker, DegreeType } from 'components/DegreePicker';
 import api from 'api/actions';
 import { EducationType } from 'types/types';
 import 'styles/index.css';
@@ -98,7 +98,16 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }: SchoolEdito
   // }
 
   const handleDegreeChange = (degree: string) => {
-    setSchoolForm({ ...schoolForm, studyType: degree });
+    // Format the degree type to include "Degree" for traditional degrees
+    let formattedDegree = degree;
+    if (degree === 'Bachelor') {
+      formattedDegree = "Bachelor's Degree";
+    } else if (degree === 'Master') {
+      formattedDegree = "Master's Degree";
+    } else if (degree === 'Associate') {
+      formattedDegree = "Associate's Degree";
+    }
+    setSchoolForm({ ...schoolForm, studyType: formattedDegree });
   }
 
   const handleSchoolHighlightsChange = (highlights: string, index: number) => {
@@ -193,7 +202,7 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }: SchoolEdito
 
       <div className="w-full mb-6 pr-2">
         <label htmlFor={"studyType"} className="form-label-text">Degree</label>
-        <DegreePicker onChange={handleDegreeChange}/>
+        <DegreePicker onChange={handleDegreeChange} initialValue={schoolForm.studyType as DegreeType}/>
       </div>
 
       {/* <div className="mb-6 left-right-spacing phone-screen-stack">

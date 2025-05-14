@@ -24,37 +24,39 @@ export function VerticalList({ items, icons, onSave }) {
 
 
   return (
-    <DragDropContext onDragEnd={onDragEnd}>
-      <Droppable droppableId="droppable">
-        {(provided, snapshot) => (
-          <div
-            className={`${snapshot.isDraggingOver ? "bg-gray-200" : "bg-white"} w-full sm:w-5/6 md:w-1/2`}
-            {...provided.droppableProps}
-            ref={provided.innerRef}
-          >
-            {items.map((item, index) => (
-              <Draggable key={item} draggableId={item} index={index}>
-                {(provided, snapshot) => (
-                  <div
-                    className={`form-style ${snapshot.isDragging ? "bg-white" : "bg-gray-200"} flex flex-row flex-center`}
-                    ref={provided.innerRef}
-                    {...provided.draggableProps}
-                    {...provided.dragHandleProps}
-                  >
-                    <div className="p-1 items-center">
-                      {icons[item]}
+    <div className="w-full px-4">
+      <DragDropContext onDragEnd={onDragEnd}>
+        <Droppable droppableId="droppable">
+          {(provided, snapshot) => (
+            <div
+              className={`${snapshot.isDraggingOver ? "bg-gray-200" : "bg-white"} w-full`}
+              {...provided.droppableProps}
+              ref={provided.innerRef}
+            >
+              {items.map((item, index) => (
+                <Draggable key={item} draggableId={item} index={index}>
+                  {(provided, snapshot) => (
+                    <div
+                      className={`form-style ${snapshot.isDragging ? "bg-white" : "bg-gray-200"} flex flex-row flex-center`}
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                      {...provided.dragHandleProps}
+                    >
+                      <div className="p-1 items-center">
+                        {icons[item]}
+                      </div>
+                      <div className="p-1 text-right text-2xl">
+                        {item}
+                      </div>
                     </div>
-                    <div className="p-1 text-right text-2xl">
-                      {item}
-                    </div>
-                  </div>
-                )}
-              </Draggable>
-            ))}
-            {provided.placeholder}
-          </div>
-        )}
-      </Droppable>
-    </DragDropContext>
+                  )}
+                </Draggable>
+              ))}
+              {provided.placeholder}
+            </div>
+          )}
+        </Droppable>
+      </DragDropContext>
+    </div>
   );
 }
