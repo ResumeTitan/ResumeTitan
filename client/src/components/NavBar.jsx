@@ -78,7 +78,7 @@ const NavBar = () => {
       {isMobileMenuOpen && (
         <div className="flex flex-col absolute top-16 rounded items-start right-0 bg-gray-800">
           <SignedOut>
-            <button
+            {/* <button
               className="text-white font-bold p-4 w-full border-b border-white text-left "
               onClick={() => {
                 setIsMobileMenuOpen(false);
@@ -86,7 +86,7 @@ const NavBar = () => {
               }}
             >
               {'Pricing'}
-            </button>
+            </button> */}
             <button
               className="text-white font-bold p-4 w-full border-b border-white text-left"
               onClick={() => {
@@ -107,7 +107,7 @@ const NavBar = () => {
             >
               {'Dashboard'}
             </button>
-            <button
+            {/* <button
               className="text-white font-bold p-4 w-full border-b border-white text-left "
               onClick={() => {
                 setIsMobileMenuOpen(false);
@@ -115,7 +115,7 @@ const NavBar = () => {
               }}
             >
               {'Pricing'}
-            </button>
+            </button> */}
             <div className="p-2">
               <UserButton afterSignOutUrl='/'/>
             </div>
@@ -155,12 +155,12 @@ const NavBar = () => {
         ) : (
           <div className="flex items-center">
             <SignedOut>
-              <a
+              {/* <a
                 className="text-white font-bold pr-8"
                 href='/pricing'
               >
                 {'Pricing'}
-              </a>
+              </a> */}
               <a
                 id="loginBtn"
                 href="/sign-in"
@@ -176,12 +176,12 @@ const NavBar = () => {
               >
                 {'Dashboard'}
               </button>
-              <button
+              {/* <button
                 className="text-white font-bold pr-8"
                 onClick={() => navigate('/pricing')}
               >
                 {'Pricing'}
-              </button>
+              </button> */}
               <UserButton afterSignOutUrl='/' />
             </SignedIn>
           </div>

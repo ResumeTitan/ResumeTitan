@@ -26,11 +26,21 @@ body {
 
 @media print {
   .no-print {
-    display: none;
+    display: none !important;
   }
 
   .print-me {
-    display: block;
+    display: block !important;
+  }
+
+  @page {
+    margin: 0;
+    size: auto;
+  }
+
+  body {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
 }
 

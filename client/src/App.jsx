@@ -41,7 +41,7 @@ export default function App() {
           <Route path="/interview" element={<InterviewPage />} />
           <Route path="/print-resume/:id" element={<PrintToPdf />} />
           <Route path="/success" element={<SuccessPage />} />
-          <Route path="/pricing" element={<PricingPage />} />
+          {/* <Route path="/pricing" element={<PricingPage />} /> */}
           <Route path="/cover-letter" element={<CoverLetterPage />} />
           <Route path="*" element={<Navigate to="/" />} />
           <Route path="/sign-in" element={<SignIn />} />

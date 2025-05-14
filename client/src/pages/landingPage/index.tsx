@@ -3,19 +3,19 @@ import About from './About';
 import Hero from './Hero';
 import IntroPage from './IntroPage';
 // import Logos from './Logos/Logos';
-import Pricing from 'components/Pricing';
+// import Pricing from 'components/Pricing';
 import 'styles/index.css';
 
 const LandingPage: React.FC = () => {
   return (
-    <div className="bg-white overflow-x-hidden">
+    <div className="bg-white overflow-x-hidden pb-10">
       <IntroPage />
       <Hero />
       {/* <Logos /> */}
       <About />
-      <div data-aos="fade-right">
+      {/* <div data-aos="fade-right">
         <Pricing />
-      </div>
+      </div> */}
       {/* <Blogs /> */}
     </div>
   );

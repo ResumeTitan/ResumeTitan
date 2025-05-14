@@ -125,12 +125,14 @@ const DashboardContainer: React.FC<DashboardContainerProps> = ({ title, items, u
           </div>
         )}
       </Header>
-      {isUserPremium(user) ? (
+      {/* {isUserPremium(user) ? (
         <AddNewButton onClick={() => onAdd(false)}>Add New</AddNewButton>
       ) : (
         <AddNewLockedButton onClick={() => onAdd(true)}>
           <span className="pr-2">Add New</span><LockIcon /></AddNewLockedButton>
-      )}
+      )} */}
+
+      <AddNewButton onClick={() => onAdd(false)}>Add New</AddNewButton>
       
       <ScrollContainer>
         {items && items.map((item) => (

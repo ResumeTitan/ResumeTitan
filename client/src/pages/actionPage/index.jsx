@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useReactToPrint } from 'react-to-print';
 import ActionTab from './actionTab/Action';
 import CustomizeTab from './customizeTab';
 import Tabs from './Tabs';
 import ResumeContainer from 'templates/ResumeContainer';
 import Spinner from 'components/Spinner';
 import ErrorAlert from 'components/Alert/ErrorAlert';
-import api from 'api/actions';
+import api, { setTokenFunction } from 'api/actions';
 import 'styles/index.css';
 import { styled } from '@mui/system';
 import DescriptionIcon from '@mui/icons-material/Description';
@@ -74,6 +75,59 @@ function ActionPage() {
   const [jobDescription, setJobDescription] = useState('');
   const [useJobDescription, setUseJobDescription] = useState(false);
   const [showPrintError, setShowPrintError] = useState(false);
+  const resumeRef = useRef();
+
+  const handlePrint = useReactToPrint({
+    content: () => resumeRef.current,
+    documentTitle: `${currentResume.name || 'Resume'}.pdf`,
+    format: 'a4',
+    pageStyle: `
+      @page {
+        size: 210mm 297mm;
+        margin: 0;
+      }
+      @media print {
+        html, body {
+          height: auto;
+          overflow: hidden;
+          width: 210mm;
+          margin: 0;
+          padding: 0;
+        }
+        body {
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
+        }
+        #root {
+          height: auto;
+          overflow: hidden;
+          width: 210mm;
+        }
+        .page-container {
+          height: auto;
+          overflow: hidden;
+          width: 210mm;
+        }
+        .resume-container {
+          width: 210mm !important;
+          height: 297mm !important;
+          transform: none !important;
+          margin: 0 !important;
+          padding: 0 !important;
+        }
+      }
+    `,
+    onBeforeGetContent: () => {
+      setResumeLoading(true);
+    },
+    onAfterPrint: () => {
+      setResumeLoading(false);
+    },
+    onPrintError: () => {
+      setResumeLoading(false);
+      console.error('Print failed');
+    }
+  });
 
   const refreshToken = async () => {
     const newToken = await getToken();
@@ -81,6 +135,7 @@ function ActionPage() {
       return null;
     }
     dispatch(setToken(newToken));
+    return newToken;
   }
 
   /**
@@ -140,24 +195,21 @@ function ActionPage() {
    * @todo Fix printing for mobile, gets too many notifications, generate on backend
    */
   const handleSaveToPdf = async () => {
-    if (!isUserPremium(user)) {
-      setShowPrintError(true);
-      return;
-    }
+    // TODO: Uncomment this if we want to check for premium users
+    // if (!isUserPremium(user)) {
+    //   setShowPrintError(true);
+    //   return;
+    // }
 
     try {
-      setResumeLoading(true);
-
       // Save the resume first
       await handleSaveResume(false);
 
-      // Construct the URL you want to open
-      const newPageUrl = `${window.location.origin}/../print-resume/${currentResume._id}`; // Replace '/new-page' with your route
-      window.open(newPageUrl, '_blank');
-
-      setResumeLoading(false);
+      // Use the print function
+      await handlePrint();
     } catch (error) {
       console.log(error);
+      setResumeLoading(false);
       throw error;
     }
   };
@@ -198,10 +250,14 @@ function ActionPage() {
   const handleSaveResume = async (exit) => {
     if (!isSignedIn) {
       navigate('/sign-in');
+      return;
     }
     setResumeLoading(true);
     try {
-      await refreshToken();
+      const newToken = await refreshToken();
+      if (!newToken) {
+        throw new Error('Failed to refresh token');
+      }
       const response = await api.put("/resume/update", currentResume);
       const savedResume = response.data.resume;
       setCurrentResume(savedResume);
@@ -211,9 +267,15 @@ function ActionPage() {
       }
     } catch (err) {
       console.log(err);
+      setResumeLoading(false);
       throw err;
     }
   }
+
+  // Set up the token function for API calls
+  React.useEffect(() => {
+    setTokenFunction(getToken);
+  }, [getToken]);
 
   return (
     <div className="page-container">
@@ -266,7 +328,7 @@ function ActionPage() {
       {/* Desktop View */}
       <div className="overflow-hidden p-2 hidden xl:block w-full">
         <div className="w-full outline p-2">
-          <ResumeContainer resume={currentResume} />
+          <ResumeContainer ref={resumeRef} resume={currentResume} />
         </div>
       </div>
 
@@ -274,7 +336,7 @@ function ActionPage() {
       {isOpen && (
         <div className="layover-container" onClick={() => setIsOpen(false)}>
           <div>
-            <ResumeContainer resume={currentResume} />
+            <ResumeContainer ref={resumeRef} resume={currentResume} />
           </div>
         </div>
       )}

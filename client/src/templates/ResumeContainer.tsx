@@ -1,64 +1,80 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import OnePageResume from './layouts/onepage';
 import ProfessionalResume from './layouts/professional/Resume';
 import MacchiatoResume from './layouts/macchiato/Resume';
 import { ResumeTypeProps } from 'types/types';
 import styled from 'styled-components';
 
-const aspectRatio = 210 / 296;
+interface ScaledContainerProps {
+  $scale?: number;
+}
 
 const StyledContainer = styled.div`
-  width: 100%;
-  min-width: 49.606em; /* 210mm -> ~13.125em (210mm = 793.7px, assuming 1em = 16px) */
-  min-height: 69.921em; /* 296mm -> ~18.5em */
-  size: 49.606em 69.921em;
+  width: 210mm;
+  height: 297mm;
   background-color: white;
   margin: 0 auto;
+  position: relative;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
 
-  /* Preserve aspect ratio using a pseudo-element */
-  &::before {
-    content: "";
-    display: block;
-    padding-top: calc(100% / ${1 / aspectRatio}); /* Sets height based on width */
-  }
-
-  /* Content positioning */
-  & > * {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+  @media print {
+    box-shadow: none;
+    width: 210mm;
+    height: 297mm;
   }
 `;
 
-const ScaledContainer = styled.div`
+const ScaledContainer = styled.div<ScaledContainerProps>`
   width: 100%;
   height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  overflow: hidden;
-  position: relative;
+  padding: 20px;
+  overflow: auto;
 
-  /* Automatically scale the Paper component to fit */
-  @media (max-width: 53.125em) { /* 850px -> 53.125em */
+  @media screen {
     & > ${StyledContainer} {
-      /* Remove transform scaling and let the aspect ratio handle resizing */
+      transform-origin: top left;
+      transform: scale(${props => props.$scale || 1});
     }
   }
 
-  @media (max-height: 68.75em) { /* 1100px -> 68.75em */
+  @media print {
+    padding: 0;
+    overflow: visible;
+    
     & > ${StyledContainer} {
-      /* Remove transform scaling and let the aspect ratio handle resizing */
+      transform: none;
+      width: 210mm;
+      height: 297mm;
     }
   }
 `;
 
-export default function ResumeContainer({ resume }: ResumeTypeProps) {
+const ResumeContainer = forwardRef<HTMLDivElement, ResumeTypeProps>(({ resume }, ref) => {
+  // Calculate scale based on container width
+  const [scale, setScale] = React.useState(1);
+  const containerRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    const updateScale = () => {
+      if (containerRef.current) {
+        const containerWidth = containerRef.current.clientWidth - 40; // Account for padding
+        const scale = containerWidth / 210; // 210mm is A4 width
+        setScale(Math.min(scale, 1)); // Don't scale up, only down
+      }
+    };
+
+    updateScale();
+    window.addEventListener('resize', updateScale);
+    return () => window.removeEventListener('resize', updateScale);
+  }, []);
+
   return (
-    <ScaledContainer>
-      <StyledContainer id={"resume-container-master"}>
+    <ScaledContainer ref={containerRef} $scale={scale}>
+      <StyledContainer ref={ref}>
         {resume.theme === "harvard" && <ProfessionalResume resume={resume} />}
         {resume.theme === "one-page" && <OnePageResume resume={resume} />}
         {resume.theme === "professional" && <ProfessionalResume resume={resume} />}
@@ -68,4 +84,8 @@ export default function ResumeContainer({ resume }: ResumeTypeProps) {
       </StyledContainer>
     </ScaledContainer>
   );
-};
+});
+
+ResumeContainer.displayName = 'ResumeContainer';
+
+export default ResumeContainer;

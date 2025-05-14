@@ -129,11 +129,12 @@ export const Dashboard: React.FC = () => {
   };
 
   const handleContentAdd = (url: string, locked = false) => {
-    if (locked) {
-      setShowPricingPopup(true);
-    } else {
-      navigate(url);
-    }
+    // if (locked) {
+    //   setShowPricingPopup(true);
+    // } else {
+    //   navigate(url);
+    // }
+    navigate(url);
   }
 
   const resumeWidgets = resumes.map((resume, index) => (

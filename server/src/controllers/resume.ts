@@ -206,6 +206,10 @@ export const postResume = async (req: Request, res: Response) => {
 export const updateResume = async (req: Request, res: Response) => {
   try {
     const resume = req.body;
+    console.log("The request is", req);
+    console.log(req.body);
+    // @ts-ignore
+    console.log(req.auth);
     // @ts-ignore
     const clerkId = req.auth.userId;
     resume.clerkId = clerkId;
@@ -382,7 +386,16 @@ export const printResumeToPdf = async (req: Request, res: Response) => {
     page.on('requestfailed', request => console.error('REQUEST FAILED:', request.url(), request.failure().errorText));
     
     await page.goto(`${CLIENT_URL}/print-resume/${id}`, { waitUntil: 'networkidle0' });
-    const pdfBuffer = await page.pdf();
+    const pdfBuffer = await page.pdf({
+      printBackground: true,
+      displayHeaderFooter: false,
+      margin: {
+        top: '0.4in',
+        right: '0.4in',
+        bottom: '0.4in',
+        left: '0.4in'
+      }
+    });
     await browser.close();
 
     // Return the PDF buffer

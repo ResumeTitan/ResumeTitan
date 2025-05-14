@@ -62,7 +62,6 @@
         "puppeteer": "^22.11.2",
         "puppeteer-core": "^22.11.2",
         "secure-password": "^4.0.0",
-        "stripe": "^15.8.0",
         "styled-components": "^6.1.12",
         "ts-node": "^10.9.2",
         "uuid": "^9.0.0"
