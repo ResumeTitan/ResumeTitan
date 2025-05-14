@@ -11,4 +11,4 @@ export const clerkClient = createClerkClient({ secretKey: process.env.CLERK_SECR
 
 // Setup ChatGPT Client
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
-export const openAiClient = new ChatOpenAI({ model: "gpt-4o", apiKey: OPENAI_API_KEY });
+export const openAiClient = new ChatOpenAI({ model: "o4-mini", apiKey: OPENAI_API_KEY });
