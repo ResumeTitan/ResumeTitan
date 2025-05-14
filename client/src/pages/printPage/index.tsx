@@ -41,7 +41,7 @@ export const PrintToPdf = () => {
   }
 
   return resume && (
-    <div>
+    <div data-resume="print-container">
       <ResumeContainer resume={resume} />
     </div>
   )

@@ -437,8 +437,8 @@ export const printResumeToPdf = async (req: Request, res: Response) => {
 
     console.log("Waiting for resume content");
 
-    // Wait for the specific resume container class
-    await page.waitForSelector('.sc-iAUooI.chLhPA', { timeout: 5000 });
+    // Wait for the resume container using data attribute
+    await page.waitForSelector('[data-resume="print-container"]', { timeout: 5000 });
 
     console.log("Resume content available");
     
