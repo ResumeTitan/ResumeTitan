@@ -206,10 +206,6 @@ export const postResume = async (req: Request, res: Response) => {
 export const updateResume = async (req: Request, res: Response) => {
   try {
     const resume = req.body;
-    console.log("The request is", req);
-    console.log(req.body);
-    // @ts-ignore
-    console.log(req.auth);
     // @ts-ignore
     const clerkId = req.auth.userId;
     resume.clerkId = clerkId;
@@ -247,10 +243,19 @@ export const getResumes = async (req: Request, res: Response) => {
 /* Get resume by id */
 export const getResume = async (req: Request, res: Response) => {
   const id = req.query.id;
+  // @ts-ignore
+  const clerkId = req.auth?.userId;
+  
   try {
-    const resume = await Resume.findOne({ _id: id });
+    const resume = await Resume.findOne({ _id: id, clerkId: clerkId });
+    
+    if (!resume) {
+      return res.status(404).json({ msg: "Resume not found" });
+    }
+    
     res.status(200).json({ resume: resume });
   } catch (err: any) {
+    console.error('Error getting resume:', err);
     res.status(500).json({ msg: err.message });
   }
 };
@@ -346,6 +351,42 @@ export const render = (name: string, html: string): string => {
     *::after {
       box-sizing: border-box;
     }
+    /* Resume Container Styles */
+    .resume-container {
+      width: 210mm;
+      height: 297mm;
+      padding: 20mm;
+      margin: 0 auto;
+      background: white;
+      position: relative;
+    }
+    /* Icon Styles */
+    .MuiSvgIcon-root {
+      width: 1em !important;
+      height: 1em !important;
+      font-size: 1.5rem !important;
+    }
+    /* Material UI Icon Fixes */
+    .MuiSvgIcon-root {
+      width: 1em !important;
+      height: 1em !important;
+      font-size: 1.5rem !important;
+    }
+    /* Ensure proper scaling */
+    .resume-container * {
+      max-width: 100%;
+    }
+    /* Fix icon sizes */
+    svg {
+      width: 1em !important;
+      height: 1em !important;
+    }
+    /* Ensure proper text positioning */
+    .resume-container > div {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
   </style>
   ${styles}
 </head>
@@ -361,32 +402,53 @@ export const render = (name: string, html: string): string => {
  */
 export const printResumeToPdf = async (req: Request, res: Response) => {
   // @ts-ignore
-  const clerkId = req.auth.userId;
+  const clerkId = req.auth?.userId;
   if (!clerkId) {
     return res.status(401).send('User not known, cannot authenticate print');
   }
 
   try {
-    const { name, html, id } = req.body;
-    console.log("id", id);
-    const htmlRaw = render(name, html);
+    const { id } = req.body;
     const browser = await puppeteer.launch({ 
       args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
       headless: true,
       ignoreHTTPSErrors: true
     });
-    
+
     const page = await browser.newPage();
     await page.setViewport({ width: 1920, height: 1080 });
-    // @ts-ignore
-    const tokenOut = await req.auth.getToken();
-    await page.setExtraHTTPHeaders({ Authorization: tokenOut });
-    // Intercept and log network requests and console messages
-    page.on('console', msg => console.log('PAGE LOG:', msg.text()));
-    page.on('requestfailed', request => console.error('REQUEST FAILED:', request.url(), request.failure().errorText));
     
-    await page.goto(`${CLIENT_URL}/print-resume/${id}`, { waitUntil: 'networkidle0' });
+    // Get the token from the request
+    // @ts-ignore
+    const token = req.auth.getToken();
+    
+    // Set the Authorization header
+    await page.setExtraHTTPHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+    
+    console.log("Navigating to", `${CLIENT_URL}/print-resume/${id}?clerkId=${clerkId}`);
+    
+    // Navigate to the print-resume URL and wait for content
+    await page.goto(`${CLIENT_URL}/print-resume/${id}?clerkId=${clerkId}`, {
+      waitUntil: ['networkidle0', 'domcontentloaded'],
+      timeout: 30000
+    });
+
+    console.log("Waiting for resume content");
+
+    // Wait for the specific resume container class
+    await page.waitForSelector('.sc-iAUooI.chLhPA', { timeout: 5000 });
+
+    console.log("Resume content available");
+    
+    // Wait for any animations or dynamic content to settle
+    await page.evaluate(() => new Promise(resolve => setTimeout(resolve, 1000)));
+
+    console.log("Rendering PDF");
+    
     const pdfBuffer = await page.pdf({
+      format: 'A4',
       printBackground: true,
       displayHeaderFooter: false,
       margin: {

@@ -222,8 +222,34 @@ function ActionPage() {
       // Save the resume first
       await handleSaveResume(false);
 
-      // Use the print function
-      await handlePrint();
+      // Check if we're on mobile
+      const isMobile = window.innerWidth <= 768;
+      
+      if (isMobile) {
+        setResumeLoading(true);
+        const response = await api.post("/resume/print", {
+          id: currentResume._id,
+          name: currentResume.name || 'Resume',
+          html: resumeRef.current.outerHTML
+        }, {
+          responseType: 'blob'
+        });
+
+        // Create a blob URL and trigger download
+        const blob = new Blob([response.data], { type: 'application/pdf' });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${currentResume.name || 'Resume'}.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+        setResumeLoading(false);
+      } else {
+        // Use the print function for desktop
+        await handlePrint();
+      }
     } catch (error) {
       console.log(error);
       setResumeLoading(false);

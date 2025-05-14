@@ -41,8 +41,10 @@ export const getResumes = async (token, userId) => {
   return response.json();
 }
 
-export const getResume = async (token, resumeId) => {
-  const response = await fetch(`${API_URL}/resume?id=${resumeId}`, {
+export const getResume = async (token, resumeId, clerkId) => {
+  console.log('Getting resume with id:', resumeId, 'and clerkId:', clerkId);
+  
+  const response = await fetch(`${API_URL}/resume?id=${resumeId}&clerkId=${clerkId}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -51,9 +53,14 @@ export const getResume = async (token, resumeId) => {
   });
 
   if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}, error: ${JSON.stringify(await response.json())}`);
+    const errorData = await response.json();
+    console.error('Error response:', errorData);
+    throw new Error(errorData.msg || `HTTP error! status: ${response.status}`);
   }
-  return response.json();
+  
+  const data = await response.json();
+  console.log('Resume data:', data);
+  return data;
 }
 
 export const postLogIn = async (email, password) => {

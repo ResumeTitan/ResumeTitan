@@ -14,7 +14,17 @@ const verifyToken = ClerkExpressWithAuth({
 // Custom middleware to handle Bearer token
 const authMiddleware = async (req: any, res: any, next: any) => {
   try {
-    // Get the token from the Authorization header
+    // Check for clerkId in query parameters first
+    const clerkId = req.query.clerkId;
+    if (clerkId) {
+      req.auth = {
+        userId: clerkId,
+        getToken: () => req.headers.authorization?.split(' ')[1]
+      };
+      return next();
+    }
+
+    // If no clerkId in query, proceed with normal token verification
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return res.status(401).json({ msg: "No token provided" });
