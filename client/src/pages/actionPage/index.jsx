@@ -115,6 +115,23 @@ function ActionPage() {
           margin: 0 !important;
           padding: 0 !important;
         }
+        @media screen and (max-width: 768px) {
+          .resume-container {
+            transform: scale(1) !important;
+            transform-origin: top left !important;
+            width: 210mm !important;
+            height: 297mm !important;
+          }
+          .layover-container {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            background: white !important;
+            z-index: 9999 !important;
+          }
+        }
       }
     `,
     onBeforeGetContent: () => {
@@ -327,16 +344,46 @@ function ActionPage() {
       </div>
       {/* Desktop View */}
       <div className="overflow-hidden p-2 hidden xl:block w-full">
-        <div className="w-full outline p-2">
+        <div className="w-full p-2">
           <ResumeContainer ref={resumeRef} resume={currentResume} />
         </div>
       </div>
 
       {/* Mobile View */}
       {isOpen && (
-        <div className="layover-container" onClick={() => setIsOpen(false)}>
-          <div>
-            <ResumeContainer ref={resumeRef} resume={currentResume} />
+        <div className="layover-container" onClick={() => setIsOpen(false)} style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          zIndex: 9999,
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center'
+        }}>
+          <div className="resume-container-wrapper" style={{
+            width: '100%',
+            height: '100%',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            overflow: 'hidden',
+            padding: '10px'
+          }}>
+            <div style={{
+              transform: 'scale(0.4)',
+              transformOrigin: 'center center',
+              width: '210mm',
+              height: '297mm',
+              position: 'relative',
+              backgroundColor: 'white',
+              borderRadius: '8px',
+              boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+            }}>
+              <ResumeContainer ref={resumeRef} resume={currentResume} />
+            </div>
           </div>
         </div>
       )}
