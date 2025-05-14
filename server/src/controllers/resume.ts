@@ -51,11 +51,19 @@ const SummarySchema = z.object({
   summary: z.string()
 });
 
+const AwardsSchema = z.object({
+  title: z.string(),
+  date: z.string(),
+  awarder: z.string(),
+  summary: z.string()
+});
+
 const ResumeDataSchema = z.object({
   summary: z.string(),
   education: z.array(EducationSchema).optional(),
   work: z.array(WorkSchema).optional(),
-  skills: SkillsSchema.optional()
+  skills: SkillsSchema.optional(),
+  awards: z.array(AwardsSchema).optional()
 });
 
 const resumeData: ResumeType = {};

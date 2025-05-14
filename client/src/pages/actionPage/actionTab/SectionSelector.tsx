@@ -14,7 +14,7 @@ import 'styles/index.css';
 
 interface ButtonData {
   label: string;
-  icon: React.ReactElement;
+  icon: React.ReactNode;
 }
 
 interface ButtonGridProps {
@@ -43,10 +43,8 @@ const ButtonGridComponent: React.FC<ButtonGridProps> = ({ onAdd, onClose }) => {
     // { label: 'Certificates', icon: <CardMembershipIcon fontSize="large" /> },
     // { label: 'Languages', icon: <TranslateIcon fontSize="large" /> },
     { label: 'Volunteer', icon: <VolunteerActivismIcon fontSize="large" /> },
-    // { label: 'Awards', icon: <EmojiEventsIcon fontSize="large" /> },
-    // { label: 'Publications', icon: <LibraryBooksIcon fontSize="large" /> },
-    // { label: 'Projects', icon: <AssessmentIcon fontSize="large" /> },
     { label: 'Skills', icon: <BuildIcon fontSize="large" /> },
+    { label: 'Awards', icon: <EmojiEventsIcon fontSize="large" /> },
   ];
 
   return (

@@ -63,6 +63,7 @@ function ActionPage() {
     work: [],
     skills: [],
     volunteer: [],
+    awards: [],
 
     theme: "professional", 
     sections: ["Basics"],
