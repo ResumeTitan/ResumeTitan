@@ -1,8 +1,8 @@
 import React from 'react';
 
 interface DetailsProps {
-  label: string;
-  description: string;
+  label: React.ReactNode;
+  description: React.ReactNode;
 }
 
 const DetailsExpand: React.FC<DetailsProps> = ({label, description}) => {

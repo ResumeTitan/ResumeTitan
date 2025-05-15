@@ -249,17 +249,21 @@ const InterviewPage: React.FC = () => {
             </div>
             <div className="interview-questions">
               {interview.map((question, index) => (
-                <div key={index} className="question-container">
-                  <div className="p-4">{index + 1}. {question.question}</div>
+                <div
+                  key={index}
+                  className={`question-container p-6 border-2 border-gray-300 rounded-lg bg-white shadow-sm${index !== 0 ? ' mt-6' : ''}${index !== interview.length - 1 ? ' mb-6' : ''}`}
+                  style={{ position: 'relative' }}
+                >
+                  <div className="p-4 font-bold text-lg md:text-xl text-black border-b border-gray-200 mb-2">{index + 1}. {question.question}</div>
                   <div className="px-4">
                     <textarea 
-                      className="form-style" 
-                      onChange={(event) => handleAnswerChange(index, event)} rows={4} 
+                      className="form-style text-base md:text-lg text-black h-64 md:h-40" 
+                      onChange={(event) => handleAnswerChange(index, event)}
                       value={question.answer}
                     />
                   </div>
-                  <DetailsExpand label="Example Answer:" description={question.example} />
-                  <DetailsExpand label="Guidance:" description={question.guidance} />
+                  <DetailsExpand label={<span className="text-base md:text-lg font-semibold text-black">Example Answer:</span>} description={<span className="text-base md:text-lg text-black">{question.example}</span>} />
+                  <DetailsExpand label={<span className="text-base md:text-lg font-semibold text-black">Guidance:</span>} description={<span className="text-base md:text-lg text-black">{question.guidance}</span>} />
                   <div className="px-4 pb-2">
                     <button
                       className="save-button"
