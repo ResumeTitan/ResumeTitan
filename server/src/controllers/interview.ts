@@ -5,7 +5,7 @@ import Interview from '../models/Interview';
 import Resume from '../models/Resume';
 import { ResumeType } from '../types/types';
 import axios from 'axios';
-import * as cheerio from 'cheerio';
+
 
 const interviewQuestionsSchema = z.object({
   questions: z.array(z.object({
@@ -86,7 +86,7 @@ Resume: ${JSON.stringify(resume)}
 
 Format response as JSON:
 {
-  "jobTitle": "extracted job title at company",
+  "jobTitle": "extracted job title",
   "company": "extracted company name",
   "jobDescription": "extracted job description",
   "questions": [
@@ -101,24 +101,6 @@ Respond ONLY with valid JSON. Do not include any explanations, introductions, or
 };
 
 const SCRAPER_API_KEY = process.env.SCRAPER_API_KEY;
-
-const extractJobFromUrl = async (url: string): Promise<{ jobTitle: string, jobDescription: string }> => {
-  if (!SCRAPER_API_KEY) throw new Error('Missing ScraperAPI key');
-  const apiUrl = `http://api.scraperapi.com?api_key=${SCRAPER_API_KEY}&url=${encodeURIComponent(url)}`;
-  const { data } = await axios.get(apiUrl, {
-    headers: {
-      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
-    }
-  });
-  const $ = cheerio.load(data);
-  // Try to extract title and description from common selectors
-  let jobTitle = $('h1').first().text().trim() || $('title').text().trim();
-  let jobDescription = $('section, .description, #jobDescriptionText, .jobsearch-jobDescriptionText').text().trim();
-  if (!jobDescription) {
-    jobDescription = $('body').text().trim().slice(0, 2000); // fallback: first 2000 chars of body
-  }
-  return { jobTitle, jobDescription };
-};
 
 export const generateInterviewQuestions = async (req: Request, res: Response) => {
   try {
@@ -177,6 +159,7 @@ export const createUpdateInterview = async (req: Request, res: Response) => {
     let finalJobTitle = jobTitle;
     let finalJobDescription = jobDescription;
     let finalJobUrl = jobUrl;
+    let finalCompany = '';
     let htmlForPrompt = '';
 
     if (resumeId) {
@@ -222,10 +205,12 @@ export const createUpdateInterview = async (req: Request, res: Response) => {
         response = await getStructuredOutput(prompt, z.object({
           jobTitle: z.string(),
           jobDescription: z.string(),
+          company: z.string(),
           questions: interviewQuestionsSchema.shape.questions
         }));
         finalJobTitle = response.jobTitle;
         finalJobDescription = response.jobDescription;
+        finalCompany = response.company;
       } catch (err) {
         console.log("Error: ", err);
         return res.status(400).json({ error: 'Failed to parse job posting from URL' });
@@ -241,6 +226,7 @@ export const createUpdateInterview = async (req: Request, res: Response) => {
       jobTitle: finalJobTitle,
       jobDescription: finalJobDescription,
       jobUrl: finalJobUrl,
+      company: finalCompany,
       clerkId,
     }
 
@@ -256,6 +242,7 @@ export const createUpdateInterview = async (req: Request, res: Response) => {
         ...interviewOut.toObject(),
         jobTitle: finalJobTitle,
         jobDescription: finalJobDescription,
+        company: finalCompany,
         jobUrl: finalJobUrl,
       }
     });
@@ -332,3 +319,32 @@ export const updateInterview = async (req: Request, res: Response) => {
     res.status(500).json({ error: err.message });
   }
 }
+
+/**
+ * @function analyzeInterview
+ * @description Analyze a user's answer to an interview question using AI
+ * @param {Request} req
+ * @param {Response} res
+ */
+export const analyzeInterview = async (req: Request, res: Response) => {
+  try {
+    const { answer, example, guidance } = req.body;
+    if (!answer || !example || !guidance) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+    const prompt = `You are an expert interview coach. Analyze the following answer to an interview question. 
+
+Question Guidance: ${guidance}
+Example Answer: ${example}
+User's Answer: ${answer}
+
+Give specific, actionable feedback on how the answer could be improved, what is good about it, and how well it matches the guidance and example. Respond in 3-5 sentences.`;
+    const result = await geminiClient.generateContent(prompt);
+    const response = await result.response;
+    const text = response.text();
+    res.status(200).json({ analysis: text });
+  } catch (error) {
+    console.error('Error analyzing interview answer:', error);
+    res.status(500).json({ error: 'Failed to analyze answer' });
+  }
+};

@@ -2,12 +2,13 @@ import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useUser } from '@clerk/clerk-react';
 import Spinner from 'components/Spinner';
-import api from 'api/actions';
+import api, { setTokenFunction } from 'api/actions';
 import CoverLetterTemplate from './CoverLetterHolder';
 import { FormContainer } from 'components/Form/styled';
 import FormField from 'components/Form/FormField';
 import FormArea from 'components/Form/FormArea';
 import FormDropdown from 'components/Form/FormDropdown';
+import { useAuth } from '@clerk/clerk-react';
 import 'styles/index.css';
 import { CoverLetterType, ResumeType } from 'types/types';
 import styled from 'styled-components';
@@ -26,6 +27,7 @@ const Container = styled.div`
 
 const CoverLetter: React.FC = () => {
   const { user, isSignedIn } = useUser();
+  const { getToken } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const [userResumes, setUserResumes] = React.useState([]);
@@ -42,6 +44,11 @@ const CoverLetter: React.FC = () => {
     company: '',
     resumeId: ''
   });
+
+  // Set up the token function for API calls
+  React.useEffect(() => {
+    setTokenFunction(getToken);
+  }, [getToken]);
 
   /**
    * @function loadCoverLetter
@@ -73,10 +80,6 @@ const CoverLetter: React.FC = () => {
    * @description Called when page loads
    */
   React.useEffect(() => {
-    if (!isSignedIn) {
-      navigate("/sign-in");
-    }
-
     async function load() {
       let newCoverLetter = coverLetter;
       if (location.state) {

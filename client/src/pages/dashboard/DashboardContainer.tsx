@@ -4,8 +4,8 @@ import EditIcon from '@mui/icons-material/Edit';
 import CloseIcon from '@mui/icons-material/Close';
 import { CoverLetterType } from 'types/types';
 import { UserResource } from '@clerk/types';
-import { isUserPremium } from '../../utils/index';
-import LockIcon from '@mui/icons-material/Lock';
+// import { isUserPremium } from '../../utils/index';
+// import LockIcon from '@mui/icons-material/Lock';
 import { AddNewButton, AddNewLockedButton } from 'components/Styled';
 
 interface DashboardContainerProps {
@@ -20,39 +20,48 @@ interface DashboardContainerProps {
 }
 
 const Container = styled.div`
-  margin: 1rem; /* m-4 */
-  padding-bottom: 0.5rem; /* pb-2 */
-  border: 4px solid black; /* border border-4 border-black */
-  border-radius: 0.5rem; /* rounded-lg */
-  background-color: white; /* bg-white */
+  margin: 1rem;
+  border: 4px solid black;
+  border-radius: 1rem;
+  background-color: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 `;
 
 const Header = styled.div`
-  font-size: 1.875rem; /* equivalent to text-3xl */
+  font-size: 2rem;
   font-weight: bold;
-  background-color: #115E59; /* replace with your main green color */
-  padding: 0.5rem; /* equivalent to p-2 */
+  background-color: #115E59;
+  padding: 1rem 1.5rem;
+  color: white;
+  border-radius: 0.5rem 0.5rem 0 0;
 `;
 
 const ItemCard = styled.div`
-  border: 4px solid black; /* border border-4 border-black */
-  margin: 0.5rem; /* m-2 */
-  border-radius: 0.5rem; /* rounded-lg */
+  border: 4px solid black;
+  margin: 0.75rem;
+  border-radius: 0.75rem;
   position: relative;
-  transition: background-color 0.3s ease; /* Add transition for hover effect */
+  transition: all 0.3s ease;
+  min-width: 250px;
+  max-width: 350px;
+  flex: 1;
 
   &:hover {
-    background-color: #e0f2f1; /* hover:bg-lightest-green (replace with your actual color) */
+    background-color: #e0f2f1;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   }
 `;
 
 const ItemDetails = styled.div`
-  color: black; /* text-black */
-  width: 10rem; /* w-40 */
-  height: 10rem; /* h-40 */
-  padding: 0.5rem; /* p-2 */
-  margin: 0.5rem; /* m-2 */
-  border-radius: 0.5rem; /* rounded-lg */
+  color: black;
+  padding: 1.5rem;
+  margin: 0.5rem;
+  border-radius: 0.5rem;
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 `;
 
 const EditButton = styled.button`
@@ -107,12 +116,15 @@ const DeleteButton = styled.button`
 
 const ScrollContainer = styled.div`
   display: flex;
-  padding: 0.5rem; /* p-2 */
-  transform-origin: top left;
-  overflow-x: scroll;
+  padding: 1rem;
+  gap: 1rem;
+  overflow-x: auto;
+  overflow-y: hidden;
   &::-webkit-scrollbar {
-    display: none; /* Hide scrollbar */
+    display: none;
   }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 `;
 
 const DashboardContainer: React.FC<DashboardContainerProps> = ({ title, items, user, onEdit, onDelete, onAdd, onChange, children }) => {
@@ -136,9 +148,10 @@ const DashboardContainer: React.FC<DashboardContainerProps> = ({ title, items, u
       
       <ScrollContainer>
         {items && items.map((item) => (
-          <ItemCard>
+          <ItemCard key={item._id}>
             <ItemDetails>
-              <div className="text-xl font-bold">{item.jobTitle} at {item.company}</div>
+              <div className="text-xl font-bold mb-2">{item.jobTitle}</div>
+              <div className="text-lg text-gray-700">at {item.company}</div>
             </ItemDetails>
 
             <EditButton

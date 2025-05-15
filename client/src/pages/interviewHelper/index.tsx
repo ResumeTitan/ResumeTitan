@@ -3,13 +3,14 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useUser } from "@clerk/clerk-react";
 import DetailsExpand from './Details';
 import Spinner from 'components/Spinner';
-import api from 'api/actions';
+import api, { setTokenFunction } from 'api/actions';
 import { isUserPremium } from '../../utils/index';
 import LockIcon from '@mui/icons-material/Lock';
 import { AddNewButton, AddNewLockedButton } from 'components/Styled';
 import CloseIcon from '@mui/icons-material/Close';
 import Pricing from 'components/Pricing';
 import { UserResource } from '@clerk/types';
+import { useAuth } from '@clerk/clerk-react';
 import 'styles/index.css';
 
 interface Interview {
@@ -21,6 +22,7 @@ interface Interview {
 
 const InterviewPage: React.FC = () => {
   const { user } = useUser();
+  const { getToken } = useAuth();
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -32,6 +34,13 @@ const InterviewPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showPricingPopup, setShowPricingPopup] = useState(false);
   const [showSaveMessage, setShowSaveMessage] = useState(false);
+  const [analysis, setAnalysis] = useState<string[]>([]);
+  const [analyzingIndex, setAnalyzingIndex] = useState<number | null>(null);
+
+  // Set up the token function for API calls
+  useEffect(() => {
+    setTokenFunction(getToken);
+  }, [getToken]);
 
   /**
    * loadInterview
@@ -74,7 +83,6 @@ const InterviewPage: React.FC = () => {
   useEffect(() => {
     const loadInterviewChange = async () => {
       if (location.state) {
-        console.log(location.state.id);
         await loadInterview(location.state.id);
       }
     }
@@ -108,8 +116,12 @@ const InterviewPage: React.FC = () => {
       const response = await api.post("interview", payload);
       //@ts-ignore
       setInterview(response.data.interview.questions);
-      if (response.data.interview.jobTitle) setJobTitle(response.data.interview.jobTitle);
-      if (response.data.interview.jobDescription) setJobDescription(response.data.interview.jobDescription);
+      if (response.data.interview.jobTitle) {
+        setJobTitle(response.data.interview.jobTitle);
+      }
+      if (response.data.interview.jobDescription) {
+        setJobDescription(response.data.interview.jobDescription);
+      }
       setIsLoading(false);
     } catch (error) {
       console.error(error);
@@ -146,6 +158,26 @@ const InterviewPage: React.FC = () => {
     newInterview[index].answer = event.target.value;
     setInterview(newInterview);
   }
+
+  const handleAnalyzeAnswer = async (index: number) => {
+    setAnalyzingIndex(index);
+    try {
+      const question = interview[index];
+      const response = await api.post('/interview/analyze', {
+        answer: question.answer,
+        example: question.example,
+        guidance: question.guidance,
+      });
+      const newAnalysis = [...analysis];
+      newAnalysis[index] = response.data.analysis;
+      setAnalysis(newAnalysis);
+    } catch (error) {
+      const newAnalysis = [...analysis];
+      newAnalysis[index] = 'Error analyzing answer.';
+      setAnalysis(newAnalysis);
+    }
+    setAnalyzingIndex(null);
+  };
 
   /**
    * @description Render the Interview Page
@@ -228,6 +260,21 @@ const InterviewPage: React.FC = () => {
                   </div>
                   <DetailsExpand label="Example Answer:" description={question.example} />
                   <DetailsExpand label="Guidance:" description={question.guidance} />
+                  <div className="px-4 pb-2">
+                    <button
+                      className="save-button"
+                      style={{ minWidth: 180 }}
+                      onClick={() => handleAnalyzeAnswer(index)}
+                      disabled={analyzingIndex === index || !question.answer}
+                    >
+                      {analyzingIndex === index ? 'Analyzing...' : 'Analyze My Answer'}
+                    </button>
+                    {analysis[index] && (
+                      <div className="mt-2 p-2 border rounded bg-gray-50 text-black">
+                        <strong>AI Analysis:</strong> {analysis[index]}
+                      </div>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>
@@ -247,7 +294,7 @@ const InterviewPage: React.FC = () => {
                   Interview Saved!
                 </div>
               )}
-            <AddNewButton onClick={handleSaveInterview}>Save Interview</AddNewButton>
+            <button className="save-button" onClick={handleSaveInterview}>Save Interview</button>
           </div>
         </div>
       </div>

@@ -145,10 +145,14 @@ body {
 }
 
 .save-button {
-  @apply bg-white text-teal-800 text-center font-medium rounded-lg text-lg w-full px-5 py-3 m-1
+  @apply bg-white text-teal-800 text-center font-medium rounded-lg text-lg px-5 py-3 m-1
     hover:bg-teal-800 hover:cursor-pointer hover:text-white
     border-4 border-black
     transition ease-in-out duration-300;
+}
+
+.save-button:disabled {
+  @apply bg-gray-300 text-gray-500 cursor-not-allowed border-gray-400;
 }
 
 .remove-content-button {
@@ -187,7 +191,7 @@ body {
 }
 
 .dashboard-header {
-  @apply text-3xl font-bold bg-main-green p-2
+  @apply text-3xl font-bold bg-main-green px-[1.5rem] py-[1rem]
 }
 
 .dashboard-button {
