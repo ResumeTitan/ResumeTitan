@@ -4,6 +4,8 @@ import { z } from 'zod';
 import Interview from '../models/Interview';
 import Resume from '../models/Resume';
 import { ResumeType } from '../types/types';
+import axios from 'axios';
+import * as cheerio from 'cheerio';
 
 const interviewQuestionsSchema = z.object({
   questions: z.array(z.object({
@@ -61,6 +63,63 @@ Format response as JSON:
 Respond ONLY with valid JSON. Do not include any explanations, introductions, or extra text.`;
 };
 
+// New prompt for HTML extraction
+const getPromptFromHtml = (html: string, resume: ResumeType): string => {
+  return `You are an expert at reading job postings. Given the following HTML of a job posting, extract:
+- The job title (e.g., 'Software Engineer')
+- The company name (e.g., 'Cisco')
+- The job description
+
+Instructions:
+1. Look for the job title in <h1>, <h2>, or elements with class names containing 'title'.
+2. Look for the company name in elements with class names containing 'company', 'employer', or similar. Do NOT use the <title> tag unless it contains both the job title and company name.
+3. If the company name is not found, just use the job title.
+4. Return the job title in the format 'Job Title at Company', e.g., 'Software Engineer at Cisco'.
+5. Extract the main job description text.
+6. Use the provided resume to tailor the questions.
+7. Generate 5-7 interview questions (mix of technical and behavioral), each with a sample answer and guidance, and categorize each question.
+
+Job Posting HTML:
+${html}
+
+Resume: ${JSON.stringify(resume)}
+
+Format response as JSON:
+{
+  "jobTitle": "extracted job title at company",
+  "company": "extracted company name",
+  "jobDescription": "extracted job description",
+  "questions": [
+    {
+      "question": "interview question",
+      "example": "sample answer",
+      "guidance": "guidance on how to answer the question"
+    }
+  ]
+}
+Respond ONLY with valid JSON. Do not include any explanations, introductions, or extra text.`;
+};
+
+const SCRAPER_API_KEY = process.env.SCRAPER_API_KEY;
+
+const extractJobFromUrl = async (url: string): Promise<{ jobTitle: string, jobDescription: string }> => {
+  if (!SCRAPER_API_KEY) throw new Error('Missing ScraperAPI key');
+  const apiUrl = `http://api.scraperapi.com?api_key=${SCRAPER_API_KEY}&url=${encodeURIComponent(url)}`;
+  const { data } = await axios.get(apiUrl, {
+    headers: {
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+    }
+  });
+  const $ = cheerio.load(data);
+  // Try to extract title and description from common selectors
+  let jobTitle = $('h1').first().text().trim() || $('title').text().trim();
+  let jobDescription = $('section, .description, #jobDescriptionText, .jobsearch-jobDescriptionText').text().trim();
+  if (!jobDescription) {
+    jobDescription = $('body').text().trim().slice(0, 2000); // fallback: first 2000 chars of body
+  }
+  return { jobTitle, jobDescription };
+};
+
 export const generateInterviewQuestions = async (req: Request, res: Response) => {
   try {
     const { jobTitle, jobDescription, resumeId } = req.body;
@@ -113,8 +172,12 @@ export const generateInterviewQuestions = async (req: Request, res: Response) =>
  */
 export const createUpdateInterview = async (req: Request, res: Response) => {
   try {
-    const { jobTitle, jobDescription, interviewId, clerkId, resumeId } = req.body;
+    const { jobTitle, jobDescription, jobUrl, interviewId, clerkId, resumeId } = req.body;
     let typedResume: ResumeType | undefined = undefined;
+    let finalJobTitle = jobTitle;
+    let finalJobDescription = jobDescription;
+    let finalJobUrl = jobUrl;
+    let htmlForPrompt = '';
 
     if (resumeId) {
       const resume = await Resume.findById(resumeId);
@@ -144,25 +207,58 @@ export const createUpdateInterview = async (req: Request, res: Response) => {
       }
     }
 
-    const prompt = getPrompt(jobTitle, jobDescription, typedResume || {});
-    const response = await getStructuredOutput(prompt, interviewQuestionsSchema);
+    let prompt = '';
+    let response;
+    if (jobUrl) {
+      try {
+        const apiUrl = `http://api.scraperapi.com?api_key=${SCRAPER_API_KEY}&url=${encodeURIComponent(jobUrl)}`;
+        const { data: html } = await axios.get(apiUrl, {
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+          }
+        });
+        htmlForPrompt = html;
+        prompt = getPromptFromHtml(htmlForPrompt, typedResume || {});
+        response = await getStructuredOutput(prompt, z.object({
+          jobTitle: z.string(),
+          jobDescription: z.string(),
+          questions: interviewQuestionsSchema.shape.questions
+        }));
+        finalJobTitle = response.jobTitle;
+        finalJobDescription = response.jobDescription;
+      } catch (err) {
+        console.log("Error: ", err);
+        return res.status(400).json({ error: 'Failed to parse job posting from URL' });
+      }
+    } else {
+      prompt = getPrompt(finalJobTitle, finalJobDescription, typedResume || {});
+      response = await getStructuredOutput(prompt, interviewQuestionsSchema);
+    }
 
     // Save the interview to the database
     const interviewIn = {
       questions: response.questions,
-      jobTitle,
-      jobDescription,
+      jobTitle: finalJobTitle,
+      jobDescription: finalJobDescription,
+      jobUrl: finalJobUrl,
       clerkId,
     }
 
+    let interviewOut;
     if (interviewId) {
-      const interviewOut = await Interview.findOneAndUpdate({ _id: interviewId }, interviewIn, { new: true });
-      res.status(200).json({ interview: interviewOut });
-      return;
+      interviewOut = await Interview.findOneAndUpdate({ _id: interviewId }, interviewIn, { new: true });
+    } else {
+      interviewOut = await Interview.create(interviewIn);
     }
 
-    const interviewOut = await Interview.create(interviewIn);
-    res.status(200).json({ interview: interviewOut });
+    res.status(200).json({
+      interview: {
+        ...interviewOut.toObject(),
+        jobTitle: finalJobTitle,
+        jobDescription: finalJobDescription,
+        jobUrl: finalJobUrl,
+      }
+    });
   } catch (error: any) {
     console.log("Error: ", error);
     res.status(500).json({ error: error.message });

@@ -6,9 +6,7 @@ import Resume from '../models/Resume';
 import { ResumeType } from '../types/types';
 
 const coverLetterSchema = z.object({
-  letter: z.string(),
-  companyName: z.string(),
-  companyAddress: z.string(),
+  letter: z.string()
 });
 
 // Helper function to get structured output from Gemini
@@ -17,7 +15,9 @@ const getStructuredOutput = async (prompt: string, schema: z.ZodType<any>) => {
   const response = await result.response;
   const text = response.text();
   try {
-    const json = JSON.parse(text);
+    // Remove markdown code block formatting if present
+    const cleanText = text.replace(/```json\n?|```/g, '').trim();
+    const json = JSON.parse(cleanText);
     return schema.parse(json);
   } catch (error) {
     console.error('Error parsing Gemini response:', error);
@@ -47,54 +47,55 @@ Requirements:
 
 Format response as JSON:
 {
-  "letter": "cover letter text",
-  "companyName": "company name",
-  "companyAddress": "company address"
+  "letter": "cover letter text"
 }`;
 };
 
-export const generateCoverLetter = async (req: Request, res: Response) => {
-  try {
-    const { jobTitle, jobDescription, resumeId } = req.body;
-    const resume = await Resume.findById(resumeId);
+// Deprecated
+// export const generateCoverLetter = async (req: Request, res: Response) => {
+//   try {
+//     const { jobTitle, jobDescription, resumeId } = req.body;
+//     const resume = await Resume.findById(resumeId);
     
-    if (!resume) {
-      return res.status(404).json({ error: 'Resume not found' });
-    }
+//     if (!resume) {
+//       return res.status(404).json({ error: 'Resume not found' });
+//     }
 
-    // Convert Mongoose document to plain object and ensure required fields
-    const resumeData = resume.toObject();
-    const basics = {
-      ...resumeData.basics,
-      label: resumeData.basics.label || '',
-      image: resumeData.basics.image || '',
-      phone: resumeData.basics.phone || '',
-      url: resumeData.basics.url || '',
-      summary: resumeData.basics.summary || '',
-      location: {
-        address: resumeData.basics.location?.address || '',
-        postalCode: resumeData.basics.location?.postalCode || '',
-        city: resumeData.basics.location?.city || '',
-        countryCode: resumeData.basics.location?.countryCode || '',
-        region: resumeData.basics.location?.region || '',
-      },
-      profiles: resumeData.basics.profiles || [],
-    };
-    const typedResume = {
-      ...resumeData,
-      _id: resumeData._id.toString(),
-      basics
-    } as unknown as ResumeType;
+//     // Convert Mongoose document to plain object and ensure required fields
+//     const resumeData = resume.toObject();
+//     const basics = {
+//       ...resumeData.basics,
+//       label: resumeData.basics.label || '',
+//       image: resumeData.basics.image || '',
+//       phone: resumeData.basics.phone || '',
+//       url: resumeData.basics.url || '',
+//       summary: resumeData.basics.summary || '',
+//       location: {
+//         address: resumeData.basics.location?.address || '',
+//         postalCode: resumeData.basics.location?.postalCode || '',
+//         city: resumeData.basics.location?.city || '',
+//         countryCode: resumeData.basics.location?.countryCode || '',
+//         region: resumeData.basics.location?.region || '',
+//       },
+//       profiles: resumeData.basics.profiles || [],
+//     };
+//     const typedResume = {
+//       ...resumeData,
+//       _id: resumeData._id.toString(),
+//       basics
+//     } as unknown as ResumeType;
 
-    const prompt = getPrompt(jobTitle, jobDescription, typedResume);
-    const response = await getStructuredOutput(prompt, coverLetterSchema);
+//     const prompt = getPrompt(jobTitle, jobDescription, typedResume);
+//     const response = await getStructuredOutput(prompt, coverLetterSchema);
 
-    res.status(200).json({ coverLetter: response });
-  } catch (error) {
-    console.error('Error generating cover letter:', error);
-    res.status(500).json({ error: 'Failed to generate cover letter' });
-  }
-};
+//     console.log("Response: ", response);
+
+//     res.status(200).json({ coverLetter: response });
+//   } catch (error) {
+//     console.error('Error generating cover letter:', error);
+//     res.status(500).json({ error: 'Failed to generate cover letter' });
+//   }
+// };
 
 /**
  * @function getCoverLetters
@@ -214,6 +215,11 @@ export const createUpdateCoverLetter = async (req: Request, res: Response): Prom
       ...response,
       clerkId,
     };
+
+    // Remove _id if it's an empty string
+    if (coverLetterIn._id === '') {
+      delete coverLetterIn._id;
+    }
 
     if (coverLetter._id) {
       const updatedCoverLetter = await CoverLetter.findOneAndUpdate(

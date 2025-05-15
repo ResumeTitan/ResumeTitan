@@ -40,7 +40,7 @@ const CoverLetterSchema = new mongoose.Schema(
       type: String,
       description: "User state"
     },
-    companyName: {
+    company: {
       type: String,
       description: "Name of the company sending a cover letter to"
     }

@@ -41,8 +41,6 @@ const CoverLetterTemplate: React.FC<Props> = ({ coverLetter }) => {
     <p key={index}>{text.trim() !== '' ? text : <>&nbsp;</>}</p>
   )) : null;
 
-  console.log(coverLetter.date);
-
   return (
     <CoverLetterContainer>
       <CoverLetter>
@@ -51,7 +49,7 @@ const CoverLetterTemplate: React.FC<Props> = ({ coverLetter }) => {
         <p>{new Date(coverLetter.date).toDateString()}</p>
         <br />
         <p>{`${coverLetter.jobTitle || '[Job Title]'}`}</p>
-        <p>{`${coverLetter.companyName || '[Company Name]'}`}</p>
+        <p>{`${coverLetter.company || '[Company Name]'}`}</p>
         <br />
         {paragraphs}
       </CoverLetter>

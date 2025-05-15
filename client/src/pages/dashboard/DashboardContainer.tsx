@@ -138,7 +138,7 @@ const DashboardContainer: React.FC<DashboardContainerProps> = ({ title, items, u
         {items && items.map((item) => (
           <ItemCard>
             <ItemDetails>
-              <div className="text-xl font-bold">{item.jobTitle}</div>
+              <div className="text-xl font-bold">{item.jobTitle} at {item.company}</div>
             </ItemDetails>
 
             <EditButton

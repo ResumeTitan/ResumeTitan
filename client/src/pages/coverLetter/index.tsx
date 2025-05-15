@@ -39,7 +39,7 @@ const CoverLetter: React.FC = () => {
     jobTitle: '',
     city: '',
     state: '',
-    companyName: '',
+    company: '',
     resumeId: ''
   });
 
@@ -182,8 +182,8 @@ const CoverLetter: React.FC = () => {
             </FormContainer>
             <FormField 
                 title={"Company Name"}
-                value={coverLetter.companyName}
-                onChange={(event) => {setCoverLetter({...coverLetter, companyName: event.target.value})}}
+                value={coverLetter.company}
+                onChange={(event) => {setCoverLetter({...coverLetter, company: event.target.value})}}
               />
             <FormDropdown 
               title={"Select Resume"}

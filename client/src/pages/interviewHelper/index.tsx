@@ -26,6 +26,8 @@ const InterviewPage: React.FC = () => {
   const location = useLocation();
   const [jobTitle, setJobTitle] = useState('');
   const [jobDescription, setJobDescription] = useState('');
+  const [jobUrl, setJobUrl] = useState('');
+  const [inputMode, setInputMode] = useState<'link' | 'manual'>('manual');
   const [interview, setInterview] = useState<Interview[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [showPricingPopup, setShowPricingPopup] = useState(false);
@@ -48,8 +50,15 @@ const InterviewPage: React.FC = () => {
 
       const interview = response.data.interview;
       setInterview(interview.questions);
-      setJobTitle(interview.jobTitle);
-      setJobDescription(interview.jobDescription);
+      setJobTitle(interview.jobTitle || '');
+      setJobDescription(interview.jobDescription || '');
+      if (interview.jobUrl) {
+        setInputMode('link');
+        setJobUrl(interview.jobUrl);
+      } else {
+        setInputMode('manual');
+        setJobUrl('');
+      }
       setIsLoading(false);
     } catch (err) {
       console.log(err);
@@ -89,14 +98,18 @@ const InterviewPage: React.FC = () => {
       if (location.state?.id) {
         interviewId = location.state.id;
       }
-      const response = await api.post("interview", { 
-        jobTitle, 
-        jobDescription, 
-        interviewId, 
-        clerkId: user.id 
-      });
+      let payload: any = { interviewId, clerkId: user.id };
+      if (inputMode === 'link') {
+        payload.jobUrl = jobUrl;
+      } else {
+        payload.jobTitle = jobTitle;
+        payload.jobDescription = jobDescription;
+      }
+      const response = await api.post("interview", payload);
       //@ts-ignore
       setInterview(response.data.interview.questions);
+      if (response.data.interview.jobTitle) setJobTitle(response.data.interview.jobTitle);
+      if (response.data.interview.jobDescription) setJobDescription(response.data.interview.jobDescription);
       setIsLoading(false);
     } catch (error) {
       console.error(error);
@@ -145,31 +158,54 @@ const InterviewPage: React.FC = () => {
             Enter Details
           </div>
           <div className="p-4">
-            <div className="w-full pr-2">
-            <label htmlFor={"title"} className="form-label-text">Job Title</label>
-            <input 
-              type="text"
-              id={"title"}
-              className="form-style"
-              value={jobTitle}
-              onChange={(event) => setJobTitle(event.target.value)}
-            />
-            </div>
+            <label htmlFor="inputMode" className="form-label-text">Select Input Method</label>
+            <select
+              id="inputMode"
+              className="form-style mb-4"
+              value={inputMode}
+              onChange={e => setInputMode(e.target.value as 'link' | 'manual')}
+            >
+              <option value="manual">Job Title and Description</option>
+              <option value="link">Job From Link</option>
+            </select>
+            {inputMode === 'link' ? (
+              <div className="w-full pr-2">
+                <label htmlFor="jobUrl" className="form-label-text">Job Posting URL</label>
+                <input
+                  type="text"
+                  id="jobUrl"
+                  className="form-style"
+                  value={jobUrl}
+                  onChange={e => setJobUrl(e.target.value)}
+                  placeholder="Paste the job posting link here..."
+                />
+              </div>
+            ) : (
+              <>
+                <div className="w-full pr-2">
+                  <label htmlFor={"title"} className="form-label-text">Job Title</label>
+                  <input 
+                    type="text"
+                    id={"title"}
+                    className="form-style"
+                    value={jobTitle}
+                    onChange={(event) => setJobTitle(event.target.value)}
+                  />
+                </div>
+                <div className="mt-4">
+                  <label htmlFor={"description"} className="form-label-text">Job Description</label>
+                  <textarea 
+                    id={"description"}
+                    className="form-style" 
+                    rows={10}
+                    value={jobDescription}
+                    onChange={(event) => setJobDescription(event.target.value)}
+                  />
+                </div>
+              </>
+            )}
           </div>
-
-          <div className="p-4">
-            <label htmlFor={"description"} className="form-label-text">Job Description</label>
-            <textarea 
-              id={"description"}
-              className="form-style" 
-              rows={10}
-              value={jobDescription}
-              onChange={(event) => setJobDescription(event.target.value)}
-            />
-          </div>
-
           <div className="pb-4">
-
             <AddNewButton onClick={handleGenerateInterview}>Generate Interview Questions</AddNewButton>
           </div>
         </div>

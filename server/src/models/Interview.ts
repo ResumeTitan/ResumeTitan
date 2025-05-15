@@ -38,6 +38,14 @@ const InterviewSchema = new mongoose.Schema(
       type: String,
       description: "Description of the job being interviewed for"
     },
+    company: {
+      type: String,
+      description: "Name of the company being interviewed for"
+    },
+    jobUrl: {
+      type: String,
+      description: "URL of the job posting, if provided"
+    },
     clerkId: {
       type: String,
       required: true,

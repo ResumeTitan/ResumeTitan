@@ -152,7 +152,7 @@ export interface CoverLetterType {
   state: string;
   jobTitle: string;
   jobDescription: string;
-  companyName: string;
+  company: string;
 
   _id: string;
   resumeId: string;
