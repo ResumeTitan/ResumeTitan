@@ -13,7 +13,7 @@ const InterviewQuestionSchema = new mongoose.Schema(
     },
     guidance: {
       type: String,
-      description: "Guidance on how to answer the questions",
+      description: "Guidance on how to answer the question",
     },
     answer: {
       type: String,
@@ -26,7 +26,7 @@ const InterviewQuestionSchema = new mongoose.Schema(
 
 const InterviewSchema = new mongoose.Schema(
   {
-    interview: {
+    questions: {
       type: [InterviewQuestionSchema],
       description: "The interview questions",
     },

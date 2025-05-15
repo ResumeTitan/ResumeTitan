@@ -3,6 +3,7 @@ import ThemeSelector from './themeSelector';
 import HarvardImg from 'assets/harvard.png';
 import OnepageImg from 'assets/onepage.png';
 import MacchiatoImg from 'assets/macchiato.png';
+import StudentClassicImg from 'assets/macchiato.png'; // TODO: Replace with actual student-classic image
 import SectionList from './SectionList';
 import 'styles/index.css';
 import { ResumeType } from 'types/types';
@@ -53,7 +54,8 @@ const CustomizeTab: React.FC<Props> = ({
       <ThemeSelector images={[
         {id: "professional", url: HarvardImg}, 
         {id: "one-page", url: OnepageImg},
-        {id: "macchiato", url: MacchiatoImg}
+        {id: "macchiato", url: MacchiatoImg},
+        {id: "student-classic", url: StudentClassicImg},
       ]} onSelect={(image) => onChangeTheme(image.id)} />
     </div>
     <div className="form-container">

@@ -8,8 +8,8 @@ import { ResumeType } from '../types/types';
 const interviewQuestionsSchema = z.object({
   questions: z.array(z.object({
     question: z.string(),
-    answer: z.string(),
-    category: z.string()
+    example: z.string(),
+    guidance: z.string()
   }))
 });
 
@@ -19,7 +19,9 @@ const getStructuredOutput = async (prompt: string, schema: z.ZodType<any>) => {
   const response = await result.response;
   const text = response.text();
   try {
-    const json = JSON.parse(text);
+    // Remove markdown code block formatting if present
+    const cleanText = text.replace(/```json\n?|\n?```/g, '').trim();
+    const json = JSON.parse(cleanText);
     return schema.parse(json);
   } catch (error) {
     console.error('Error parsing Gemini response:', error);
@@ -51,47 +53,48 @@ Format response as JSON:
   "questions": [
     {
       "question": "interview question",
-      "answer": "sample answer",
-      "category": "question category"
+      "example": "sample answer",
+      "guidance": "guidance on how to answer the question"
     }
   ]
-}`;
+}
+Respond ONLY with valid JSON. Do not include any explanations, introductions, or extra text.`;
 };
 
 export const generateInterviewQuestions = async (req: Request, res: Response) => {
   try {
     const { jobTitle, jobDescription, resumeId } = req.body;
-    const resume = await Resume.findById(resumeId);
-    
-    if (!resume) {
-      return res.status(404).json({ error: 'Resume not found' });
+    let typedResume: ResumeType | undefined = undefined;
+
+    if (resumeId) {
+      const resume = await Resume.findById(resumeId);
+      if (resume) {
+        const resumeData = resume.toObject();
+        const basics = {
+          ...resumeData.basics,
+          label: resumeData.basics.label || '',
+          image: resumeData.basics.image || '',
+          phone: resumeData.basics.phone || '',
+          url: resumeData.basics.url || '',
+          summary: resumeData.basics.summary || '',
+          location: {
+            address: resumeData.basics.location?.address || '',
+            postalCode: resumeData.basics.location?.postalCode || '',
+            city: resumeData.basics.location?.city || '',
+            countryCode: resumeData.basics.location?.countryCode || '',
+            region: resumeData.basics.location?.region || '',
+          },
+          profiles: resumeData.basics.profiles || [],
+        };
+        typedResume = {
+          ...resumeData,
+          _id: resumeData._id.toString(),
+          basics
+        } as unknown as ResumeType;
+      }
     }
 
-    // Convert Mongoose document to plain object and ensure required fields
-    const resumeData = resume.toObject();
-    const basics = {
-      ...resumeData.basics,
-      label: resumeData.basics.label || '',
-      image: resumeData.basics.image || '',
-      phone: resumeData.basics.phone || '',
-      url: resumeData.basics.url || '',
-      summary: resumeData.basics.summary || '',
-      location: {
-        address: resumeData.basics.location?.address || '',
-        postalCode: resumeData.basics.location?.postalCode || '',
-        city: resumeData.basics.location?.city || '',
-        countryCode: resumeData.basics.location?.countryCode || '',
-        region: resumeData.basics.location?.region || '',
-      },
-      profiles: resumeData.basics.profiles || [],
-    };
-    const typedResume = {
-      ...resumeData,
-      _id: resumeData._id.toString(),
-      basics
-    } as unknown as ResumeType;
-
-    const prompt = getPrompt(jobTitle, jobDescription, typedResume);
+    const prompt = getPrompt(jobTitle, jobDescription, typedResume || {});
     const response = await getStructuredOutput(prompt, interviewQuestionsSchema);
 
     res.status(200).json({ questions: response.questions });
@@ -111,37 +114,37 @@ export const generateInterviewQuestions = async (req: Request, res: Response) =>
 export const createUpdateInterview = async (req: Request, res: Response) => {
   try {
     const { jobTitle, jobDescription, interviewId, clerkId, resumeId } = req.body;
-    const resume = await Resume.findById(resumeId);
-    
-    if (!resume) {
-      return res.status(404).json({ error: 'Resume not found' });
+    let typedResume: ResumeType | undefined = undefined;
+
+    if (resumeId) {
+      const resume = await Resume.findById(resumeId);
+      if (resume) {
+        const resumeData = resume.toObject();
+        const basics = {
+          ...resumeData.basics,
+          label: resumeData.basics.label || '',
+          image: resumeData.basics.image || '',
+          phone: resumeData.basics.phone || '',
+          url: resumeData.basics.url || '',
+          summary: resumeData.basics.summary || '',
+          location: {
+            address: resumeData.basics.location?.address || '',
+            postalCode: resumeData.basics.location?.postalCode || '',
+            city: resumeData.basics.location?.city || '',
+            countryCode: resumeData.basics.location?.countryCode || '',
+            region: resumeData.basics.location?.region || '',
+          },
+          profiles: resumeData.basics.profiles || [],
+        };
+        typedResume = {
+          ...resumeData,
+          _id: resumeData._id.toString(),
+          basics
+        } as unknown as ResumeType;
+      }
     }
 
-    // Convert Mongoose document to plain object and ensure required fields
-    const resumeData = resume.toObject();
-    const basics = {
-      ...resumeData.basics,
-      label: resumeData.basics.label || '',
-      image: resumeData.basics.image || '',
-      phone: resumeData.basics.phone || '',
-      url: resumeData.basics.url || '',
-      summary: resumeData.basics.summary || '',
-      location: {
-        address: resumeData.basics.location?.address || '',
-        postalCode: resumeData.basics.location?.postalCode || '',
-        city: resumeData.basics.location?.city || '',
-        countryCode: resumeData.basics.location?.countryCode || '',
-        region: resumeData.basics.location?.region || '',
-      },
-      profiles: resumeData.basics.profiles || [],
-    };
-    const typedResume = {
-      ...resumeData,
-      _id: resumeData._id.toString(),
-      basics
-    } as unknown as ResumeType;
-
-    const prompt = getPrompt(jobTitle, jobDescription, typedResume);
+    const prompt = getPrompt(jobTitle, jobDescription, typedResume || {});
     const response = await getStructuredOutput(prompt, interviewQuestionsSchema);
 
     // Save the interview to the database

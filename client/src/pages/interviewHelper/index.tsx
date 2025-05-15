@@ -29,7 +29,7 @@ const InterviewPage: React.FC = () => {
   const [interview, setInterview] = useState<Interview[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [showPricingPopup, setShowPricingPopup] = useState(false);
-
+  const [showSaveMessage, setShowSaveMessage] = useState(false);
 
   /**
    * loadInterview
@@ -44,12 +44,10 @@ const InterviewPage: React.FC = () => {
         return;
       }
 
-      console.log("Loaded");
-
       const response = await api.get(`/interview/${id}`);
 
       const interview = response.data.interview;
-      setInterview(interview.interview);
+      setInterview(interview.questions);
       setJobTitle(interview.jobTitle);
       setJobDescription(interview.jobDescription);
       setIsLoading(false);
@@ -88,8 +86,8 @@ const InterviewPage: React.FC = () => {
       }
       setIsLoading(true);
       let interviewId = '';
-      if (location.state?.interviewId) {
-        interviewId = location.state.interviewId;
+      if (location.state?.id) {
+        interviewId = location.state.id;
       }
       const response = await api.post("interview", { 
         jobTitle, 
@@ -98,7 +96,7 @@ const InterviewPage: React.FC = () => {
         clerkId: user.id 
       });
       //@ts-ignore
-      setInterview(response.data.interview.interview);
+      setInterview(response.data.interview.questions);
       setIsLoading(false);
     } catch (error) {
       console.error(error);
@@ -112,13 +110,14 @@ const InterviewPage: React.FC = () => {
   const handleSaveInterview = async () => {
     setIsLoading(true);
     try {
-      const response = await api.put(`/interview/${location.state.interviewId}`, {
+      const response = await api.put(`/interview/${location.state.id}`, {
         jobTitle,
         jobDescription,
-        interview,
+        questions: interview,
       });
-
-      setInterview(response.data.interview.interview);
+      setInterview(response.data.interview.questions);
+      setShowSaveMessage(true);
+      setTimeout(() => setShowSaveMessage(false), 2000);
     } catch (error) {
       console.error(error);
     }
@@ -170,12 +169,8 @@ const InterviewPage: React.FC = () => {
           </div>
 
           <div className="pb-4">
-          {isUserPremium(user as UserResource) ? (
+
             <AddNewButton onClick={handleGenerateInterview}>Generate Interview Questions</AddNewButton>
-          ) : (
-            <AddNewLockedButton onClick={() => setShowPricingPopup(true)}>
-              <span className="pr-2">Generate Interview Questions</span><LockIcon /></AddNewLockedButton>
-          )}
           </div>
         </div>
 
@@ -210,17 +205,19 @@ const InterviewPage: React.FC = () => {
           >
             {"Exit to Dashboard"}
           </button>
-          <button
-            className="add-button border-2 border-black"
-            onClick={handleSaveInterview}
-          >
-            {"Save Interview"}
-          </button>
+          <div className="flex justify-end mt-4" style={{ position: 'relative' }}>
+            {showSaveMessage && (
+                <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-white text-dark-green px-3 py-1 rounded text-sm whitespace-nowrap animate-fade-in-out border border-dark-green z-10">
+                  Interview Saved!
+                </div>
+              )}
+            <AddNewButton onClick={handleSaveInterview}>Save Interview</AddNewButton>
+          </div>
         </div>
       </div>
 
       {/* Pricing Popup */}
-      {showPricingPopup && (
+      {/* {showPricingPopup && (
         <div className="pricing-popup">
           <div className="absolute top-2 right-4 p-2 bg-red-500 text-white rounded-full">
             <button
@@ -233,7 +230,7 @@ const InterviewPage: React.FC = () => {
             <Pricing />
           </div>
         </div>
-      )}
+      )} */}
 
       { isLoading && (
         <Spinner />
