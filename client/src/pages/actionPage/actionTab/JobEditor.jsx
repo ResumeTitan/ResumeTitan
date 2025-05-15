@@ -24,13 +24,16 @@ const suggestions = [
 function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
   const [jobForm, setJobForm] = useState(editingJob);
   const [aiLoading, setAiLoading] = useState(false);
-  const [startDate, setStartDate] = useState(new Date(editingJob.startDate) || new Date());
-  const [endDate, setEndDate] = useState(new Date(editingJob.endDate) || new Date());
   const [endDateChecked, setEndDateChecked] = useState(editingJob.endDateCurrent || false);
   const [aiAssistant, showAiAssistant] = useState(false);
   const [aiAssistantMsg, setAiAssistantMsg] = useState('');
   const [placeholder, setPlaceholder] = useState("Ensure that all highlights follow a consistent format and tone");
   const [isPlaceholderActive, setIsPlaceholderActive] = useState(false);
+
+  React.useEffect(() => {
+    setJobForm(editingJob);
+    setEndDateChecked(editingJob.endDateCurrent || false);
+  }, [editingJob]);
 
   React.useEffect(() => {
     if (aiAssistant) {
@@ -49,11 +52,8 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
   }, [aiAssistant]);
 
   const handleSaveJob = () => {
-    jobForm.startDate = startDate.toString();
     if (endDateChecked) {
       jobForm.endDate = "";
-    } else {
-      jobForm.endDate = endDate.toString();
     }
     onSave(jobForm);
     setJobForm({});
@@ -111,7 +111,10 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
     setAiLoading(true);
     try {
       console.log(jobForm.highlights);
-      const jobResponse = await api.post("/resume/work", { job: jobForm });
+      const jobResponse = await api.post("/resume/work", { 
+        job: jobForm,
+        userInput: null
+      });
       setJobForm(prev => ({ ...prev, highlights: jobResponse.data.response.highlights }));
     } catch (error) {
       console.error("Error calling AI:", error);
@@ -131,8 +134,11 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
   
     setAiLoading(true);
     try {
-      console.log(jobForm.highlights);
-      const jobResponse = await api.post("/resume/work", { job: newForm });
+      console.log(aiAssistantMsg);
+      const jobResponse = await api.post("/resume/work", { 
+        job: newForm,
+        userInput: aiAssistantMsg
+      });
       setJobForm(prev => ({ ...prev, highlights: jobResponse.data.response.highlights }));
     } catch (error) {
       console.error("Error calling AI:", error);
@@ -189,31 +195,40 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
           title='Start Date' 
           value={jobForm.startDate} 
           onChange={(event) => {
-            setJobForm({...jobForm, startDate: event.target.value});
+            const newDate = event.target.value;
+            setJobForm(prev => ({
+              ...prev,
+              startDate: newDate
+            }));
           }} 
         />
         <DateInput 
           title='End Date' 
           value={jobForm.endDate}
           onChange={(event) => {
-            setJobForm({...jobForm, endDate: event.target.value});
+            const newDate = event.target.value;
+            setJobForm(prev => ({
+              ...prev,
+              endDate: newDate
+            }));
           }}
           disabled={endDateChecked}
-        />
+          className={endDateChecked ? "bg-gray-100 opacity-70 rounded" : ""}
+        >
+          <div className="mt-2">
+            <label htmlFor="endDateCheckbox" className="block text-sm">
+              Current
+            </label>
+            <input
+              id="endDateCheckbox"
+              type="checkbox"
+              checked={endDateChecked}
+              onChange={handleEndDateCurrent}
+              className="mr-2"
+            />
+          </div>
+        </DateInput>
       </FormContainer>
-      <div className="mt-2">
-        <label htmlFor="endDateCheckbox" className="block text-xs">
-          Current
-        </label>
-        <input 
-          id="endDateCheckbox"
-          type="checkbox"
-          value=""
-          className="bg-gray-700 border-gray-600 w-4 h-4 text-blue-600 rounded focus:ring-blue-600 ring-offset-gray-800 focus:ring-2 mt-1" 
-          onChange={handleEndDateCurrent}
-          checked={endDateChecked}
-        />
-      </div>
 
       <div className="m-2">
         <div className="left-right-spacing my-2">
@@ -270,7 +285,17 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
               </button>
             </div>
           </div>
-        )) : null}
+        )) : (
+          <div className="left-right-spacing">
+            <div className="w-full pr-2 py-1">
+              <textarea 
+                className="form-style flex-wrap h-24 lg:h-16"
+                placeholder="Click Add or Write with AI to start adding accomplishments/skills..."
+                disabled
+              />
+            </div>
+          </div>
+        )}
 
         {aiAssistant && (
           <>

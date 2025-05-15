@@ -43,11 +43,11 @@ function ActionTab({
   /**
    * @function handleSkillsAiCall
    */
-  const handleSkillsAiCall = async (userInput) => {
+  const handleSkillsAiCall = async (userInput = '') => {
     setAiSkillsLoading(true);
     const skillsResponse = await api.post("/resume/skills", {
       ...resumeIn,
-      userInput: userInput || ''  // Pass the user's input to the API
+      userInput: userInput // Always pass the AI assistant text, even if empty
     });
     setAiSkillsLoading(false);
     onUpdateResume({

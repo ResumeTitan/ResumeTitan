@@ -36,6 +36,8 @@ const InterviewPage: React.FC = () => {
   const [showSaveMessage, setShowSaveMessage] = useState(false);
   const [analysis, setAnalysis] = useState<string[]>([]);
   const [analyzingIndex, setAnalyzingIndex] = useState<number | null>(null);
+  const [company, setCompany] = useState('');
+  const [showConfirmPopup, setShowConfirmPopup] = useState(false);
 
   // Set up the token function for API calls
   useEffect(() => {
@@ -68,6 +70,7 @@ const InterviewPage: React.FC = () => {
         setInputMode('manual');
         setJobUrl('');
       }
+      setCompany(interview.company || '');
       setIsLoading(false);
     } catch (err) {
       console.log(err);
@@ -112,6 +115,7 @@ const InterviewPage: React.FC = () => {
       } else {
         payload.jobTitle = jobTitle;
         payload.jobDescription = jobDescription;
+        payload.company = company;
       }
       const response = await api.post("interview", payload);
       //@ts-ignore
@@ -138,6 +142,9 @@ const InterviewPage: React.FC = () => {
       const response = await api.put(`/interview/${location.state.id}`, {
         jobTitle,
         jobDescription,
+        company,
+        jobUrl,
+        useJobUrl: inputMode === 'link',
         questions: interview,
       });
       setInterview(response.data.interview.questions);
@@ -179,6 +186,14 @@ const InterviewPage: React.FC = () => {
     setAnalyzingIndex(null);
   };
 
+  const onGenerateClick = () => {
+    if (interview.length > 0) {
+      setShowConfirmPopup(true);
+    } else {
+      handleGenerateInterview();
+    }
+  };
+
   /**
    * @description Render the Interview Page
    */
@@ -215,6 +230,16 @@ const InterviewPage: React.FC = () => {
             ) : (
               <>
                 <div className="w-full pr-2">
+                  <label htmlFor={"company"} className="form-label-text">Company</label>
+                  <input 
+                    type="text"
+                    id={"company"}
+                    className="form-style"
+                    value={company}
+                    onChange={(event) => setCompany(event.target.value)}
+                  />
+                </div>
+                <div className="w-full pr-2 mt-4">
                   <label htmlFor={"title"} className="form-label-text">Job Title</label>
                   <input 
                     type="text"
@@ -237,9 +262,22 @@ const InterviewPage: React.FC = () => {
               </>
             )}
           </div>
-          <div className="pb-4">
-            <AddNewButton onClick={handleGenerateInterview}>Generate Interview Questions</AddNewButton>
+          <div className="p-4 flex flex-row gap-4 items-center">
+            <button className="save-button" onClick={onGenerateClick}>Generate Interview Questions</button>
+            <button className="save-button" onClick={handleSaveInterview}>Save Interview</button>
           </div>
+          {showConfirmPopup && (
+            <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-30">
+              <div className="bg-white p-6 rounded-lg shadow-lg border-2 border-gray-400 max-w-xs w-full">
+                <div className="text-black font-semibold mb-4">Are you sure?</div>
+                <div className="text-black mb-4 text-sm">Generating new questions will overwrite your current questions and answers.</div>
+                <div className="flex justify-end gap-2">
+                  <button className="secondary-action-button" onClick={() => setShowConfirmPopup(false)}>Cancel</button>
+                  <button className="save-button" onClick={() => { setShowConfirmPopup(false); handleGenerateInterview(); }}>Yes, Overwrite</button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         {interview.length > 0 && (
@@ -286,18 +324,20 @@ const InterviewPage: React.FC = () => {
         )}
 
         <div className="py-4 flex justify-between">
-          <button
-            className="remove-button"
-            onClick={() => navigate('/dashboard')}
-          >
-            {"Exit to Dashboard"}
-          </button>
-          <div className="flex justify-end mt-4" style={{ position: 'relative' }}>
+          <div className="flex justify-end mt-2" style={{ position: 'relative' }}>
+            <button
+              className="secondary-action-button"
+              onClick={() => navigate('/dashboard')}
+            >
+              {"Exit to Dashboard"}
+            </button>
+          </div>
+          <div className="flex justify-end mt-2" style={{ position: 'relative' }}>
             {showSaveMessage && (
-                <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-white text-dark-green px-3 py-1 rounded text-sm whitespace-nowrap animate-fade-in-out border border-dark-green z-10">
-                  Interview Saved!
-                </div>
-              )}
+              <div className="fixed top-8 left-1/2 transform -translate-x-1/2 bg-white text-dark-green px-6 py-3 rounded text-base whitespace-nowrap animate-fade-in-out border border-dark-green z-50 shadow-lg font-semibold">
+                Interview Saved!
+              </div>
+            )}
             <button className="save-button" onClick={handleSaveInterview}>Save Interview</button>
           </div>
         </div>

@@ -77,6 +77,7 @@ function ActionPage() {
   const [useJobDescription, setUseJobDescription] = useState(false);
   const [showPrintError, setShowPrintError] = useState(false);
   const resumeRef = useRef();
+  const [previewScale, setPreviewScale] = useState(0.4);
 
   const handlePrint = useReactToPrint({
     content: () => resumeRef.current,
@@ -321,6 +322,33 @@ function ActionPage() {
     setTokenFunction(getToken);
   }, [getToken]);
 
+  React.useEffect(() => {
+    if (isOpen) {
+      const updateScale = () => {
+        const width = window.innerWidth;
+        if (width <= 300) {
+          setPreviewScale(0.3);
+        } else if (width <= 400) {
+          setPreviewScale(0.4);
+        } else if (width <= 500) {
+          setPreviewScale(0.5);
+        } else if (width <= 650) {
+          setPreviewScale(0.6);
+        } else {
+          setPreviewScale(0.7);
+        }
+      };
+      updateScale();
+      window.addEventListener('resize', updateScale);
+      // Prevent background scroll
+      document.body.style.overflow = 'hidden';
+      return () => {
+        window.removeEventListener('resize', updateScale);
+        document.body.style.overflow = '';
+      };
+    }
+  }, [isOpen]);
+
   return (
     <div className="page-container">
       {resumeLoading && (
@@ -400,10 +428,10 @@ function ActionPage() {
             padding: '10px'
           }}>
             <div style={{
-              transform: 'scale(0.4)',
+              transform: `scale(${previewScale})`,
               transformOrigin: 'center center',
-              width: '210mm',
-              height: '297mm',
+              width: '794px',
+              height: '1122px',
               position: 'relative',
               backgroundColor: 'white',
               borderRadius: '8px',

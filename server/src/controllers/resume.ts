@@ -35,7 +35,6 @@ const WorkSchema = z.object({
   startDate: z.string(),
   endDate: z.string(),
   highlights: z.array(z.string()),
-  summary: z.string(),
   extraHighlights: z.array(z.string())
 });
 
@@ -106,11 +105,12 @@ Format as JSON:
 Data: ${JSON.stringify(data)}
 
 Requirements:
-1. Generate 2-6 relevant highlights based on the education details
-2. Include academic achievements and key projects
-3. Optimize for ATS
-4. No school name repetition
-5. Each highlight should be unique and impactful
+1. If userInput is provided, transform, rewrite, or generate the highlights array according to the user's instructions: "${data.userInput}". This may include rewording, removing, or adding highlights, not just generating new ones. Listen carefully to the user's request and apply it to the highlights array.
+2. If no userInput is provided, generate 2-6 relevant highlights based on the education details
+3. Include academic achievements and key projects
+4. Optimize for ATS
+5. No school name repetition
+6. Each highlight should be unique and impactful
 
 Format as JSON:
 {
@@ -128,11 +128,12 @@ Format as JSON:
 Data: ${JSON.stringify(data)}
 
 Requirements:
-1. Generate 3-7 relevant highlights based on the role and responsibilities
-2. Focus on quantifiable achievements and impact
-3. Optimize for ATS
-4. No company name repetition
-5. Each highlight should demonstrate unique value
+1. If userInput is provided, transform, rewrite, or generate the highlights array according to the user's instructions: "${data.userInput}". This may include rewording, removing, or adding highlights, not just generating new ones. Listen carefully to the user's request and apply it to the highlights array.
+2. If no userInput is provided, generate 3-7 relevant highlights based on the role and responsibilities
+3. Focus on quantifiable achievements and impact
+4. Optimize for ATS
+5. No company name repetition
+6. Each highlight should demonstrate unique value
 
 Format as JSON:
 {
@@ -172,7 +173,7 @@ Format as JSON:
 Data: ${JSON.stringify(data)}
 
 Requirements:
-1. If userInput is provided, generate 1-2 skills related to "${data.userInput}" with appropriate proficiency levels and keywords
+1. 1. If userInput is provided, transform, rewrite, or generate the skills array according to the user's instructions: "${data.userInput}". This may include rewording, removing, or adding skills, not just generating new ones. Listen carefully to the user's request and apply it to the skills array.
 2. If no userInput is provided, generate 4-10 relevant skills based on work/education background
 3. Include proficiency levels for each skill
 4. Add relevant keywords for each skill
@@ -214,16 +215,19 @@ export const postSummary = async (req: Request, res: Response) => {
 
 export const postEducation = async (req: Request, res: Response) => {
   try {
-    const { education } = req.body;
-    resumeData.education = education;
+    const { education, userInput } = req.body;
+    if (!resumeData.education) {
+      resumeData.education = [];
+    }
+    resumeData.education.push(education);
 
-    const prompt = getPrompt('education', education);
+    const prompt = getPrompt('education', { ...education, userInput });
     const response = await getStructuredOutput(prompt, EducationSchema);
 
     res.status(200).json({ message: 'Education information added successfully', response });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Error generating education information' });
+    console.error('Error generating education information:', error);
+    res.status(500).json({ error: 'Failed to generate education information' });
   }
 };
 
@@ -235,13 +239,13 @@ export const postEducation = async (req: Request, res: Response) => {
  */
 export const postWork = async (req: Request, res: Response) => {
   try {
-    const { job } = req.body;
+    const { job, userInput } = req.body;
     if (!resumeData.work) {
       resumeData.work = [];
     }
     resumeData.work.push(job);
 
-    const prompt = getPrompt('work', job);
+    const prompt = getPrompt('work', { ...job, userInput });
     const response = await getStructuredOutput(prompt, WorkSchema);
 
     res.status(200).json({ message: 'Job information added successfully', response });
@@ -276,11 +280,11 @@ export const postVolunteer = async (req: Request, res: Response) => {
 };
 
 export const postSkills = async (req: Request, res: Response) => {
-  const { skills, work, education, summary, volunteer } = req.body;
+  const { skills, work, education, summary, volunteer, userInput } = req.body;
   resumeData.skills = skills;
 
   try {
-    const prompt = getPrompt('skills', { skills, work, education, summary, volunteer });
+    const prompt = getPrompt('skills', { skills, work, education, summary, volunteer, userInput });
     const response = await getStructuredOutput(prompt, SkillsSchema);
 
     res.status(200).json({ msg: 'Skills information added successfully', response });

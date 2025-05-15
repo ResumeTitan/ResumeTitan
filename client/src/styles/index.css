@@ -114,9 +114,7 @@ body {
 }
 
 .add-button {
-  @apply text-black text-center font-medium rounded-lg text-sm lg:text-xl px-5 py-2.5 m-1
-    hover:bg-teal-800 hover:text-white hover:cursor-pointer
-    transition ease-in-out duration-200;
+  @apply border-2 rounded-lg font-medium text-sm lg:text-xl px-5 py-2.5 m-1 text-black text-center border-black hover:bg-teal-800 hover:text-white hover:cursor-pointer transition ease-in-out duration-200;
 }
 
 .add-button-small {
@@ -145,10 +143,7 @@ body {
 }
 
 .save-button {
-  @apply bg-white text-teal-800 text-center font-medium rounded-lg text-lg px-5 py-3 m-1
-    hover:bg-teal-800 hover:cursor-pointer hover:text-white
-    border-4 border-black
-    transition ease-in-out duration-300;
+  @apply border-2 rounded-lg font-medium text-lg px-5 py-2.5 m-1 text-center bg-white text-teal-800 border-black hover:bg-teal-800 hover:text-white hover:cursor-pointer transition ease-in-out duration-300;
 }
 
 .save-button:disabled {
@@ -183,7 +178,7 @@ body {
 }
 
 .secondary-action-button {
-  @apply bg-white p-4 font-bold leading-none rounded text-main-green border border-black hover:bg-main-green hover:text-white hover:border-main-green items-center transition duration-300 ease-in-out;
+  @apply border-2 rounded-lg font-medium text-lg px-5 py-2.5 m-1 text-center bg-white text-red-700 border-red-500 hover:bg-red-600 hover:text-white hover:border-red-600 transition duration-300 ease-in-out;
 }
 
 .dashboard-container {

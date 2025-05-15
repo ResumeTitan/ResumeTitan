@@ -46,13 +46,16 @@ const suggestions = [
 function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }: SchoolEditorProps) {
   const [schoolForm, setSchoolForm] = useState<EducationType>(editingSchool);
   const [aiLoading, setAiLoading] = useState<boolean>(false);
-  const [startDate, setStartDate] = useState<Dayjs>(dayjs(editingSchool.startDate || new Date()));
-  const [endDate, setEndDate] = useState<Dayjs>(dayjs(editingSchool.endDate || new Date()));
+  const [endDateChecked, setEndDateChecked] = useState<boolean>(editingSchool.endDateCurrent || false);
   const [aiAssistant, showAiAssistant] = useState<boolean>(false);
   const [aiAssistantMsg, setAiAssistantMsg] = useState<string>('');
-  const [endDateChecked, setEndDateChecked] = useState<boolean>(editingSchool.endDateCurrent || false);
-  const [placeholder, setPlaceholder] = useState<string>("Ensure that all four highlights follow a consistent format and tone");
+  const [placeholder, setPlaceholder] = useState<string>("Ensure that all highlights follow a consistent format and tone");
   const [isPlaceholderActive, setIsPlaceholderActive] = useState<boolean>(false);
+
+  React.useEffect(() => {
+    setSchoolForm(editingSchool);
+    setEndDateChecked(editingSchool.endDateCurrent || false);
+  }, [editingSchool]);
 
   React.useEffect(() => {
     if (aiAssistant) {
@@ -71,12 +74,10 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }: SchoolEdito
   }, [aiAssistant]);
 
   const handleSaveSchool = () => {
-    const updatedSchool = {
-      ...schoolForm,
-      startDate: startDate.toString(),
-      endDate: endDateChecked ? "" : endDate.toString(),
-    };
-    onSave(updatedSchool);
+    if (endDateChecked) {
+      schoolForm.endDate = "";
+    }
+    onSave(schoolForm);
     setSchoolForm(newEducation);
   }
 
@@ -132,7 +133,10 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }: SchoolEdito
     setAiLoading(true);
     try {
       console.log(schoolForm.highlights);
-      const schoolResponse = await api.post("/resume/education", { education: schoolForm });
+      const schoolResponse = await api.post("/resume/education", { 
+        education: schoolForm,
+        userInput: null
+      });
       setSchoolForm(prev => ({ ...prev, highlights: schoolResponse.data.response.highlights }));
     } catch (error) {
       console.error("Error calling AI:", error);
@@ -153,7 +157,10 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }: SchoolEdito
     setAiLoading(true);
     try {
       console.log(schoolForm.highlights);
-      const schoolResponse = await api.post("/resume/education", { education: newForm });
+      const schoolResponse = await api.post("/resume/education", { 
+        education: newForm,
+        userInput: aiAssistantMsg
+      });
       setSchoolForm(prev => ({ ...prev, highlights: schoolResponse.data.response.highlights }));
     } catch (error) {
       console.error("Error calling AI:", error);
@@ -182,31 +189,40 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }: SchoolEdito
           title='Start Date' 
           value={schoolForm.startDate} 
           onChange={(event) => {
-            setSchoolForm({...schoolForm, startDate: event.target.value});
+            const newDate = event.target.value;
+            setSchoolForm(prev => ({
+              ...prev,
+              startDate: newDate
+            }));
           }} 
         />
         <DateInput 
           title='End Date' 
           value={schoolForm.endDate}
           onChange={(event) => {
-            setSchoolForm({...schoolForm, endDate: event.target.value});
+            const newDate = event.target.value;
+            setSchoolForm(prev => ({
+              ...prev,
+              endDate: newDate
+            }));
           }}
           disabled={endDateChecked}
-        />
+          className={endDateChecked ? "bg-gray-100 opacity-70 rounded" : ""}
+        >
+          <div className="mt-2">
+            <label htmlFor="endDateCheckbox" className="block text-sm">
+              Current
+            </label>
+            <input
+              id="endDateCheckbox"
+              type="checkbox"
+              checked={endDateChecked}
+              onChange={handleEndDateCurrent}
+              className="mr-2"
+            />
+          </div>
+        </DateInput>
       </FormContainer>
-      <div className="mt-2">
-        <label htmlFor="endDateCheckbox" className="block text-xs">
-          Current
-        </label>
-        <input 
-          id="endDateCheckbox"
-          type="checkbox"
-          value=""
-          className="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-600 ring-offset-gray-800 focus:ring-2 mt-1" 
-          onChange={handleEndDateCurrent}
-          checked={endDateChecked}
-        />
-      </div>
 
       <div>
         <div className="left-right-spacing flex my-2">
@@ -268,7 +284,7 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }: SchoolEdito
           <div className="w-full pr-2 py-1">
             <textarea 
               className="form-style flex-wrap h-24 lg:h-16"
-              placeholder="Click add to start adding accomplishments/skills..."
+              placeholder="Click Add or Write with AI to start adding accomplishments/skills..."
               disabled
             />
           </div>

@@ -74,7 +74,7 @@ Instructions:
 1. Look for the job title in <h1>, <h2>, or elements with class names containing 'title'.
 2. Look for the company name in elements with class names containing 'company', 'employer', or similar. Do NOT use the <title> tag unless it contains both the job title and company name.
 3. If the company name is not found, just use the job title.
-4. Return the job title in the format 'Job Title at Company', e.g., 'Software Engineer at Cisco'.
+4. Return the job title in the format 'Job Title', e.g., 'Software Engineer'.
 5. Extract the main job description text.
 6. Use the provided resume to tailor the questions.
 7. Generate 5-7 interview questions (mix of technical and behavioral), each with a sample answer and guidance, and categorize each question.
@@ -154,12 +154,12 @@ export const generateInterviewQuestions = async (req: Request, res: Response) =>
  */
 export const createUpdateInterview = async (req: Request, res: Response) => {
   try {
-    const { jobTitle, jobDescription, jobUrl, interviewId, clerkId, resumeId } = req.body;
+    const { jobTitle, jobDescription, jobUrl, interviewId, clerkId, resumeId, company, useJobUrl } = req.body;
     let typedResume: ResumeType | undefined = undefined;
     let finalJobTitle = jobTitle;
     let finalJobDescription = jobDescription;
     let finalJobUrl = jobUrl;
-    let finalCompany = '';
+    let finalCompany = company || '';
     let htmlForPrompt = '';
 
     if (resumeId) {
@@ -192,8 +192,9 @@ export const createUpdateInterview = async (req: Request, res: Response) => {
 
     let prompt = '';
     let response;
-    if (jobUrl) {
+    if (useJobUrl && jobUrl) {
       try {
+        // Only use scraper API if useJobUrl is true and jobUrl is present
         const apiUrl = `http://api.scraperapi.com?api_key=${SCRAPER_API_KEY}&url=${encodeURIComponent(jobUrl)}`;
         const { data: html } = await axios.get(apiUrl, {
           headers: {
@@ -216,6 +217,7 @@ export const createUpdateInterview = async (req: Request, res: Response) => {
         return res.status(400).json({ error: 'Failed to parse job posting from URL' });
       }
     } else {
+      // Use provided jobTitle, jobDescription, and company to generate questions
       prompt = getPrompt(finalJobTitle, finalJobDescription, typedResume || {});
       response = await getStructuredOutput(prompt, interviewQuestionsSchema);
     }
