@@ -10,6 +10,8 @@ import { DegreePicker, DegreeType } from 'components/DegreePicker';
 import api from 'api/actions';
 import { EducationType } from 'types/types';
 import 'styles/index.css';
+import { FormContainer } from 'components/Form/styled';
+import DateInput from 'components/Form/DateInput';
 
 const newEducation = {
   id: -1,
@@ -88,26 +90,13 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }: SchoolEdito
     setSchoolForm(newEducation);
   }
 
-  const handleSchoolChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSchoolChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { id, value } = e.target;
     setSchoolForm({ ...schoolForm, [id]: value });
   }
 
-  // const handleStateChange = (state: string) => {
-  //   setSchoolForm({ ...schoolForm, state: state });
-  // }
-
   const handleDegreeChange = (degree: string) => {
-    // Format the degree type to include "Degree" for traditional degrees
-    let formattedDegree = degree;
-    if (degree === 'Bachelor') {
-      formattedDegree = "Bachelor's Degree";
-    } else if (degree === 'Master') {
-      formattedDegree = "Master's Degree";
-    } else if (degree === 'Associate') {
-      formattedDegree = "Associate's Degree";
-    }
-    setSchoolForm({ ...schoolForm, studyType: formattedDegree });
+    setSchoolForm({ ...schoolForm, studyType: degree });
   }
 
   const handleSchoolHighlightsChange = (highlights: string, index: number) => {
@@ -128,8 +117,8 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }: SchoolEdito
 
   const handleEndDateCurrent = () => {
     const endDateCurrent = !endDateChecked;
-    setSchoolForm({ ...schoolForm, endDateCurrent: endDateCurrent, endDate: "" });
-    setEndDateChecked(endDateCurrent);
+    setSchoolForm({ ...schoolForm, endDateCurrent: endDateCurrent });
+    setEndDateChecked(!endDateChecked);
   }
 
   const handleHighlightAdd = () => {
@@ -175,91 +164,48 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }: SchoolEdito
 
   return (
     <div className={`${aiLoading ? "animate-pulse" : ""}`}>
-      <div className="py-4">
-        <label htmlFor={"institution"} className="form-label-text">Institution Name</label>
+      <div className="my-6">
+        <label htmlFor={"institution"} className="form-label-text">School</label>
         <input 
           type="text"
           id={"institution"}
-          className="form-style" 
-          placeholder={"Enter school name..."}
-          onChange={handleSchoolChange}
+          className="form-style"
+          placeholder="Enter school name..."
           value={schoolForm.institution || ''}
-          required 
-        />
-      </div>
-      <div className="mb-6">
-        <label htmlFor={"area"} className="form-label-text">Area of Study</label>
-        <input 
-          type="text"
-          id={"area"}
-          className="form-style"
-          placeholder="Enter area of study..."
-          value={schoolForm.area || ''}
           onChange={handleSchoolChange}
           required 
         />
       </div>
 
-      <div className="w-full mb-6 pr-2">
-        <label htmlFor={"studyType"} className="form-label-text">Degree</label>
-        <DegreePicker onChange={handleDegreeChange} initialValue={schoolForm.studyType as DegreeType}/>
-      </div>
-
-      {/* <div className="mb-6 left-right-spacing phone-screen-stack">
-        <div className="w-full">
-        <label htmlFor={"city"} className="form-label-text">City</label>
+      <FormContainer>
+        <DateInput 
+          title='Start Date' 
+          value={schoolForm.startDate} 
+          onChange={(event) => {
+            setSchoolForm({...schoolForm, startDate: event.target.value});
+          }} 
+        />
+        <DateInput 
+          title='End Date' 
+          value={schoolForm.endDate}
+          onChange={(event) => {
+            setSchoolForm({...schoolForm, endDate: event.target.value});
+          }}
+          disabled={endDateChecked}
+        />
+      </FormContainer>
+      <div className="mt-2">
+        <label htmlFor="endDateCheckbox" className="block text-xs">
+          Current
+        </label>
         <input 
-          type="text"
-          id={"city"}
-          className="form-style"
-          placeholder="Enter city..."
-          value={schoolForm.city || ''}
-          onChange={handleSchoolChange}
-          required />
-        </div>
-        <div className="w-full">
-        <label htmlFor={"state"} className="form-label-text">State</label>
-        <StatePicker onChange={handleStateChange} initState={schoolForm.state || ""}/>
-        </div>
-      </div> */}
-
-      <div className="mb-6 left-right-spacing">
-        <div className="w-full">
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DemoContainer components={['DatePicker', 'DatePicker']}>
-              <DatePicker
-                label="Start Date"
-                value={dayjs(startDate)}
-                onChange={(newValue: Dayjs | null) => newValue && setStartDate(newValue)}
-              />
-            </DemoContainer>
-          </LocalizationProvider>
-        </div>
-        <div className="w-full">
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DemoContainer components={['DatePicker', 'DatePicker']}>
-              <DatePicker
-                label="End Date"
-                value={dayjs(endDate)}
-                onChange={(newValue: Dayjs | null) => newValue && setEndDate(newValue)}
-                disabled={endDateChecked}
-              />
-            </DemoContainer>
-          </LocalizationProvider>
-          <div className="align-right">
-            <label htmlFor="endDateCheckbox" className="flex items-center">
-              <div className="text-xs pr-2">Current</div>
-              <input 
-                id="endDateCheckbox"
-                type="checkbox"
-                value=""
-                className="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-600 ring-offset-gray-800 focus:ring-2" 
-                onChange={handleEndDateCurrent}
-                checked={endDateChecked}
-              />
-            </label>
-          </div>
-        </div>
+          id="endDateCheckbox"
+          type="checkbox"
+          value=""
+          className="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-600 ring-offset-gray-800 focus:ring-2 mt-1" 
+          onChange={handleEndDateCurrent}
+          checked={endDateChecked}
+        />
       </div>
 
       <div>

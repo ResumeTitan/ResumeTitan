@@ -8,6 +8,8 @@ import dayjs from 'dayjs';
 import StatePicker from 'components/StatePicker';
 import api from 'api/actions';
 import 'styles/index.css';
+import { FormContainer } from 'components/Form/styled';
+import DateInput from 'components/Form/DateInput';
 
 const suggestions = [
   "Check the spelling and grammar of the second highlight",
@@ -182,44 +184,35 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
         </div>
       </div>
 
-      <div className="mb-6 justify-between phone-screen-stack">
-        <div className="w-full">
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DemoContainer components={['DatePicker', 'DatePicker']}>
-              <DatePicker
-                label="Start Date"
-                value={dayjs(startDate)}
-                onChange={(newValue) => {setStartDate(newValue.toString())}}
-              />
-            </DemoContainer>
-          </LocalizationProvider>
-        </div>
-        <div className="w-full">
-
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DemoContainer components={['DatePicker', 'DatePicker']}>
-              <DatePicker
-                label="End Date"
-                value={dayjs(endDate)}
-                onChange={(newValue) => {setEndDate(newValue.toString())}}
-                disabled={endDateChecked}
-              />
-            </DemoContainer>
-          </LocalizationProvider>
-          <div className="left-right-spacing">
-            <label htmlFor="endDateCheckbox" className="flex items-center">
-              <div className="text-xs pr-2">Current</div>
-            <input 
-              id="endDateCheckbox"
-              type="checkbox"
-              value=""
-              className="bg-gray-700 border-gray-600 w-4 h-4 text-blue-600 rounded focus:ring-blue-600 ring-offset-gray-800 focus:ring-2" 
-              onChange={handleEndDateCurrent}
-              checked={endDateChecked}
-            />
-            </label>
-          </div>
-        </div>
+      <FormContainer>
+        <DateInput 
+          title='Start Date' 
+          value={jobForm.startDate} 
+          onChange={(event) => {
+            setJobForm({...jobForm, startDate: event.target.value});
+          }} 
+        />
+        <DateInput 
+          title='End Date' 
+          value={jobForm.endDate}
+          onChange={(event) => {
+            setJobForm({...jobForm, endDate: event.target.value});
+          }}
+          disabled={endDateChecked}
+        />
+      </FormContainer>
+      <div className="mt-2">
+        <label htmlFor="endDateCheckbox" className="block text-xs">
+          Current
+        </label>
+        <input 
+          id="endDateCheckbox"
+          type="checkbox"
+          value=""
+          className="bg-gray-700 border-gray-600 w-4 h-4 text-blue-600 rounded focus:ring-blue-600 ring-offset-gray-800 focus:ring-2 mt-1" 
+          onChange={handleEndDateCurrent}
+          checked={endDateChecked}
+        />
       </div>
 
       <div className="m-2">
