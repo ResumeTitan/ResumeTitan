@@ -51,12 +51,17 @@ const CustomizeTab: React.FC<Props> = ({
     </div>
     <div className="form-container font-bold">
       <div className="form-text-main">{"Theme"}</div>
-      <ThemeSelector images={[
-        {id: "professional", url: HarvardImg}, 
-        {id: "one-page", url: OnepageImg},
-        {id: "macchiato", url: MacchiatoImg},
-        {id: "student-classic", url: StudentClassicImg},
-      ]} onSelect={(image) => onChangeTheme(image.id)} />
+      <ThemeSelector 
+        resume={resume}
+        themes={[
+          {id: "professional", label: "Professional"}, 
+          {id: "one-page", label: "One Page"},
+          {id: "macchiato", label: "Macchiato"},
+          {id: "student-classic", label: "Student Classic"},
+        ]}
+        selectedTheme={resume.theme}
+        onSelect={onChangeTheme}
+      />
     </div>
     <div className="form-container">
       <div className="form-text-main">{"Job Specific Content"}</div>
