@@ -5,11 +5,16 @@ const SpeechToTextTextarea = ({ value, onChange, placeholder = '', className = '
   const recognitionRef = useRef(null);
 
   const handleMicClick = () => {
-    if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
-      alert('Speech recognition not supported in this browser.');
+    if (listening) {
+      // If already listening, stop recognition
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+        setListening(false);
+      }
       return;
     }
-    if (listening) {
+    if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
+      alert('Speech recognition not supported in this browser.');
       return;
     }
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -44,10 +49,10 @@ const SpeechToTextTextarea = ({ value, onChange, placeholder = '', className = '
       />
       <button
         type="button"
-        className={`mic-button p-2 rounded-full border ${listening ? 'bg-green-200 border-green-600' : 'bg-gray-100 border-gray-400'} transition-colors w-16 h-16 flex items-center justify-center`}
+        className={`mic-button p-2 rounded-full border font-bold w-16 h-16 flex items-center justify-center transition-colors ${listening ? 'bg-green-200 border-green-600 text-green-900' : 'bg-gray-100 border-gray-400'}`}
         onClick={handleMicClick}
-        title={listening ? 'Listening...' : 'Record answer'}
-        aria-label="Record answer"
+        title={listening ? 'Stop recording' : 'Record answer'}
+        aria-label={listening ? 'Stop recording' : 'Record answer'}
         style={{ minWidth: '4rem', minHeight: '4rem' }}
       >
         <span role="img" aria-label="mic" className="text-4xl">🎤</span>
