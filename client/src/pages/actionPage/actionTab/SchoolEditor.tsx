@@ -183,6 +183,25 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }: SchoolEdito
           required 
         />
       </div>
+      <div className="my-6">
+        <label htmlFor={"area"} className="form-label-text">Major/Area of Study</label>
+        <input 
+          type="text"
+          id={"area"}
+          className="form-style"
+          placeholder="Enter major or area of study..."
+          value={schoolForm.area || ''}
+          onChange={handleSchoolChange}
+          required 
+        />
+      </div>
+      <div className="my-6">
+        <label htmlFor={"degree"} className="form-label-text">Degree</label>
+        <DegreePicker 
+          initialValue={schoolForm.studyType as DegreeType}
+          onChange={handleDegreeChange}
+        />
+      </div>
 
       <FormContainer>
         <DateInput 
