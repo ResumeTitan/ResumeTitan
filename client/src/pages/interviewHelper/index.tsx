@@ -12,6 +12,7 @@ import Pricing from 'components/Pricing';
 import { UserResource } from '@clerk/types';
 import { useAuth } from '@clerk/clerk-react';
 import 'styles/index.css';
+import SpeechToTextTextarea from 'components/SpeechToTextTextarea';
 
 interface Interview {
   question: string;
@@ -294,10 +295,11 @@ const InterviewPage: React.FC = () => {
                 >
                   <div className="p-4 font-bold text-lg md:text-xl text-black border-b border-gray-200 mb-2">{index + 1}. {question.question}</div>
                   <div className="px-4">
-                    <textarea 
-                      className="form-style text-base md:text-lg text-black h-64 md:h-40" 
-                      onChange={(event) => handleAnswerChange(index, event)}
+                    <SpeechToTextTextarea
+                      className="form-style text-base md:text-lg text-black h-64 md:h-40"
                       value={question.answer}
+                      onChange={function(val: string) { handleAnswerChange(index, { target: { value: val } }); }}
+                      placeholder="Type or record your answer here..."
                     />
                   </div>
                   <DetailsExpand label={<span className="text-base md:text-lg font-semibold text-black">Example Answer:</span>} description={<span className="text-base md:text-lg text-black">{question.example}</span>} />
