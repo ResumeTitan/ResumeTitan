@@ -4,6 +4,7 @@ import { z } from 'zod';
 import CoverLetter from '../models/CoverLetter';
 import Resume from '../models/Resume';
 import { ResumeType } from '../types/types';
+import axios from 'axios';
 
 const coverLetterSchema = z.object({
   letter: z.string()
@@ -49,6 +50,34 @@ Format response as JSON:
 {
   "letter": "cover letter text"
 }`;
+};
+
+/* Insert a new prompt (getPromptFromHtml) for extracting job info from HTML, similar to interview helper. */
+const getPromptFromHtml = (html: string, resume: ResumeType): string => {
+  return `You are an expert at reading job postings. Given the following HTML of a job posting, extract:
+– The job title (e.g., 'Software Engineer')
+– The company name (e.g., 'Cisco')
+– The job description
+
+Instructions:
+1. Look for the job title in <h1>, <h2>, or elements with class names containing 'title'.
+2. Look for the company name in elements with class names containing 'company', 'employer', or similar. Do NOT use the <title> tag unless it contains both the job title and company name.
+3. If the company name is not found, just use the job title.
+4. Return the job title in the format 'Job Title', e.g., 'Software Engineer'.
+5. Extract the main job description text.
+
+Job Posting HTML:
+${html}
+
+Resume: ${JSON.stringify(resume)}
+
+Format response as JSON:
+{
+  "jobTitle": "extracted job title",
+  "company": "extracted company name",
+  "jobDescription": "extracted job description"
+}
+Respond ONLY with valid JSON. Do not include any explanations, introductions, or extra text.`;
 };
 
 // Deprecated
@@ -166,7 +195,7 @@ export const updateCoverLetter = async (req: Request, res: Response): Promise<Re
 
 /**
  * @function createUpdateCoverLetter
- * @description Creates or updates a cover letter
+ * @description POST Creates or updates a cover letter
  * @param {Request} req 
  * @param {Response} res 
  * @returns 
@@ -174,7 +203,7 @@ export const updateCoverLetter = async (req: Request, res: Response): Promise<Re
 export const createUpdateCoverLetter = async (req: Request, res: Response): Promise<Response> => {
   try {
     const { coverLetter, clerkId } = req.body;
-    const { jobTitle, jobDescription, resumeId } = coverLetter;
+    let { jobTitle, jobDescription, company, resumeId, jobUrl, useJobUrl } = coverLetter;
 
     // Generate the cover letter content
     const resume = await Resume.findById(resumeId);
@@ -206,12 +235,36 @@ export const createUpdateCoverLetter = async (req: Request, res: Response): Prom
       basics
     } as unknown as ResumeType;
 
-    const prompt = getPrompt(jobTitle, jobDescription, typedResume);
-    const response = await getStructuredOutput(prompt, coverLetterSchema);
+    let prompt = '';
+    let response;
+    if (useJobUrl && jobUrl) {
+      try {
+        // Use scraper api (if available) to fetch job posting HTML
+        const SCRAPER_API_KEY = process.env.SCRAPER_API_KEY;
+        const apiUrl = `http://api.scraperapi.com?api_key=${SCRAPER_API_KEY}&url=${encodeURIComponent(jobUrl)}`;
+        const { data: html } = await axios.get(apiUrl, {
+          headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36' }
+        });
+        prompt = getPromptFromHtml(html, typedResume);
+        const jobInfoResponse = await getStructuredOutput(prompt, z.object({ jobTitle: z.string(), company: z.string(), jobDescription: z.string() }));
+        jobTitle = jobInfoResponse.jobTitle;
+        company = jobInfoResponse.company;
+        jobDescription = jobInfoResponse.jobDescription;
+      } catch (err) {
+        console.error("Error fetching job info from URL:", err);
+        return res.status(400).json({ error: 'Failed to parse job posting from URL' });
+      }
+    }
+
+    prompt = getPrompt(jobTitle, jobDescription, typedResume);
+    response = await getStructuredOutput(prompt, coverLetterSchema);
 
     // Create or update the cover letter
     const coverLetterIn = {
       ...coverLetter,
+      jobTitle,
+      jobDescription,
+      company,
       ...response,
       clerkId,
     };

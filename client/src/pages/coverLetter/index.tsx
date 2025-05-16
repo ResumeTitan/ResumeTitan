@@ -44,6 +44,9 @@ const CoverLetter: React.FC = () => {
     company: '',
     resumeId: ''
   });
+  const [inputMode, setInputMode] = React.useState<'manual' | 'link'>('manual');
+  const [jobUrl, setJobUrl] = React.useState('');
+  const [showSaveMessage, setShowSaveMessage] = React.useState(false);
 
   // Set up the token function for API calls
   React.useEffect(() => {
@@ -83,7 +86,6 @@ const CoverLetter: React.FC = () => {
     async function load() {
       let newCoverLetter = coverLetter;
       if (location.state) {
-        console.log("loading cover letter");
         const id = location.state.id;
         newCoverLetter = await loadCoverLetter(id);
         newCoverLetter["_id"] = id;
@@ -113,11 +115,13 @@ const CoverLetter: React.FC = () => {
         throw new Error("User not found");
       }
       setIsLoading(true);
-      const response = await api.post("cover-letter", { 
-        coverLetter,
-        clerkId: user.id 
-      });
-
+      let payload: any = { clerkId: user.id };
+      if (inputMode === 'link') {
+        payload.coverLetter = { ...coverLetter, jobUrl, useJobUrl: true };
+      } else {
+        payload.coverLetter = { ...coverLetter, useJobUrl: false };
+      }
+      const response = await api.post("cover-letter", payload);
       setCoverLetter(response.data.coverLetter);
       setIsLoading(false);
     } catch (error) {
@@ -125,24 +129,45 @@ const CoverLetter: React.FC = () => {
     }
   }
 
-  const handleSaveCoverLetter = async () => {
+  const handleSaveCoverLetter = async (exit: boolean) => {
     try {
       if (!user) {
         throw new Error("User not found");
       }
       setIsLoading(true);
-      const response = await api.put(`cover-letter/${coverLetter._id}`, { 
-        coverLetter,
-        clerkId: user.id 
-      });
-
+      let payload: any = { clerkId: user.id };
+      if (inputMode === 'link') {
+        payload.coverLetter = { ...coverLetter, jobUrl, useJobUrl: true };
+      } else {
+        payload.coverLetter = { ...coverLetter, useJobUrl: false };
+      }
+      const response = await api.put(`cover-letter/${coverLetter._id}`, payload);
       setCoverLetter(response.data.coverLetter);
       setIsLoading(false);
-      navigate("/dashboard");
+      setShowSaveMessage(true);
+      setTimeout(() => setShowSaveMessage(false), 2000);
+      if (exit) {
+        navigate("/dashboard");
+      }
     } catch (error) {
       console.error(error);
     }
   }
+
+  // Custom tab button style
+  const tabButtonStyle = (active: boolean) => ({
+    flex: 1,
+    padding: '6px 0',
+    borderRadius: '8px 8px 0 0',
+    fontWeight: 'bold',
+    fontSize: '1.1rem',
+    background: active ? '#115E59' : '#e2e8f0',
+    color: active ? 'white' : '#115E59',
+    border: 'none',
+    outline: 'none',
+    cursor: 'pointer',
+    transition: 'background 0.2s, color 0.2s',
+  });
 
   if (!user) {
     return null;
@@ -152,24 +177,22 @@ const CoverLetter: React.FC = () => {
     <Container>
       <div className="left-section no-print">
         <div className="form-container">
-          <div className="form-text-main">
+          <div className="form-text-main mb-4">
             Cover Letter Information
           </div>
-          <div>
+          {/* Profile Info Section */}
+          <div className="mb-6 p-4 rounded bg-gray-50 border border-gray-200">
+            <div className="font-bold mb-2">Profile Information</div>
             <FormField 
               title={"Name"}
               value={coverLetter.name}
               onChange={(event) => setCoverLetter({...coverLetter, name: event.target.value})}
             />
             <FormField 
-              title={"Job Title"}
-              value={coverLetter.jobTitle}
-              onChange={(event) => setCoverLetter({...coverLetter, jobTitle: event.target.value})}
-            />
-            <FormArea 
-              title={"Job Description"}
-              value={coverLetter.jobDescription}
-              onChange={(event) => setCoverLetter({...coverLetter, jobDescription: event.target.value})}
+              title={"Email"}
+              value={user?.emailAddresses?.[0]?.toString() || ''}
+              onChange={() => {}}
+              disabled
             />
             <FormContainer>
               <FormField 
@@ -183,11 +206,55 @@ const CoverLetter: React.FC = () => {
                 onChange={(event) => {setCoverLetter({...coverLetter, state: event.target.value})}}
               />
             </FormContainer>
-            <FormField 
-                title={"Company Name"}
-                value={coverLetter.company}
-                onChange={(event) => {setCoverLetter({...coverLetter, company: event.target.value})}}
-              />
+          </div>
+
+          {/* AI Input Section */}
+          <div className="mb-6 p-4 rounded bg-white border border-gray-200">
+            <div className="font-bold mb-2">Job Information for AI</div>
+            <div style={{ display: 'flex', marginBottom: 16, gap: 2 }}>
+              <button
+                style={tabButtonStyle(inputMode === 'manual')}
+                onClick={() => setInputMode('manual')}
+                type="button"
+              >
+                Job Title/Description
+              </button>
+              <button
+                style={tabButtonStyle(inputMode === 'link')}
+                onClick={() => setInputMode('link')}
+                type="button"
+              >
+                Job URL
+              </button>
+            </div>
+            {inputMode === 'manual' ? (
+              <>
+                <FormField 
+                  title={"Job Title"}
+                  value={coverLetter.jobTitle}
+                  onChange={(event) => setCoverLetter({...coverLetter, jobTitle: event.target.value})}
+                />
+                <FormField 
+                  title={"Company"}
+                  value={coverLetter.company}
+                  onChange={(event) => setCoverLetter({...coverLetter, company: event.target.value})}
+                />
+                <FormArea 
+                  title={"Job Description"}
+                  value={coverLetter.jobDescription}
+                  onChange={(event) => setCoverLetter({...coverLetter, jobDescription: event.target.value})}
+                />
+              </>
+            ) : (
+              <>
+                <FormField 
+                  title={"Job Posting URL"}
+                  value={jobUrl}
+                  onChange={(event) => setJobUrl(event.target.value)}
+                  placeholder="Paste the job posting link here..."
+                />
+              </>
+            )}
             <FormDropdown 
               title={"Select Resume"}
               onChange={(event) => {
@@ -201,21 +268,22 @@ const CoverLetter: React.FC = () => {
                 <option value={resume.id}>{resume.name}</option>
               ))}
             </FormDropdown>
-            {coverLetter.letter && (
-              <FormArea 
-                title={"Cover Letter"}
-                value={coverLetter.letter}
-                rows={10}
-                onChange={(event) => setCoverLetter({...coverLetter, letter: event.target.value})}
-              />
-            )}
           </div>
+
+          {coverLetter.letter && (
+            <FormArea 
+              title={"Cover Letter"}
+              value={coverLetter.letter}
+              rows={10}
+              onChange={(event) => setCoverLetter({...coverLetter, letter: event.target.value})}
+            />
+          )}
           <div className="p-4">
             <button
               className="interview-button"
               onClick={handleGenerateCoverLetter}
             >
-              {"Generate Cover Letter"}
+              {isLoading ? 'Writing...' : 'Write Cover Letter with AI'}
             </button>
             <button
               className="interview-button"
@@ -226,10 +294,23 @@ const CoverLetter: React.FC = () => {
             {coverLetter.letter && (
               <button
                 className="interview-button"
-                onClick={handleSaveCoverLetter}
+                onClick={() => handleSaveCoverLetter(false)}
               >
                 {"Save Cover Letter"}
               </button>
+            )}
+            {coverLetter.letter && (
+              <button
+                className="interview-button"
+                onClick={() => handleSaveCoverLetter(true)}
+              >
+                {"Save and Exit"}
+              </button>
+            )}
+            {showSaveMessage && (
+              <div className="fixed top-8 left-1/2 transform -translate-x-1/2 bg-white text-dark-green px-6 py-3 rounded text-base whitespace-nowrap animate-fade-in-out border border-dark-green z-50 shadow-lg font-semibold">
+                Cover Letter Saved!
+              </div>
             )}
           </div>
         </div>
