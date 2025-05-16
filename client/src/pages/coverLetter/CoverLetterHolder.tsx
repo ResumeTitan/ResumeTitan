@@ -10,12 +10,26 @@ const CoverLetterContainer = styled.div`
   flex: 2;
   font-size: 16px;
   padding: 10px;
+  width: 8.5in;
+  height: 11in;
   border: 1px solid #ccc;
-  width: 100%;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  margin: 0 auto;
+  background: white;
 
   @media print {
     border: 0px solid #ccc;
-    height: 11in;
+    box-shadow: none;
+  }
+
+  &.pdf-export {
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    background: white !important;
+    height: 11in !important;
+    width: 8.5in !important;
   }
 
   // width: 100%; /* Set width to 100% of its container */

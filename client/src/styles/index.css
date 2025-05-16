@@ -177,8 +177,20 @@ body {
   @apply bg-main-green p-4 font-bold leading-none rounded text-white border hover:border-transparent hover:bg-gray-200 hover:text-teal-800 hover:border-black items-center transition duration-300 ease-in-out
 }
 
+.primary-action-button {
+  @apply border-2 rounded-lg font-medium text-lg px-5 py-2.5 m-1 text-center bg-white text-teal-800 border-black hover:bg-teal-800 hover:text-white hover:cursor-pointer transition ease-in-out duration-300;
+}
+
+.primary-action-button:disabled {
+  @apply bg-gray-300 text-gray-500 cursor-not-allowed border-gray-400;
+}
+
 .secondary-action-button {
   @apply border-2 rounded-lg font-medium text-lg px-5 py-2.5 m-1 text-center bg-white text-red-700 border-red-500 hover:bg-red-600 hover:text-white hover:border-red-600 transition duration-300 ease-in-out;
+}
+
+.secondary-action-button:disabled {
+  @apply bg-gray-300 text-gray-500 cursor-not-allowed border-gray-400;
 }
 
 .dashboard-container {

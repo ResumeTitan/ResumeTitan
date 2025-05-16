@@ -78,6 +78,11 @@ function ActionPage() {
   const [showPrintError, setShowPrintError] = useState(false);
   const resumeRef = useRef();
   const [previewScale, setPreviewScale] = useState(0.4);
+  const [hasOverflow, setHasOverflow] = useState(false);
+
+  const handleOverflowChange = (hasOverflow) => {
+    setHasOverflow(hasOverflow);
+  };
 
   const handlePrint = useReactToPrint({
     content: () => resumeRef.current,
@@ -232,7 +237,6 @@ function ActionPage() {
         const response = await api.post("/resume/print", {
           id: currentResume._id,
           name: currentResume.name || 'Resume',
-          html: resumeRef.current.outerHTML
         }, {
           responseType: 'blob'
         });
@@ -253,7 +257,7 @@ function ActionPage() {
         await handlePrint();
       }
     } catch (error) {
-      console.log(error);
+      console.error('Error saving to PDF:', error);
       setResumeLoading(false);
       throw error;
     }
@@ -292,7 +296,7 @@ function ActionPage() {
    *    Redirect to dashboard
    * @param {boolean} exit If true, redirect to dashboard
    */
-  const handleSaveResume = async (exit) => {
+  const handleSaveResume = async (exit, updatedResume = null) => {
     if (!isSignedIn) {
       navigate('/sign-in');
       return;
@@ -303,7 +307,12 @@ function ActionPage() {
       if (!newToken) {
         throw new Error('Failed to refresh token');
       }
-      const response = await api.put("/resume/update", currentResume);
+      let response;
+      if (updatedResume) {
+        response = await api.put("/resume/update", updatedResume);
+      } else {
+        response = await api.put("/resume/update", currentResume);
+      }
       const savedResume = response.data.resume;
       setCurrentResume(savedResume);
       setResumeLoading(false);
@@ -315,6 +324,17 @@ function ActionPage() {
       setResumeLoading(false);
       throw err;
     }
+  }
+
+  const handleUpdateResume = (updatedResume) => {
+    setCurrentResume(updatedResume);
+
+    handleSaveResume(false, updatedResume);
+  }
+
+  const handleUpdateSections = (sections) => {
+    setCurrentResume({...currentResume, sections});
+    handleSaveResume(false, {...currentResume, sections});
   }
 
   // Set up the token function for API calls
@@ -367,11 +387,18 @@ function ActionPage() {
         </ErrorAlert>
         </div>
       )}
+      {hasOverflow && (
+        <div className="mb-4 p-4 bg-yellow-100 border border-yellow-400 rounded">
+          <p className="text-yellow-700">
+            Warning: Your resume content exceeds one page. Consider removing some content or adjusting formatting.
+          </p>
+        </div>
+      )}
         <Tabs openTab={activeTab} setOpenTab={(tab) => setActiveTab(tab)} />
         {activeTab === 1 && (
           <ActionTab 
             resumeIn={currentResume}
-            onUpdateResume={(resumeIn) => setCurrentResume(resumeIn)}
+            onUpdateResume={handleUpdateResume}
             onPrint={handleSaveToPdf}
             onGenerateResume={handleGenerateResume} 
           />
@@ -384,7 +411,7 @@ function ActionPage() {
             onUpdateJobDescription={(description) => setJobDescription(description)}
             isJobDescriptionUsed={(checked) => setUseJobDescription(checked)}
             onChangeTheme={(theme) => setCurrentResume({...currentResume, theme: theme})}
-            onUpdateSections={(sections) => setCurrentResume({...currentResume, sections})}
+            onUpdateSections={handleUpdateSections}
           />
         )}
         <div className="w-full">
@@ -400,7 +427,11 @@ function ActionPage() {
       {/* Desktop View */}
       <div className="overflow-hidden p-2 hidden xl:block w-full">
         <div className="w-full p-2">
-          <ResumeContainer ref={resumeRef} resume={currentResume} />
+          <ResumeContainer 
+            ref={resumeRef} 
+            resume={currentResume} 
+            onOverflowChange={handleOverflowChange}
+          />
         </div>
       </div>
 
@@ -437,7 +468,11 @@ function ActionPage() {
               borderRadius: '8px',
               boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
             }}>
-              <ResumeContainer ref={resumeRef} resume={currentResume} />
+              <ResumeContainer 
+                ref={resumeRef} 
+                resume={currentResume} 
+                onOverflowChange={handleOverflowChange}
+              />
             </div>
           </div>
         </div>

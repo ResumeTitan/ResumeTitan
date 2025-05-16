@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useEffect } from 'react';
 import OnePageResume from './layouts/onepage';
 import ProfessionalResume from './layouts/professional/Resume';
 import MacchiatoResume from './layouts/macchiato/Resume';
@@ -8,6 +8,10 @@ import styled from 'styled-components';
 
 interface ScaledContainerProps {
   $scale?: number;
+}
+
+interface ResumeContainerProps extends ResumeTypeProps {
+  onOverflowChange?: (hasOverflow: boolean) => void;
 }
 
 const StyledContainer = styled.div`
@@ -54,12 +58,41 @@ const ScaledContainer = styled.div<ScaledContainerProps>`
   }
 `;
 
-const ResumeContainer = forwardRef<HTMLDivElement, ResumeTypeProps>(({ resume }, ref) => {
+const ResumeContainer = forwardRef<HTMLDivElement, ResumeContainerProps>(({ resume, onOverflowChange }, ref) => {
   // Calculate scale based on container width
   const [scale, setScale] = React.useState(1);
   const containerRef = React.useRef<HTMLDivElement>(null);
 
-  React.useEffect(() => {
+  // Check for content overflow
+  useEffect(() => {
+    const checkOverflow = () => {
+      if (ref && 'current' in ref && ref.current) {
+        const contentHeight = ref.current.scrollHeight;
+        const containerHeight = ref.current.clientHeight;
+        const hasOverflow = contentHeight > containerHeight;
+        
+        if (onOverflowChange) {
+          onOverflowChange(hasOverflow);
+        }
+      }
+    };
+
+    // Check overflow after initial render and on content changes
+    checkOverflow();
+    
+    // Set up a ResizeObserver to check for overflow when content changes
+    const resizeObserver = new ResizeObserver(checkOverflow);
+    if (ref && 'current' in ref && ref.current) {
+      resizeObserver.observe(ref.current);
+    }
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, [resume, onOverflowChange, ref]);
+
+  // Update scale on window resize
+  useEffect(() => {
     const updateScale = () => {
       if (containerRef.current) {
         const containerWidth = containerRef.current.clientWidth - 40; // Account for padding

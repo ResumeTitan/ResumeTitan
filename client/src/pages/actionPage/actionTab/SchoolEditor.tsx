@@ -51,6 +51,8 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }: SchoolEdito
   const [aiAssistantMsg, setAiAssistantMsg] = useState<string>('');
   const [placeholder, setPlaceholder] = useState<string>("Ensure that all highlights follow a consistent format and tone");
   const [isPlaceholderActive, setIsPlaceholderActive] = useState<boolean>(false);
+  const [showBrainstorm, setShowBrainstorm] = useState(false);
+  const [brainstormInput, setBrainstormInput] = useState('');
 
   React.useEffect(() => {
     setSchoolForm(editingSchool);
@@ -129,13 +131,12 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }: SchoolEdito
     }));
   }
 
-  const handleAiCall = async () => {
+  const handleAiCall = async (userInput: string | null = null) => {
     setAiLoading(true);
     try {
-      console.log(schoolForm.highlights);
       const schoolResponse = await api.post("/resume/education", { 
         education: schoolForm,
-        userInput: null
+        userInput: userInput
       });
       setSchoolForm(prev => ({ ...prev, highlights: schoolResponse.data.response.highlights }));
     } catch (error) {
@@ -156,7 +157,6 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }: SchoolEdito
   
     setAiLoading(true);
     try {
-      console.log(schoolForm.highlights);
       const schoolResponse = await api.post("/resume/education", { 
         education: newForm,
         userInput: aiAssistantMsg
@@ -242,7 +242,7 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }: SchoolEdito
             </button>
             <button
               className="green-button flex items-center justify-center sm:h-12 rounded-lg cursor-pointer"
-              onClick={handleAiCall}
+              onClick={() => setShowBrainstorm(true)}
             >
               <div>
                 <AutoAwesomeIcon className="pr-2"/>
@@ -314,22 +314,56 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }: SchoolEdito
         )}
       </div>
 
+      {showBrainstorm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+          <div className="bg-white p-6 rounded shadow-lg max-w-md w-full">
+            <h2 className="text-lg font-bold mb-2">Brainstorm for AI</h2>
+            <p className="mb-2 text-sm text-gray-600">Enter your ideas, skills, or accomplishments to help our AI write your bullet points. Separate items with a comma.</p>
+            <p className="mb-2 text-sm text-red-600 font-semibold">Warning: This will overwrite your existing highlights.</p>
+            <textarea
+              className="form-style w-full h-24 mb-4"
+              placeholder="E.g. Led a club, Won a scholarship, Volunteered for events"
+              value={brainstormInput}
+              onChange={e => setBrainstormInput(e.target.value)}
+            />
+            <div className="flex justify-end gap-2">
+              <button
+                className="secondary-action-button"
+                onClick={() => setShowBrainstorm(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="primary-action-button"
+                onClick={() => {
+                  setShowBrainstorm(false);
+                  handleAiCall(brainstormInput);
+                  setBrainstormInput('');
+                }}
+              >
+                Continue
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="flex justify-between">
         <button
           disabled={!schoolForm.id}
-          className={`${schoolForm.id ? "remove-button" : "disabled-button"}`}
+          className={"secondary-action-button"}
           onClick={handleDeleteSchool}
         >
           {"Delete"}
         </button>
         <button
-          className="remove-button"
+          className="secondary-action-button"
           onClick={handleCancel}
         >
           {"Cancel"}
         </button>
         <button
-          className="add-button-small"
+          className="primary-action-button"
           onClick={handleSaveSchool}
         >
           {"Save"}

@@ -29,6 +29,8 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
   const [aiAssistantMsg, setAiAssistantMsg] = useState('');
   const [placeholder, setPlaceholder] = useState("Ensure that all highlights follow a consistent format and tone");
   const [isPlaceholderActive, setIsPlaceholderActive] = useState(false);
+  const [showBrainstorm, setShowBrainstorm] = useState(false);
+  const [brainstormInput, setBrainstormInput] = useState('');
 
   React.useEffect(() => {
     setJobForm(editingJob);
@@ -107,13 +109,12 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
   /**
    * @function handleAiCall
    */
-  const handleAiCall = async () => {
+  const handleAiCall = async (userInput = null) => {
     setAiLoading(true);
     try {
-      console.log(jobForm.highlights);
       const jobResponse = await api.post("/resume/work", { 
         job: jobForm,
-        userInput: null
+        userInput: userInput
       });
       setJobForm(prev => ({ ...prev, highlights: jobResponse.data.response.highlights }));
     } catch (error) {
@@ -134,7 +135,6 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
   
     setAiLoading(true);
     try {
-      console.log(aiAssistantMsg);
       const jobResponse = await api.post("/resume/work", { 
         job: newForm,
         userInput: aiAssistantMsg
@@ -239,7 +239,7 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
           <div className="phone-screen-stack">
             <button
               className="green-button order-last xs:order-first p-2 my-1"
-              onClick={handleAiCall}
+              onClick={() => setShowBrainstorm(true)}
             >
               <div>
                 <AutoAwesomeIcon className="pr-2"/>
@@ -334,24 +334,58 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
       <div className="left-right-spacing">
         <button
           disabled={!jobForm.id}
-          className={`${jobForm.id ? "remove-button" : "disabled-button"}`}
+          className={"secondary-action-button"}
           onClick={handleDeleteJob}
         >
           {"Delete"}
         </button>
         <button
-          className="remove-button"
+          className="secondary-action-button"
           onClick={handleCancel}
         >
           {"Cancel"}
         </button>
         <button
-          className="add-button-small"
+          className="primary-action-button"
           onClick={handleSaveJob}
         >
           {"Save"}
         </button>
       </div>
+
+      {showBrainstorm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+          <div className="bg-white p-6 rounded shadow-lg max-w-md w-full">
+            <h2 className="text-lg font-bold mb-2">Brainstorm for AI</h2>
+            <p className="mb-2 text-sm text-gray-600">Enter your ideas, skills, or accomplishments to help the AI write your bullet points. Separate items with a comma.</p>
+            <p className="mb-2 text-sm text-red-600 font-semibold">Warning: This will overwrite your existing highlights.</p>
+            <textarea
+              className="form-style w-full h-24 mb-4"
+              placeholder="E.g. Led a team, Improved efficiency, Managed budgets"
+              value={brainstormInput}
+              onChange={e => setBrainstormInput(e.target.value)}
+            />
+            <div className="flex justify-end gap-2">
+              <button
+                className="secondary-action-button"
+                onClick={() => setShowBrainstorm(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="primary-action-button"
+                onClick={() => {
+                  setShowBrainstorm(false);
+                  handleAiCall(brainstormInput);
+                  setBrainstormInput('');
+                }}
+              >
+                Continue
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
