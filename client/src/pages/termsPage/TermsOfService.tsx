@@ -72,19 +72,27 @@ export const TermsOfService = () => {
             (a) We may terminate or suspend your access to the Website at any time without notice for any reason.
           </p>
           <p className="text-base font-bold leading-relaxed">
-          8. Changes to Terms
+            8. Third-Party Software and Attributions
+          </p>
+          <p className="text-base leading-relaxed">
+              (a) Our service uses third-party open-source software. In accordance with their licenses, we provide attribution as required.
+              Notably, we make use of the JSON Resume project <a className="underline" href="https://jsonresume.org">https://jsonresume.org</a>
+              , which is licensed under the MIT License available at <a className="underline" href="https://opensource.org/licenses/MIT">https://opensource.org/licenses/MIT</a>
+          </p>
+          <p className="text-base font-bold leading-relaxed">
+          9. Changes to Terms
           </p>
           <p className="text-base leading-relaxed">
             (a) We reserve the right to modify these Terms at any time. The updated version will be effective upon posting on the Website.
           </p>
           <p className="text-base font-bold leading-relaxed">
-          9. Governing Law
+          10. Governing Law
           </p>
           <p className="text-base leading-relaxed">
             (a) These Terms are governed by the laws of the United States of America.
           </p>
           <p className="text-base font-bold leading-relaxed">
-          10. Contact Us
+          11. Contact Us
           </p>
           <p className="text-base leading-relaxed">
             (a) If you have any questions or concerns about these Terms, please contact us at info@resumetitan.com.
