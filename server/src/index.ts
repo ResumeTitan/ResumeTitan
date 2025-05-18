@@ -12,6 +12,7 @@ import resumeRoutes from './routes/resume';
 import interviewRoutes from './routes/interview';
 // import stripeRoutes from './routes/stripe';
 import coverLetterRoutes from './routes/coverLetter';
+import chatRoutes from './routes/chat';
 
 /* CONFIGURATIONS */
 // @ts-ignore
@@ -48,6 +49,7 @@ app.use('/resume', resumeRoutes);
 app.use('/interview', interviewRoutes);
 // app.use('/checkout', stripeRoutes);
 app.use('/cover-letter', coverLetterRoutes);
+app.use('/chat', chatRoutes);
 
 /* MONGOOSE SETUP */
 const HOST = process.env.HOST || 'localhost';

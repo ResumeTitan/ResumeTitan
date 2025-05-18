@@ -18,6 +18,7 @@ import AboutUs from 'pages/aboutUs';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import { SignIn, SignUp } from '@clerk/clerk-react';
+import ChatBot from './components/ChatBot/ChatBot';
 
 AOS.init({
   duration: 500
@@ -48,6 +49,7 @@ export default function App() {
           <Route path="/sign-up" element={<SignUp />} />
         </Routes>
         {!window.location.pathname.includes('/print-resume') && <Footer />}
+        <ChatBot />
       </BrowserRouter>
     </div>
   );

@@ -3,13 +3,18 @@ import { openAiClient } from '../ext/clients';
 import { z } from "zod";
 import Interview from "../models/Interview.js";
 
-const interviewModel = openAiClient.withStructuredOutput(z.object({
+const interviewSchema = z.object({
   interview: z.array(z.object({
     question: z.string(),
     example: z.string(),
     guidance: z.string()
   }))
-}));
+});
+
+const interviewModel = openAiClient.bind({
+  functions: [{ name: "interview", parameters: interviewSchema }],
+  function_call: { name: "interview" }
+});
 
 const getPrompt = (jobTitle: string, jobDescription: string) => {
   const prompt = `

@@ -60,12 +60,35 @@ const ResumeDataSchema = z.object({
 
 const resumeData: ResumeType = {};
 
-const summaryModel = openAiClient.withStructuredOutput(SummarySchema);
-const educationModel = openAiClient.withStructuredOutput(EducationSchema);
-const volunteerModel = openAiClient.withStructuredOutput(VolunteerSchema);
-const workModel = openAiClient.withStructuredOutput(WorkSchema);
-const skillsModel = openAiClient.withStructuredOutput(SkillsSchema);
-const resumeModel = openAiClient.withStructuredOutput(ResumeDataSchema);
+const summaryModel = openAiClient.bind({
+  functions: [{ name: "summary", parameters: SummarySchema }],
+  function_call: { name: "summary" }
+});
+
+const educationModel = openAiClient.bind({
+  functions: [{ name: "education", parameters: EducationSchema }],
+  function_call: { name: "education" }
+});
+
+const volunteerModel = openAiClient.bind({
+  functions: [{ name: "volunteer", parameters: VolunteerSchema }],
+  function_call: { name: "volunteer" }
+});
+
+const workModel = openAiClient.bind({
+  functions: [{ name: "work", parameters: WorkSchema }],
+  function_call: { name: "work" }
+});
+
+const skillsModel = openAiClient.bind({
+  functions: [{ name: "skills", parameters: SkillsSchema }],
+  function_call: { name: "skills" }
+});
+
+const resumeModel = openAiClient.bind({
+  functions: [{ name: "resume", parameters: ResumeDataSchema }],
+  function_call: { name: "resume" }
+});
 
 const getPrompt = (section: string, data: any) => {
   let prompt = 'You are a hiring manager at a company and you need to generate the perfect resume for a potential candidate.';
@@ -364,8 +387,28 @@ export const printResumeToPdf = async (req: Request, res: Response) => {
 
   try {
     const { name, html, id } = req.body;
+    
+    // Validate input
+    if (!name || !html || !id) {
+      return res.status(400).send('Missing required fields');
+    }
+
+    // Sanitize HTML to prevent XSS and other attacks
+    const sanitizedHtml = html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+    
+    // Validate image URLs in the HTML
+    const imgRegex = /<img[^>]+src="([^">]+)"/g;
+    let match;
+    while ((match = imgRegex.exec(sanitizedHtml)) !== null) {
+      const imgUrl = match[1];
+      // Only allow data URLs and URLs from trusted domains
+      if (!imgUrl.startsWith('data:') && !imgUrl.startsWith('/assets/')) {
+        return res.status(400).send('Invalid image URL detected');
+      }
+    }
+
     console.log("id", id);
-    const htmlRaw = render(name, html);
+    const htmlRaw = render(name, sanitizedHtml);
     const browser = await puppeteer.launch({ 
       args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
       headless: true,

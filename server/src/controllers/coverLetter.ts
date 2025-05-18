@@ -11,7 +11,10 @@ const coverLetterSchema = z.object({
   companyAddress: z.string(),
 });
 
-const coverLetterModel = openAiClient.withStructuredOutput(coverLetterSchema);
+const coverLetterModel = openAiClient.bind({
+  functions: [{ name: "coverLetter", parameters: coverLetterSchema }],
+  function_call: { name: "coverLetter" }
+});
 
 /**
  * @function getPrompt
