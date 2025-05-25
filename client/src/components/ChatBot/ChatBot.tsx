@@ -4,6 +4,7 @@ import { useUser, useAuth } from '@clerk/clerk-react';
 import axios from 'axios';
 import ChatIcon from '@mui/icons-material/Chat';
 import SendIcon from '@mui/icons-material/Send';
+import CloseIcon from '@mui/icons-material/Close';
 import { useNavigate } from 'react-router-dom';
 
 const ChatContainer = styled.div`
@@ -27,8 +28,31 @@ const ChatHeader = styled.div`
   border-radius: 10px 10px 0 0;
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: space-between;
   font-weight: bold;
+`;
+
+const HeaderLeft = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+`;
+
+const CloseButton = styled.button`
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
 `;
 
 const ChatMessages = styled.div`
@@ -55,8 +79,14 @@ const ChatInput = styled.div`
   padding: 15px;
   border-top: 1px solid #dee2e6;
   display: flex;
+  flex-direction: column;
   gap: 10px;
   background: #f8f9fa;
+`;
+
+const InputContainer = styled.div`
+  display: flex;
+  gap: 10px;
 `;
 
 const Input = styled.input`
@@ -68,6 +98,13 @@ const Input = styled.input`
   &:focus {
     border-color: #115E59;
   }
+`;
+
+const CharCounter = styled.div`
+  font-size: 12px;
+  color: #6c757d;
+  text-align: right;
+  padding-right: 10px;
 `;
 
 const SendButton = styled.button`
@@ -123,6 +160,24 @@ const ChatBot: React.FC = () => {
   const { getToken } = useAuth();
   const { isSignedIn } = useUser();
   const navigate = useNavigate();
+  const MAX_CHARS = 1000;
+  const MAX_RESPONSE_CHARS = 1500;
+  const MAX_MESSAGES = 30;
+
+  const truncateMessage = (message: string): string => {
+    if (message.length <= MAX_RESPONSE_CHARS) return message;
+    return message.slice(0, MAX_RESPONSE_CHARS) + '...';
+  };
+
+  const addMessage = (text: string, isUser: boolean) => {
+    setMessages(prev => {
+      const newMessages = [...prev, { text, isUser }];
+      if (newMessages.length > MAX_MESSAGES) {
+        return newMessages.slice(-MAX_MESSAGES);
+      }
+      return newMessages;
+    });
+  };
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -137,7 +192,7 @@ const ChatBot: React.FC = () => {
 
     const userMessage = input;
     setInput('');
-    setMessages(prev => [...prev, { text: userMessage, isUser: true }]);
+    addMessage(userMessage, true);
     setIsLoading(true);
 
     try {
@@ -147,10 +202,11 @@ const ChatBot: React.FC = () => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      setMessages(prev => [...prev, { text: response.data.response, isUser: false }]);
+      const truncatedResponse = truncateMessage(response.data.response);
+      addMessage(truncatedResponse, false);
     } catch (error) {
       console.error('Error sending message:', error);
-      setMessages(prev => [...prev, { text: 'Sorry, I encountered an error. Please try again.', isUser: false }]);
+      addMessage('Sorry, I encountered an error. Please try again.', false);
     } finally {
       setIsLoading(false);
     }
@@ -167,6 +223,13 @@ const ChatBot: React.FC = () => {
     navigate('/sign-in');
   };
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (value.length <= MAX_CHARS) {
+      setInput(value);
+    }
+  };
+
   if (!isOpen) {
     return (
       <button
@@ -175,7 +238,7 @@ const ChatBot: React.FC = () => {
           position: 'fixed',
           bottom: '20px',
           right: '20px',
-          background: '#115E59',
+          background: '#88abcb',
           color: 'white',
           border: 'none',
           borderRadius: '50%',
@@ -198,8 +261,13 @@ const ChatBot: React.FC = () => {
     return (
       <ChatContainer>
         <ChatHeader>
-          <ChatIcon style={{ width: '24px', height: '24px' }} />
-          <span>ResumeTitan Assistant</span>
+          <HeaderLeft>
+            <ChatIcon style={{ width: '24px', height: '24px' }} />
+            <span>ResumeTitan Assistant</span>
+          </HeaderLeft>
+          <CloseButton onClick={() => setIsOpen(false)}>
+            <CloseIcon style={{ width: '20px', height: '20px' }} />
+          </CloseButton>
         </ChatHeader>
         <LoginPrompt>
           <h3>Welcome to ResumeTitan Assistant!</h3>
@@ -213,8 +281,13 @@ const ChatBot: React.FC = () => {
   return (
     <ChatContainer>
       <ChatHeader>
-        <ChatIcon style={{ width: '24px', height: '24px' }} />
-        <span>ResumeTitan Assistant</span>
+        <HeaderLeft>
+          <ChatIcon style={{ width: '24px', height: '24px' }} />
+          <span>ResumeTitan Assistant</span>
+        </HeaderLeft>
+        <CloseButton onClick={() => setIsOpen(false)}>
+          <CloseIcon style={{ width: '20px', height: '20px' }} />
+        </CloseButton>
       </ChatHeader>
       <ChatMessages>
         {messages.map((message, index) => (
@@ -234,16 +307,22 @@ const ChatBot: React.FC = () => {
         <div ref={messagesEndRef} />
       </ChatMessages>
       <ChatInput>
-        <Input
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyPress={handleKeyPress}
-          placeholder="Type your message..."
-          disabled={isLoading}
-        />
-        <SendButton onClick={handleSend} disabled={isLoading}>
-          <SendIcon style={{ width: '20px', height: '20px' }} />
-        </SendButton>
+        <InputContainer>
+          <Input
+            value={input}
+            onChange={handleInputChange}
+            onKeyPress={handleKeyPress}
+            placeholder="Type your message..."
+            disabled={isLoading}
+            maxLength={MAX_CHARS}
+          />
+          <SendButton onClick={handleSend} disabled={isLoading}>
+            <SendIcon style={{ width: '20px', height: '20px' }} />
+          </SendButton>
+        </InputContainer>
+        <CharCounter>
+          {input.length}/{MAX_CHARS} characters
+        </CharCounter>
       </ChatInput>
     </ChatContainer>
   );
