@@ -14,11 +14,25 @@ const ChatContainer = styled.div`
   width: 350px;
   height: 500px;
   background: #f8f9fa;
-  border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  border: 2px solid white;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3), 0 6px 12px rgba(17, 94, 89, 0.2), 0 0 0 1px rgba(17, 94, 89, 0.1);
   display: flex;
   flex-direction: column;
   z-index: 1000;
+  backdrop-filter: blur(10px);
+  animation: slideInUp 0.3s ease-out;
+
+  @keyframes slideInUp {
+    from {
+      transform: translateY(20px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
 `;
 
 const ChatHeader = styled.div`
@@ -30,6 +44,7 @@ const ChatHeader = styled.div`
   align-items: center;
   justify-content: space-between;
   font-weight: bold;
+  font-size: 14px;
 `;
 
 const HeaderLeft = styled.div`
@@ -67,12 +82,14 @@ const ChatMessages = styled.div`
 
 const Message = styled.div<{ $isUser: boolean }>`
   max-width: 80%;
-  padding: 10px 15px;
+  padding: 8px 12px;
   border-radius: 15px;
   background: ${props => props.$isUser ? '#115E59' : '#e9ecef'};
   color: ${props => props.$isUser ? 'white' : '#212529'};
   align-self: ${props => props.$isUser ? 'flex-end' : 'flex-start'};
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  font-size: 13px;
+  line-height: 1.4;
 `;
 
 const ChatInput = styled.div`
@@ -82,6 +99,7 @@ const ChatInput = styled.div`
   flex-direction: column;
   gap: 10px;
   background: #f8f9fa;
+  border-radius: 0 0 10px 10px;
 `;
 
 const InputContainer = styled.div`
@@ -95,13 +113,14 @@ const Input = styled.input`
   border: 1px solid #ced4da;
   border-radius: 20px;
   outline: none;
+  font-size: 13px;
   &:focus {
     border-color: #115E59;
   }
 `;
 
 const CharCounter = styled.div`
-  font-size: 12px;
+  font-size: 10px;
   color: #6c757d;
   text-align: right;
   padding-right: 10px;
@@ -238,9 +257,9 @@ const ChatBot: React.FC = () => {
           position: 'fixed',
           bottom: '20px',
           right: '20px',
-          background: '#88abcb',
+          background: '#115E59',
           color: 'white',
-          border: 'none',
+          border: '3px solid white',
           borderRadius: '50%',
           width: '60px',
           height: '60px',
@@ -248,8 +267,19 @@ const ChatBot: React.FC = () => {
           alignItems: 'center',
           justifyContent: 'center',
           cursor: 'pointer',
-          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-          zIndex: 1000
+          boxShadow: '0 8px 16px rgba(0, 0, 0, 0.3), 0 4px 8px rgba(17, 94, 89, 0.3)',
+          zIndex: 1000,
+          transition: 'all 0.3s ease'
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.transform = 'scale(1.1)';
+          e.currentTarget.style.boxShadow = '0 12px 20px rgba(0, 0, 0, 0.4), 0 6px 12px rgba(17, 94, 89, 0.4)';
+          e.currentTarget.style.background = '#0d4a45';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.transform = 'scale(1)';
+          e.currentTarget.style.boxShadow = '0 8px 16px rgba(0, 0, 0, 0.3), 0 4px 8px rgba(17, 94, 89, 0.3)';
+          e.currentTarget.style.background = '#115E59';
         }}
       >
         <ChatIcon style={{ width: '30px', height: '30px' }} />
