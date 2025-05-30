@@ -4,7 +4,8 @@ import {
   getInterviews, 
   getInterview, 
   updateInterview, 
-  deleteInterview 
+  deleteInterview,
+  analyzeInterview
 } from "../controllers/interview";
 import verifyToken from "../middleware/auth";
 
@@ -15,5 +16,6 @@ router.get("/", verifyToken, getInterviews);
 router.get("/:id", verifyToken, getInterview);
 router.delete("/:id", verifyToken, deleteInterview);
 router.put("/:id", verifyToken, updateInterview);
+router.post("/analyze", verifyToken, analyzeInterview);
 
 export default router;

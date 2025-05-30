@@ -43,9 +43,13 @@ function ActionTab({
   /**
    * @function handleSkillsAiCall
    */
-  const handleSkillsAiCall = async () => {
+  const handleSkillsAiCall = async (userInput = '') => {
     setAiSkillsLoading(true);
-    const skillsResponse = await api.post("/resume/skills", resumeIn);
+    const skillsResponse = await api.post("/resume/skills", {
+      ...resumeIn,
+      userInput: userInput, // Always pass the AI assistant text, even if empty
+      operationType: userInput ? 'edit' : 'generate'
+    });
     setAiSkillsLoading(false);
     onUpdateResume({
       ...resumeIn,
@@ -153,6 +157,36 @@ function ActionTab({
     });
   }
 
+  const handleSaveAward = (awardForm) => {
+    if (awardForm.id) {
+      const updatedAwards = resumeIn.awards.map((award) => {
+        if (award.id === awardForm.id) {
+          return awardForm;
+        } else {
+          return award;
+        }
+      });
+      onUpdateResume({
+        ...resumeIn,
+        awards: updatedAwards
+      });
+    } else {
+      awardForm.id = resumeIn.awards.length + 1;
+      onUpdateResume({
+        ...resumeIn,
+        awards: [...resumeIn.awards, awardForm]
+      });
+    }
+  }
+
+  const handleDeleteAward = (id) => {
+    const updatedAwards = resumeIn.awards.filter((award) => award.id !== id);
+    onUpdateResume({
+      ...resumeIn,
+      awards: updatedAwards
+    });
+  }
+
   const handleSwapJobs = (up, index) => {
     const tempWork = resumeIn.work;
     if (up) {
@@ -175,6 +209,15 @@ function ActionTab({
     });
   }
 
+  const handleSwapAwards = (indexA, indexB) => {
+    const tempAwards = resumeIn.awards;
+    swapArrayElements(tempAwards, indexA, indexB);
+    onUpdateResume({
+      ...resumeIn,
+      awards: tempAwards
+    });
+  }
+
   const handleUpdateResumeName = (name) => {
     onUpdateResume({...resumeIn, name});
   }
@@ -190,10 +233,6 @@ function ActionTab({
 
   const handleUpdateSkills = (skills) => {
     onUpdateResume({...resumeIn, skills});
-  }
-
-  const handleUpdateAwards = (awards) => {
-    onUpdateResume({...resumeIn, awards});
   }
 
   const handleUpdateBasics = (basics) => {
@@ -241,7 +280,12 @@ function ActionTab({
       )}
       
       {resumeIn.sections.includes("Awards") && (
-        <Awards initAwards={resumeIn.awards} aiLoading={aiSkillsLoading} onUpdate={handleUpdateAwards} onAiCall={handleSkillsAiCall}/>
+        <Awards 
+          initAwards={resumeIn.awards || []} 
+          aiLoading={false}
+          onUpdate={(awards) => onUpdateResume({...resumeIn, awards})}
+          onAiCall={() => {}}
+        />
       )}
 
       <div className="form-container">

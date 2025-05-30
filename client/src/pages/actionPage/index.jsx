@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useReactToPrint } from 'react-to-print';
 import ActionTab from './actionTab/Action';
 import CustomizeTab from './customizeTab';
 import Tabs from './Tabs';
 import ResumeContainer from 'templates/ResumeContainer';
 import Spinner from 'components/Spinner';
 import ErrorAlert from 'components/Alert/ErrorAlert';
-import api from 'api/actions';
+import api, { setTokenFunction } from 'api/actions';
 import 'styles/index.css';
 import { styled } from '@mui/system';
 import DescriptionIcon from '@mui/icons-material/Description';
@@ -62,6 +63,7 @@ function ActionPage() {
     work: [],
     skills: [],
     volunteer: [],
+    awards: [],
 
     theme: "professional", 
     sections: ["Basics"],
@@ -74,6 +76,82 @@ function ActionPage() {
   const [jobDescription, setJobDescription] = useState('');
   const [useJobDescription, setUseJobDescription] = useState(false);
   const [showPrintError, setShowPrintError] = useState(false);
+  const resumeRef = useRef();
+  const [previewScale, setPreviewScale] = useState(0.4);
+  const [hasOverflow, setHasOverflow] = useState(false);
+
+  const handleOverflowChange = (hasOverflow) => {
+    setHasOverflow(hasOverflow);
+  };
+
+  const handlePrint = useReactToPrint({
+    content: () => resumeRef.current,
+    documentTitle: `${currentResume.name || 'Resume'}.pdf`,
+    format: 'a4',
+    pageStyle: `
+      @page {
+        size: 210mm 297mm;
+        margin: 0;
+      }
+      @media print {
+        html, body {
+          height: auto;
+          overflow: hidden;
+          width: 210mm;
+          margin: 0;
+          padding: 0;
+        }
+        body {
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
+        }
+        #root {
+          height: auto;
+          overflow: hidden;
+          width: 210mm;
+        }
+        .page-container {
+          height: auto;
+          overflow: hidden;
+          width: 210mm;
+        }
+        .resume-container {
+          width: 210mm !important;
+          height: 297mm !important;
+          transform: none !important;
+          margin: 0 !important;
+          padding: 0 !important;
+        }
+        @media screen and (max-width: 768px) {
+          .resume-container {
+            transform: scale(1) !important;
+            transform-origin: top left !important;
+            width: 210mm !important;
+            height: 297mm !important;
+          }
+          .layover-container {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            background: white !important;
+            z-index: 9999 !important;
+          }
+        }
+      }
+    `,
+    onBeforeGetContent: () => {
+      setResumeLoading(true);
+    },
+    onAfterPrint: () => {
+      setResumeLoading(false);
+    },
+    onPrintError: () => {
+      setResumeLoading(false);
+      console.error('Print failed');
+    }
+  });
 
   const refreshToken = async () => {
     const newToken = await getToken();
@@ -81,6 +159,7 @@ function ActionPage() {
       return null;
     }
     dispatch(setToken(newToken));
+    return newToken;
   }
 
   /**
@@ -140,24 +219,46 @@ function ActionPage() {
    * @todo Fix printing for mobile, gets too many notifications, generate on backend
    */
   const handleSaveToPdf = async () => {
-    if (!isUserPremium(user)) {
-      setShowPrintError(true);
-      return;
-    }
+    // TODO: Uncomment this if we want to check for premium users
+    // if (!isUserPremium(user)) {
+    //   setShowPrintError(true);
+    //   return;
+    // }
 
     try {
-      setResumeLoading(true);
-
       // Save the resume first
       await handleSaveResume(false);
 
-      // Construct the URL you want to open
-      const newPageUrl = `${window.location.origin}/../print-resume/${currentResume._id}`; // Replace '/new-page' with your route
-      window.open(newPageUrl, '_blank');
+      // Check if we're on mobile
+      const isMobile = window.innerWidth <= 768;
+      
+      if (isMobile) {
+        setResumeLoading(true);
+        const response = await api.post("/resume/print", {
+          id: currentResume._id,
+          name: currentResume.name || 'Resume',
+        }, {
+          responseType: 'blob'
+        });
 
-      setResumeLoading(false);
+        // Create a blob URL and trigger download
+        const blob = new Blob([response.data], { type: 'application/pdf' });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${currentResume.name || 'Resume'}.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+        setResumeLoading(false);
+      } else {
+        // Use the print function for desktop
+        await handlePrint();
+      }
     } catch (error) {
-      console.log(error);
+      console.error('Error saving to PDF:', error);
+      setResumeLoading(false);
       throw error;
     }
   };
@@ -195,14 +296,23 @@ function ActionPage() {
    *    Redirect to dashboard
    * @param {boolean} exit If true, redirect to dashboard
    */
-  const handleSaveResume = async (exit) => {
+  const handleSaveResume = async (exit, updatedResume = null) => {
     if (!isSignedIn) {
       navigate('/sign-in');
+      return;
     }
     setResumeLoading(true);
     try {
-      await refreshToken();
-      const response = await api.put("/resume/update", currentResume);
+      const newToken = await refreshToken();
+      if (!newToken) {
+        throw new Error('Failed to refresh token');
+      }
+      let response;
+      if (updatedResume) {
+        response = await api.put("/resume/update", updatedResume);
+      } else {
+        response = await api.put("/resume/update", currentResume);
+      }
       const savedResume = response.data.resume;
       setCurrentResume(savedResume);
       setResumeLoading(false);
@@ -211,9 +321,82 @@ function ActionPage() {
       }
     } catch (err) {
       console.log(err);
+      setResumeLoading(false);
       throw err;
     }
   }
+
+  const handleUpdateResume = (updatedResume) => {
+    setCurrentResume(updatedResume);
+    
+    // Save silently without showing spinner
+    handleSilentSaveResume(updatedResume);
+  }
+
+  /**
+   * @function handleSilentSaveResume
+   * @description Save current state of resume silently without showing spinner
+   * @param {Object} updatedResume The resume to save
+   */
+  const handleSilentSaveResume = async (updatedResume) => {
+    if (!isSignedIn) {
+      return;
+    }
+    try {
+      const newToken = await refreshToken();
+      if (!newToken) {
+        throw new Error('Failed to refresh token');
+      }
+      const response = await api.put("/resume/update", updatedResume);
+      const savedResume = response.data.resume;
+      
+      // If this was a new resume (no _id), update the state with the returned _id
+      // so subsequent saves don't create new resumes
+      if (!updatedResume._id && savedResume._id) {
+        setCurrentResume(savedResume);
+      }
+    } catch (err) {
+      console.log('Silent save error:', err);
+      // Optionally show a subtle error notification instead of throwing
+    }
+  }
+
+  const handleUpdateSections = (sections) => {
+    setCurrentResume({...currentResume, sections});
+    handleSaveResume(false, {...currentResume, sections});
+  }
+
+  // Set up the token function for API calls
+  React.useEffect(() => {
+    setTokenFunction(getToken);
+  }, [getToken]);
+
+  React.useEffect(() => {
+    if (isOpen) {
+      const updateScale = () => {
+        const width = window.innerWidth;
+        if (width <= 300) {
+          setPreviewScale(0.3);
+        } else if (width <= 400) {
+          setPreviewScale(0.4);
+        } else if (width <= 500) {
+          setPreviewScale(0.5);
+        } else if (width <= 650) {
+          setPreviewScale(0.6);
+        } else {
+          setPreviewScale(0.7);
+        }
+      };
+      updateScale();
+      window.addEventListener('resize', updateScale);
+      // Prevent background scroll
+      document.body.style.overflow = 'hidden';
+      return () => {
+        window.removeEventListener('resize', updateScale);
+        document.body.style.overflow = '';
+      };
+    }
+  }, [isOpen]);
 
   return (
     <div className="page-container">
@@ -233,11 +416,18 @@ function ActionPage() {
         </ErrorAlert>
         </div>
       )}
+      {hasOverflow && (
+        <div className="mb-4 p-4 bg-yellow-100 border border-yellow-400 rounded">
+          <p className="text-yellow-700">
+            Warning: Your resume content exceeds one page. Consider removing some content or adjusting formatting.
+          </p>
+        </div>
+      )}
         <Tabs openTab={activeTab} setOpenTab={(tab) => setActiveTab(tab)} />
         {activeTab === 1 && (
           <ActionTab 
             resumeIn={currentResume}
-            onUpdateResume={(resumeIn) => setCurrentResume(resumeIn)}
+            onUpdateResume={handleUpdateResume}
             onPrint={handleSaveToPdf}
             onGenerateResume={handleGenerateResume} 
           />
@@ -250,7 +440,7 @@ function ActionPage() {
             onUpdateJobDescription={(description) => setJobDescription(description)}
             isJobDescriptionUsed={(checked) => setUseJobDescription(checked)}
             onChangeTheme={(theme) => setCurrentResume({...currentResume, theme: theme})}
-            onUpdateSections={(sections) => setCurrentResume({...currentResume, sections})}
+            onUpdateSections={handleUpdateSections}
           />
         )}
         <div className="w-full">
@@ -265,16 +455,54 @@ function ActionPage() {
       </div>
       {/* Desktop View */}
       <div className="overflow-hidden p-2 hidden xl:block w-full">
-        <div className="w-full outline p-2">
-          <ResumeContainer resume={currentResume} />
+        <div className="w-full p-2">
+          <ResumeContainer 
+            ref={resumeRef} 
+            resume={currentResume} 
+            onOverflowChange={handleOverflowChange}
+          />
         </div>
       </div>
 
       {/* Mobile View */}
       {isOpen && (
-        <div className="layover-container" onClick={() => setIsOpen(false)}>
-          <div>
-            <ResumeContainer resume={currentResume} />
+        <div className="layover-container" onClick={() => setIsOpen(false)} style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          zIndex: 9999,
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center'
+        }}>
+          <div className="resume-container-wrapper" style={{
+            width: '100%',
+            height: '100%',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            overflow: 'hidden',
+            padding: '10px'
+          }}>
+            <div style={{
+              transform: `scale(${previewScale})`,
+              transformOrigin: 'center center',
+              width: '794px',
+              height: '1122px',
+              position: 'relative',
+              backgroundColor: 'white',
+              borderRadius: '8px',
+              boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+            }}>
+              <ResumeContainer 
+                ref={resumeRef} 
+                resume={currentResume} 
+                onOverflowChange={handleOverflowChange}
+              />
+            </div>
           </div>
         </div>
       )}

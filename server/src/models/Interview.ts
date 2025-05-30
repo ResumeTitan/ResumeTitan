@@ -13,7 +13,7 @@ const InterviewQuestionSchema = new mongoose.Schema(
     },
     guidance: {
       type: String,
-      description: "Guidance on how to answer the questions",
+      description: "Guidance on how to answer the question",
     },
     answer: {
       type: String,
@@ -26,7 +26,7 @@ const InterviewQuestionSchema = new mongoose.Schema(
 
 const InterviewSchema = new mongoose.Schema(
   {
-    interview: {
+    questions: {
       type: [InterviewQuestionSchema],
       description: "The interview questions",
     },
@@ -37,6 +37,14 @@ const InterviewSchema = new mongoose.Schema(
     jobDescription: {
       type: String,
       description: "Description of the job being interviewed for"
+    },
+    company: {
+      type: String,
+      description: "Name of the company being interviewed for"
+    },
+    jobUrl: {
+      type: String,
+      description: "URL of the job posting, if provided"
     },
     clerkId: {
       type: String,

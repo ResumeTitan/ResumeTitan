@@ -1,8 +1,5 @@
 import React, { useState } from 'react';
 import ThemeSelector from './themeSelector';
-import HarvardImg from 'assets/harvard.png';
-import OnepageImg from 'assets/onepage.png';
-import MacchiatoImg from 'assets/macchiato.png';
 import SectionList from './SectionList';
 import 'styles/index.css';
 import { ResumeType } from 'types/types';
@@ -50,13 +47,19 @@ const CustomizeTab: React.FC<Props> = ({
     </div>
     <div className="form-container font-bold">
       <div className="form-text-main">{"Theme"}</div>
-      <ThemeSelector images={[
-        {id: "professional", url: HarvardImg}, 
-        {id: "one-page", url: OnepageImg},
-        {id: "macchiato", url: MacchiatoImg}
-      ]} onSelect={(image) => onChangeTheme(image.id)} />
+      <ThemeSelector 
+        resume={resume}
+        themes={[
+          {id: "professional", label: "Professional"}, 
+          {id: "one-page", label: "One Page"},
+          {id: "macchiato", label: "Macchiato"},
+          {id: "student-classic", label: "Student Classic"},
+        ]}
+        selectedTheme={resume.theme}
+        onSelect={onChangeTheme}
+      />
     </div>
-    <div className="form-container">
+    {/* <div className="form-container">
       <div className="form-text-main">{"Job Specific Content"}</div>
       <div className="p-2">
         <input 
@@ -91,7 +94,7 @@ const CustomizeTab: React.FC<Props> = ({
           />
         </div>
       </div>
-    </div>
+    </div> */}
     </>
   );
 };

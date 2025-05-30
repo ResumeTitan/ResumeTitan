@@ -6,7 +6,7 @@ ENV PATH=/usr/local/node/bin:$PATH
 ARG NODE_VERSION=20.8.0
 
 RUN apt-get update \
-  && apt install -y curl python-is-python3 pkg-config build-essential \
+  && apt install -y curl python-is-python3 pkg-config build-essential ffmpeg \
   && curl -sL https://github.com/nodenv/node-build/archive/master.tar.gz | tar xz -C /tmp/ \
   && /tmp/node-build-master/bin/node-build "${NODE_VERSION}" /usr/local/node \
   && rm -rf /tmp/node-build-master

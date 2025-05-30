@@ -12,8 +12,18 @@ interface SkillsProps {
   initSkills: SkillType[];
   aiLoading: boolean;
   onUpdate: (skills: SkillType[]) => void;
-  onAiCall: () => void;
+  onAiCall: (input: string) => void;
 }
+
+const suggestions = [
+  "What technical skills do you have?",
+  "What programming languages are you proficient in?",
+  "What tools and technologies have you worked with?",
+  "What soft skills would you like to highlight?",
+  "What industry-specific skills do you possess?",
+  "What certifications or specialized training do you have?",
+  "What skills would be most relevant for your target role?"
+];
 
 /**
  * @function Skills
@@ -24,7 +34,28 @@ interface SkillsProps {
 const Skills: React.FC<SkillsProps> = ({ initSkills, aiLoading, onUpdate, onAiCall }) => {
   const [skills, setSkills] = useState<SkillType[]>([]);
   const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [aiAssistant, showAiAssistant] = useState(false);
+  const [aiAssistantMsg, setAiAssistantMsg] = useState('');
+  const [placeholder, setPlaceholder] = useState(suggestions[0]);
+  const [isPlaceholderActive, setIsPlaceholderActive] = useState(false);
   const [newKeywords, setNewKeywords] = useState<string[]>([]);
+  const [showAddMessage, setShowAddMessage] = useState(false);
+
+  useEffect(() => {
+    if (aiAssistant) {
+      let index = 0;
+      const interval = setInterval(() => {
+        setIsPlaceholderActive(false);
+        setTimeout(() => {
+          setPlaceholder(suggestions[index]);
+          setIsPlaceholderActive(true);
+          index = (index + 1) % suggestions.length;
+        }, 300);
+      }, 5000);
+
+      return () => clearInterval(interval);
+    }
+  }, [aiAssistant]);
 
   /**
    * @function handleSkillsChange
@@ -46,6 +77,8 @@ const Skills: React.FC<SkillsProps> = ({ initSkills, aiLoading, onUpdate, onAiCa
    */
   const handleAddSkills = () => {
     setSkills([...skills, { name: '', level: '', keywords: [] }]);
+    setShowAddMessage(true);
+    setTimeout(() => setShowAddMessage(false), 2000); // Hide message after 2 seconds
   }
 
   /**
@@ -59,27 +92,18 @@ const Skills: React.FC<SkillsProps> = ({ initSkills, aiLoading, onUpdate, onAiCa
     setSkills(newSkills);
   }
 
-  /**
-   * @function handleAddKeyword
-   * @description Adds a new keyword to a skill.
-   * @param {number} skillIndex - The index of the skill to add the keyword to.
-   */
   const handleAddKeyword = (skillIndex: number) => {
     const keyword = newKeywords[skillIndex];
-    if (keyword.trim()) {
+    if (keyword?.trim()) {
       const newSkills = [...skills];
       newSkills[skillIndex].keywords.push(keyword.trim());
       setSkills(newSkills);
-      setNewKeywords([...newKeywords, keyword]);
+      const updatedKeywords = [...newKeywords];
+      updatedKeywords[skillIndex] = '';
+      setNewKeywords(updatedKeywords);
     }
   }
 
-  /**
-   * @function handleDeleteKeyword
-   * @description Deletes a keyword from a skill.
-   * @param {number} skillIndex - The index of the skill.
-   * @param {number} keywordIndex - The index of the keyword to delete.
-   */
   const handleDeleteKeyword = (skillIndex: number, keywordIndex: number) => {
     const newSkills = [...skills];
     newSkills[skillIndex].keywords.splice(keywordIndex, 1);
@@ -95,13 +119,22 @@ const Skills: React.FC<SkillsProps> = ({ initSkills, aiLoading, onUpdate, onAiCa
     onUpdate(skills);
   }
 
+  const handleAiAssistCall = async () => {
+    if (aiAssistantMsg.trim()) {
+      try {
+        onAiCall(aiAssistantMsg);
+        setAiAssistantMsg('');
+        showAiAssistant(false);
+      } catch (error) {
+        console.error("Error calling AI:", error);
+      }
+    }
+  }
+
   // Initialize skills with initSkills prop
   useEffect(() => {
     setSkills(initSkills);
   }, [initSkills]);
-
-  // Empty effect for aiLoading changes
-  useEffect(() => {}, [aiLoading]);
 
   return (
     <div className={`${aiLoading ? "animate-pulse" : ""} form-container`}>
@@ -117,28 +150,67 @@ const Skills: React.FC<SkillsProps> = ({ initSkills, aiLoading, onUpdate, onAiCa
               {"Save"}
             </button>
             <div className="flex justify-center">
+              <div className="relative">
+                <button
+                  className="green-button p-4"
+                  onClick={handleAddSkills}
+                >
+                  {"Add Skill"}
+                </button>
+                {showAddMessage && (
+                  <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-white text-dark-green px-3 py-1 rounded text-sm whitespace-nowrap animate-fade-in-out border border-dark-green">
+                    Skill Added to bottom
+                  </div>
+                )}
+              </div>
               <button
                 className="green-button p-4"
-                onClick={handleAddSkills}
-              >
-                {"Add Skill"}
-              </button>
-              <button
-                className="green-button p-4"
-                onClick={onAiCall}
+                onClick={() => showAiAssistant(true)}
               >
                 <div>
                   <AutoAwesomeIcon className="pr-2"/>
-                  <span>Write with AI</span>
+                  <span>AI Assistant</span>
                 </div>
               </button>
             </div>
           </div>
-          <div className="flex flex-col justify-between">
+
+          {aiAssistant && (
+            <div className="mb-4">
+              <div className="left-right-spacing flex items-center">
+                <div className="w-full pr-2">
+                  <textarea
+                    className={`form-style flex-wrap h-max ${isPlaceholderActive ? 'placeholder-roll-down' : 'placeholder-roll-up'}`}
+                    placeholder={placeholder}
+                    value={aiAssistantMsg}
+                    onChange={(e) => setAiAssistantMsg(e.target.value)}
+                  />
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    className="green-button p-2"
+                    onClick={handleAiAssistCall}
+                  >
+                    <div>
+                      <AutoAwesomeIcon className="pr-2"/>
+                      <span>Write with AI</span>
+                    </div>
+                  </button>
+                  <button
+                    className="green-button p-2"
+                    onClick={() => showAiAssistant(false)}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+          
           {skills.map((skill, skillIndex) => (
             <div key={skillIndex} className="mb-2 p-4 border rounded">
               <div className="flex flex-row">
-              <input 
+                <input 
                   type="text"
                   className="form-style mb-1"
                   placeholder="Skill Name"
@@ -146,20 +218,17 @@ const Skills: React.FC<SkillsProps> = ({ initSkills, aiLoading, onUpdate, onAiCa
                   onChange={(e) => handleSkillsChange(e, skillIndex, 'name')}
                   required 
                 />
-
               </div>
               <div className="flex mb-4">
                 <input 
                   type="text"
                   className="form-style mr-2 p-2"
                   placeholder="New Keyword"
-                  value={newKeywords[skillIndex]}
+                  value={newKeywords[skillIndex] || ''}
                   onChange={(e) => {
                     const keywordsIn = [...newKeywords];
-                    keywordsIn[skillIndex] = e.target.value
-                    console.log(keywordsIn[skillIndex]);
+                    keywordsIn[skillIndex] = e.target.value;
                     setNewKeywords(keywordsIn);
-                    console.log(newKeywords[skillIndex]);
                   }}
                 />
                 <button
@@ -170,36 +239,25 @@ const Skills: React.FC<SkillsProps> = ({ initSkills, aiLoading, onUpdate, onAiCa
                 </button>
               </div>
               <div className="flex flex-wrap mb-1">
-              {skill.keywords.map((keyword, keywordIndex) => (
-                <div className="py-2 pr-2">
-                <span 
-                  key={keywordIndex} 
-                  className="bg-lighter-green text-dark-green px-2 py-1 rounded cursor-pointer"
-                  onClick={() => handleDeleteKeyword(skillIndex, keywordIndex)}
-                >
-                  {keyword} ✕
-                </span>
-                </div>
-              ))}
-              <button
-                  className="remove-content-button whitespace-nowrap my-2"
-                  onClick={() => handleSkillsDelete(skillIndex)}
-                >
-                  Delete Skill
-                </button>
+                {skill.keywords.map((keyword, keywordIndex) => (
+                  <div key={keywordIndex} className="py-2 pr-2">
+                    <span 
+                      className="bg-lighter-green text-dark-green px-2 py-1 rounded cursor-pointer"
+                      onClick={() => handleDeleteKeyword(skillIndex, keywordIndex)}
+                    >
+                      {keyword} ✕
+                    </span>
+                  </div>
+                ))}
               </div>
-
-              {/* <input 
-                type="text"
-                className="form-style mb-2"
-                placeholder="Skill Level"
-                value={skill.level}
-                onChange={(e) => handleSkillsChange(e, skillIndex, 'level')}
-                required 
-              /> */}
+              <button
+                className="remove-content-button whitespace-nowrap my-2"
+                onClick={() => handleSkillsDelete(skillIndex)}
+              >
+                Delete Skill
+              </button>
             </div>
           ))}
-          </div>
         </div>
       ) : (
         <>

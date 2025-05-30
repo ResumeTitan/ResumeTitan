@@ -8,20 +8,54 @@ import dayjs from 'dayjs';
 import StatePicker from 'components/StatePicker';
 import api from 'api/actions';
 import 'styles/index.css';
+import { FormContainer } from 'components/Form/styled';
+import DateInput from 'components/Form/DateInput';
+
+const suggestions = [
+  "Check the spelling and grammar of the second highlight",
+  "Revise the top two highlights to make them more concise and impactful",
+  "Add quantifiable results to the first highlight to better showcase accomplishments",
+  "Remove any vague or non-specific terms from the third highlight",
+  "Add quantifiable results to the first highlight to better showcase accomplishments",
+  "Reorder the highlights to ensure the most impressive achievements are listed first",
+  "Shorten the second highlight while retaining its key points to improve readability"
+];
 
 function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
   const [jobForm, setJobForm] = useState(editingJob);
   const [aiLoading, setAiLoading] = useState(false);
-  const [startDate, setStartDate] = useState(new Date(editingJob.startDate) || new Date());
-  const [endDate, setEndDate] = useState(new Date(editingJob.endDate) || new Date());
   const [endDateChecked, setEndDateChecked] = useState(editingJob.endDateCurrent || false);
+  const [aiAssistant, showAiAssistant] = useState(false);
+  const [aiAssistantMsg, setAiAssistantMsg] = useState('');
+  const [placeholder, setPlaceholder] = useState("Ensure that all highlights follow a consistent format and tone");
+  const [isPlaceholderActive, setIsPlaceholderActive] = useState(false);
+  const [showBrainstorm, setShowBrainstorm] = useState(false);
+  const [brainstormInput, setBrainstormInput] = useState('');
+
+  React.useEffect(() => {
+    setJobForm(editingJob);
+    setEndDateChecked(editingJob.endDateCurrent || false);
+  }, [editingJob]);
+
+  React.useEffect(() => {
+    if (aiAssistant) {
+      let index = 0;
+      const interval = setInterval(() => {
+        setIsPlaceholderActive(false); // Trigger the roll-up animation
+        setTimeout(() => {
+          setPlaceholder(suggestions[index]); // Change the placeholder text
+          setIsPlaceholderActive(true); // Trigger the roll-down animation
+          index = (index + 1) % suggestions.length;
+        }, 300); // Delay to sync with roll-up animation
+      }, 5000); // Change placeholder every 5 seconds
+
+      return () => clearInterval(interval); // Cleanup on unmount
+    }
+  }, [aiAssistant]);
 
   const handleSaveJob = () => {
-    jobForm.startDate = startDate.toString();
     if (endDateChecked) {
       jobForm.endDate = "";
-    } else {
-      jobForm.endDate = endDate.toString();
     }
     onSave(jobForm);
     setJobForm({});
@@ -75,11 +109,36 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
   /**
    * @function handleAiCall
    */
-  const handleAiCall = async () => {
+  const handleAiCall = async (userInput = null) => {
     setAiLoading(true);
-    const jobResponse = await api.post("/resume/work", { job: jobForm });
-    setJobForm({ ...jobForm, highlights: jobResponse.data.response.highlights });
-    setAiLoading(false);
+    try {
+      const jobResponse = await api.post("/resume/work", { 
+        job: jobForm,
+        userInput: userInput,
+        operationType: userInput ? 'brainstorm' : 'generate'
+      });
+      setJobForm(prev => ({ ...prev, highlights: jobResponse.data.response.highlights }));
+    } catch (error) {
+      console.error("Error calling AI:", error);
+    } finally {
+      setAiLoading(false);
+    }
+  }
+
+  const handleAiAssistCall = async () => {
+    setAiLoading(true);
+    try {
+      const jobResponse = await api.post("/resume/work", { 
+        job: jobForm,
+        userInput: aiAssistantMsg,
+        operationType: 'edit'
+      });
+      setJobForm(prev => ({ ...prev, highlights: jobResponse.data.response.highlights }));
+    } catch (error) {
+      console.error("Error calling AI:", error);
+    } finally {
+      setAiLoading(false);
+    }
   }
 
   return (
@@ -125,45 +184,45 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
         </div>
       </div>
 
-      <div className="mb-6 justify-between phone-screen-stack">
-        <div className="w-full">
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DemoContainer components={['DatePicker', 'DatePicker']}>
-              <DatePicker
-                label="Start Date"
-                value={dayjs(startDate)}
-                onChange={(newValue) => {setStartDate(newValue.toString())}}
-              />
-            </DemoContainer>
-          </LocalizationProvider>
-        </div>
-        <div className="w-full">
-
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DemoContainer components={['DatePicker', 'DatePicker']}>
-              <DatePicker
-                label="End Date"
-                value={dayjs(endDate)}
-                onChange={(newValue) => {setEndDate(newValue.toString())}}
-                disabled={endDateChecked}
-              />
-            </DemoContainer>
-          </LocalizationProvider>
-          <div className="left-right-spacing">
-            <label htmlFor="endDateCheckbox" className="flex items-center">
-              <div className="text-xs pr-2">Current</div>
-            <input 
+      <FormContainer>
+        <DateInput 
+          title='Start Date' 
+          value={jobForm.startDate} 
+          onChange={(event) => {
+            const newDate = event.target.value;
+            setJobForm(prev => ({
+              ...prev,
+              startDate: newDate
+            }));
+          }} 
+        />
+        <DateInput 
+          title='End Date' 
+          value={jobForm.endDate}
+          onChange={(event) => {
+            const newDate = event.target.value;
+            setJobForm(prev => ({
+              ...prev,
+              endDate: newDate
+            }));
+          }}
+          disabled={endDateChecked}
+          className={endDateChecked ? "bg-gray-100 opacity-70 rounded" : ""}
+        >
+          <div className="mt-2">
+            <label htmlFor="endDateCheckbox" className="block text-sm">
+              Current
+            </label>
+            <input
               id="endDateCheckbox"
               type="checkbox"
-              value=""
-              className="bg-gray-700 border-gray-600 w-4 h-4 text-blue-600 rounded focus:ring-blue-600 ring-offset-gray-800 focus:ring-2" 
-              onChange={handleEndDateCurrent}
               checked={endDateChecked}
+              onChange={handleEndDateCurrent}
+              className="mr-2"
             />
-            </label>
           </div>
-        </div>
-      </div>
+        </DateInput>
+      </FormContainer>
 
       <div className="m-2">
         <div className="left-right-spacing my-2">
@@ -174,7 +233,7 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
           <div className="phone-screen-stack">
             <button
               className="green-button order-last xs:order-first p-2 my-1"
-              onClick={handleAiCall}
+              onClick={() => setShowBrainstorm(true)}
             >
               <div>
                 <AutoAwesomeIcon className="pr-2"/>
@@ -187,8 +246,18 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
             >
               Add
             </button>
+            <button
+              className="green-button order-first xs:order-last p-2 my-1"
+              onClick={() => showAiAssistant(true)}
+            >
+              <div>
+                <AutoAwesomeIcon className="pr-2"/>
+                <span>AI Assistant</span>
+              </div>
+            </button>
           </div>
         </div>
+
         {jobForm.highlights ? jobForm.highlights.map((item, index) => (
           <div className="left-right-spacing">
             <div className="w-full pr-2 py-1">
@@ -199,7 +268,6 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
                 placeholder="Enter highlights from work..."
                 value={item}
                 onChange={(e) => handleJobHighlightsChange(e.target.value, index)}
-                required 
               />
             </div>
             <div className="flex items-center">
@@ -211,42 +279,107 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
               </button>
             </div>
           </div>
-          )
-        ) : (
+        )) : (
           <div className="left-right-spacing">
             <div className="w-full pr-2 py-1">
               <textarea 
-                type="text"
-                className="form-style flex-wrap h-24 lg:h-16 text-black"
-                placeholder="Click add to start adding highlights..."
+                className="form-style flex-wrap h-24 lg:h-16"
+                placeholder="Click Add or Write with AI to start adding accomplishments/skills..."
                 disabled
               />
             </div>
           </div>
+        )}
+
+        {aiAssistant && (
+          <>
+            <div className="border-t border-gray-700 my-4"></div>
+            <div className="left-right-spacing">
+              <div className="w-full pr-2 py-1">
+                <textarea
+                  className={`form-style flex-wrap h-24 lg:h-16 ${isPlaceholderActive ? 'placeholder-roll-down' : 'placeholder-roll-up'}`}
+                  placeholder={placeholder}
+                  value={aiAssistantMsg}
+                  onChange={(e) => setAiAssistantMsg(e.target.value)}
+                />
+              </div>
+              <div className="phone-screen-stack">
+                <button
+                  className="green-button order-last xs:order-first p-2 my-1"
+                  onClick={handleAiAssistCall}
+                >
+                  <div>
+                    <AutoAwesomeIcon className="pr-2"/>
+                    <span>Write with AI</span>
+                  </div>
+                </button>
+                <button
+                  className="green-button order-first xs:order-last p-2 my-1"
+                  onClick={() => showAiAssistant(false)}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </>
         )}
       </div>
 
       <div className="left-right-spacing">
         <button
           disabled={!jobForm.id}
-          className={`${jobForm.id ? "remove-button" : "disabled-button"}`}
+          className={"secondary-action-button"}
           onClick={handleDeleteJob}
         >
           {"Delete"}
         </button>
         <button
-          className="remove-button"
+          className="secondary-action-button"
           onClick={handleCancel}
         >
           {"Cancel"}
         </button>
         <button
-          className="add-button-small"
+          className="primary-action-button"
           onClick={handleSaveJob}
         >
           {"Save"}
         </button>
       </div>
+
+      {showBrainstorm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+          <div className="bg-white p-6 rounded shadow-lg max-w-md w-full">
+            <h2 className="text-lg font-bold mb-2">Brainstorm for AI</h2>
+            <p className="mb-2 text-sm text-gray-600">Enter your ideas, skills, or accomplishments to help the AI write your bullet points. Separate items with a comma.</p>
+            <p className="mb-2 text-sm text-red-600 font-semibold">Warning: This will overwrite your existing highlights.</p>
+            <textarea
+              className="form-style w-full h-24 mb-4"
+              placeholder="E.g. Led a team, Improved efficiency, Managed budgets"
+              value={brainstormInput}
+              onChange={e => setBrainstormInput(e.target.value)}
+            />
+            <div className="flex justify-end gap-2">
+              <button
+                className="secondary-action-button"
+                onClick={() => setShowBrainstorm(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="primary-action-button"
+                onClick={() => {
+                  setShowBrainstorm(false);
+                  handleAiCall(brainstormInput);
+                  setBrainstormInput('');
+                }}
+              >
+                Continue
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

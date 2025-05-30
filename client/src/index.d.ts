@@ -1,5 +1,6 @@
 declare module '*.png';
 declare module '*.gif';
+declare module 'html2pdf.js';
 declare namespace JSX {
   interface IntrinsicElements {
     'stripe-buy-button': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {

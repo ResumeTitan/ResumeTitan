@@ -6,10 +6,12 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import dayjs, { Dayjs } from 'dayjs';
 import StatePicker from 'components/StatePicker';
-import DegreePicker from 'components/DegreePicker';
+import { DegreePicker, DegreeType } from 'components/DegreePicker';
 import api from 'api/actions';
 import { EducationType } from 'types/types';
 import 'styles/index.css';
+import { FormContainer } from 'components/Form/styled';
+import DateInput from 'components/Form/DateInput';
 
 const newEducation = {
   id: -1,
@@ -44,13 +46,18 @@ const suggestions = [
 function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }: SchoolEditorProps) {
   const [schoolForm, setSchoolForm] = useState<EducationType>(editingSchool);
   const [aiLoading, setAiLoading] = useState<boolean>(false);
-  const [startDate, setStartDate] = useState<Dayjs>(dayjs(editingSchool.startDate || new Date()));
-  const [endDate, setEndDate] = useState<Dayjs>(dayjs(editingSchool.endDate || new Date()));
+  const [endDateChecked, setEndDateChecked] = useState<boolean>(editingSchool.endDateCurrent || false);
   const [aiAssistant, showAiAssistant] = useState<boolean>(false);
   const [aiAssistantMsg, setAiAssistantMsg] = useState<string>('');
-  const [endDateChecked, setEndDateChecked] = useState<boolean>(editingSchool.endDateCurrent || false);
-  const [placeholder, setPlaceholder] = useState<string>("Ensure that all four highlights follow a consistent format and tone");
+  const [placeholder, setPlaceholder] = useState<string>("Ensure that all highlights follow a consistent format and tone");
   const [isPlaceholderActive, setIsPlaceholderActive] = useState<boolean>(false);
+  const [showBrainstorm, setShowBrainstorm] = useState(false);
+  const [brainstormInput, setBrainstormInput] = useState('');
+
+  React.useEffect(() => {
+    setSchoolForm(editingSchool);
+    setEndDateChecked(editingSchool.endDateCurrent || false);
+  }, [editingSchool]);
 
   React.useEffect(() => {
     if (aiAssistant) {
@@ -69,12 +76,10 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }: SchoolEdito
   }, [aiAssistant]);
 
   const handleSaveSchool = () => {
-    const updatedSchool = {
-      ...schoolForm,
-      startDate: startDate.toString(),
-      endDate: endDateChecked ? "" : endDate.toString(),
-    };
-    onSave(updatedSchool);
+    if (endDateChecked) {
+      schoolForm.endDate = "";
+    }
+    onSave(schoolForm);
     setSchoolForm(newEducation);
   }
 
@@ -88,14 +93,10 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }: SchoolEdito
     setSchoolForm(newEducation);
   }
 
-  const handleSchoolChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSchoolChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { id, value } = e.target;
     setSchoolForm({ ...schoolForm, [id]: value });
   }
-
-  // const handleStateChange = (state: string) => {
-  //   setSchoolForm({ ...schoolForm, state: state });
-  // }
 
   const handleDegreeChange = (degree: string) => {
     setSchoolForm({ ...schoolForm, studyType: degree });
@@ -119,8 +120,8 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }: SchoolEdito
 
   const handleEndDateCurrent = () => {
     const endDateCurrent = !endDateChecked;
-    setSchoolForm({ ...schoolForm, endDateCurrent: endDateCurrent, endDate: "" });
-    setEndDateChecked(endDateCurrent);
+    setSchoolForm({ ...schoolForm, endDateCurrent: endDateCurrent });
+    setEndDateChecked(!endDateChecked);
   }
 
   const handleHighlightAdd = () => {
@@ -130,11 +131,14 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }: SchoolEdito
     }));
   }
 
-  const handleAiCall = async () => {
+  const handleAiCall = async (userInput: string | null = null) => {
     setAiLoading(true);
     try {
-      console.log(schoolForm.highlights);
-      const schoolResponse = await api.post("/resume/education", { education: schoolForm });
+      const schoolResponse = await api.post("/resume/education", { 
+        education: schoolForm,
+        userInput: userInput,
+        operationType: userInput ? 'brainstorm' : 'generate'
+      });
       setSchoolForm(prev => ({ ...prev, highlights: schoolResponse.data.response.highlights }));
     } catch (error) {
       console.error("Error calling AI:", error);
@@ -144,18 +148,13 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }: SchoolEdito
   }
 
   const handleAiAssistCall = async () => {
-    const newForm = { ...schoolForm };
-
-    if (newForm.highlights) {
-      newForm.highlights = [...newForm.highlights, aiAssistantMsg];
-    } else {
-      newForm.highlights = [aiAssistantMsg];
-    }
-  
     setAiLoading(true);
     try {
-      console.log(schoolForm.highlights);
-      const schoolResponse = await api.post("/resume/education", { education: newForm });
+      const schoolResponse = await api.post("/resume/education", { 
+        education: schoolForm,
+        userInput: aiAssistantMsg,
+        operationType: 'edit'
+      });
       setSchoolForm(prev => ({ ...prev, highlights: schoolResponse.data.response.highlights }));
     } catch (error) {
       console.error("Error calling AI:", error);
@@ -166,92 +165,77 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }: SchoolEdito
 
   return (
     <div className={`${aiLoading ? "animate-pulse" : ""}`}>
-      <div className="py-4">
-        <label htmlFor={"institution"} className="form-label-text">Institution Name</label>
+      <div className="my-6">
+        <label htmlFor={"institution"} className="form-label-text">School</label>
         <input 
           type="text"
           id={"institution"}
-          className="form-style" 
-          placeholder={"Enter school name..."}
-          onChange={handleSchoolChange}
+          className="form-style"
+          placeholder="Enter school name..."
           value={schoolForm.institution || ''}
+          onChange={handleSchoolChange}
           required 
         />
       </div>
-      <div className="mb-6">
-        <label htmlFor={"area"} className="form-label-text">Area of Study</label>
+      <div className="my-6">
+        <label htmlFor={"area"} className="form-label-text">Major/Area of Study</label>
         <input 
           type="text"
           id={"area"}
           className="form-style"
-          placeholder="Enter area of study..."
+          placeholder="Enter major or area of study..."
           value={schoolForm.area || ''}
           onChange={handleSchoolChange}
           required 
         />
       </div>
-
-      <div className="w-full mb-6 pr-2">
-        <label htmlFor={"studyType"} className="form-label-text">Degree</label>
-        <DegreePicker onChange={handleDegreeChange}/>
+      <div className="my-6">
+        <label htmlFor={"degree"} className="form-label-text">Degree</label>
+        <DegreePicker 
+          initialValue={schoolForm.studyType as DegreeType}
+          onChange={handleDegreeChange}
+        />
       </div>
 
-      {/* <div className="mb-6 left-right-spacing phone-screen-stack">
-        <div className="w-full">
-        <label htmlFor={"city"} className="form-label-text">City</label>
-        <input 
-          type="text"
-          id={"city"}
-          className="form-style"
-          placeholder="Enter city..."
-          value={schoolForm.city || ''}
-          onChange={handleSchoolChange}
-          required />
-        </div>
-        <div className="w-full">
-        <label htmlFor={"state"} className="form-label-text">State</label>
-        <StatePicker onChange={handleStateChange} initState={schoolForm.state || ""}/>
-        </div>
-      </div> */}
-
-      <div className="mb-6 left-right-spacing">
-        <div className="w-full">
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DemoContainer components={['DatePicker', 'DatePicker']}>
-              <DatePicker
-                label="Start Date"
-                value={dayjs(startDate)}
-                onChange={(newValue: Dayjs | null) => newValue && setStartDate(newValue)}
-              />
-            </DemoContainer>
-          </LocalizationProvider>
-        </div>
-        <div className="w-full">
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DemoContainer components={['DatePicker', 'DatePicker']}>
-              <DatePicker
-                label="End Date"
-                value={dayjs(endDate)}
-                onChange={(newValue: Dayjs | null) => newValue && setEndDate(newValue)}
-                disabled={endDateChecked}
-              />
-            </DemoContainer>
-          </LocalizationProvider>
-          <div className="align-right">
-            <label htmlFor="endDateCheckbox" className="flex items-center">
-              <div className="text-xs pr-2">Current</div>
-              <input 
-                id="endDateCheckbox"
-                type="checkbox"
-                value=""
-                className="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-600 ring-offset-gray-800 focus:ring-2" 
-                onChange={handleEndDateCurrent}
-                checked={endDateChecked}
-              />
+      <FormContainer>
+        <DateInput 
+          title='Start Date' 
+          value={schoolForm.startDate} 
+          onChange={(event) => {
+            const newDate = event.target.value;
+            setSchoolForm(prev => ({
+              ...prev,
+              startDate: newDate
+            }));
+          }} 
+        />
+        <DateInput 
+          title='End Date' 
+          value={schoolForm.endDate}
+          onChange={(event) => {
+            const newDate = event.target.value;
+            setSchoolForm(prev => ({
+              ...prev,
+              endDate: newDate
+            }));
+          }}
+          disabled={endDateChecked}
+          className={endDateChecked ? "bg-gray-100 opacity-70 rounded" : ""}
+        >
+          <div className="mt-2">
+            <label htmlFor="endDateCheckbox" className="block text-sm">
+              Current
             </label>
+            <input
+              id="endDateCheckbox"
+              type="checkbox"
+              checked={endDateChecked}
+              onChange={handleEndDateCurrent}
+              className="mr-2"
+            />
           </div>
-        </div>
-      </div>
+        </DateInput>
+      </FormContainer>
 
       <div>
         <div className="left-right-spacing flex my-2">
@@ -271,7 +255,7 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }: SchoolEdito
             </button>
             <button
               className="green-button flex items-center justify-center sm:h-12 rounded-lg cursor-pointer"
-              onClick={handleAiCall}
+              onClick={() => setShowBrainstorm(true)}
             >
               <div>
                 <AutoAwesomeIcon className="pr-2"/>
@@ -313,7 +297,7 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }: SchoolEdito
           <div className="w-full pr-2 py-1">
             <textarea 
               className="form-style flex-wrap h-24 lg:h-16"
-              placeholder="Click add to start adding accomplishments/skills..."
+              placeholder="Click Add or Write with AI to start adding accomplishments/skills..."
               disabled
             />
           </div>
@@ -343,22 +327,56 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }: SchoolEdito
         )}
       </div>
 
+      {showBrainstorm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+          <div className="bg-white p-6 rounded shadow-lg max-w-md w-full">
+            <h2 className="text-lg font-bold mb-2">Brainstorm for AI</h2>
+            <p className="mb-2 text-sm text-gray-600">Enter your ideas, skills, or accomplishments to help our AI write your bullet points. Separate items with a comma.</p>
+            <p className="mb-2 text-sm text-red-600 font-semibold">Warning: This will overwrite your existing highlights.</p>
+            <textarea
+              className="form-style w-full h-24 mb-4"
+              placeholder="E.g. Led a club, Won a scholarship, Volunteered for events"
+              value={brainstormInput}
+              onChange={e => setBrainstormInput(e.target.value)}
+            />
+            <div className="flex justify-end gap-2">
+              <button
+                className="secondary-action-button"
+                onClick={() => setShowBrainstorm(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="primary-action-button"
+                onClick={() => {
+                  setShowBrainstorm(false);
+                  handleAiCall(brainstormInput);
+                  setBrainstormInput('');
+                }}
+              >
+                Continue
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="flex justify-between">
         <button
           disabled={!schoolForm.id}
-          className={`${schoolForm.id ? "remove-button" : "disabled-button"}`}
+          className={"secondary-action-button"}
           onClick={handleDeleteSchool}
         >
           {"Delete"}
         </button>
         <button
-          className="remove-button"
+          className="secondary-action-button"
           onClick={handleCancel}
         >
           {"Cancel"}
         </button>
         <button
-          className="add-button-small"
+          className="primary-action-button"
           onClick={handleSaveSchool}
         >
           {"Save"}

@@ -34,6 +34,20 @@ function Schools({ education, onSave, onDelete, onReorder }) {
     setEditingSchool({});
   }
 
+  const handleMoveUp = (index, e) => {
+    e.stopPropagation();
+    if (index > 0) {
+      onReorder(index, index - 1);
+    }
+  }
+
+  const handleMoveDown = (index, e) => {
+    e.stopPropagation();
+    if (index < education.length - 1) {
+      onReorder(index, index + 1);
+    }
+  }
+
   const editingForm = (
     <div className="px-4 pb-4">
       <SchoolEditor editingSchool={editingSchool} onSave={handleSaveSchool} onDelete={handleDeleteSchool} onCancel={handleCancel}/>
@@ -47,13 +61,28 @@ function Schools({ education, onSave, onDelete, onReorder }) {
 
       {!isEditing && (
         <div>
-          
           {education.map((school, index) => (
             <div key={`school-${index}`} 
-              className="form-secondary-area" 
+              className="form-secondary-area flex items-center" 
               onClick={() => handleEditSchool(school.id)}
             >
-              <div>
+              <div className="flex items-center gap-2 mr-4">
+                <button 
+                  className="p-1 hover:bg-gray-100 rounded"
+                  onClick={(e) => handleMoveUp(index, e)}
+                  disabled={index === 0}
+                >
+                  <KeyboardArrowUpIcon />
+                </button>
+                <button 
+                  className="p-1 hover:bg-gray-100 rounded"
+                  onClick={(e) => handleMoveDown(index, e)}
+                  disabled={index === education.length - 1}
+                >
+                  <KeyboardArrowDownIcon />
+                </button>
+              </div>
+              <div className="flex-grow">
                 <div className="font-bold">
                   {school.institution}
                 </div>
@@ -61,17 +90,15 @@ function Schools({ education, onSave, onDelete, onReorder }) {
                   {school.area}
                 </div>
               </div>
-              {/* <div>
-                <button onClick={() => onReorder(index, index - 1)}>
-                  <KeyboardArrowUpIcon />
-                </button>
-                <button onClick={() => onReorder(index, index + 1)}>
-                  <KeyboardArrowDownIcon />
-                </button>
-                <button className="green-button p-2 border border-1" onClick={() => handleEditSchool(school.id)}>
-                  {"Edit"}
-                </button>
-              </div> */}
+              <button 
+                className="green-button px-6 py-2 border border-1 min-w-[100px]" 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleEditSchool(school.id);
+                }}
+              >
+                {"Edit"}
+              </button>
             </div>
           ))}
           <div className={`p-4 flex flex-col items-center justify-center add-button`} onClick={handleAddSchool}>

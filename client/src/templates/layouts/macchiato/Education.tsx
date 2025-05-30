@@ -60,7 +60,7 @@ const Education: React.FC<EducationProps> = ({ education }) => {
 
   return (
     <Container>
-      <Section title={"Experience"} >
+      <Section title={"Education"} >
       {education.map((edu, index) => (
         <Item key={index}>
           <Subsection title={edu.institution} />

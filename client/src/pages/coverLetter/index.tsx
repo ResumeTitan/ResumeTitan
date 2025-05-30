@@ -1,31 +1,87 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useUser } from '@clerk/clerk-react';
 import Spinner from 'components/Spinner';
-import api from 'api/actions';
+import api, { setTokenFunction } from 'api/actions';
 import CoverLetterTemplate from './CoverLetterHolder';
 import { FormContainer } from 'components/Form/styled';
 import FormField from 'components/Form/FormField';
 import FormArea from 'components/Form/FormArea';
 import FormDropdown from 'components/Form/FormDropdown';
+import { useAuth } from '@clerk/clerk-react';
 import 'styles/index.css';
 import { CoverLetterType, ResumeType } from 'types/types';
-import styled from 'styled-components';
+import styled, { createGlobalStyle } from 'styled-components';
+import { PDFDownloadLink, BlobProviderParams } from '@react-pdf/renderer';
+import CoverLetterPDF from './CoverLetterPDF';
 
 const Container = styled.div`
   background-color: white;
   color: black; /* Change to your desired text color */
   display: flex;
-  flex-direction: column;
+  flex-direction: row; /* default: row */
   padding: 1rem;
 
-  @media (min-width: 1024px) {
-    flex-direction: row;
+  @media (max-width: 1200px) {
+    flex-direction: column; /* on small screens, stack (cover letter below forms) */
+    padding: 1rem;
+  }
+`;
+
+const ResponsiveFormContainer = styled.div`
+  max-width: 500px;
+  width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+  @media (max-width: 1200px) {
+    max-width: 100%;
+    width: 100%;
+    margin-top: 1rem;
+  }
+`;
+
+// Add a styled wrapper for the cover letter preview
+const CoverLetterPreviewWrapper = styled.div`
+  margin-left: 2rem;
+  display: flex;
+  align-items: flex-start;
+  @media (max-width: 1200px) {
+    margin-left: 0;
+    margin-top: 1rem;
+    justify-content: center;
+    /* Scale down the cover letter for small screens */
+    & > * {
+      transform: scale(1);
+      transform-origin: top center;
+    }
+  }
+  @media (max-width: 600px) {
+    & > * {
+      transform: scale(0.8);
+    }
+  }
+`;
+
+const PrintOnlyCoverLetter = createGlobalStyle`
+  @media print {
+    body * {
+      display: none !important;
+    }
+    #print-root, #print-root * {
+      display: block !important;
+      position: static !important;
+      width: 100% !important;
+      box-shadow: none !important;
+      background: white !important;
+      color: black !important;
+      transform: none !important;
+    }
   }
 `;
 
 const CoverLetter: React.FC = () => {
   const { user, isSignedIn } = useUser();
+  const { getToken } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const [userResumes, setUserResumes] = React.useState([]);
@@ -39,9 +95,18 @@ const CoverLetter: React.FC = () => {
     jobTitle: '',
     city: '',
     state: '',
-    companyName: '',
+    company: '',
     resumeId: ''
   });
+  const [inputMode, setInputMode] = React.useState<'manual' | 'link'>('manual');
+  const [jobUrl, setJobUrl] = React.useState('');
+  const [showSaveMessage, setShowSaveMessage] = React.useState(false);
+  const coverLetterRef = useRef<HTMLDivElement>(null);
+
+  // Set up the token function for API calls
+  React.useEffect(() => {
+    setTokenFunction(getToken);
+  }, [getToken]);
 
   /**
    * @function loadCoverLetter
@@ -73,14 +138,9 @@ const CoverLetter: React.FC = () => {
    * @description Called when page loads
    */
   React.useEffect(() => {
-    if (!isSignedIn) {
-      navigate("/sign-in");
-    }
-
     async function load() {
       let newCoverLetter = coverLetter;
       if (location.state) {
-        console.log("loading cover letter");
         const id = location.state.id;
         newCoverLetter = await loadCoverLetter(id);
         newCoverLetter["_id"] = id;
@@ -110,11 +170,13 @@ const CoverLetter: React.FC = () => {
         throw new Error("User not found");
       }
       setIsLoading(true);
-      const response = await api.post("cover-letter", { 
-        coverLetter,
-        clerkId: user.id 
-      });
-
+      let payload: any = { clerkId: user.id };
+      if (inputMode === 'link') {
+        payload.coverLetter = { ...coverLetter, jobUrl, useJobUrl: true };
+      } else {
+        payload.coverLetter = { ...coverLetter, useJobUrl: false };
+      }
+      const response = await api.post("cover-letter", payload);
       setCoverLetter(response.data.coverLetter);
       setIsLoading(false);
     } catch (error) {
@@ -122,24 +184,45 @@ const CoverLetter: React.FC = () => {
     }
   }
 
-  const handleSaveCoverLetter = async () => {
+  const handleSaveCoverLetter = async (exit: boolean) => {
     try {
       if (!user) {
         throw new Error("User not found");
       }
       setIsLoading(true);
-      const response = await api.put(`cover-letter/${coverLetter._id}`, { 
-        coverLetter,
-        clerkId: user.id 
-      });
-
+      let payload: any = { clerkId: user.id };
+      if (inputMode === 'link') {
+        payload.coverLetter = { ...coverLetter, jobUrl, useJobUrl: true };
+      } else {
+        payload.coverLetter = { ...coverLetter, useJobUrl: false };
+      }
+      const response = await api.put(`cover-letter/${coverLetter._id}`, payload);
       setCoverLetter(response.data.coverLetter);
       setIsLoading(false);
-      navigate("/dashboard");
+      setShowSaveMessage(true);
+      setTimeout(() => setShowSaveMessage(false), 2000);
+      if (exit) {
+        navigate("/dashboard");
+      }
     } catch (error) {
       console.error(error);
     }
   }
+
+  // Custom tab button style
+  const tabButtonStyle = (active: boolean) => ({
+    flex: 1,
+    padding: '6px 0',
+    borderRadius: '8px 8px 0 0',
+    fontWeight: 'bold',
+    fontSize: '1.1rem',
+    background: active ? '#115E59' : '#e2e8f0',
+    color: active ? 'white' : '#115E59',
+    border: 'none',
+    outline: 'none',
+    cursor: 'pointer',
+    transition: 'background 0.2s, color 0.2s',
+  });
 
   if (!user) {
     return null;
@@ -147,57 +230,102 @@ const CoverLetter: React.FC = () => {
 
   return (
     <Container>
-      <div className="left-section no-print">
-        <div className="form-container">
-          <div className="form-text-main">
-            Cover Letter Information
-          </div>
-          <div>
-            <FormField 
-              title={"Name"}
-              value={coverLetter.name}
-              onChange={(event) => setCoverLetter({...coverLetter, name: event.target.value})}
-            />
-            <FormField 
-              title={"Job Title"}
-              value={coverLetter.jobTitle}
-              onChange={(event) => setCoverLetter({...coverLetter, jobTitle: event.target.value})}
-            />
-            <FormArea 
-              title={"Job Description"}
-              value={coverLetter.jobDescription}
-              onChange={(event) => setCoverLetter({...coverLetter, jobDescription: event.target.value})}
-            />
-            <FormContainer>
+      <div style={{ flex: 1, width: '100%' }}>
+        <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+          <ResponsiveFormContainer className="form-container">
+            <div className="form-text-main mb-4">
+              Cover Letter Information
+            </div>
+            {/* Profile Info Section */}
+            <div className="mb-6 p-4 rounded bg-gray-50 border border-gray-200">
+              <div className="font-bold mb-2">Profile Information</div>
               <FormField 
-                title={"City"}
-                value={coverLetter.city}
-                onChange={(event) => {setCoverLetter({...coverLetter, city: event.target.value})}}
+                title={"Name"}
+                value={coverLetter.name}
+                onChange={(event) => setCoverLetter({...coverLetter, name: event.target.value})}
               />
               <FormField 
-                title={"State"}
-                value={coverLetter.state}
-                onChange={(event) => {setCoverLetter({...coverLetter, state: event.target.value})}}
+                title={"Email"}
+                value={user?.emailAddresses?.[0]?.toString() || ''}
+                onChange={() => {}}
+                disabled
               />
-            </FormContainer>
-            <FormField 
-                title={"Company Name"}
-                value={coverLetter.companyName}
-                onChange={(event) => {setCoverLetter({...coverLetter, companyName: event.target.value})}}
-              />
-            <FormDropdown 
-              title={"Select Resume"}
-              onChange={(event) => {
-                const resumeId = userResumes.find((res: ResumeType) => res.name === event.target.value);
-                if (resumeId) {
-                  setCoverLetter({...coverLetter, resumeId})}
+              <FormContainer>
+                <FormField 
+                  title={"City"}
+                  value={coverLetter.city}
+                  onChange={(event) => {setCoverLetter({...coverLetter, city: event.target.value})}}
+                />
+                <FormField 
+                  title={"State"}
+                  value={coverLetter.state}
+                  onChange={(event) => {setCoverLetter({...coverLetter, state: event.target.value})}}
+                />
+              </FormContainer>
+            </div>
+
+            {/* AI Input Section */}
+            <div className="mb-6 p-4 rounded bg-white border border-gray-200">
+              <div className="font-bold mb-2">Job Information for AI</div>
+              <div style={{ display: 'flex', marginBottom: 16, gap: 2 }}>
+                <button
+                  style={tabButtonStyle(inputMode === 'manual')}
+                  onClick={() => setInputMode('manual')}
+                  type="button"
+                >
+                  Job Title/Description
+                </button>
+                <button
+                  style={tabButtonStyle(inputMode === 'link')}
+                  onClick={() => setInputMode('link')}
+                  type="button"
+                >
+                  Job URL
+                </button>
+              </div>
+              {inputMode === 'manual' ? (
+                <>
+                  <FormField 
+                    title={"Job Title"}
+                    value={coverLetter.jobTitle}
+                    onChange={(event) => setCoverLetter({...coverLetter, jobTitle: event.target.value})}
+                  />
+                  <FormField 
+                    title={"Company"}
+                    value={coverLetter.company}
+                    onChange={(event) => setCoverLetter({...coverLetter, company: event.target.value})}
+                  />
+                  <FormArea 
+                    title={"Job Description"}
+                    value={coverLetter.jobDescription}
+                    onChange={(event) => setCoverLetter({...coverLetter, jobDescription: event.target.value})}
+                  />
+                </>
+              ) : (
+                <>
+                  <FormField 
+                    title={"Job Posting URL"}
+                    value={jobUrl}
+                    onChange={(event) => setJobUrl(event.target.value)}
+                    placeholder="Paste the job posting link here..."
+                  />
+                </>
+              )}
+              <FormDropdown 
+                title={"Select Resume"}
+                onChange={(event) => {
+                  const resumeId = userResumes.find((res: ResumeType) => res.name === event.target.value);
+                  if (resumeId) {
+                    setCoverLetter({...coverLetter, resumeId})}
+                  }
                 }
-              }
-            >
-              {userResumes && userResumes.map((resume: any) => (
-                <option value={resume.id}>{resume.name}</option>
-              ))}
-            </FormDropdown>
+              >
+                {userResumes && userResumes.map((resume: any) => (
+                  <option value={resume.id}>{resume.name}</option>
+                ))}
+              </FormDropdown>
+            </div>
+
             {coverLetter.letter && (
               <FormArea 
                 title={"Cover Letter"}
@@ -206,35 +334,61 @@ const CoverLetter: React.FC = () => {
                 onChange={(event) => setCoverLetter({...coverLetter, letter: event.target.value})}
               />
             )}
-          </div>
-          <div className="p-4">
-            <button
-              className="interview-button"
-              onClick={handleGenerateCoverLetter}
-            >
-              {"Generate Cover Letter"}
-            </button>
-            <button
-              className="interview-button"
-              onClick={() => window.print()}
-            >
-              {"Print Cover Letter"}
-            </button>
-            {coverLetter.letter && (
+            <div className="p-4">
               <button
                 className="interview-button"
-                onClick={handleSaveCoverLetter}
+                onClick={handleGenerateCoverLetter}
               >
-                {"Save Cover Letter"}
+                {isLoading ? 'Writing...' : 'Write Cover Letter with AI'}
               </button>
-            )}
-          </div>
+              <button>
+                <PDFDownloadLink
+                  document={<CoverLetterPDF coverLetter={coverLetter} />}
+                  fileName="cover-letter.pdf"
+                >
+                  {/* @ts-ignore */}
+                  {({ loading }) => (
+                    <button
+                      className="interview-button"
+                      style={{ marginTop: '1rem' }}
+                    >
+                      {loading ? 'Preparing PDF...' : 'Download PDF'}
+                    </button>
+                  )}
+                </PDFDownloadLink>
+              </button>
+
+              {coverLetter.letter && (
+                <button
+                  className="interview-button"
+                  onClick={() => handleSaveCoverLetter(false)}
+                >
+                  {"Save Cover Letter"}
+                </button>
+              )}
+              {coverLetter.letter && (
+                <button
+                  className="interview-button"
+                  onClick={() => handleSaveCoverLetter(true)}
+                >
+                  {"Save and Exit"}
+                </button>
+              )}
+              {showSaveMessage && (
+                <div className="fixed top-8 left-1/2 transform -translate-x-1/2 bg-white text-dark-green px-6 py-3 rounded text-base whitespace-nowrap animate-fade-in-out border border-dark-green z-50 shadow-lg font-semibold">
+                  Cover Letter Saved!
+                </div>
+              )}
+            </div>
+          </ResponsiveFormContainer>
         </div>
       </div>
 
-      <CoverLetterTemplate 
-        coverLetter={coverLetter}
-      />
+      <CoverLetterPreviewWrapper id="print-root" ref={coverLetterRef}>
+        <CoverLetterTemplate coverLetter={coverLetter} />
+      </CoverLetterPreviewWrapper>
+
+      <PrintOnlyCoverLetter />
 
       { isLoading && (
         <Spinner />

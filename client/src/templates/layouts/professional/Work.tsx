@@ -15,7 +15,7 @@ const Work: React.FC<WorkProps> = ({ work }) => {
 
   return (
     <div>
-      <Section title="Experience">
+      <Section title="Work Experience">
         {work.map((w, key) => (
           <Experience
             title={w.position}

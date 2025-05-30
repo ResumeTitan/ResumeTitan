@@ -114,9 +114,7 @@ body {
 }
 
 .add-button {
-  @apply text-black text-center font-medium rounded-lg text-sm lg:text-xl px-5 py-2.5 m-1
-    hover:bg-teal-800 hover:text-white hover:cursor-pointer
-    transition ease-in-out duration-200;
+  @apply border-2 rounded-lg font-medium text-sm lg:text-xl px-5 py-2.5 m-1 text-black text-center border-black hover:bg-teal-800 hover:text-white hover:cursor-pointer transition ease-in-out duration-200;
 }
 
 .add-button-small {
@@ -145,10 +143,11 @@ body {
 }
 
 .save-button {
-  @apply bg-white text-teal-800 text-center font-medium rounded-lg text-lg w-full px-5 py-3 m-1
-    hover:bg-teal-800 hover:cursor-pointer hover:text-white
-    border-4 border-black
-    transition ease-in-out duration-300;
+  @apply border-2 rounded-lg font-medium text-lg px-5 py-2.5 m-1 text-center bg-white text-teal-800 border-black hover:bg-teal-800 hover:text-white hover:cursor-pointer transition ease-in-out duration-300;
+}
+
+.save-button:disabled {
+  @apply bg-gray-300 text-gray-500 cursor-not-allowed border-gray-400;
 }
 
 .remove-content-button {
@@ -178,8 +177,20 @@ body {
   @apply bg-main-green p-4 font-bold leading-none rounded text-white border hover:border-transparent hover:bg-gray-200 hover:text-teal-800 hover:border-black items-center transition duration-300 ease-in-out
 }
 
+.primary-action-button {
+  @apply border-2 rounded-lg font-medium text-lg px-5 py-2.5 m-1 text-center bg-white text-teal-800 border-black hover:bg-teal-800 hover:text-white hover:cursor-pointer transition ease-in-out duration-300;
+}
+
+.primary-action-button:disabled {
+  @apply bg-gray-300 text-gray-500 cursor-not-allowed border-gray-400;
+}
+
 .secondary-action-button {
-  @apply bg-white p-4 font-bold leading-none rounded text-main-green border border-black hover:bg-main-green hover:text-white hover:border-main-green items-center transition duration-300 ease-in-out;
+  @apply border-2 rounded-lg font-medium text-lg px-5 py-2.5 m-1 text-center bg-white text-red-700 border-red-500 hover:bg-red-600 hover:text-white hover:border-red-600 transition duration-300 ease-in-out;
+}
+
+.secondary-action-button:disabled {
+  @apply bg-gray-300 text-gray-500 cursor-not-allowed border-gray-400;
 }
 
 .dashboard-container {
@@ -187,7 +198,7 @@ body {
 }
 
 .dashboard-header {
-  @apply text-3xl font-bold bg-main-green p-2
+  @apply text-3xl font-bold bg-main-green px-[1.5rem] py-[1rem]
 }
 
 .dashboard-button {
@@ -312,4 +323,27 @@ body {
     transform: translateY(100%);
     opacity: 0;
   }
+}
+
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 10px);
+  }
+  10% {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+  90% {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -5px);
+  }
+}
+
+.animate-fade-in-out {
+  animation: fadeInOut 2s cubic-bezier(0.4, 0, 0.2, 1);
 }

@@ -3,14 +3,14 @@ import VolunteerEditor from './VolunteerEditor';
 import VolunteerActivismIcon from '@mui/icons-material/VolunteerActivism';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import { VolunteerType } from 'types/types';
 import 'styles/index.css';
+import { VolunteerType } from 'types/types';
 
 interface VolunteersProps {
   volunteerExperience: VolunteerType[];
   onSave: (volunteer: VolunteerType) => void;
   onDelete: (id: number) => void;
-  onReorder: (fromIndex: number, toIndex: number) => void;
+  onReorder: (indexA: number, indexB: number) => void;
 }
 
 const Volunteers: React.FC<VolunteersProps> = ({ volunteerExperience, onSave, onDelete, onReorder }) => {
@@ -42,6 +42,20 @@ const Volunteers: React.FC<VolunteersProps> = ({ volunteerExperience, onSave, on
     setEditingVolunteer({});
   }
 
+  const handleMoveUp = (index: number, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (index > 0) {
+      onReorder(index, index - 1);
+    }
+  }
+
+  const handleMoveDown = (index: number, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (index < volunteerExperience.length - 1) {
+      onReorder(index, index + 1);
+    }
+  }
+
   const editingForm = (
     <div className="px-4 pb-4">
       <VolunteerEditor editingVolunteer={editingVolunteer as VolunteerType} onSave={handleSaveVolunteer} onDelete={handleDeleteVolunteer} onCancel={handleCancel} />
@@ -57,10 +71,26 @@ const Volunteers: React.FC<VolunteersProps> = ({ volunteerExperience, onSave, on
         <div>
           {volunteerExperience.map((volunteer, index) => (
             <div key={`volunteer-${index}`} 
-              className="form-secondary-area" 
+              className="form-secondary-area flex items-center" 
               onClick={() => handleEditVolunteer(volunteer.id!)}
             >
-              <div>
+              <div className="flex items-center gap-2 mr-4">
+                <button 
+                  className="p-1 hover:bg-gray-100 rounded"
+                  onClick={(e) => handleMoveUp(index, e)}
+                  disabled={index === 0}
+                >
+                  <KeyboardArrowUpIcon />
+                </button>
+                <button 
+                  className="p-1 hover:bg-gray-100 rounded"
+                  onClick={(e) => handleMoveDown(index, e)}
+                  disabled={index === volunteerExperience.length - 1}
+                >
+                  <KeyboardArrowDownIcon />
+                </button>
+              </div>
+              <div className="flex-grow">
                 <div className="font-bold">
                   {volunteer.position}
                 </div>
@@ -68,17 +98,15 @@ const Volunteers: React.FC<VolunteersProps> = ({ volunteerExperience, onSave, on
                   {volunteer.organization}
                 </div>
               </div>
-              {/* <div>
-                <button onClick={() => onReorder(index, index - 1)}>
-                  <KeyboardArrowUpIcon />
-                </button>
-                <button onClick={() => onReorder(index, index + 1)}>
-                  <KeyboardArrowDownIcon />
-                </button>
-                <button className="green-button p-2 border border-1" onClick={() => handleEditVolunteer(volunteer.id!)}>
-                  {"Edit"}
-                </button>
-              </div> */}
+              <button 
+                className="green-button px-6 py-2 border border-1 min-w-[100px]" 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleEditVolunteer(volunteer.id!);
+                }}
+              >
+                {"Edit"}
+              </button>
             </div>
           ))}
           <div className={`p-4 flex flex-col items-center justify-center add-button`} onClick={handleAddVolunteer}>

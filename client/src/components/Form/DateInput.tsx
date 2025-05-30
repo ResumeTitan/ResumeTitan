@@ -8,6 +8,8 @@ interface SectionComponentProps {
   value?: string
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   children?: React.ReactNode;
+  disabled?: boolean;
+  className?: string;
 }
 
 const Div = styled.div`
@@ -20,9 +22,9 @@ const Div = styled.div`
   // background-color: #f8f8f8;
 `;
 
-const DateInput: React.FC<SectionComponentProps> = ({ title, value, onChange, children }) => {
+const DateInput: React.FC<SectionComponentProps> = ({ title, value, onChange, children, disabled, className }) => {
   return (
-    <Div>
+    <Div className={className}>
       <FormLabel>
         {title && (
           <>
@@ -30,7 +32,7 @@ const DateInput: React.FC<SectionComponentProps> = ({ title, value, onChange, ch
           </>
         )}
       </FormLabel>
-      <FormDateInput value={value} onChange={onChange}/>
+      <FormDateInput value={value} onChange={onChange} disabled={disabled}/>
       {children}
     </Div>
   );

@@ -6,7 +6,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import CloseIcon from '@mui/icons-material/Close';
 import Popup from './Popup';
 import { useUser, useAuth } from '@clerk/clerk-react';
-import api from 'api/actions';
+import api, { setTokenFunction } from 'api/actions';
 import { setToken } from '../../state/authReducer';
 import { useDispatch } from 'react-redux';
 import { ResumeType } from 'types/types';
@@ -27,6 +27,11 @@ export const Dashboard: React.FC = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [showPricingPopup, setShowPricingPopup] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+
+  // Set up the token function for API calls
+  useEffect(() => {
+    setTokenFunction(getToken);
+  }, [getToken]);
 
   /**
    * @function loadResumes
@@ -129,11 +134,12 @@ export const Dashboard: React.FC = () => {
   };
 
   const handleContentAdd = (url: string, locked = false) => {
-    if (locked) {
-      setShowPricingPopup(true);
-    } else {
-      navigate(url);
-    }
+    // if (locked) {
+    //   setShowPricingPopup(true);
+    // } else {
+    //   navigate(url);
+    // }
+    navigate(url);
   }
 
   const resumeWidgets = resumes.map((resume, index) => (

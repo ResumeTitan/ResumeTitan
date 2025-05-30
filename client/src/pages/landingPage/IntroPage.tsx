@@ -121,7 +121,7 @@ const LandingPage: React.FC = () => {
       <LargeHeader>
         <FancyText>Creating your resume with AI today</FancyText>
       </LargeHeader>
-      <LargeButton onClick={handleButtonClick}>Get Started Now</LargeButton>
+      <button className="login-button p-5" onClick={handleButtonClick}>Get Started Now</button>
     </FullPageContainer>
   );
 };

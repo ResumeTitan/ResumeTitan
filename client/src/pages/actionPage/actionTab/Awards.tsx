@@ -1,9 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import {  Form, FormInput, FormButton, FormAlert, FormLabel, FormDateInput, FormHeader } from "components/Form/styled";
 import "styles/index.css";
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
 export interface AwardType {
+  id?: string;
   title: string;
   date: string;
   awarder: string;
@@ -24,8 +28,14 @@ interface AwardsProps {
  * @returns {React.ReactElement} The rendered Awards component.
  */
 const Awards: React.FC<AwardsProps> = ({ initAwards, aiLoading, onUpdate, onAiCall }) => {
-  const [awards, setAwards] = useState<AwardType[]>([]);
-  const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [awards, setAwards] = useState<AwardType[]>(initAwards);
+  const [editingAward, setEditingAward] = useState<AwardType | null>(null);
+  const [formData, setFormData] = useState<AwardType>({
+    title: '',
+    date: '',
+    awarder: '',
+    summary: ''
+  });
 
   /**
    * @function handleAwardsChange
@@ -50,7 +60,8 @@ const Awards: React.FC<AwardsProps> = ({ initAwards, aiLoading, onUpdate, onAiCa
    * @description Adds a new empty award to the list.
    */
   const handleAddAward = () => {
-    setAwards([...awards, { title: "", date: "", awarder: "", summary: "" }]);
+    setEditingAward({} as AwardType);
+    setFormData({ title: '', date: '', awarder: '', summary: '' });
   };
 
   /**
@@ -69,108 +80,191 @@ const Awards: React.FC<AwardsProps> = ({ initAwards, aiLoading, onUpdate, onAiCa
    * @description Saves the current awards and exits editing mode.
    */
   const handleSaveAwards = () => {
-    setIsEditing(false);
+    setEditingAward(null);
     onUpdate(awards);
   };
 
-  // Initialize awards with initAwards prop
-  useEffect(() => {
-    setAwards(initAwards);
-  }, [initAwards]);
+  const handleEdit = (award: AwardType) => {
+    setEditingAward(award);
+    setFormData(award);
+  };
+
+  const handleSaveForm = () => {
+    if (editingAward?.id) {
+      const updatedAwards = awards.map(award => 
+        award.id === editingAward.id ? { ...formData, id: award.id } : award
+      );
+      setAwards(updatedAwards);
+      onUpdate(updatedAwards);
+    } else {
+      const newAward = { ...formData, id: String(awards.length + 1) };
+      const updatedAwards = [...awards, newAward];
+      setAwards(updatedAwards);
+      onUpdate(updatedAwards);
+    }
+    setEditingAward(null);
+    setFormData({ title: '', date: '', awarder: '', summary: '' });
+  };
+
+  const handleCancel = () => {
+    setEditingAward(null);
+    setFormData({ title: '', date: '', awarder: '', summary: '' });
+  };
+
+  const handleDelete = (id: string | undefined) => {
+    if (!id) return;
+    const updatedAwards = awards.filter(award => award.id !== id);
+    setAwards(updatedAwards);
+    onUpdate(updatedAwards);
+    setEditingAward(null);
+  };
+
+  const handleMoveUp = (index: number, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (index > 0) {
+      const updatedAwards = [...awards];
+      [updatedAwards[index], updatedAwards[index - 1]] = [updatedAwards[index - 1], updatedAwards[index]];
+      setAwards(updatedAwards);
+      onUpdate(updatedAwards);
+    }
+  };
+
+  const handleMoveDown = (index: number, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (index < awards.length - 1) {
+      const updatedAwards = [...awards];
+      [updatedAwards[index], updatedAwards[index + 1]] = [updatedAwards[index + 1], updatedAwards[index]];
+      setAwards(updatedAwards);
+      onUpdate(updatedAwards);
+    }
+  };
 
   return (
     <div className={`${aiLoading ? "animate-pulse" : ""} form-container`}>
-      <FormHeader onClick={() => {setIsEditing(!isEditing)}}>{"Awards"}</FormHeader>
+      <div className="form-text-main">{"Awards"}</div>
 
-      {isEditing ? (
-        <Form >
-            <FormLabel>Title:</FormLabel>
-            <FormInput type="text" value={"title"} onChange={e => console.log(e)}/>
-            <FormLabel>Awarder:</FormLabel>
-            <FormInput type="text" value={"text"} onChange={(e) => console.log(e)} />
-            <FormButton type="submit" disabled={true}>Login</FormButton>
-            <FormDateInput type="text" onChange={e => console.log(e)}/>
-        </Form>
-
-
-
-        // <div className="p-4">
-        //   <div className="flex justify-between mb-4">
-        //     <button className="green-button p-4 text-xl" onClick={handleSaveAwards}>
-        //       {"Save"}
-        //     </button>
-        //     <div className="flex justify-center">
-        //       <button className="green-button p-4" onClick={handleAddAward}>
-        //         {"Add Award"}
-        //       </button>
-        //       <button className="green-button p-4" onClick={onAiCall}>
-        //         <div>
-        //           <AutoAwesomeIcon className="pr-2" />
-        //           <span>Write with AI</span>
-        //         </div>
-        //       </button>
-        //     </div>
-        //   </div>
-        //   <div className="flex flex-col justify-between">
-        //     {awards.map((award, awardIndex) => (
-        //       <div key={awardIndex} className="mb-2 p-4 border rounded">
-        //         <div className="flex flex-row">
-        //           <input
-        //             type="text"
-        //             className="form-style mb-1"
-        //             placeholder="Award Title"
-        //             value={award.title}
-        //             onChange={(e) => handleAwardsChange(e, awardIndex, "title")}
-        //             required
-        //           />
-        //         </div>
-        //         <div className="flex flex-row mb-2">
-        //           <input
-        //             type="text"
-        //             className="form-style mr-2"
-        //             placeholder="Awarder"
-        //             value={award.awarder}
-        //             onChange={(e) => handleAwardsChange(e, awardIndex, "awarder")}
-        //             required
-        //           />
-        //           <input
-        //             type="date"
-        //             className="form-style"
-        //             placeholder="Date"
-        //             value={award.date}
-        //             onChange={(e) => handleAwardsChange(e, awardIndex, "date")}
-        //             required
-        //           />
-        //         </div>
-        //         <textarea
-        //           className="form-style mb-2"
-        //           placeholder="Summary"
-        //           value={award.summary}
-        //           onChange={(e) => handleAwardsChange(e, awardIndex, "summary")}
-        //         />
-        //         <button
-        //           className="remove-content-button whitespace-nowrap my-2"
-        //           onClick={() => handleAwardDelete(awardIndex)}
-        //         >
-        //           Delete Award
-        //         </button>
-        //       </div>
-        //     ))}
-        //   </div>
-        // </div>
-      ) : (
-        <>
-          {awards && (
-            <div
-              className="form-secondary-area"
-              onClick={() => {
-                setIsEditing(true);
-              }}
-            >
-              {awards.map((award) => award.title).join(", ")}
+      {editingAward !== null ? (
+        <div className="px-4 pb-4">
+          <div className="m-2">
+            <div className="left-right-spacing my-2">
+              <div className="flex items-center">
+                <label className="form-label-text">Award Title</label>
+              </div>
             </div>
-          )}
-        </>
+            <input
+              type="text"
+              className="form-style"
+              value={formData.title}
+              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+              placeholder="Enter award title"
+            />
+
+            <div className="left-right-spacing my-2">
+              <div className="flex items-center">
+                <label className="form-label-text">Date</label>
+              </div>
+            </div>
+            <input
+              type="text"
+              className="form-style"
+              value={formData.date}
+              onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+              placeholder="Enter date"
+            />
+
+            <div className="left-right-spacing my-2">
+              <div className="flex items-center">
+                <label className="form-label-text">Awarder</label>
+              </div>
+            </div>
+            <input
+              type="text"
+              className="form-style"
+              value={formData.awarder}
+              onChange={(e) => setFormData({ ...formData, awarder: e.target.value })}
+              placeholder="Enter awarder"
+            />
+
+            <div className="left-right-spacing my-2">
+              <div className="flex items-center">
+                <label className="form-label-text">Summary</label>
+              </div>
+            </div>
+            <textarea
+              className="form-style h-24"
+              value={formData.summary}
+              onChange={(e) => setFormData({ ...formData, summary: e.target.value })}
+              placeholder="Enter award summary"
+            />
+          </div>
+
+          <div className="left-right-spacing">
+            <button
+              disabled={!editingAward.id}
+              className={`${editingAward.id ? "remove-button" : "disabled-button"}`}
+              onClick={() => handleDelete(editingAward.id)}
+            >
+              Delete
+            </button>
+            <button
+              className="remove-button"
+              onClick={handleCancel}
+            >
+              Cancel
+            </button>
+            <button
+              className="add-button-small"
+              onClick={handleSaveForm}
+            >
+              Save
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div>
+          {awards.map((award, index) => (
+            <div key={award.id} 
+              className="form-secondary-area flex items-center" 
+              onClick={() => handleEdit(award)}
+            >
+              <div className="flex items-center gap-2 mr-4">
+                <button 
+                  className="p-1 hover:bg-gray-100 rounded"
+                  onClick={(e) => handleMoveUp(index, e)}
+                  disabled={index === 0}
+                >
+                  <KeyboardArrowUpIcon />
+                </button>
+                <button 
+                  className="p-1 hover:bg-gray-100 rounded"
+                  onClick={(e) => handleMoveDown(index, e)}
+                  disabled={index === awards.length - 1}
+                >
+                  <KeyboardArrowDownIcon />
+                </button>
+              </div>
+              <div className="flex-grow">
+                <div className="font-bold">{award.title}</div>
+                <div>{award.date}</div>
+                <div>{award.awarder}</div>
+                {award.summary && <div className="mt-2">{award.summary}</div>}
+              </div>
+              <button 
+                className="green-button px-6 py-2 border border-1 min-w-[100px]" 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleEdit(award);
+                }}
+              >
+                Edit
+              </button>
+            </div>
+          ))}
+          <div className={`p-4 flex flex-col items-center justify-center add-button`} onClick={handleAddAward}>
+            <EmojiEventsIcon fontSize="large" />
+            <span>{"Add Award"}</span>
+          </div>
+        </div>
       )}
     </div>
   );

@@ -3,13 +3,14 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import WhiteLogo from '../assets/logo-white.png';
 import TextLogo from '../assets/text-logo-white.png';
 import 'styles/index.css';
-import { SignedIn, SignedOut, UserButton } from "@clerk/clerk-react";
+import { SignedIn, SignedOut, UserButton, useUser } from "@clerk/clerk-react";
 
 const NavBar = () => {
   const [mobileScreen, setMobileScreen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation(); 
+  const { user } = useUser();
   const isAuthRoute = location.pathname.includes("/sign-in") || location.pathname.includes("/sign-up"); // Determine if it's an auth route
 
   // let clerkUserId = "";
@@ -76,19 +77,10 @@ const NavBar = () => {
       </button>
 
       {isMobileMenuOpen && (
-        <div className="flex flex-col absolute top-16 rounded items-start right-0 bg-gray-800">
+        <div className="flex flex-col absolute top-16 right-0 bg-white border-2 border-black rounded-lg shadow-lg animate-slideUpFadeIn">
           <SignedOut>
             <button
-              className="text-white font-bold p-4 w-full border-b border-white text-left "
-              onClick={() => {
-                setIsMobileMenuOpen(false);
-                navigate('/pricing');
-              }}
-            >
-              {'Pricing'}
-            </button>
-            <button
-              className="text-white font-bold p-4 w-full border-b border-white text-left"
+              className="text-main-green font-bold p-4 w-full border-b-2 border-black text-left hover:bg-lightest-green transition ease-in-out duration-300"
               onClick={() => {
                 setIsMobileMenuOpen(false);
                 navigate('/sign-in');
@@ -99,7 +91,7 @@ const NavBar = () => {
           </SignedOut>
           <SignedIn>
             <button
-              className="text-white font-bold p-4 w-full border-b border-white text-left"
+              className="text-main-green font-bold p-4 w-full border-b-2 border-black text-left hover:bg-lightest-green transition ease-in-out duration-300"
               onClick={() => {
                 setIsMobileMenuOpen(false);
                 navigate('/dashboard');
@@ -107,18 +99,23 @@ const NavBar = () => {
             >
               {'Dashboard'}
             </button>
-            <button
-              className="text-white font-bold p-4 w-full border-b border-white text-left "
+            <button 
+              className="p-4 border-b-2 border-black text-left hover:bg-lightest-green transition ease-in-out duration-300 flex items-center justify-between"
               onClick={() => {
-                setIsMobileMenuOpen(false);
-                navigate('/pricing');
+                const userButton = document.querySelector('.cl-userButtonTrigger');
+                if (userButton) {
+                  userButton.click();
+                }
               }}
             >
-              {'Pricing'}
+              <div className="flex items-center">
+                <span className="text-main-green font-bold">Hello, </span>
+                <span className="text-main-green ml-1">{user?.fullName || 'User'}</span>
+              </div>
+              <div className="ml-4">
+                <UserButton afterSignOutUrl='/'/>
+              </div>
             </button>
-            <div className="p-2">
-              <UserButton afterSignOutUrl='/'/>
-            </div>
           </SignedIn>
         </div>
       )}
@@ -127,7 +124,7 @@ const NavBar = () => {
 
   return (
     <div className="no-print">
-      <nav className="flex justify-between w-full items-center bg-main-green py-2 px-8">
+      <nav className="flex justify-between w-full items-center bg-main-green py-2 px-8 border-b-2 border-black">
         <div
           className={`flex items-center w-full ${
             mobileScreen ? 'justify-between' : ''
@@ -155,12 +152,12 @@ const NavBar = () => {
         ) : (
           <div className="flex items-center">
             <SignedOut>
-              <a
+              {/* <a
                 className="text-white font-bold pr-8"
                 href='/pricing'
               >
                 {'Pricing'}
-              </a>
+              </a> */}
               <a
                 id="loginBtn"
                 href="/sign-in"
@@ -176,12 +173,12 @@ const NavBar = () => {
               >
                 {'Dashboard'}
               </button>
-              <button
+              {/* <button
                 className="text-white font-bold pr-8"
                 onClick={() => navigate('/pricing')}
               >
                 {'Pricing'}
-              </button>
+              </button> */}
               <UserButton afterSignOutUrl='/' />
             </SignedIn>
           </div>
