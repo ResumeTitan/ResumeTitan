@@ -1,9 +1,5 @@
 import React, { useState } from 'react';
 import ThemeSelector from './themeSelector';
-import HarvardImg from 'assets/harvard.png';
-import OnepageImg from 'assets/onepage.png';
-import MacchiatoImg from 'assets/macchiato.png';
-import StudentClassicImg from 'assets/macchiato.png'; // TODO: Replace with actual student-classic image
 import SectionList from './SectionList';
 import 'styles/index.css';
 import { ResumeType } from 'types/types';
@@ -63,7 +59,7 @@ const CustomizeTab: React.FC<Props> = ({
         onSelect={onChangeTheme}
       />
     </div>
-    <div className="form-container">
+    {/* <div className="form-container">
       <div className="form-text-main">{"Job Specific Content"}</div>
       <div className="p-2">
         <input 
@@ -98,7 +94,7 @@ const CustomizeTab: React.FC<Props> = ({
           />
         </div>
       </div>
-    </div>
+    </div> */}
     </>
   );
 };

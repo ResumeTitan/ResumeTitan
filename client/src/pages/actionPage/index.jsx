@@ -328,8 +328,37 @@ function ActionPage() {
 
   const handleUpdateResume = (updatedResume) => {
     setCurrentResume(updatedResume);
+    
+    // Save silently without showing spinner
+    handleSilentSaveResume(updatedResume);
+  }
 
-    handleSaveResume(false, updatedResume);
+  /**
+   * @function handleSilentSaveResume
+   * @description Save current state of resume silently without showing spinner
+   * @param {Object} updatedResume The resume to save
+   */
+  const handleSilentSaveResume = async (updatedResume) => {
+    if (!isSignedIn) {
+      return;
+    }
+    try {
+      const newToken = await refreshToken();
+      if (!newToken) {
+        throw new Error('Failed to refresh token');
+      }
+      const response = await api.put("/resume/update", updatedResume);
+      const savedResume = response.data.resume;
+      
+      // If this was a new resume (no _id), update the state with the returned _id
+      // so subsequent saves don't create new resumes
+      if (!updatedResume._id && savedResume._id) {
+        setCurrentResume(savedResume);
+      }
+    } catch (err) {
+      console.log('Silent save error:', err);
+      // Optionally show a subtle error notification instead of throwing
+    }
   }
 
   const handleUpdateSections = (sections) => {

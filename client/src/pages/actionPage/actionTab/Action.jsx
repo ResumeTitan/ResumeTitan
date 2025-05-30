@@ -47,7 +47,8 @@ function ActionTab({
     setAiSkillsLoading(true);
     const skillsResponse = await api.post("/resume/skills", {
       ...resumeIn,
-      userInput: userInput // Always pass the AI assistant text, even if empty
+      userInput: userInput, // Always pass the AI assistant text, even if empty
+      operationType: userInput ? 'edit' : 'generate'
     });
     setAiSkillsLoading(false);
     onUpdateResume({

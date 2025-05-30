@@ -114,7 +114,8 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
     try {
       const jobResponse = await api.post("/resume/work", { 
         job: jobForm,
-        userInput: userInput
+        userInput: userInput,
+        operationType: userInput ? 'brainstorm' : 'generate'
       });
       setJobForm(prev => ({ ...prev, highlights: jobResponse.data.response.highlights }));
     } catch (error) {
@@ -125,19 +126,12 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
   }
 
   const handleAiAssistCall = async () => {
-    const newForm = { ...jobForm };
-
-    if (newForm.highlights) {
-      newForm.highlights = [...newForm.highlights, aiAssistantMsg];
-    } else {
-      newForm.highlights = [aiAssistantMsg];
-    }
-  
     setAiLoading(true);
     try {
       const jobResponse = await api.post("/resume/work", { 
-        job: newForm,
-        userInput: aiAssistantMsg
+        job: jobForm,
+        userInput: aiAssistantMsg,
+        operationType: 'edit'
       });
       setJobForm(prev => ({ ...prev, highlights: jobResponse.data.response.highlights }));
     } catch (error) {

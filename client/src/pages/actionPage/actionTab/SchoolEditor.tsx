@@ -136,7 +136,8 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }: SchoolEdito
     try {
       const schoolResponse = await api.post("/resume/education", { 
         education: schoolForm,
-        userInput: userInput
+        userInput: userInput,
+        operationType: userInput ? 'brainstorm' : 'generate'
       });
       setSchoolForm(prev => ({ ...prev, highlights: schoolResponse.data.response.highlights }));
     } catch (error) {
@@ -147,19 +148,12 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }: SchoolEdito
   }
 
   const handleAiAssistCall = async () => {
-    const newForm = { ...schoolForm };
-
-    if (newForm.highlights) {
-      newForm.highlights = [...newForm.highlights, aiAssistantMsg];
-    } else {
-      newForm.highlights = [aiAssistantMsg];
-    }
-  
     setAiLoading(true);
     try {
       const schoolResponse = await api.post("/resume/education", { 
-        education: newForm,
-        userInput: aiAssistantMsg
+        education: schoolForm,
+        userInput: aiAssistantMsg,
+        operationType: 'edit'
       });
       setSchoolForm(prev => ({ ...prev, highlights: schoolResponse.data.response.highlights }));
     } catch (error) {

@@ -3,47 +3,43 @@ import Resume from '../models/Resume';
 import { z } from "zod";
 import { ResumeType } from "../types/types";
 import { geminiClient } from '../ext/clients';
-import { ServerStyleSheet } from 'styled-components';
 import puppeteer from 'puppeteer';
 
 import "dotenv/config";
 const CLIENT_URL = process.env.CLIENT_URL;
 
 const EducationSchema = z.object({
-  institution: z.string(),
-  studyType: z.string(),
-  area: z.string(),
-  startDate: z.string(),
-  endDate: z.string(),
-  highlights: z.array(z.string()),
-  extraHighlights: z.array(z.string())
+  institution: z.string().optional(),
+  studyType: z.string().optional(),
+  area: z.string().optional(),
+  startDate: z.string().optional(),
+  endDate: z.string().optional(),
+  highlights: z.array(z.string()).optional()
 });
 
 const VolunteerSchema = z.object({
-  organization: z.string(),
-  position: z.string(),
-  url: z.string(),
-  startDate: z.string(),
-  endDate: z.string(),
-  highlights: z.array(z.string()),
-  extraHighlights: z.array(z.string())
+  organization: z.string().optional(),
+  position: z.string().optional(),
+  url: z.string().optional(),
+  startDate: z.string().optional(),
+  endDate: z.string().optional(),
+  highlights: z.array(z.string()).optional()
 });
 
 const WorkSchema = z.object({
-  position: z.string(),
-  name: z.string(),
-  startDate: z.string(),
-  endDate: z.string(),
-  highlights: z.array(z.string()),
-  extraHighlights: z.array(z.string())
+  position: z.string().optional(),
+  name: z.string().optional(),
+  startDate: z.string().optional(),
+  endDate: z.string().optional(),
+  highlights: z.array(z.string()).optional()
 });
 
 const SkillsSchema = z.object({
   skills: z.array(z.object({
     name: z.string(),
-    level: z.string(),
-    keywords: z.array(z.string())
-  }))
+    level: z.string().optional(),
+    keywords: z.array(z.string()).optional()
+  })).optional()
 });
 
 const SummarySchema = z.object({
@@ -51,10 +47,10 @@ const SummarySchema = z.object({
 });
 
 const AwardsSchema = z.object({
-  title: z.string(),
-  date: z.string(),
-  awarder: z.string(),
-  summary: z.string()
+  title: z.string().optional(),
+  date: z.string().optional(),
+  awarder: z.string().optional(),
+  summary: z.string().optional()
 });
 
 const ResumeDataSchema = z.object({
@@ -83,7 +79,7 @@ const getStructuredOutput = async (prompt: string, schema: z.ZodType<any>) => {
   }
 };
 
-const getPrompt = (section: string, data: any) => {
+const getPrompt = (section: string, data: any, operationType: string = 'generate') => {
   switch (section) {
     case 'summary':
       return `Generate a professional resume summary for:
@@ -101,61 +97,179 @@ Format as JSON:
 }`;
 
     case 'education':
-      return `Generate education highlights for:
-Data: ${JSON.stringify(data)}
+      if (operationType === 'brainstorm' && data.userInput) {
+        return `Generate education highlights based on brainstorming input:
+Education Details: ${JSON.stringify(data)}
+Brainstorm Input: "${data.userInput}"
 
 Requirements:
-1. If userInput is provided, transform, rewrite, or generate the highlights array according to the user's instructions: "${data.userInput}". This may include rewording, removing, or adding highlights, not just generating new ones. Listen carefully to the user's request and apply it to the highlights array.
-2. If no userInput is provided, generate 2-6 relevant highlights based on the education details
-3. Include academic achievements and key projects
+1. Transform the brainstorm ideas into 3-6 professional education highlights
+2. Focus on academic achievements, projects, coursework, and extracurricular activities
+3. Make each highlight specific and quantifiable where possible
 4. Optimize for ATS
 5. No school name repetition
 6. Each highlight should be unique and impactful
+7. Return ONLY valid JSON, no additional text or markdown formatting
+
+Format as JSON:
+{
+  "institution": "school name",
+  "studyType": "degree type", 
+  "area": "major",
+  "startDate": "start date",
+  "endDate": "end date",
+  "highlights": ["achievement 1", "achievement 2", ...]
+}`;
+      } else if (operationType === 'edit' && data.userInput) {
+        return `You are an AI assistant helping to edit resume highlights. Analyze the existing highlights and apply the user's instructions intelligently.
+
+Current Education Entry: ${JSON.stringify(data)}
+User Instructions: "${data.userInput}"
+Current Highlights: ${JSON.stringify(data.highlights || [])}
+
+INSTRUCTIONS FOR AI ASSISTANT:
+The user wants you to modify their education highlights based on their specific request. You should:
+1. Carefully read the user's instructions and understand what they want to change
+2. Look at the existing highlights and determine how to best apply the user's request
+3. The user might want you to:
+   - Rewrite specific highlights for better impact or clarity
+   - Add new highlights they forgot to mention
+   - Remove highlights that aren't relevant
+   - Improve grammar, tone, or professional language
+   - Reorganize highlights for better flow
+   - Make highlights more quantifiable or specific
+   - Ensure consistency across all highlights
+4. Apply the user's instructions while maintaining professional resume language
+5. Keep the total number of highlights reasonable (3-6)
+6. Preserve any highlights the user didn't specifically ask to change
+7. Return ONLY valid JSON, no additional text or markdown formatting
+
+Format as JSON:
+{
+  "institution": "school name",
+  "studyType": "degree type",
+  "area": "major", 
+  "startDate": "start date",
+  "endDate": "end date",
+  "highlights": ["achievement 1", "achievement 2", ...]
+}`;
+      } else {
+        return `Generate education highlights for:
+Data: ${JSON.stringify(data)}
+
+Requirements:
+1. Generate 2-6 relevant highlights based on the education details
+2. Include academic achievements and key projects
+3. Optimize for ATS
+4. No school name repetition
+5. Each highlight should be unique and impactful
+6. Return ONLY valid JSON, no additional text or markdown formatting
 
 Format as JSON:
 {
   "institution": "school name",
   "studyType": "degree type",
   "area": "major",
-  "startDate": "start date",
+  "startDate": "start date", 
   "endDate": "end date",
-  "highlights": ["achievement 1", "achievement 2", ...],
-  "extraHighlights": ["extra 1", "extra 2", ...]
+  "highlights": ["achievement 1", "achievement 2", ...]
 }`;
+      }
 
     case 'work':
-      return `Generate work experience highlights for:
-Data: ${JSON.stringify(data)}
+      if (operationType === 'brainstorm' && data.userInput) {
+        return `Generate work experience highlights based on brainstorming input:
+Work Details: ${JSON.stringify(data)}
+Brainstorm Input: "${data.userInput}"
 
 Requirements:
-1. If userInput is provided, transform, rewrite, or generate the highlights array according to the user's instructions: "${data.userInput}". This may include rewording, removing, or adding highlights, not just generating new ones. Listen carefully to the user's request and apply it to the highlights array.
-2. If no userInput is provided, generate 3-7 relevant highlights based on the role and responsibilities
-3. Focus on quantifiable achievements and impact
+1. Transform the brainstorm ideas into 4-7 professional work highlights
+2. Focus on quantifiable achievements, impact, and responsibilities
+3. Make each highlight action-oriented and results-focused
 4. Optimize for ATS
 5. No company name repetition
 6. Each highlight should demonstrate unique value
+7. Return ONLY valid JSON, no additional text or markdown formatting
 
 Format as JSON:
 {
   "position": "job title",
   "name": "company name",
   "startDate": "start date",
+  "endDate": "end date", 
+  "highlights": ["achievement 1", "achievement 2", ...],
+  "summary": "brief role description"
+}`;
+      } else if (operationType === 'edit' && data.userInput) {
+        return `You are an AI assistant helping to edit resume highlights. Analyze the existing highlights and apply the user's instructions intelligently.
+
+Current Work Entry: ${JSON.stringify(data)}
+User Instructions: "${data.userInput}"
+Current Highlights: ${JSON.stringify(data.highlights || [])}
+
+INSTRUCTIONS FOR AI ASSISTANT:
+The user wants you to modify their work highlights based on their specific request. You should:
+1. Carefully read the user's instructions and understand what they want to change
+2. Look at the existing highlights and determine how to best apply the user's request
+3. The user might want you to:
+   - Rewrite specific highlights for better impact or clarity
+   - Add new highlights they forgot to mention
+   - Remove highlights that aren't relevant
+   - Improve grammar, tone, or professional language
+   - Reorganize highlights for better flow
+   - Make highlights more quantifiable or specific
+   - Ensure consistency across all highlights
+4. Apply the user's instructions while maintaining professional resume language
+5. Keep the total number of highlights reasonable (3-7)
+6. Preserve any highlights the user didn't specifically ask to change
+7. Return ONLY valid JSON, no additional text or markdown formatting
+
+Format as JSON:
+{
+  "position": "job title", 
+  "name": "company name",
+  "startDate": "start date",
   "endDate": "end date",
   "highlights": ["achievement 1", "achievement 2", ...],
-  "summary": "brief role description",
-  "extraHighlights": ["extra 1", "extra 2", ...]
+  "summary": "brief role description"
 }`;
-
-    case 'volunteer':
-      return `Generate volunteer experience highlights for:
+      } else {
+        return `Generate work experience highlights for:
 Data: ${JSON.stringify(data)}
 
 Requirements:
-1. Generate 2-5 relevant highlights based on the volunteer role
-2. Focus on impact and skills gained
+1. Generate 3-7 relevant highlights based on the role and responsibilities
+2. Focus on quantifiable achievements and impact
 3. Optimize for ATS
-4. No organization name repetition
-5. Each highlight should show unique contribution
+4. No company name repetition
+5. Each highlight should demonstrate unique value
+6. Return ONLY valid JSON, no additional text or markdown formatting
+
+Format as JSON:
+{
+  "position": "job title",
+  "name": "company name", 
+  "startDate": "start date",
+  "endDate": "end date",
+  "highlights": ["achievement 1", "achievement 2", ...],
+  "summary": "brief role description"
+}`;
+      }
+
+    case 'volunteer':
+      if (operationType === 'brainstorm' && data.userInput) {
+        return `Generate volunteer experience highlights based on brainstorming input:
+Volunteer Details: ${JSON.stringify(data)}
+Brainstorm Input: "${data.userInput}"
+
+Requirements:
+1. Transform the brainstorm ideas into 3-6 professional volunteer highlights
+2. Focus on impact, skills gained, and community contribution
+3. Make each highlight specific and meaningful
+4. Optimize for ATS
+5. No organization name repetition
+6. Each highlight should show unique contribution
+7. Return ONLY valid JSON, no additional text or markdown formatting
 
 Format as JSON:
 {
@@ -164,21 +278,79 @@ Format as JSON:
   "url": "website",
   "startDate": "start date",
   "endDate": "end date",
-  "highlights": ["achievement 1", "achievement 2", ...],
-  "extraHighlights": ["extra 1", "extra 2", ...]
+  "highlights": ["achievement 1", "achievement 2", ...]
 }`;
+      } else if (operationType === 'edit' && data.userInput) {
+        return `You are an AI assistant helping to edit resume highlights. Analyze the existing highlights and apply the user's instructions intelligently.
 
-    case 'skills':
-      return `Generate relevant skills for:
+Current Volunteer Entry: ${JSON.stringify(data)}
+User Instructions: "${data.userInput}"
+Current Highlights: ${JSON.stringify(data.highlights || [])}
+
+INSTRUCTIONS FOR AI ASSISTANT:
+The user wants you to modify their volunteer highlights based on their specific request. You should:
+1. Carefully read the user's instructions and understand what they want to change
+2. Look at the existing highlights and determine how to best apply the user's request
+3. The user might want you to:
+   - Rewrite specific highlights for better impact or clarity
+   - Add new highlights they forgot to mention
+   - Remove highlights that aren't relevant
+   - Improve grammar, tone, or professional language
+   - Reorganize highlights for better flow
+   - Make highlights more quantifiable or specific
+   - Ensure consistency across all highlights
+4. Apply the user's instructions while maintaining professional resume language
+5. Keep the total number of highlights reasonable (3-6)
+6. Preserve any highlights the user didn't specifically ask to change
+7. Return ONLY valid JSON, no additional text or markdown formatting
+
+Format as JSON:
+{
+  "organization": "org name",
+  "position": "role", 
+  "url": "website",
+  "startDate": "start date",
+  "endDate": "end date",
+  "highlights": ["achievement 1", "achievement 2", ...]
+}`;
+      } else {
+        return `Generate volunteer experience highlights for:
 Data: ${JSON.stringify(data)}
 
 Requirements:
-1. 1. If userInput is provided, transform, rewrite, or generate the skills array according to the user's instructions: "${data.userInput}". This may include rewording, removing, or adding skills, not just generating new ones. Listen carefully to the user's request and apply it to the skills array.
-2. If no userInput is provided, generate 4-10 relevant skills based on work/education background
+1. Generate 2-5 relevant highlights based on the volunteer role
+2. Focus on impact and skills gained
+3. Optimize for ATS
+4. No organization name repetition
+5. Each highlight should show unique contribution
+6. Return ONLY valid JSON, no additional text or markdown formatting
+
+Format as JSON:
+{
+  "organization": "org name",
+  "position": "role",
+  "url": "website", 
+  "startDate": "start date",
+  "endDate": "end date",
+  "highlights": ["achievement 1", "achievement 2", ...]
+}`;
+      }
+
+    case 'skills':
+      if (operationType === 'edit' && data.userInput) {
+        return `Edit and improve existing skills based on user instructions:
+Skills Data: ${JSON.stringify(data)}
+User Instructions: "${data.userInput}"
+Existing Skills: ${JSON.stringify(data.skills || [])}
+
+Requirements:
+1. Follow the user's specific instructions for editing the skills
+2. This may include rewording, removing, adding, or reorganizing skills
 3. Include proficiency levels for each skill
 4. Add relevant keywords for each skill
-5. Match work/education background
+5. Preserve any skills the user didn't ask to change
 6. Prioritize most important skills first
+7. Return ONLY valid JSON, no additional text or markdown formatting
 
 Format as JSON:
 {
@@ -190,6 +362,29 @@ Format as JSON:
     }
   ]
 }`;
+      } else {
+        return `Generate relevant skills for:
+Data: ${JSON.stringify(data)}
+
+Requirements:
+1. Generate 4-10 relevant skills based on work/education background
+2. Include proficiency levels for each skill
+3. Add relevant keywords for each skill
+4. Match work/education background
+5. Prioritize most important skills first
+6. Return ONLY valid JSON, no additional text or markdown formatting
+
+Format as JSON:
+{
+  "skills": [
+    {
+      "name": "skill name",
+      "level": "proficiency", 
+      "keywords": ["keyword1", "keyword2"]
+    }
+  ]
+}`;
+      }
 
     default:
       return '';
@@ -215,13 +410,24 @@ export const postSummary = async (req: Request, res: Response) => {
 
 export const postEducation = async (req: Request, res: Response) => {
   try {
-    const { education, userInput } = req.body;
+    const { education, userInput, operationType } = req.body;
     if (!resumeData.education) {
       resumeData.education = [];
     }
     resumeData.education.push(education);
 
-    const prompt = getPrompt('education', { ...education, userInput });
+    // Determine operation type based on request data
+    let opType = operationType || 'generate';
+    if (!opType && userInput) {
+      // If userInput exists but no operationType specified, determine based on context
+      if (education.highlights && education.highlights.length > 0) {
+        opType = 'edit'; // Has existing highlights, likely editing
+      } else {
+        opType = 'brainstorm'; // No existing highlights, likely brainstorming
+      }
+    }
+
+    const prompt = getPrompt('education', { ...education, userInput }, opType);
     const response = await getStructuredOutput(prompt, EducationSchema);
 
     res.status(200).json({ message: 'Education information added successfully', response });
@@ -239,13 +445,24 @@ export const postEducation = async (req: Request, res: Response) => {
  */
 export const postWork = async (req: Request, res: Response) => {
   try {
-    const { job, userInput } = req.body;
+    const { job, userInput, operationType } = req.body;
     if (!resumeData.work) {
       resumeData.work = [];
     }
     resumeData.work.push(job);
 
-    const prompt = getPrompt('work', { ...job, userInput });
+    // Determine operation type based on request data
+    let opType = operationType || 'generate';
+    if (!opType && userInput) {
+      // If userInput exists but no operationType specified, determine based on context
+      if (job.highlights && job.highlights.length > 0) {
+        opType = 'edit'; // Has existing highlights, likely editing
+      } else {
+        opType = 'brainstorm'; // No existing highlights, likely brainstorming
+      }
+    }
+
+    const prompt = getPrompt('work', { ...job, userInput }, opType);
     const response = await getStructuredOutput(prompt, WorkSchema);
 
     res.status(200).json({ message: 'Job information added successfully', response });
@@ -262,17 +479,28 @@ export const postWork = async (req: Request, res: Response) => {
  * @param {Response} res
  */
 export const postVolunteer = async (req: Request, res: Response) => {
-  const { vol } = req.body;
-  if (!resumeData.volunteer) {
-    resumeData.volunteer = [];
-  }
-  resumeData.volunteer.push(vol);
-
   try {
-    const prompt = getPrompt('volunteer', vol);
+    const { volunteer, userInput, operationType } = req.body;
+    if (!resumeData.volunteer) {
+      resumeData.volunteer = [];
+    }
+    resumeData.volunteer.push(volunteer);
+
+    // Determine operation type based on request data
+    let opType = operationType || 'generate';
+    if (!opType && userInput) {
+      // If userInput exists but no operationType specified, determine based on context
+      if (volunteer.highlights && volunteer.highlights.length > 0) {
+        opType = 'edit'; // Has existing highlights, likely editing
+      } else {
+        opType = 'brainstorm'; // No existing highlights, likely brainstorming
+      }
+    }
+
+    const prompt = getPrompt('volunteer', { ...volunteer, userInput }, opType);
     const response = await getStructuredOutput(prompt, VolunteerSchema);
 
-    res.status(200).json({ msg: 'Volunteer information added successfully', response });
+    res.status(200).json({ message: 'Volunteer information added successfully', response });
   } catch (error) {
     console.error('Error generating volunteer information:', error);
     res.status(500).json({ error: 'Failed to generate volunteer information' });
@@ -280,11 +508,18 @@ export const postVolunteer = async (req: Request, res: Response) => {
 };
 
 export const postSkills = async (req: Request, res: Response) => {
-  const { skills, work, education, summary, volunteer, userInput } = req.body;
+  const { skills, work, education, summary, volunteer, userInput, operationType } = req.body;
   resumeData.skills = skills;
 
   try {
-    const prompt = getPrompt('skills', { skills, work, education, summary, volunteer, userInput });
+    // Determine operation type based on request data
+    let opType = operationType || 'generate';
+    if (!opType && userInput) {
+      // If userInput exists but no operationType specified, it's likely editing
+      opType = 'edit';
+    }
+
+    const prompt = getPrompt('skills', { skills, work, education, summary, volunteer, userInput }, opType);
     const response = await getStructuredOutput(prompt, SkillsSchema);
 
     res.status(200).json({ msg: 'Skills information added successfully', response });

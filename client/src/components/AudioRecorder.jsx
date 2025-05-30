@@ -1,12 +1,46 @@
 import React, { useRef, useState } from 'react';
 import api from 'api/actions';
 
+// Select the best supported audio MIME type for MediaRecorder
+function getSupportedMimeType() {
+  const possibleTypes = [
+    'audio/webm;codecs=opus',
+    'audio/webm',
+    'audio/mp4',
+    'audio/aac',
+    'audio/mpeg',
+    'audio/wav'
+  ];
+  for (const type of possibleTypes) {
+    if (window.MediaRecorder && MediaRecorder.isTypeSupported(type)) {
+      return type;
+    }
+  }
+  return '';
+}
+
+// Detect iOS Safari
+function isIOSSafari() {
+  return (
+    /iP(ad|hone|od)/.test(navigator.userAgent) &&
+    /WebKit/.test(navigator.userAgent) &&
+    !/CriOS/.test(navigator.userAgent)
+  );
+}
+
 const AudioRecorder = ({ onTranscript, disabled }) => {
   const [recording, setRecording] = useState(false);
   const [loading, setLoading] = useState(false);
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
   const streamRef = useRef(null);
+
+  // Detect supported mime type once on mount
+  const mimeType = getSupportedMimeType() || undefined;
+  if (!mimeType || isIOSSafari()) {
+    // If not supported or on iOS Safari, render nothing (no mic button)
+    return null;
+  }
 
   const handleStart = async () => {
     if (!navigator.mediaDevices || !window.MediaRecorder) {
@@ -16,7 +50,7 @@ const AudioRecorder = ({ onTranscript, disabled }) => {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     streamRef.current = stream;
     audioChunksRef.current = [];
-    const mediaRecorder = new window.MediaRecorder(stream, { mimeType: 'audio/webm' });
+    const mediaRecorder = new window.MediaRecorder(stream, mimeType ? { mimeType } : undefined);
     mediaRecorderRef.current = mediaRecorder;
 
     mediaRecorder.ondataavailable = (e) => {
@@ -27,7 +61,7 @@ const AudioRecorder = ({ onTranscript, disabled }) => {
 
     mediaRecorder.onstop = async () => {
       setLoading(true);
-      const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+      const audioBlob = new Blob(audioChunksRef.current, { type: mimeType || 'audio/webm' });
       const formData = new FormData();
       formData.append('audio', audioBlob, 'recording.webm');
       try {
@@ -43,6 +77,7 @@ const AudioRecorder = ({ onTranscript, disabled }) => {
       } catch (err) {
         alert('Speech-to-text failed.');
       }
+      // Stop all tracks to release the mic
       if (streamRef.current) {
         streamRef.current.getTracks().forEach(track => track.stop());
         streamRef.current = null;
