@@ -1,6 +1,7 @@
 import { createClerkClient } from '@clerk/backend';
 // import Stripe from 'stripe';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { ChatOpenAI } from "@langchain/openai";
 import 'dotenv/config';
 
 // Setup Clerk Client
@@ -17,3 +18,10 @@ if (!GEMINI_API_KEY) {
 
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
 export const geminiClient = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+// Setup ChatGPT Client
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+export const openAiClient = new ChatOpenAI({ 
+  modelName: "gpt-4",
+  apiKey: OPENAI_API_KEY,
+  temperature: 0.7
+});

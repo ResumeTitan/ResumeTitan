@@ -13,6 +13,7 @@ import interviewRoutes from './routes/interview';
 // import stripeRoutes from './routes/stripe';
 import coverLetterRoutes from './routes/coverLetter';
 import speechRoutes from './routes/speech';
+import chatRoutes from './routes/chat';
 
 /* CONFIGURATIONS */
 // @ts-ignore
@@ -50,6 +51,7 @@ app.use('/interview', interviewRoutes);
 // app.use('/checkout', stripeRoutes);
 app.use('/cover-letter', coverLetterRoutes);
 app.use('/speech', speechRoutes);
+app.use('/chat', chatRoutes);
 
 /* MONGOOSE SETUP */
 const HOST = process.env.HOST || 'localhost';
