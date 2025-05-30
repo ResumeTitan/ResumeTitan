@@ -14,3 +14,6 @@ client/package-lock.json
 .env.local
 client/.env.local
 .vscode
+package.json
+package-lock.json
+
