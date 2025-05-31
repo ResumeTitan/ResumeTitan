@@ -4,18 +4,18 @@ Our Cover Letter Generator helps you quickly craft personalized, professional co
 
 ---
 
-## 🧭 Getting Started
+## Getting Started
 
 1. **Log in to your account** on the website.
 2. From your **Dashboard**, under **“My Cover Letters”**, click on **“Add New”**
 
 ---
 
-## ✍️ Filling Out Cover Letter Information
+## Filling Out Cover Letter Information
 
 The generator will prompt you to enter key details to help tailor your letter. Here's what you'll need:
 
-### 1. 📝 Heading Information
+### 1. Heading Information
 
 Start with your contact details that will appear at the top of the letter:
 
@@ -24,7 +24,7 @@ Start with your contact details that will appear at the top of the letter:
 - Phone Number  
 - City, State
 
-### 2. 🧑‍💼 Job Target
+### 2. Job Target
 
 You have two ways to help the AI tailor your cover letter:
 
@@ -42,7 +42,7 @@ Paste the direct URL of the job posting. The AI will extract relevant informatio
 
 ---
 
-## 🤖 AI-Powered Letter Generation
+## AI-Powered Letter Generation
 
 Once you've provided the necessary inputs, click **“Generate Cover Letter.”**
 
@@ -55,23 +55,23 @@ The AI will create a full draft that includes:
 
 ---
 
-## 🛠 Editing with the AI Assistant
+## Editing with the AI Assistant
 
 After generation, you can **manually edit** the letter or use the **AI Assistant** to revise specific parts.
 
-### ✨ Sample Prompts for AI Editing
+### Sample Prompts for AI Editing
 
-#### 🔄 Rewording
+#### Rewording
 - "Make this more formal"
 - "Use a more enthusiastic tone"
 - "Simplify the language"
 
-#### 📈 Expanding
+#### Expanding
 - "Add a sentence about my leadership experience"
 - "Include more detail about my tech skills"
 - "Mention my internship at Google"
 
-#### 🧹 Polishing
+#### Polishing
 - "Fix grammar and formatting"
 - "Make this sound more confident"
 - "Tailor this for a non-profit role"
@@ -80,14 +80,14 @@ You can highlight a sentence or paragraph and enter your prompt to fine-tune it 
 
 ---
 
-## 💾 Saving & Exporting
+## Saving & Exporting
 
 - Click **“Save”** to store your cover letter to your dashboard.
 - You can download it as a **PDF** or **copy it as plain text**.
 
 ---
 
-## 💡 Pro Tips
+## Pro Tips
 
 - Customize your letter for each job to maximize your chances.  
 - Keep it under one page.  
@@ -98,4 +98,4 @@ You can highlight a sentence or paragraph and enter your prompt to fine-tune it 
 
 For additional help, contact us at info@resumetitan.com.
 
-Good luck with your applications! ✉️💼
+Good luck with your applications!

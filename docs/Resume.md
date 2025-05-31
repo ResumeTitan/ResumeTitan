@@ -4,14 +4,14 @@ Welcome to the Resume Builder! This guide will walk you through how to use the r
 
 ---
 
-## 🧭 Getting Started
+## Getting Started
 
 1. **Log in to your account** on the website.
 2. You will be taken to your **Dashboard**. Under **My Resumes**, click **Add New**.
 
 ---
 
-## ✍️ Filling Out Your Resume
+## Filling Out Your Resume
 
 The Resume Builder is organized into sections for easy editing.
 
@@ -29,7 +29,7 @@ Start by entering your essential personal details:
 
 After your basic info, you can start building out the rest of your resume by adding customizable sections.
 
-#### 🧰 Work Experience
+#### Work Experience
 
 Include:
 
@@ -39,7 +39,7 @@ Include:
 - Start and End Dates  
 - Description of Responsibilities/Achievements  
 
-#### 🎓 Education
+#### Education
 
 Include:
 
@@ -49,7 +49,7 @@ Include:
 - Graduation Date  
 - Relevant coursework or honors (optional)  
 
-#### 🤝 Volunteering
+#### Volunteering
 
 Include:
 
@@ -62,11 +62,11 @@ Include:
 
 ---
 
-## 🤖 Using AI Assistance to Build Your Resume
+## Using AI Assistance to Build Your Resume
 
 Each resume section includes **AI-powered tools** to help you write compelling, professional content more efficiently.
 
-### ✨ Write with AI - Content Generator
+### Write with AI - Content Generator
 
 Instead of manually writing bullet points, you can provide a **short description** of the experience, and the AI will generate multiple resume-ready bullet points for you. The more information provided, the more tailored the highlights will be to you.
 
@@ -80,45 +80,45 @@ _Generated Bullet Points:_
 - Designed and published 50+ posts across platforms weekly  
 - Analyzed campaign performance to guide future content initiatives  
 
-### ✨ AI Assitant - Editing & Enhancement
+### AI Assitant - Editing & Enhancement
 
 Already have bullet points but want to improve them? Use the AI assistant to **refine**, **reword**, or **expand** them.
 
 You can highlight one or multiple bullet points and give the assistant a prompt.
 
-#### ✅ Sample AI Prompts for Editing
+#### Sample AI Prompts for Editing
 
 Each section offers an AI assistant. This is meant for spot edits, along with adding and removing existing highlights. The prompt you give the AI Assistant can be applied to one, multiple or all of the bullet points in the section. Here are some example prompts you can use:
 
-##### 🔄 Rewording
+##### Rewording
 - "Make this more professional"
 - "Rephrase using action verbs"
 - "Change the tone to be more confident"
 
-##### 📈 Expanding
+##### Expanding
 - "Add more measurable impact"
 - "Include tools or technologies used"
 - "Mention team collaboration or leadership"
 
-##### ✂️ Condensing
+##### Condensing
 - "Make this more concise"
 - "Summarize in one short bullet"
 
-##### 🛠 Mixed Improvements
+##### Mixed Improvements
 - "Improve grammar and add numbers if relevant"
 - "Polish this for a tech resume"
 - "Tailor this for a marketing manager role"
 
 ---
 
-## 💾 Saving & Managing Resumes
+## Saving & Managing Resumes
 
 - Once you've entered your information, click the **“Save”** button in the section, or at the bottom of the page to store your resume.
 - Return to the **Dashboard** anytime to **edit** or **delete** existing resumes.
 
 ---
 
-## 🧭 Tips for Best Results
+## Tips for Best Results
 
 - Keep descriptions **concise** but **impactful**.  
 - Double-check for **grammar and spelling**.
@@ -129,4 +129,4 @@ Each section offers an AI assistant. This is meant for spot edits, along with ad
 
 For more help, contact us at info@resumetitan.com.
 
-Happy resume building! 💼
+Happy resume building!

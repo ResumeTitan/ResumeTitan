@@ -4,14 +4,14 @@ Our Interview Prep tool helps you get ready for your next job interview by gener
 
 ---
 
-## 🧭 Getting Started
+## Getting Started
 
 1. **Log in to your account** on the website.
 2. From your **Dashboard**, under **“My Interviews”** click **“Add New”**
 
 ---
 
-## ✍️ Providing Job Information
+## Providing Job Information
 
 To tailor the interview questions, you’ll need to provide details about the position:
 
@@ -27,14 +27,14 @@ To tailor the interview questions, you’ll need to provide details about the po
 
 ---
 
-## 🤖 Generating Interview Questions
+## Generating Interview Questions
 
 - After entering the job info, click **“Generate Interview Questions.”**  
 - The tool will return several interview questions tailored to the role.
 
 ---
 
-## 💬 Answering Interview Questions
+## Answering Interview Questions
 
 For each question, you will see:
 
@@ -44,7 +44,7 @@ For each question, you will see:
 
 ---
 
-## 🛠 Using AI to Improve Your Answers
+## Using AI to Improve Your Answers
 
 Once you've written your answer, click the **“Analyze My Answer”** button.
 
@@ -56,7 +56,7 @@ The AI assistant will:
 
 ---
 
-## 💡 Tips for Best Use
+## Tips for Best Use
 
 - Be honest and authentic in your answers.  
 - Use the example answers and guidance as inspiration, but tailor your responses to your own experiences.  
@@ -65,7 +65,7 @@ The AI assistant will:
 
 ---
 
-## 💾 Saving & Reviewing
+## Saving & Reviewing
 
 - Save your answers to review and refine them later.  
 - Use the Dashboard to revisit saved interview prep sessions anytime.  
@@ -75,4 +75,4 @@ The AI assistant will:
 
 For further assistance, contact us at info@resumetitan.com.
 
-Prepare well, and good luck with your interview! 🎤✨
+Prepare well, and good luck with your interview!
