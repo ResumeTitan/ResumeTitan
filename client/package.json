@@ -44,12 +44,13 @@
         "web-vitals": "^2.1.4"
     },
     "scripts": {
-        "start": "env-cmd -f .env.development react-scripts start",
+        "start": "env-cmd -f .env.dev react-scripts start",
         "start:prod": "env-cmd -f .env.production serve -s build",
         "build": "react-scripts build",
         "test": "react-scripts test",
         "eject": "react-scripts eject",
-        "deploy": "flyctl deploy",
+        "deploy:dev": "flyctl deploy -c fly-dev.toml",
+        "deploy:prod": "flyctl deploy -c fly.toml",
         "clean": "rm -rf node_modules && rm package-lock.json",
         "clean:install": "rm -rf node_modules && rm package-lock.json && npm install"
     },

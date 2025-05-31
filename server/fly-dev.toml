@@ -1,0 +1,21 @@
+# fly.toml app configuration file generated for resumegpt-server-dev on 2025-05-31T00:36:59-04:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'resumegpt-server-dev'
+primary_region = 'iad'
+
+[build]
+
+[http_service]
+  internal_port = 3000
+  force_https = true
+  auto_stop_machines = 'stop'
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ['app']
+
+[[vm]]
+  size = 'performance-8x'
+  processes = ['app']
