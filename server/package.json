@@ -8,7 +8,8 @@
         "test": "echo \"Error: no test specified\" && exit 1",
         "start": "npx tsx src/index.ts",
         "start:prod": "node dist/index.js",
-        "deploy": "flyctl deploy",
+        "deploy:dev": "flyctl deploy -c fly-dev.toml",
+        "deploy:prod": "flyctl deploy -c fly.toml",
         "clean": "rm -rf node_modules && rm package-lock.json",
         "clean:install": "rm -rf node_modules && rm package-lock.json && npm install"
     },

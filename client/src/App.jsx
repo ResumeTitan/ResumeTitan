@@ -9,7 +9,7 @@ import LandingPage from './pages/landingPage';
 import ContactPage from './pages/contact';
 import InterviewPage from './pages/interviewHelper';
 import SuccessPage from './pages/paymentSuccess';
-import PricingPage from './pages/pricing';
+// import PricingPage from './pages/pricing';
 import CoverLetterPage from './pages/coverLetter';
 import { PrintToPdf } from 'pages/printPage';
 import { Survey } from './pages/survey';

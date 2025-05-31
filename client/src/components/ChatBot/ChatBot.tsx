@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
 import { useUser, useAuth } from '@clerk/clerk-react';
-import axios from 'axios';
+import api, { setTokenFunction } from 'api/actions';
 import ChatIcon from '@mui/icons-material/Chat';
 import SendIcon from '@mui/icons-material/Send';
 import CloseIcon from '@mui/icons-material/Close';
@@ -165,6 +165,32 @@ const LoginButton = styled.button`
   }
 `;
 
+const LoadingDots = styled.div`
+  display: flex;
+  gap: 4px;
+  align-items: center;
+`;
+
+const LoadingDot = styled.div<{ delay: number }>`
+  width: 8px;
+  height: 8px;
+  background: #115E59;
+  border-radius: 50%;
+  animation: flowWave 1.5s ease-in-out infinite;
+  animation-delay: ${props => props.delay}s;
+
+  @keyframes flow {
+    0%, 60%, 100% {
+      opacity: 0.3;
+      transform: scale(0.8);
+    }
+    30% {
+      opacity: 1;
+      transform: scale(1.2);
+    }
+  }
+`;
+
 const ChatBot: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Array<{ text: string; isUser: boolean }>>([
@@ -182,6 +208,11 @@ const ChatBot: React.FC = () => {
   const MAX_CHARS = 1000;
   const MAX_RESPONSE_CHARS = 1500;
   const MAX_MESSAGES = 30;
+
+  // Set up the token function for API calls
+  useEffect(() => {
+    setTokenFunction(getToken);
+  }, [getToken]);
 
   const truncateMessage = (message: string): string => {
     if (message.length <= MAX_RESPONSE_CHARS) return message;
@@ -215,10 +246,8 @@ const ChatBot: React.FC = () => {
     setIsLoading(true);
 
     try {
-      const token = await getToken();
-      const response = await axios.post('http://localhost:3001/chat', 
+      const response = await api.post('/chat', 
         { message: userMessage },
-        { headers: { Authorization: `Bearer ${token}` } }
       );
 
       const truncatedResponse = truncateMessage(response.data.response);
@@ -327,11 +356,11 @@ const ChatBot: React.FC = () => {
         ))}
         {isLoading && (
           <Message $isUser={false}>
-            <div style={{ display: 'flex', gap: '5px' }}>
-              <div style={{ width: '8px', height: '8px', background: '#115E59', borderRadius: '50%', animation: 'bounce 1s infinite' }} />
-              <div style={{ width: '8px', height: '8px', background: '#115E59', borderRadius: '50%', animation: 'bounce 1s infinite 0.2s' }} />
-              <div style={{ width: '8px', height: '8px', background: '#115E59', borderRadius: '50%', animation: 'bounce 1s infinite 0.4s' }} />
-            </div>
+            <LoadingDots>
+              <LoadingDot delay={0} />
+              <LoadingDot delay={0.2} />
+              <LoadingDot delay={0.4} />
+            </LoadingDots>
           </Message>
         )}
         <div ref={messagesEndRef} />

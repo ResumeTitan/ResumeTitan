@@ -72,6 +72,7 @@ export const Dashboard: React.FC = () => {
 
   useEffect(() => {
     const loadData = async () => {
+      // TODO remove?
       const newToken = await getToken();
       if (!newToken) {
         return null;
