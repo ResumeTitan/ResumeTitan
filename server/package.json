@@ -13,7 +13,10 @@
         "clean:install": "rm -rf node_modules && rm package-lock.json && npm install"
     },
     "nodemonConfig": {
-        "ignore": ["node_modules", "dist"]
+        "ignore": [
+            "node_modules",
+            "dist"
+        ]
     },
     "engineStrict": true,
     "overrides": {
@@ -30,11 +33,13 @@
         "@clerk/nextjs": "^5.7.2",
         "@emotion/react": "11.10.6",
         "@emotion/styled": "11.10.6",
+        "@google/generative-ai": "^0.24.1",
         "@langchain/openai": "^0.0.14",
         "@prisma/client": "4.5.0",
         "@sparticuz/chromium": "^123.0.1",
         "axios": "^1.7.2",
         "bcrypt": "^5.1.0",
+        "body-parser": "^1.20.2",
         "chatgpt": "^5.0.10",
         "chatgpt-prompts": "^2.0.1",
         "cookie-parser": "~1.4.7",
@@ -46,12 +51,14 @@
         "got": "^14.4.1",
         "helmet": "^7.1.0",
         "jsonwebtoken": "^9.0.0",
+        "langchain": "^0.0.200",
         "locate-chrome": "^0.1.1",
         "lodash.merge": "^4.6.2",
         "mongoose": "^8.1.1",
         "morgan": "^1.10.0",
         "multer": "^1.4.5-lts.1",
         "node-fetch": "3.3.0",
+        "openai": "^4.24.1",
         "passport": "0.6.0",
         "passport-google-oauth20": "2.0.0",
         "patch-package": "^6.4.7",
@@ -62,9 +69,6 @@
         "styled-components": "^6.1.8",
         "ts-node": "^10.9.2",
         "uuid": "^9.0.0",
-        "body-parser": "^1.20.2",
-        "langchain": "^0.0.200",
-        "openai": "^4.24.1",
         "zod": "^3.22.4"
     },
     "devDependencies": {
