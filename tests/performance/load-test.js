@@ -14,8 +14,8 @@ const TEST_USER_ID = __ENV.TEST_USER_ID;
 // Test configuration
 export const options = {
   stages: [
-    { duration: __ENV.RAMP_UP_DURATION || '30s', target: parseInt(__ENV.MAX_VIRTUAL_USERS) },
-    { duration: __ENV.STEADY_STATE_DURATION || '1m', target: parseInt(__ENV.MAX_VIRTUAL_USERS) },
+    { duration: __ENV.RAMP_UP_DURATION || '30s', target: parseInt(__ENV.MAX_VIRTUAL_USERS) || 10 },
+    { duration: __ENV.STEADY_STATE_DURATION || '1m', target: parseInt(__ENV.MAX_VIRTUAL_USERS) || 10 },
     { duration: __ENV.RAMP_DOWN_DURATION || '30s', target: 0 },
   ],
   thresholds: {
