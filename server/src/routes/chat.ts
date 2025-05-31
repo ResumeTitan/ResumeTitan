@@ -2,12 +2,13 @@ import express from 'express';
 import { z } from 'zod';
 import { openAiClient } from '../ext/clients';
 import verifyToken from '../middleware/auth';
+import { cacheMiddleware } from '../middleware/cache';
 import { ChatPromptTemplate, HumanMessagePromptTemplate, SystemMessagePromptTemplate } from '@langchain/core/prompts';
 
 const router = express.Router();
 
 // Chat endpoint
-router.post('/', verifyToken, async (req, res) => {
+router.post('/', verifyToken, cacheMiddleware(3600), async (req, res) => {
   try {
     const { message } = req.body;
     
@@ -15,16 +16,10 @@ router.post('/', verifyToken, async (req, res) => {
       return res.status(400).json({ error: 'Message is required' });
     }
 
+    // Simplified system prompt for faster processing
     const prompt = ChatPromptTemplate.fromMessages([
       SystemMessagePromptTemplate.fromTemplate(
-        `You are the ResumeTitan Assistant, a helpful guide for the ResumeTitan application. Your role is to:
-        1. Help users understand and use ResumeTitan's features
-        2. Guide users through creating and managing their resumes
-        3. Explain how to use the resume builder, interview preparation, and cover letter features
-        4. Provide tips for creating effective resumes within the ResumeTitan platform
-        5. Answer questions about ResumeTitan's functionality and features
-        
-        Important: Only discuss features and functionality available within the ResumeTitan application. Do not suggest external services or tools.`
+        `You are the ResumeTitan Assistant. Help users with resume creation, interview prep, and cover letters. Keep responses concise and focused on ResumeTitan features only.`
       ),
       HumanMessagePromptTemplate.fromTemplate("{input}")
     ]);
