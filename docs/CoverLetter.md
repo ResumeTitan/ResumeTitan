@@ -7,7 +7,7 @@ Our Cover Letter Generator helps you quickly craft personalized, professional co
 ## 🧭 Getting Started
 
 1. **Log in to your account** on the website.
-2. From your **Dashboard**, click on **“Generate Cover Letter.”**
+2. From your **Dashboard**, under **“My Cover Letters”**, click on **“Add New”**
 
 ---
 
