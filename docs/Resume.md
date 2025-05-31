@@ -4,17 +4,10 @@ Welcome to the Resume Builder! This guide will walk you through how to use the r
 
 ---
 
-## 📋 Accessing the Resume Builder
+## 🧭 Getting Started
 
 1. **Log in to your account** on the website.
 2. You will be taken to your **Dashboard**. Under **My Resumes**, click **Add New**.
-
----
-
-## ➕ Creating a New Resume
-
-1. Click the **"Add New Resume"** button on the Dashboard.
-2. This will take you to the **Resume Builder** page.
 
 ---
 
