@@ -15,6 +15,8 @@ import { PrintToPdf } from 'pages/printPage';
 import { Survey } from './pages/survey';
 import { Dashboard } from './pages/dashboard';
 import AboutUs from 'pages/aboutUs';
+import DocsPage from './pages/docs';
+import DynamicDocsPage from './pages/docs/DynamicDocsPage';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import { SignIn, SignUp } from '@clerk/clerk-react';
@@ -38,6 +40,8 @@ export default function App() {
           <Route path="/survey" element={<Survey />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/about" element={<AboutUs />} />
+          <Route path="/docs" element={<DocsPage />} />
+          <Route path="/docs/:docName" element={<DynamicDocsPage />} />
           <Route path="/interview" element={<InterviewPage />} />
           <Route path="/print-resume/:id" element={<PrintToPdf />} />
           <Route path="/success" element={<SuccessPage />} />

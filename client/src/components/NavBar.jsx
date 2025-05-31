@@ -78,6 +78,15 @@ const NavBar = () => {
 
       {isMobileMenuOpen && (
         <div className="flex flex-col absolute top-16 right-0 bg-white border-2 border-black rounded-lg shadow-lg animate-slideUpFadeIn">
+          <button
+            className="text-main-green font-bold p-4 w-full border-b-2 border-black text-left hover:bg-lightest-green transition ease-in-out duration-300"
+            onClick={() => {
+              setIsMobileMenuOpen(false);
+              navigate('/docs');
+            }}
+          >
+            {'User Guides'}
+          </button>
           <SignedOut>
             <button
               className="text-main-green font-bold p-4 w-full border-b-2 border-black text-left hover:bg-lightest-green transition ease-in-out duration-300"
@@ -151,6 +160,12 @@ const NavBar = () => {
           mobileNavbar
         ) : (
           <div className="flex items-center">
+            <button
+              className="text-white font-bold pr-8"
+              onClick={() => navigate('/docs')}
+            >
+              {'User Guides'}
+            </button>
             <SignedOut>
               {/* <a
                 className="text-white font-bold pr-8"
