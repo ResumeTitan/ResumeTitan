@@ -1,7 +1,7 @@
 node_modules
 server/node_modules
 server/dist
-server/.env
+server/.env*
 server/.cache
 server/package-lock.json
 server/google-credentials.json
@@ -11,6 +11,7 @@ client/src/templates/layouts/from-hbs
 client/.env.development
 client/.env.production
 client/package-lock.json
-.env.local
-client/.env.local
+client/.env*
 .vscode
+package.json
+package-lock.json
