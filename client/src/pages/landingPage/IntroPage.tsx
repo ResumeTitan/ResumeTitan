@@ -1,8 +1,21 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from "@clerk/clerk-react";
 import RtAnimatedImg from 'assets/rtAnimated.gif';
+import AnimatedLogo from '../../components/AnimatedLogo';
+
+// Animation keyframes
+const fadeInUp = keyframes`
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+`;
 
 // Define the styled component that fills the entire page height
 const FullPageContainer = styled.div`
@@ -28,34 +41,22 @@ const FullPageContainer = styled.div`
 
   @media (max-width: 768px) {
     font-size: 18px; /* Smaller font size for mobile devices */
+    height: 100svh; /* Use small viewport height for mobile */
+    min-height: -webkit-fill-available; /* Safari fallback */
   }
 
   @media (max-width: 480px) {
     font-size: 16px; /* Smallest font size for very small screens */
+    height: 100svh; /* Use small viewport height for mobile */
+    min-height: -webkit-fill-available; /* Safari fallback */
   }
-`;
-
-// Style the image
-const LogoImage = styled.img`
-  height: 50vh;
-  margin-bottom: 10px;
-
-  // @media (min-width: 1024px) {
-  //   height: auto; /* Let it scale naturally */
-  //   position: absolute;
-  //   top: 0;
-  //   right: 0;
-  //   background-color: #115E59; /* Green background for the logo */
-  //   border-radius: 0 0 0 50px; /* Round only the bottom-left corner */
-  //   width: 300px; /* Set a fixed width for the image */
-  //   height: 300px; /* Set a fixed height for the image */
-  //   padding: 20px; /* Add padding inside the image container */
-  // }
 `;
 
 // Style the header
 const LargeHeader = styled.h1`
-  margin-bottom: 20px;    
+  margin-bottom: 20px;
+  opacity: 0;
+  animation: ${fadeInUp} 1s ease-out 0.5s forwards;
 
   @media (min-width: 1024px) {
     text-align: left; /* Align text to the left on desktop */
@@ -64,19 +65,19 @@ const LargeHeader = styled.h1`
 `;
 
 // Style the button
-const LargeButton = styled.button`
+const GetStartedButton = styled.button`
   font-size: 1.5rem;
   font-weight: bold;
   padding: 16px 32px;
-  background-color: #88abcb; /* Primary button color */
-  color: white;
-  border: none;
-  border-radius: 8px;
   cursor: pointer;
   transition: background-color 0.3s;
+  opacity: 0;
+  animation: ${fadeInUp} 1s ease-out 1s forwards;
 
   &:hover {
     background-color: #082421; /* Darker shade on hover */
+    background-color: #082421;
+    color: white;
   }
 
   // @media (min-width: 1024px) {
@@ -117,11 +118,11 @@ const LandingPage: React.FC = () => {
 
   return (
     <FullPageContainer>
-      <LogoImage src={RtAnimatedImg} alt="Logo" />
+      <AnimatedLogo />
       <LargeHeader>
         <FancyText>Creating your resume with AI today</FancyText>
       </LargeHeader>
-      <button className="login-button p-5" onClick={handleButtonClick}>Get Started Now</button>
+      <GetStartedButton className="login-button p-5" onClick={handleButtonClick}>Get Started Now</GetStartedButton>
     </FullPageContainer>
   );
 };

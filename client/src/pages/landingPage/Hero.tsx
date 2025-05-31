@@ -24,12 +24,12 @@ const Hero: React.FC = () => {
 
           <div className="flex space-x-8">
             <a
-              className="secondary-action-button text-lg"
+              className="primary-action-button text-lg"
               href="/sign-up"
             >Sign Up</a>
 
             <a
-              className="action-button text-lg"
+              className="primary-action-button text-lg"
               href="/sign-in"
             >Log In</a>
           </div>

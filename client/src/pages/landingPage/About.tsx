@@ -41,13 +41,13 @@ const About: React.FC = () => {
         <div className="flex space-x-8">
           <button
             onClick={handleActionButton}
-            className="action-button text-md"
+            className="primary-action-button text-md"
           >
             Get Started
           </button>
           <a
             href="/about"
-            className="secondary-action-button text-md"
+            className="primary-action-button text-md"
           >
             About Us
           </a>     
