@@ -2,6 +2,7 @@ import React from 'react';
 import Footer from 'components/Footer';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import NavBar from './components/NavBar';
+import ChatBot from './components/ChatBot/ChatBot';
 import ActionPage from './pages/actionPage';
 import TermsPage from './pages/termsPage';
 import PrivacyPolicy from './pages/privacyPolicy';
@@ -9,7 +10,7 @@ import LandingPage from './pages/landingPage';
 import ContactPage from './pages/contact';
 import InterviewPage from './pages/interviewHelper';
 import SuccessPage from './pages/paymentSuccess';
-import PricingPage from './pages/pricing';
+// import PricingPage from './pages/pricing';
 import CoverLetterPage from './pages/coverLetter';
 import { PrintToPdf } from 'pages/printPage';
 import { Survey } from './pages/survey';
@@ -52,6 +53,7 @@ export default function App() {
           <Route path="/sign-up" element={<SignUp />} />
         </Routes>
         {!window.location.pathname.includes('/print-resume') && <Footer />}
+        {!window.location.pathname.includes('/print-resume') && <ChatBot />}
       </BrowserRouter>
     </div>
   );
