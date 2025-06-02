@@ -4,7 +4,12 @@ import 'dotenv/config';
 
 const verifyToken = ClerkExpressWithAuth({
   jwtKey: process.env.CLERK_JWT_SECRET,
-  authorizedParties: ["http://localhost:3000", "https://resumegpt-client.fly.dev", "https://resumetitan.com"],
+  authorizedParties: [
+    "http://localhost:3000", 
+    "https://resumegpt-client.fly.dev",
+    "https://resumegpt-client-dev.fly.dev",
+    "https://resumetitan.com"
+  ],
   signInUrl: "/",
   onError: (err) => {
     console.error("Auth error:", err);
