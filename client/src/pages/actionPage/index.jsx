@@ -448,7 +448,7 @@ function ActionPage() {
           <button onClick={() => handleSaveResume(true)} className="save-button">Save and Exit</button>
         </div>
 
-        <div onClick={() => setIsOpen(true)} className="fixed bottom-8 right-8 hover:cursor-pointer xl:hidden">
+        <div onClick={() => setIsOpen(true)} className="fixed bottom-4 left-8 hover:cursor-pointer xl:hidden">
           <CustomDocumentIcon />
         </div>
 

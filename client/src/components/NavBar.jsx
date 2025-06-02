@@ -77,7 +77,7 @@ const NavBar = () => {
       </button>
 
       {isMobileMenuOpen && (
-        <div className="flex flex-col absolute top-16 right-0 bg-white border-2 border-black rounded-lg shadow-lg animate-slideUpFadeIn">
+        <div className="flex flex-col absolute top-16 right-0 bg-white border-2 border-black rounded-lg shadow-lg animate-slideUpFadeIn z-50">
           <button
             className="text-main-green font-bold p-4 w-full border-b-2 border-black text-left hover:bg-lightest-green transition ease-in-out duration-300"
             onClick={() => {
@@ -133,7 +133,7 @@ const NavBar = () => {
 
   return (
     <div className="no-print">
-      <nav className="flex justify-between w-full items-center bg-main-green py-2 px-8 border-b-2 border-black">
+      <nav className="flex justify-between w-full items-center bg-main-green py-2 px-8 border-b-2 border-black z-40 relative">
         <div
           className={`flex items-center w-full ${
             mobileScreen ? 'justify-between' : ''
