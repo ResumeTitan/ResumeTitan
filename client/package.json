@@ -1,7 +1,10 @@
 {
     "name": "client",
-    "version": "0.1.0",
+    "version": "1.0.0",
     "private": true,
+    "engines": {
+        "node": "^21.6.2"
+    },
     "dependencies": {
         "@clerk/clerk-js": "^5.12.0",
         "@clerk/clerk-react": "^5.2.9",
@@ -26,7 +29,7 @@
         "hooks": "^0.3.2",
         "html2canvas": "^1.4.1",
         "html2pdf.js": "^0.10.3",
-        "jspdf": "^2.5.2",
+        "jspdf": "^3.0.1",
         "react": "^18.2.0",
         "react-beautiful-dnd": "^13.1.1",
         "react-datepicker": "^6.2.0",
@@ -42,11 +45,11 @@
         "serve": "^14.2.0",
         "styled-components": "^6.1.12",
         "tailwindcss": "^3.4.4",
-        "typescript": "^4.9.5",
+        "typescript": "^5.3.3",
         "web-vitals": "^2.1.4"
     },
     "scripts": {
-        "start": "env-cmd -f .env.dev react-scripts start",
+        "start": "env-cmd -f .env.local react-scripts start",
         "start:prod": "env-cmd -f .env.production serve -s build",
         "build": "react-scripts build",
         "test": "react-scripts test",

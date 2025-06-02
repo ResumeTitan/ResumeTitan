@@ -3,7 +3,7 @@ FROM node:slim
 EXPOSE 8181
 
 ENV PATH=/usr/local/node/bin:$PATH
-ARG NODE_VERSION=20.8.0
+ARG NODE_VERSION=21.6.2
 
 RUN apt-get update \
   && apt install -y curl python-is-python3 pkg-config build-essential ffmpeg \

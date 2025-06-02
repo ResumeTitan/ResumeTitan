@@ -12,6 +12,8 @@ client/.env.development
 client/.env.production
 client/package-lock.json
 client/.env*
+tests/**/.env
+tests/**/results.json
 .vscode
 package.json
 package-lock.json
