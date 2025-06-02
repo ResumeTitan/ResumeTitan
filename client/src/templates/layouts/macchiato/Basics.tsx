@@ -94,7 +94,7 @@ const About: React.FC<AboutProps> = ({ basics }) => {
         </InfoTag>
       )}
 
-      {basics.profiles && basics.profiles[0].network && basics.profiles.map((profile, index) => (
+      {basics.profiles && basics.profiles.length > 0 && basics.profiles[0].network && basics.profiles.map((profile, index) => (
         <InfoTag key={index}>
           <IconButton component="a" href={profile.url}>
             <LanguageIcon /> {/* Replace with appropriate social media icons */}

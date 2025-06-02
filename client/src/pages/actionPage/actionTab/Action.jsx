@@ -17,7 +17,8 @@ import 'styles/index.css';
 function ActionTab({
   resumeIn,
   onPrint,
-  onUpdateResume
+  onUpdateResume,
+  onUploadPdf
 }) {
   const [sectionPopupOpen, setSectionPopupOpen] = useState(false);
   const [popupOpen, setPopupOpen] = useState(false);
@@ -247,7 +248,7 @@ function ActionTab({
 
   return (
     <div>
-      <ResumeName initName={resumeIn.name} onPrint={ onPrint } onUpdateResumeName={handleUpdateResumeName} />
+      <ResumeName initName={resumeIn.name} onPrint={ onPrint } onUpdateResumeName={handleUpdateResumeName} onUploadPdf={onUploadPdf} />
       <PersonalInfo initialInfo={resumeIn.basics} onUpdate={handleUpdateBasics} />
       <Summary summary={resumeIn.basics.summary} aiLoading={aiSummaryLoading} onUpdate={handleUpdateSummary} onAiCall={handleSummaryAiCall} />
 
