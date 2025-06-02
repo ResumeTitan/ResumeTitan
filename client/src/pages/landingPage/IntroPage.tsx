@@ -75,7 +75,6 @@ const GetStartedButton = styled.button`
   animation: ${fadeInUp} 1s ease-out 1s forwards;
 
   &:hover {
-    background-color: #082421; /* Darker shade on hover */
     background-color: #082421;
     color: white;
   }
