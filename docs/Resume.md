@@ -11,6 +11,39 @@ Welcome to the Resume Builder! This guide will walk you through how to use the r
 
 ---
 
+## Upload from PDF
+
+Already have a resume in PDF format? You can quickly import your existing resume instead of starting from scratch!
+
+### How to Upload Your PDF Resume
+
+1. Look for the **"Upload from PDF"** button next to the **"Print Resume"** button at the top of the page.
+2. **Click "Upload from PDF"** and select your PDF file from your computer.
+3. **Wait for processing** - Our AI will analyze your PDF and automatically extract:
+   - Personal information (name, email, phone, location)
+   - Work experience with job titles, companies, and descriptions
+   - Education details including schools, degrees, and dates
+   - Skills and certifications
+   - Any other relevant sections from your resume
+
+### What Happens After Upload
+
+- Your resume data will be **automatically populated** into the appropriate sections
+- You can **review and edit** any extracted information to ensure accuracy
+- **Add, remove, or modify** sections as needed
+- Use our **AI tools** to further enhance and polish your content
+
+### Tips for Best PDF Upload Results
+
+- Use a **clean, well-formatted PDF** for better text extraction
+- Ensure your PDF is **text-based** (not a scanned image)
+- **Review all extracted data** carefully after upload
+- **Save your work** after making any adjustments
+
+> **Note:** PDF upload uses advanced AI to parse your resume, but you should always review the extracted information for accuracy and completeness.
+
+---
+
 ## Filling Out Your Resume
 
 The Resume Builder is organized into sections for easy editing.
@@ -58,7 +91,7 @@ Include:
 - Duration  
 - Description of your contributions  
 
-> You can **add multiple entries** to each section as needed. Use the **“Add New”** button under each section to keep building.
+> You can **add multiple entries** to each section as needed. Use the **"Add New"** button under each section to keep building.
 
 ---
 
@@ -113,7 +146,7 @@ Each section offers an AI assistant. This is meant for spot edits, along with ad
 
 ## Saving & Managing Resumes
 
-- Once you've entered your information, click the **“Save”** button in the section, or at the bottom of the page to store your resume.
+- Once you've entered your information, click the **"Save"** button in the section, or at the bottom of the page to store your resume.
 - Return to the **Dashboard** anytime to **edit** or **delete** existing resumes.
 
 ---
@@ -123,7 +156,7 @@ Each section offers an AI assistant. This is meant for spot edits, along with ad
 - Keep descriptions **concise** but **impactful**.  
 - Double-check for **grammar and spelling**.
 - Tailor each resume to match different job roles.
-- Use the **AI tools** to iterate and polish—don’t settle for your first draft!
+- Use the **AI tools** to iterate and polish—don't settle for your first draft!
 
 ---
 
