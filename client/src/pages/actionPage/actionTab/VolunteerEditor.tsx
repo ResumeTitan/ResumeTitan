@@ -1,15 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
-import dayjs from 'dayjs';
-import StatePicker from 'components/StatePicker';
 import { FormContainer } from 'components/Form/styled';
 import DateInput from 'components/Form/DateInput';
 import { VolunteerType } from 'types/types';
 import api from 'api/actions';
+import AIAssistant from 'components/AIAssistant';
 import 'styles/index.css';
 
 interface VolunteerEditorProps {
@@ -264,36 +259,15 @@ const VolunteerEditor: React.FC<VolunteerEditorProps> = ({ editingVolunteer, onS
         )}
 
         {aiAssistant && (
-          <>
-            <div className="border-t border-gray-700 my-4"></div>
-            <div className="left-right-spacing">
-              <div className="w-full pr-2 py-1">
-                <textarea
-                  className={`form-style flex-wrap h-24 lg:h-16 ${isPlaceholderActive ? 'placeholder-roll-down' : 'placeholder-roll-up'}`}
-                  placeholder={placeholder}
-                  value={aiAssistantMsg}
-                  onChange={(e) => setAiAssistantMsg(e.target.value)}
-                />
-              </div>
-              <div className="phone-screen-stack">
-                <button
-                  className="green-button order-last xs:order-first p-2 my-1"
-                  onClick={handleAiAssistCall}
-                >
-                  <div>
-                    <AutoAwesomeIcon className="pr-2"/>
-                    <span>Write with AI</span>
-                  </div>
-                </button>
-                <button
-                  className="green-button order-first xs:order-last p-2 my-1"
-                  onClick={() => showAiAssistant(false)}
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </>
+          <AIAssistant
+            placeholder={placeholder}
+            isPlaceholderActive={isPlaceholderActive}
+            aiAssistantMsg={aiAssistantMsg}
+            onMessageChange={setAiAssistantMsg}
+            onSubmit={handleAiAssistCall}
+            onClose={() => showAiAssistant(false)}
+            loading={aiLoading}
+          />
         )}
       </div>
 

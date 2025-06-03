@@ -8,9 +8,12 @@ import { isUserPremium } from '../../utils/index';
 import LockIcon from '@mui/icons-material/Lock';
 import { AddNewButton, AddNewLockedButton } from 'components/Styled';
 import CloseIcon from '@mui/icons-material/Close';
+import PrintIcon from '@mui/icons-material/Print';
 import Pricing from 'components/Pricing';
 import { UserResource } from '@clerk/types';
 import { useAuth } from '@clerk/clerk-react';
+import InterviewPrintOptions, { PrintOptions } from 'components/InterviewPrintOptions';
+import PrintableInterview from 'components/PrintableInterview';
 import 'styles/index.css';
 import SpeechToTextTextarea from 'components/SpeechToTextTextarea';
 
@@ -39,6 +42,8 @@ const InterviewPage: React.FC = () => {
   const [analyzingIndex, setAnalyzingIndex] = useState<number | null>(null);
   const [company, setCompany] = useState('');
   const [showConfirmPopup, setShowConfirmPopup] = useState(false);
+  const [showPrintOptions, setShowPrintOptions] = useState(false);
+  const [printOptions, setPrintOptions] = useState<PrintOptions | null>(null);
 
   // Set up the token function for API calls
   useEffect(() => {
@@ -195,6 +200,31 @@ const InterviewPage: React.FC = () => {
     }
   };
 
+  const handlePrintInterview = (options: PrintOptions) => {
+    setPrintOptions(options);
+    // Trigger print after state update
+    setTimeout(() => {
+      window.print();
+    }, 100);
+  };
+
+  const hasJobInfo = Boolean(jobTitle || company || jobDescription);
+
+  // Custom tab button style matching cover letter generator
+  const tabButtonStyle = (active: boolean) => ({
+    flex: 1,
+    padding: '6px 0',
+    borderRadius: '8px 8px 0 0',
+    fontWeight: 'bold',
+    fontSize: '1.1rem',
+    background: active ? '#115E59' : '#e2e8f0',
+    color: active ? 'white' : '#115E59',
+    border: 'none',
+    outline: 'none',
+    cursor: 'pointer',
+    transition: 'background 0.2s, color 0.2s',
+  });
+
   /**
    * @description Render the Interview Page
    */
@@ -206,16 +236,22 @@ const InterviewPage: React.FC = () => {
             Enter Details
           </div>
           <div className="p-4">
-            <label htmlFor="inputMode" className="form-label-text">Select Input Method</label>
-            <select
-              id="inputMode"
-              className="form-style mb-4"
-              value={inputMode}
-              onChange={e => setInputMode(e.target.value as 'link' | 'manual')}
-            >
-              <option value="manual">Job Title and Description</option>
-              <option value="link">Job From Link</option>
-            </select>
+            <div style={{ display: 'flex', marginBottom: 16, gap: 2 }}>
+              <button
+                style={tabButtonStyle(inputMode === 'manual')}
+                onClick={() => setInputMode('manual')}
+                type="button"
+              >
+                Job Title/Description
+              </button>
+              <button
+                style={tabButtonStyle(inputMode === 'link')}
+                onClick={() => setInputMode('link')}
+                type="button"
+              >
+                Job URL
+              </button>
+            </div>
             {inputMode === 'link' ? (
               <div className="w-full pr-2">
                 <label htmlFor="jobUrl" className="form-label-text">Job Posting URL</label>
@@ -263,9 +299,13 @@ const InterviewPage: React.FC = () => {
               </>
             )}
           </div>
-          <div className="p-4 flex flex-row gap-4 items-center">
+          <div className="left-right-spacing p-2">
             <button className="save-button" onClick={onGenerateClick}>Generate Interview Questions</button>
-            <button className="save-button" onClick={handleSaveInterview}>Save Interview</button>
+            <button 
+              className="save-button" 
+              onClick={handleSaveInterview}
+              disabled={isLoading || interview.length === 0}
+            >Save Interview</button>
           </div>
           {showConfirmPopup && (
             <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-30">
@@ -283,8 +323,15 @@ const InterviewPage: React.FC = () => {
 
         {interview.length > 0 && (
           <div className="form-container">
-            <div className="form-text-main">
-              Interview Questions
+            <div className="form-text-main flex justify-between items-center mb-4">
+              <span>Interview Questions</span>
+              <button
+                className="interview-button bg-white flex items-center gap-2"
+                onClick={() => setShowPrintOptions(true)}
+              >
+                <PrintIcon />
+                Print Interview
+              </button>
             </div>
             <div className="interview-questions">
               {interview.map((question, index) => (
@@ -299,7 +346,7 @@ const InterviewPage: React.FC = () => {
                       className="form-style text-base md:text-lg text-black h-64 md:h-40"
                       value={question.answer}
                       onChange={function(val: string) { handleAnswerChange(index, { target: { value: val } }); }}
-                      placeholder="Type or record your answer here..."
+                      placeholder="Type your answer here..."
                     />
                   </div>
                   <DetailsExpand label={<span className="text-base md:text-lg font-semibold text-black">Example Answer:</span>} description={<span className="text-base md:text-lg text-black">{question.example}</span>} />
@@ -345,21 +392,25 @@ const InterviewPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Pricing Popup */}
-      {/* {showPricingPopup && (
-        <div className="pricing-popup">
-          <div className="absolute top-2 right-4 p-2 bg-red-500 text-white rounded-full">
-            <button
-              onClick={() => setShowPricingPopup(false)}
-            >
-              <CloseIcon fontSize="large" />
-            </button>
-          </div>
-          <div className="relative text-black bg-white p-6 rounded shadow-lg">
-            <Pricing />
-          </div>
-        </div>
-      )} */}
+      {/* Print Options Popup */}
+      {showPrintOptions && (
+        <InterviewPrintOptions
+          onClose={() => setShowPrintOptions(false)}
+          onPrint={handlePrintInterview}
+          hasJobInfo={hasJobInfo}
+        />
+      )}
+
+      {/* Printable Interview Component */}
+      {printOptions && (
+        <PrintableInterview
+          interview={interview}
+          jobTitle={jobTitle}
+          company={company}
+          jobDescription={jobDescription}
+          options={printOptions}
+        />
+      )}
 
       { isLoading && (
         <Spinner />

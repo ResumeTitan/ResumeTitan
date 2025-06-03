@@ -1,12 +1,8 @@
 import React, { useState } from 'react';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
-import dayjs from 'dayjs';
 import StatePicker from 'components/StatePicker';
 import api from 'api/actions';
+import AIAssistant from 'components/AIAssistant';
 import 'styles/index.css';
 import { FormContainer } from 'components/Form/styled';
 import DateInput from 'components/Form/DateInput';
@@ -224,39 +220,52 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
         </DateInput>
       </FormContainer>
 
-      <div className="m-2">
-        <div className="left-right-spacing my-2">
-          <div className="flex items-center">
-            <label htmlFor={"jobHighlights"} className="form-label-text">Highlights</label>
-          </div>
-          
-          <div className="phone-screen-stack">
-            <button
-              className="green-button order-last xs:order-first p-2 my-1"
-              onClick={() => setShowBrainstorm(true)}
-            >
-              <div>
-                <AutoAwesomeIcon className="pr-2"/>
-                <span>Write with AI</span>
-              </div>
-            </button>
-            <button
-              className="green-button order-first xs:order-last p-2 my-1"
-              onClick={handleHighlightAdd}
-            >
-              Add
-            </button>
-            <button
-              className="green-button order-first xs:order-last p-2 my-1"
-              onClick={() => showAiAssistant(true)}
-            >
-              <div>
-                <AutoAwesomeIcon className="pr-2"/>
-                <span>AI Assistant</span>
-              </div>
-            </button>
+      <div className="">
+        <div className="my-2">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
+            <div className="flex items-center">
+              <label htmlFor={"jobHighlights"} className="form-label-text">Highlights</label>
+            </div>
+            
+            <div className="left-right-spacing">
+              <button
+                className="primary-action-button"
+                onClick={() => showAiAssistant(true)}
+              >
+                <div>
+                  <AutoAwesomeIcon className="pr-2"/>
+                  <span>AI Assistant</span>
+                </div>
+              </button>
+              <button
+                className="primary-action-button"
+                onClick={() => setShowBrainstorm(true)}
+              >
+                <div>
+                  <AutoAwesomeIcon className="pr-2"/>
+                  <span>Write with AI</span>
+                </div>
+              </button>
+              <button
+                className="primary-action-button"
+                onClick={handleHighlightAdd}
+              >
+                Add
+              </button>
+            </div>
           </div>
         </div>
+        {aiAssistant && (
+          <AIAssistant
+            placeholder={placeholder}
+            isPlaceholderActive={isPlaceholderActive}
+            aiAssistantMsg={aiAssistantMsg}
+            onMessageChange={setAiAssistantMsg}
+            onSubmit={handleAiAssistCall}
+            onClose={() => showAiAssistant(false)}
+              loading={aiLoading}
+            />
+        )}
 
         {jobForm.highlights ? jobForm.highlights.map((item, index) => (
           <div className="left-right-spacing">
@@ -289,39 +298,6 @@ function JobEditor({ editingJob, onSave, onDelete, onCancel }) {
               />
             </div>
           </div>
-        )}
-
-        {aiAssistant && (
-          <>
-            <div className="border-t border-gray-700 my-4"></div>
-            <div className="left-right-spacing">
-              <div className="w-full pr-2 py-1">
-                <textarea
-                  className={`form-style flex-wrap h-24 lg:h-16 ${isPlaceholderActive ? 'placeholder-roll-down' : 'placeholder-roll-up'}`}
-                  placeholder={placeholder}
-                  value={aiAssistantMsg}
-                  onChange={(e) => setAiAssistantMsg(e.target.value)}
-                />
-              </div>
-              <div className="phone-screen-stack">
-                <button
-                  className="green-button order-last xs:order-first p-2 my-1"
-                  onClick={handleAiAssistCall}
-                >
-                  <div>
-                    <AutoAwesomeIcon className="pr-2"/>
-                    <span>Write with AI</span>
-                  </div>
-                </button>
-                <button
-                  className="green-button order-first xs:order-last p-2 my-1"
-                  onClick={() => showAiAssistant(false)}
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </>
         )}
       </div>
 

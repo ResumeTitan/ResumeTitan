@@ -11,10 +11,10 @@ const SpeechToTextTextarea = ({ value, onChange, placeholder = '', className = '
         placeholder={placeholder}
         {...props}
       />
-      <AudioRecorder
+      {/* <AudioRecorder
         onTranscript={transcript => onChange(value ? value + ' ' + transcript : transcript)}
         disabled={false}
-      />
+      /> */}
     </div>
   );
 };
