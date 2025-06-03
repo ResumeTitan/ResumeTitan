@@ -366,6 +366,50 @@ function ActionPage() {
     handleSaveResume(false, {...currentResume, sections});
   }
 
+  /**
+   * @function handleUploadPdf
+   * @description Handle PDF file upload and extract resume data
+   * @param {File} file The PDF file to upload
+   */
+  const handleUploadPdf = async (file) => {
+    if (!isSignedIn) {
+      navigate('/sign-in');
+      return;
+    }
+
+    setResumeLoading(true);
+    try {
+      const formData = new FormData();
+      formData.append('pdf', file);
+
+      const response = await api.post('/resume/upload-pdf', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      const extractedData = response.data;
+      
+      // Update the current resume with extracted data
+      const updatedResume = {
+        ...currentResume,
+        ...extractedData,
+        name: extractedData.name || currentResume.name || 'Uploaded Resume'
+      };
+
+      setCurrentResume(updatedResume);
+      
+      // Save the updated resume
+      await handleSaveResume(false, updatedResume);
+      
+    } catch (error) {
+      console.error('Error uploading PDF:', error);
+      throw new Error('Failed to upload and process PDF. Please try again.');
+    } finally {
+      setResumeLoading(false);
+    }
+  };
+
   // Set up the token function for API calls
   React.useEffect(() => {
     setTokenFunction(getToken);
@@ -430,6 +474,7 @@ function ActionPage() {
             onUpdateResume={handleUpdateResume}
             onPrint={handleSaveToPdf}
             onGenerateResume={handleGenerateResume} 
+            onUploadPdf={handleUploadPdf}
           />
         )}
         {activeTab === 2 && (

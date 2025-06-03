@@ -61,6 +61,40 @@ const ResumeDataSchema = z.object({
   awards: z.array(AwardsSchema).optional()
 });
 
+const UploadedResumeSchema = z.object({
+  name: z.string().optional(),
+  basics: z.object({
+    name: z.string().optional(),
+    email: z.string().optional(),
+    phone: z.string().optional(),
+    url: z.string().optional(),
+    summary: z.string().optional(),
+    location: z.object({
+      address: z.string().optional(),
+      city: z.string().optional(),
+      region: z.string().optional(),
+      postalCode: z.string().optional(),
+      countryCode: z.string().optional()
+    }).optional(),
+    profiles: z.array(z.object({
+      network: z.string().optional(),
+      username: z.string().optional(),
+      url: z.string().optional()
+    })).optional()
+  }).optional(),
+  education: z.array(EducationSchema.extend({ id: z.number().optional() })).optional(),
+  work: z.array(WorkSchema.extend({ id: z.number().optional() })).optional(),
+  skills: z.array(z.object({
+    name: z.string().optional(),
+    level: z.string().optional(),
+    keywords: z.array(z.string()).optional()
+  })).optional(),
+  volunteer: z.array(VolunteerSchema.extend({ id: z.number().optional() })).optional(),
+  awards: z.array(AwardsSchema.extend({ id: z.number().optional() })).optional(),
+  sections: z.array(z.string()).optional(),
+  theme: z.string().optional()
+});
+
 const resumeData: ResumeType = {};
 
 // Helper function to get structured output from Gemini
@@ -338,27 +372,57 @@ Format as JSON:
 
     case 'skills':
       if (operationType === 'edit' && data.userInput) {
-        return `Edit and improve existing skills based on user instructions:
-Skills Data: ${JSON.stringify(data)}
-User Instructions: "${data.userInput}"
+        return `You are an AI assistant helping to edit and organize resume skills. You can handle various skill operations including organizing, grouping, adding, removing, or restructuring skills.
+
+Current Skills Data: ${JSON.stringify(data)}
+User Request: "${data.userInput}"
 Existing Skills: ${JSON.stringify(data.skills || [])}
 
-Requirements:
-1. Follow the user's specific instructions for editing the skills
-2. This may include rewording, removing, adding, or reorganizing skills
-3. Include proficiency levels for each skill
-4. Add relevant keywords for each skill
-5. Preserve any skills the user didn't ask to change
-6. Prioritize most important skills first
-7. Return ONLY valid JSON, no additional text or markdown formatting
+INSTRUCTIONS FOR AI ASSISTANT:
+The user wants you to modify their skills based on their specific request. You should intelligently interpret what they want and apply it. Common requests include:
+
+1. **Grouping/Categorizing**: "group these skills into sets of subskills", "organize by category", "create skill groups"
+   - Create logical skill categories (e.g. "Programming Languages", "Web Technologies", "Databases")
+   - Group related skills together under appropriate categories
+   - Use the skill name as the category and keywords as the subskills
+
+2. **Adding Skills**: "add Python", "include project management skills"
+   - Add new skills to the existing list
+   - Assign appropriate proficiency levels
+   - Add relevant keywords/subskills
+
+3. **Removing Skills**: "remove outdated skills", "take out basic skills"
+   - Remove specified or outdated skills
+   - Keep only relevant, current skills
+
+4. **Reorganizing**: "prioritize most important", "reorder by proficiency"
+   - Reorder skills by importance, proficiency, or relevance
+   - Keep the most valuable skills prominent
+
+5. **Improving**: "make these more specific", "add proficiency levels"
+   - Enhance existing skills with better descriptions
+   - Add or update proficiency levels
+   - Add relevant keywords/technologies
+
+6. **Reformatting**: "break down into subcategories", "consolidate similar skills"
+   - Restructure how skills are presented
+   - Combine or separate skills as needed
+
+For **grouping operations specifically**:
+- Use the main category as the skill "name" (e.g., "Programming Languages")
+- Put the specific technologies in "keywords" array (e.g., ["JavaScript", "Python", "Java"])
+- Set appropriate proficiency levels for the category
+- Common skill groups: Programming Languages, Web Technologies, Databases, Cloud Platforms, Tools & Software, Frameworks, Operating Systems
+
+Apply the user's instructions while maintaining professional resume language. Return ONLY valid JSON, no additional text or markdown formatting.
 
 Format as JSON:
 {
   "skills": [
     {
-      "name": "skill name",
-      "level": "proficiency",
-      "keywords": ["keyword1", "keyword2"]
+      "name": "skill name or category name",
+      "level": "proficiency level (Beginner/Intermediate/Advanced/Expert)",
+      "keywords": ["specific skills", "technologies", "or subskills"]
     }
   ]
 }`;
@@ -372,7 +436,8 @@ Requirements:
 3. Add relevant keywords for each skill
 4. Match work/education background
 5. Prioritize most important skills first
-6. Return ONLY valid JSON, no additional text or markdown formatting
+6. Consider grouping related skills into categories if appropriate
+7. Return ONLY valid JSON, no additional text or markdown formatting
 
 Format as JSON:
 {
@@ -686,3 +751,213 @@ export const printResumeToPdf = async (req: Request, res: Response) => {
     res.status(500).send('Internal Server Error');
   }
 }
+
+export const uploadPdfResume = async (req: Request, res: Response) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No PDF file uploaded' });
+    }
+
+    console.log('PDF Upload Debug Info:');
+    console.log('- File size:', req.file.size, 'bytes');
+    console.log('- File mimetype:', req.file.mimetype);
+    console.log('- File name:', req.file.originalname);
+
+    // Check file size (Gemini has limits for inline data)
+    const maxSizeInline = 20 * 1024 * 1024; // 20MB limit for inline data
+    if (req.file.size > maxSizeInline) {
+      return res.status(400).json({ 
+        error: 'PDF file too large', 
+        details: `File size ${req.file.size} bytes exceeds limit of ${maxSizeInline} bytes` 
+      });
+    }
+
+    // Use the inline data approach instead of file manager
+    const prompt = `Analyze this resume PDF and extract all information in a structured format. Return the data as a JSON object with the following exact structure:
+
+{
+  "name": "extracted resume name/title",
+  "basics": {
+    "name": "full name",
+    "email": "email address",
+    "phone": "phone number", 
+    "url": "website/portfolio URL",
+    "summary": "professional summary or objective",
+    "location": {
+      "address": "street address",
+      "city": "city",
+      "region": "state/province", 
+      "postalCode": "zip/postal code",
+      "countryCode": "country code"
+    },
+    "profiles": [
+      {
+        "network": "platform name (LinkedIn, GitHub, etc.)",
+        "username": "username",
+        "url": "profile URL"
+      }
+    ]
+  },
+  "education": [
+    {
+      "id": 1,
+      "institution": "school name",
+      "studyType": "degree type",
+      "area": "field of study", 
+      "startDate": "start date",
+      "endDate": "end date",
+      "highlights": ["achievement 1", "achievement 2"]
+    }
+  ],
+  "work": [
+    {
+      "id": 1,
+      "position": "job title",
+      "name": "company name",
+      "startDate": "start date", 
+      "endDate": "end date",
+      "highlights": ["responsibility/achievement 1", "responsibility/achievement 2"]
+    }
+  ],
+  "skills": [
+    {
+      "name": "skill name",
+      "level": "proficiency level",
+      "keywords": ["related", "terms"]
+    }
+  ],
+  "volunteer": [
+    {
+      "id": 1,
+      "organization": "organization name",
+      "position": "role/title",
+      "startDate": "start date",
+      "endDate": "end date", 
+      "highlights": ["contribution 1", "contribution 2"]
+    }
+  ],
+  "awards": [
+    {
+      "id": 1,
+      "title": "award name",
+      "date": "award date",
+      "awarder": "awarding organization",
+      "summary": "award description"
+    }
+  ],
+  "sections": ["Basics", "Education", "Work", "Skills", "Volunteer", "Awards"],
+  "theme": "professional"
+}
+
+Important guidelines:
+1. Extract ALL available information from the resume
+2. If a field is not present, use empty string "" or empty array []
+3. Assign sequential IDs starting from 1 for education, work, volunteer, and awards
+4. Include only sections that have actual content in the "sections" array
+5. Format dates consistently (e.g., "Jan 2020", "2020-01-01")
+6. Return ONLY valid JSON, no additional text or markdown formatting
+7. If you cannot extract certain information, use empty values rather than making assumptions
+
+If you cannot read the PDF content, return this exact JSON structure with empty values:
+{
+  "name": "",
+  "basics": {"name": "", "email": "", "phone": "", "url": "", "summary": "", "location": {"address": "", "city": "", "region": "", "postalCode": "", "countryCode": ""}, "profiles": []},
+  "education": [],
+  "work": [],
+  "skills": [],
+  "volunteer": [],
+  "awards": [],
+  "sections": ["Basics"],
+  "theme": "professional"
+}`;
+
+    console.log('Sending PDF to Gemini for analysis...');
+    
+    try {
+      const result = await geminiClient.generateContent([
+        prompt,
+        {
+          inlineData: {
+            mimeType: req.file.mimetype,
+            data: req.file.buffer.toString('base64')
+          }
+        }
+      ]);
+
+      const response = await result.response;
+      const text = response.text();
+
+      console.log('Gemini Response Debug:');
+      console.log('- Response received:', !!text);
+      console.log('- Response length:', text?.length || 0);
+      console.log('- Raw response preview:', text?.substring(0, 200) + '...');
+
+      if (!text || text.trim().length === 0) {
+        throw new Error('Empty response from Gemini');
+      }
+
+      try {
+        // Parse and validate the JSON response using Zod
+        const cleanText = text.replace(/```json\n?|\n?```/g, '').trim();
+        console.log('- Cleaned text preview:', cleanText.substring(0, 200) + '...');
+        
+        const rawData = JSON.parse(cleanText);
+        console.log('- JSON parsed successfully');
+        
+        // Validate the extracted data using our Zod schema
+        const extractedData = UploadedResumeSchema.parse(rawData);
+        console.log('- Schema validation passed');
+
+        // Ensure we have the basic structure
+        if (!extractedData.basics) {
+          console.log('- Warning: No basics found, creating empty structure');
+          extractedData.basics = {
+            name: "", email: "", phone: "", url: "", summary: "",
+            location: { address: "", city: "", region: "", postalCode: "", countryCode: "" },
+            profiles: []
+          };
+        }
+
+        if (!extractedData.sections || extractedData.sections.length === 0) {
+          console.log('- Warning: No sections found, setting default');
+          extractedData.sections = ["Basics"];
+        }
+
+        console.log('- Successfully extracted data from PDF');
+        res.json(extractedData);
+      } catch (parseError) {
+        console.error('JSON/Schema parsing error:', parseError);
+        console.error('Raw response that failed to parse:', text);
+        
+        if (parseError instanceof z.ZodError) {
+          console.error('Zod validation errors:', parseError.errors);
+          res.status(500).json({ 
+            error: 'Failed to validate extracted resume data',
+            details: 'The extracted data does not match the expected format.',
+            validationErrors: parseError.errors,
+            rawResponse: text.substring(0, 500) // First 500 chars for debugging
+          });
+        } else {
+          res.status(500).json({ 
+            error: 'Failed to parse extracted resume data',
+            details: 'The AI response could not be processed. Please try again.',
+            rawResponse: text.substring(0, 500) // First 500 chars for debugging
+          });
+        }
+      }
+    } catch (geminiError) {
+      console.error('Gemini API error:', geminiError);
+      res.status(500).json({ 
+        error: 'Failed to analyze PDF with AI',
+        details: geminiError instanceof Error ? geminiError.message : 'Unknown AI service error'
+      });
+    }
+
+  } catch (error) {
+    console.error('Error processing PDF upload:', error);
+    res.status(500).json({ 
+      error: 'Failed to process PDF upload',
+      details: error instanceof Error ? error.message : 'Unknown error occurred'
+    });
+  }
+};

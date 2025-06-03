@@ -6,10 +6,10 @@ import mongoose from "mongoose";
  */
 
 const BasicsSchema = new mongoose.Schema({
-  name: { type: String, required: true, default: '' },
+  name: { type: String, required: false, default: '' },
   label: { type: String, required: false, default: '' },
   image: { type: String, required: false, default: '' },
-  email: { type: String, required: true, default: '' },
+  email: { type: String, required: false, default: '' },
   phone: { type: String, required: false, default: '' },
   url: { type: String, required: false, default: '' },
   summary: { type: String, required: false, default: '' },
