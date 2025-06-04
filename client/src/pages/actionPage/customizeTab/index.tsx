@@ -54,6 +54,7 @@ const CustomizeTab: React.FC<Props> = ({
           {id: "one-page", label: "One Page"},
           {id: "macchiato", label: "Macchiato"},
           {id: "student-classic", label: "Student Classic"},
+          {id: "academic-modern", label: "Academic Modern"},
         ]}
         selectedTheme={resume.theme}
         onSelect={onChangeTheme}
