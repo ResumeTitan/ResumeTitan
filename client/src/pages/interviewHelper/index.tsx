@@ -222,7 +222,15 @@ const InterviewPage: React.FC = () => {
     setPrintOptions(options);
     // Trigger print after state update
     setTimeout(() => {
+      // Add class to body to enable interview-specific print styles
+      document.body.classList.add('printing-interview');
+      
       window.print();
+      
+      // Remove class after printing
+      setTimeout(() => {
+        document.body.classList.remove('printing-interview');
+      }, 1000);
     }, 100);
   };
 

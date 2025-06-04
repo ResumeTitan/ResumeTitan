@@ -1,12 +1,12 @@
 /* Print styles for Interview component */
 @media print {
-  /* Hide everything and show only print content */
-  body * {
+  /* Only hide everything when body has the printing-interview class */
+  body.printing-interview * {
     visibility: hidden;
   }
   
-  #printable-interview,
-  #printable-interview * {
+  body.printing-interview #printable-interview,
+  body.printing-interview #printable-interview * {
     visibility: visible;
   }
   
