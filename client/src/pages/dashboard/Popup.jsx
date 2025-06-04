@@ -7,13 +7,13 @@ const Popup = ({ message, handleDelete, handleCancel }) => {
         <p className="mb-4">{message}</p>
         <div className="flex justify-end">
           <button
-            className="bg-red-500 text-white px-4 py-2 mr-2"
+            className="secondary-action-button"
             onClick={handleDelete}
           >
             Delete
           </button>
           <button
-            className="bg-gray-300 text-gray-700 px-4 py-2"
+            className="primary-action-button text-black"
             onClick={handleCancel}
           >
             Cancel

@@ -12,7 +12,87 @@ import { useDispatch } from 'react-redux';
 import { ResumeType } from 'types/types';
 import DashboardContainer from './DashboardContainer';
 import Pricing from 'components/Pricing';
+import styled from 'styled-components';
 import 'styles/index.css'
+
+// Styled components for resume cards with hover animations
+const ResumeCard = styled.div`
+  position: relative;
+  margin: 4rem;
+  border: 8px solid black;
+  border-radius: 1rem;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background-color: #e0f2f1;
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  }
+`;
+
+const ResumeEditButton = styled.button`
+  position: absolute;
+  background-color: #0d4a45;
+  color: white;
+  border-radius: 9999px;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20rem;
+  height: 20rem;
+  top: 2rem;
+  left: 2rem;
+  opacity: 0;
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #115e59;
+    transform: scale(1.1);
+  }
+
+  ${ResumeCard}:hover & {
+    opacity: 1;
+  }
+`;
+
+const ResumeDeleteButton = styled.button`
+  position: absolute;
+  background-color: #dc2626;
+  color: white;
+  border-radius: 9999px;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20rem;
+  height: 20rem;
+  top: 2rem;
+  right: 2rem;
+  opacity: 0;
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #b91c1c;
+    transform: scale(1.1);
+  }
+
+  ${ResumeCard}:hover & {
+    opacity: 1;
+  }
+`;
+
+const ResumeTitle = styled.div`
+  color: black;
+  margin: 1rem 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 3.75rem;
+  font-weight: bold;
+`;
 
 export const Dashboard: React.FC = () => {
   const { user, isLoaded, isSignedIn } = useUser();
@@ -143,26 +223,24 @@ export const Dashboard: React.FC = () => {
   }
 
   const resumeWidgets = resumes.map((resume, index) => (
-    <div key={resume._id} className="relative group mx-16 my-8 border-8 border-black rounded-2xl hover:bg-lightest-green">
+    <ResumeCard key={resume._id}>
       <div className="p-2">
         <ResumeContainer resume={resume} />
       </div>
-      <div className="text-black my-4 flex justify-center items-center text-6xl">
+      <ResumeTitle>
         {resume.name}
-      </div>
-      <button
+      </ResumeTitle>
+      <ResumeEditButton
         onClick={() => handleClickResume(resume._id)}
-        className="dashboard-edit-button w-5/6 h-96 top-20 left-20"
       >
-        <EditIcon style={{ fontSize: 256 }} />
-      </button>
-      <button
+        <EditIcon style={{ fontSize: 196 }} />
+      </ResumeEditButton>
+      <ResumeDeleteButton
         onClick={() => handleClickedDelete(resume._id)}
-        className="dashboard-delete-button w-5/6 h-96 bottom-60 left-20"
       >
-        <CloseIcon style={{ fontSize: 256 }} />
-      </button>
-    </div>
+        <CloseIcon style={{ fontSize: 196 }} />
+      </ResumeDeleteButton>
+    </ResumeCard>
   ));
 
   const resumePlaceholder = (
