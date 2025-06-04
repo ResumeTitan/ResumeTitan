@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import EmailIcon from '@mui/icons-material/Email';
 import PhoneIcon from '@mui/icons-material/Phone';
 import LanguageIcon from '@mui/icons-material/Language';
@@ -10,7 +9,6 @@ import { BasicsType } from 'types/types';
 import Section from './Section';
 
 interface Location {
-  address?: string;
   city?: string;
   region?: string;
   postalCode?: string;
@@ -32,7 +30,7 @@ const InfoTag = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 16px;
+  font-size: 14px;
 
   svg {
     color: #39424B;
@@ -42,8 +40,8 @@ const InfoTag = styled.div`
 
 const About: React.FC<AboutProps> = ({ basics }) => {
   const formatAddress = (location: Location) => {
-    const { address, city, region, postalCode, countryCode } = location;
-    return `${address ? address + ', ' : ''}${city ? city + ', ' : ''}${region ? region + ', ' : ''}${postalCode ? postalCode + ', ' : ''}${countryCode}`;
+    const { city, region, postalCode, countryCode } = location;
+    return `${city ? city + ', ' : ''}${region ? region + ', ' : ''}${postalCode ? postalCode + ', ' : ''}${countryCode}`;
   };
 
   return (

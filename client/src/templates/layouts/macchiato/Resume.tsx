@@ -5,6 +5,14 @@ import Education from './Education';
 import ResumeHeader from './ResumeHeader';
 import Volunteer from './Volunteer';
 import Skills from './Skills';
+import Awards from './Awards';
+import Languages from './Languages';
+import Interests from './Interests';
+import Summary from './Summary';
+import Projects from './Projects';
+import Publications from './Publications';
+import References from './References';
+import Certificates from './Certificates';
 import styled from 'styled-components';
 import { ResumeTypeProps } from 'types/types';
 
@@ -58,68 +66,58 @@ export const HighlightItem = styled.li`
   font-size: 12px;
 `;
 
-const Languages = () => (
-  <section>
-    {/* Implement the languages content here */}
-  </section>
-);
+// Define which sections go in the left panel (sidebar)
+const leftPanelSections = ['Skills', 'Awards', 'Languages', 'Interests'];
 
-const Interests = () => (
-  <section>
-    {/* Implement the interests content here */}
-  </section>
-);
-
-const Summary = () => (
-  <section>
-    {/* Implement the summary content here */}
-  </section>
-);
-
-const Projects = () => (
-  <section>
-    {/* Implement the projects content here */}
-  </section>
-);
-
-const Awards = () => (
-  <section>
-    {/* Implement the awards content here */}
-  </section>
-);
-
-const Publications = () => (
-  <section>
-    {/* Implement the publications content here */}
-  </section>
-);
-
-const References = () => (
-  <section>
-    {/* Implement the references content here */}
-  </section>
-);
+// Define section component mappings
+const sectionComponents = {
+  Skills: Skills,
+  Awards: Awards,
+  Languages: Languages,
+  Interests: Interests,
+  Summary: Summary,
+  Work: Work,
+  Projects: Projects,
+  Education: Education,
+  Volunteer: Volunteer,
+  Publications: Publications,
+  References: References,
+  Certificates: Certificates,
+};
 
 const Resume: React.FC<ResumeTypeProps> = ({ resume }) => {
+  const sections = resume.sections || [
+    'Summary', 'Work', 'Projects', 'Education', 
+    'Skills', 'Volunteer', 'Awards', 'Languages'
+  ];
+
+  // Filter sections for left and right panels
+  const leftSections = sections.filter(section => leftPanelSections.includes(section));
+  const rightSections = sections.filter(section => !leftPanelSections.includes(section));
+
+  const renderSection = (sectionName: string) => {
+    const SectionComponent = sectionComponents[sectionName as keyof typeof sectionComponents];
+    if (!SectionComponent) return null;
+
+    // Pass the appropriate props based on section type
+    const props = { 
+      key: sectionName,
+      ...resume 
+    };
+
+    return <SectionComponent {...props} />;
+  };
+
   return (
     <Page id="resume">
-      <ResumeHeader basics={ resume.basics }/>
+      <ResumeHeader basics={resume.basics} />
       <ResumeContent>
         <LeftColumn>
-          <Basics basics={ resume.basics }/>
-          <Skills skills={ resume.skills }/>
-          <Languages />
-          <Interests />
+          <Basics basics={resume.basics} />
+          {leftSections.map(renderSection)}
         </LeftColumn>
         <RightColumn>
-          <Summary />
-          <Work work={ resume.work } />
-          <Projects />
-          <Education education={ resume.education }/>
-          <Volunteer volunteer={ resume.volunteer }/>
-          <Awards />
-          <Publications />
-          <References />
+          {rightSections.map(renderSection)}
         </RightColumn>
       </ResumeContent>
     </Page>

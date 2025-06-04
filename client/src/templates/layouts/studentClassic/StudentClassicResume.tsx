@@ -104,6 +104,14 @@ const StudentClassicResume: React.FC<ResumeTypeProps> = ({ resume }) => {
   const education = resume.education || [];
   const work = resume.work || [];
   const volunteer = resume.volunteer || [];
+  const skills = resume.skills || [];
+  const awards = resume.awards || [];
+  const projects = resume.projects || [];
+  const certificates = resume.certificates || [];
+  const publications = resume.publications || [];
+  const languages = resume.languages || [];
+  const interests = resume.interests || [];
+  const references = resume.references || [];
   const profile = basics.summary || '';
 
   const sectionsMap: { [key: string]: JSX.Element } = {
@@ -111,6 +119,140 @@ const StudentClassicResume: React.FC<ResumeTypeProps> = ({ resume }) => {
       <Section key="Profile">
         <SectionTitle>Profile</SectionTitle>
         <div style={{ textAlign: 'center' }}>{profile}</div>
+      </Section>
+    ),
+    Skills: (
+      <Section key="Skills">
+        <SectionTitle>Skills</SectionTitle>
+        {skills.map((skill, idx) => (
+          <div key={idx} style={{ marginBottom: 8 }}>
+            <b>{skill.name}</b>
+            {/* {skill.level && <span style={{ color: '#555', marginLeft: 8 }}>({skill.level})</span>} */}
+            {skill.keywords && skill.keywords.length > 0 && (
+              <div style={{ fontSize: '0.9rem', color: '#666', marginTop: 4 }}>
+                {skill.keywords.join(', ')}
+              </div>
+            )}
+          </div>
+        ))}
+      </Section>
+    ),
+    Projects: (
+      <Section key="Projects">
+        <SectionTitle>Projects</SectionTitle>
+        {projects.map((project, idx) => (
+          <div key={idx} style={{ marginBottom: 16 }}>
+            <b>{project.name}</b>
+            {project.url && (
+              <span style={{ marginLeft: 8 }}>
+                <a href={project.url} style={{ color: '#555', textDecoration: 'underline dotted' }}>
+                  View Project
+                </a>
+              </span>
+            )}
+            <SubTitle>
+              {formatDate(project.startDate)} – {project.endDate ? formatDate(project.endDate) : 'Present'}
+            </SubTitle>
+            {project.description && <div>{project.description}</div>}
+            {project.highlights && project.highlights.length > 0 && (
+              <KeyAchievements>
+                Key Features:
+                <BulletList>
+                  {project.highlights.map((h, i) => <li key={i}>{h}</li>)}
+                </BulletList>
+              </KeyAchievements>
+            )}
+          </div>
+        ))}
+      </Section>
+    ),
+    Awards: (
+      <Section key="Awards">
+        <SectionTitle>Awards & Honors</SectionTitle>
+        {awards.map((award, idx) => (
+          <div key={idx} style={{ marginBottom: 12 }}>
+            <b>{award.title}</b>
+            <SubTitle>{award.awarder}</SubTitle>
+            <div>{formatDate(award.date)}</div>
+            {award.summary && <div style={{ marginTop: 4 }}>{award.summary}</div>}
+          </div>
+        ))}
+      </Section>
+    ),
+    Certificates: (
+      <Section key="Certificates">
+        <SectionTitle>Certifications</SectionTitle>
+        {certificates.map((cert, idx) => (
+          <div key={idx} style={{ marginBottom: 12 }}>
+            <b>{cert.name}</b>
+            <SubTitle>{cert.issuer}</SubTitle>
+            <div>{formatDate(cert.date)}</div>
+            {cert.url && (
+              <div style={{ marginTop: 4 }}>
+                <a href={cert.url} style={{ color: '#555', textDecoration: 'underline dotted' }}>
+                  View Certificate
+                </a>
+              </div>
+            )}
+          </div>
+        ))}
+      </Section>
+    ),
+    Publications: (
+      <Section key="Publications">
+        <SectionTitle>Publications</SectionTitle>
+        {publications.map((pub, idx) => (
+          <div key={idx} style={{ marginBottom: 12 }}>
+            <b>{pub.name}</b>
+            <SubTitle>{pub.publisher}</SubTitle>
+            <div>{formatDate(pub.releaseDate)}</div>
+            {pub.url && (
+              <div style={{ marginTop: 4 }}>
+                <a href={pub.url} style={{ color: '#555', textDecoration: 'underline dotted' }}>
+                  View Publication
+                </a>
+              </div>
+            )}
+            {pub.summary && <div style={{ marginTop: 4 }}>{pub.summary}</div>}
+          </div>
+        ))}
+      </Section>
+    ),
+    Languages: (
+      <Section key="Languages">
+        <SectionTitle>Languages</SectionTitle>
+        {languages.map((lang, idx) => (
+          <div key={idx} style={{ marginBottom: 8 }}>
+            <b>{lang.language}</b>
+            {lang.fluency && <span style={{ color: '#555', marginLeft: 8 }}>({lang.fluency})</span>}
+          </div>
+        ))}
+      </Section>
+    ),
+    Interests: (
+      <Section key="Interests">
+        <SectionTitle>Interests</SectionTitle>
+        {interests.map((interest, idx) => (
+          <div key={idx} style={{ marginBottom: 8 }}>
+            <b>{interest.name}</b>
+            {interest.keywords && interest.keywords.length > 0 && (
+              <div style={{ fontSize: '0.9rem', color: '#666', marginTop: 4 }}>
+                {interest.keywords.join(', ')}
+              </div>
+            )}
+          </div>
+        ))}
+      </Section>
+    ),
+    References: (
+      <Section key="References">
+        <SectionTitle>References</SectionTitle>
+        {references.map((ref, idx) => (
+          <div key={idx} style={{ marginBottom: 12 }}>
+            <b>{ref.name}</b>
+            <SubTitle>{ref.reference}</SubTitle>
+          </div>
+        ))}
       </Section>
     ),
     Volunteer: (
@@ -187,7 +329,7 @@ const StudentClassicResume: React.FC<ResumeTypeProps> = ({ resume }) => {
     ),
   };
 
-  const sectionOrder = resume.sections || ["Profile", "Volunteer", "Work", "Education"];
+  const sectionOrder = resume.sections || ["Profile", "Education", "Work", "Skills", "Projects", "Volunteer", "Awards"];
 
   return (
     <>
