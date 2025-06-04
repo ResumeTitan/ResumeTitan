@@ -40,8 +40,8 @@ const InfoTag = styled.div`
 
 const About: React.FC<AboutProps> = ({ basics }) => {
   const formatAddress = (location: Location) => {
-    const { city, region, postalCode, countryCode } = location;
-    return `${city ? city + ', ' : ''}${region ? region + ', ' : ''}${postalCode ? postalCode + ', ' : ''}${countryCode}`;
+    const { city, region } = location;
+    return `${city ? city + ', ' : ''}${region ? region : ''}`;
   };
 
   return (

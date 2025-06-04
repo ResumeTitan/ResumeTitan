@@ -40,7 +40,7 @@ const Contact = styled.div`
 `;
 
 const Section = styled.div`
-  margin: 12px 0 0 0;
+  margin: 6px 0 0 0;
   padding: 0 8px 8px 8px;
 `;
 
@@ -141,7 +141,7 @@ const StudentClassicResume: React.FC<ResumeTypeProps> = ({ resume }) => {
       <Section key="Projects">
         <SectionTitle>Projects</SectionTitle>
         {projects.map((project, idx) => (
-          <div key={idx} style={{ marginBottom: 16 }}>
+          <div key={idx} style={{ marginBottom: 8 }}>
             <b>{project.name}</b>
             {project.url && (
               <span style={{ marginLeft: 8 }}>
@@ -170,7 +170,7 @@ const StudentClassicResume: React.FC<ResumeTypeProps> = ({ resume }) => {
       <Section key="Awards">
         <SectionTitle>Awards & Honors</SectionTitle>
         {awards.map((award, idx) => (
-          <div key={idx} style={{ marginBottom: 12 }}>
+          <div key={idx} style={{ marginBottom: 8 }}>
             <b>{award.title}</b>
             <SubTitle>{award.awarder}</SubTitle>
             <div>{formatDate(award.date)}</div>
@@ -183,7 +183,7 @@ const StudentClassicResume: React.FC<ResumeTypeProps> = ({ resume }) => {
       <Section key="Certificates">
         <SectionTitle>Certifications</SectionTitle>
         {certificates.map((cert, idx) => (
-          <div key={idx} style={{ marginBottom: 12 }}>
+          <div key={idx} style={{ marginBottom: 8 }}>
             <b>{cert.name}</b>
             <SubTitle>{cert.issuer}</SubTitle>
             <div>{formatDate(cert.date)}</div>
@@ -202,7 +202,7 @@ const StudentClassicResume: React.FC<ResumeTypeProps> = ({ resume }) => {
       <Section key="Publications">
         <SectionTitle>Publications</SectionTitle>
         {publications.map((pub, idx) => (
-          <div key={idx} style={{ marginBottom: 12 }}>
+            <div key={idx} style={{ marginBottom: 8 }}>
             <b>{pub.name}</b>
             <SubTitle>{pub.publisher}</SubTitle>
             <div>{formatDate(pub.releaseDate)}</div>
@@ -248,7 +248,7 @@ const StudentClassicResume: React.FC<ResumeTypeProps> = ({ resume }) => {
       <Section key="References">
         <SectionTitle>References</SectionTitle>
         {references.map((ref, idx) => (
-          <div key={idx} style={{ marginBottom: 12 }}>
+          <div key={idx} style={{ marginBottom: 8 }}>
             <b>{ref.name}</b>
             <SubTitle>{ref.reference}</SubTitle>
           </div>
@@ -259,7 +259,7 @@ const StudentClassicResume: React.FC<ResumeTypeProps> = ({ resume }) => {
       <Section key="Volunteer">
         <SectionTitle>Volunteer Experience</SectionTitle>
         {volunteer.map((v, idx) => (
-          <div key={idx} style={{ marginBottom: 16 }}>
+          <div key={idx} style={{ marginBottom: 8 }}>
             <b>{v.position}</b>
             <SubTitle>{v.organization}</SubTitle>
             <div>{formatDate(v.startDate)} – {v.endDate ? formatDate(v.endDate) : 'Present'}</div>
@@ -279,7 +279,7 @@ const StudentClassicResume: React.FC<ResumeTypeProps> = ({ resume }) => {
       <Section key="Work">
         <SectionTitle>Work Experience</SectionTitle>
         {work.map((w, idx) => (
-          <div key={idx} style={{ marginBottom: 16 }}>
+          <div key={idx} style={{ marginBottom: 8 }}>
             <b>{w.position}</b>
             <SubTitle>{w.name}</SubTitle>
             <div>{formatDate(w.startDate)} – {w.endDate ? formatDate(w.endDate) : 'Present'}</div>
@@ -300,7 +300,7 @@ const StudentClassicResume: React.FC<ResumeTypeProps> = ({ resume }) => {
       <Section key="Education">
         <SectionTitle>Education</SectionTitle>
         {education.map((e, idx) => (
-          <div key={idx} style={{ marginBottom: 16 }}>
+          <div key={idx} style={{ marginBottom: 8 }}>
             <b>{e.institution}</b>
             <div>
               {e.studyType && <span>{e.studyType}</span>}

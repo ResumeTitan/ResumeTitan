@@ -72,9 +72,7 @@ const UploadedResumeSchema = z.object({
     location: z.object({
       address: z.string().optional(),
       city: z.string().optional(),
-      region: z.string().optional(),
-      postalCode: z.string().optional(),
-      countryCode: z.string().optional()
+      region: z.string().optional()
     }).optional(),
     profiles: z.array(z.object({
       network: z.string().optional(),
@@ -861,11 +859,8 @@ export const uploadPdfResume = async (req: Request, res: Response) => {
     "url": "website/portfolio URL",
     "summary": "professional summary or objective",
     "location": {
-      "address": "street address",
       "city": "city",
-      "region": "state/province", 
-      "postalCode": "zip/postal code",
-      "countryCode": "country code"
+      "region": "state/province"
     },
     "profiles": [
       {
@@ -938,7 +933,7 @@ Important guidelines:
 If you cannot read the PDF content, return this exact JSON structure with empty values:
 {
   "name": "",
-  "basics": {"name": "", "email": "", "phone": "", "url": "", "summary": "", "location": {"address": "", "city": "", "region": "", "postalCode": "", "countryCode": ""}, "profiles": []},
+  "basics": {"name": "", "email": "", "phone": "", "url": "", "summary": "", "location": {"city": "", "region": ""}, "profiles": []},
   "education": [],
   "work": [],
   "skills": [],
@@ -990,7 +985,7 @@ If you cannot read the PDF content, return this exact JSON structure with empty 
           console.log('- Warning: No basics found, creating empty structure');
           extractedData.basics = {
             name: "", email: "", phone: "", url: "", summary: "",
-            location: { address: "", city: "", region: "", postalCode: "", countryCode: "" },
+            location: { address: "", city: "", region: "" },
             profiles: []
           };
         }

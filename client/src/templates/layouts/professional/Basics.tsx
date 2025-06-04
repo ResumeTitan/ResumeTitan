@@ -64,7 +64,7 @@ const BasicsComponent: React.FC<BasicsComponentProps> = ({ basics }) => {
           {location && location.city && (
             <Info>
               <LocationOnIcon />
-              {location.city}, {location.countryCode}
+              {location.city}, {location.region}
             </Info>
           )}
           {email && (

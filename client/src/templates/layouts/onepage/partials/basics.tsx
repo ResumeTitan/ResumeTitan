@@ -58,7 +58,6 @@ const BasicsComponent: React.FC<BasicsComponentProps> = ({ basics }) => {
                 <span className="address">
                   {location.city && location.city}
                   {location.region && `, ${location.region}`}
-                  {location.countryCode && `, ${location.countryCode}`}
                 </span>
               </>
             )}
