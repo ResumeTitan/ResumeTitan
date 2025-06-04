@@ -1029,7 +1029,6 @@ If you cannot read the PDF content, return this exact JSON structure with empty 
         details: geminiError instanceof Error ? geminiError.message : 'Unknown AI service error'
       });
     }
-
   } catch (error) {
     console.error('Error processing PDF upload:', error);
     res.status(500).json({ 
