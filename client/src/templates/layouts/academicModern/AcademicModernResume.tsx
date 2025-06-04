@@ -534,6 +534,23 @@ const AcademicModernResume: React.FC<ResumeTypeProps> = ({ resume }) => {
               <Email href={`mailto:${basics.email}`}>{basics.email}</Email>
             </>
           )}
+          {basics.url && (
+            <>
+              {' '}•{' '}
+              <a 
+                href={basics.url} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                style={{ 
+                  color: 'rgba(255, 255, 255, 0.9)', 
+                  textDecoration: 'none',
+                  borderBottom: '1px solid rgba(255, 255, 255, 0.3)'
+                }}
+              >
+                {basics.url}
+              </a>
+            </>
+          )}
         </Contact>
       </Header>
       <Main>
