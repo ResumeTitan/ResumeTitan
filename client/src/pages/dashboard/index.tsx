@@ -16,7 +16,7 @@ import styled from 'styled-components';
 import 'styles/index.css'
 
 // Styled components for resume cards with hover animations
-const ResumeCard = styled.div`
+const ResumeCardHolder = styled.div`
   position: relative;
   margin: 4rem;
   border: 8px solid black;
@@ -52,7 +52,7 @@ const ResumeEditButton = styled.button`
     transform: scale(1.1);
   }
 
-  ${ResumeCard}:hover & {
+  ${ResumeCardHolder}:hover & {
     opacity: 1;
   }
 `;
@@ -79,7 +79,7 @@ const ResumeDeleteButton = styled.button`
     transform: scale(1.1);
   }
 
-  ${ResumeCard}:hover & {
+  ${ResumeCardHolder}:hover & {
     opacity: 1;
   }
 `;
@@ -223,7 +223,7 @@ export const Dashboard: React.FC = () => {
   }
 
   const resumeWidgets = resumes.map((resume, index) => (
-    <ResumeCard key={resume._id}>
+    <ResumeCardHolder key={resume._id}>
       <div className="p-2">
         <ResumeContainer resume={resume} />
       </div>
@@ -240,7 +240,7 @@ export const Dashboard: React.FC = () => {
       >
         <CloseIcon style={{ fontSize: 196 }} />
       </ResumeDeleteButton>
-    </ResumeCard>
+    </ResumeCardHolder>
   ));
 
   const resumePlaceholder = (
