@@ -310,7 +310,7 @@ const PersonalInfo: React.FC<PersonalInfoProps> = ({ initialInfo, onUpdate }) =>
                   </div>
                 )}
                 
-                {(infoForm.profiles || []).length > 0 && (
+                {/* {(infoForm.profiles || []).length > 0 && (
                   <div className="mt-3">
                     <span className="text-sm text-gray-600">Profiles:</span>
                     <div className="mt-1 space-y-1">
@@ -321,7 +321,7 @@ const PersonalInfo: React.FC<PersonalInfoProps> = ({ initialInfo, onUpdate }) =>
                       ))}
                     </div>
                   </div>
-                )}
+                )} */}
               </div>
             </div>
             
