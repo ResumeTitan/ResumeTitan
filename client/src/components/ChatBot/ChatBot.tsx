@@ -6,6 +6,7 @@ import ChatIcon from '@mui/icons-material/Chat';
 import SendIcon from '@mui/icons-material/Send';
 import CloseIcon from '@mui/icons-material/Close';
 import { useNavigate } from 'react-router-dom';
+import ReactMarkdown from 'react-markdown';
 
 const ChatContainer = styled.div`
   position: fixed;
@@ -82,14 +83,48 @@ const ChatMessages = styled.div`
 
 const Message = styled.div<{ $isUser: boolean }>`
   max-width: 80%;
-  padding: 8px 12px;
+  padding: 12px 16px;
   border-radius: 15px;
   background: ${props => props.$isUser ? '#115E59' : '#e9ecef'};
   color: ${props => props.$isUser ? 'white' : '#212529'};
   align-self: ${props => props.$isUser ? 'flex-end' : 'flex-start'};
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   font-size: 13px;
-  line-height: 1.4;
+  line-height: 1.6;
+
+  /* Markdown styling */
+  h1, h2, h3, h4, h5, h6 {
+    margin: 0.5em 0;
+    font-weight: 600;
+  }
+
+  p {
+    margin: 0.5em 0;
+  }
+
+  ul, ol {
+    margin: 0.5em 0;
+    padding-left: 1.5em;
+  }
+
+  li {
+    margin: 0.25em 0;
+  }
+
+  code {
+    background: rgba(0, 0, 0, 0.1);
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+    font-family: monospace;
+  }
+
+  pre {
+    background: rgba(0, 0, 0, 0.1);
+    padding: 1em;
+    border-radius: 5px;
+    overflow-x: auto;
+    margin: 0.5em 0;
+  }
 `;
 
 const ChatInput = styled.div`
@@ -351,7 +386,11 @@ const ChatBot: React.FC = () => {
       <ChatMessages>
         {messages.map((message, index) => (
           <Message key={index} $isUser={message.isUser}>
-            {message.text}
+            {message.isUser ? (
+              message.text
+            ) : (
+              <ReactMarkdown>{message.text}</ReactMarkdown>
+            )}
           </Message>
         ))}
         {isLoading && (
