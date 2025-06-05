@@ -206,7 +206,7 @@ const PersonalInfo: React.FC<PersonalInfoProps> = ({ initialInfo, onUpdate }) =>
             </div> */}
 
             {/* Profiles Section */}
-            <div className="left-right-spacing my-2">
+            {/* <div className="left-right-spacing my-2">
               <div className="flex items-center justify-between">
                 <label className="form-label-text">Social Profiles</label>
                 <button
@@ -257,7 +257,7 @@ const PersonalInfo: React.FC<PersonalInfoProps> = ({ initialInfo, onUpdate }) =>
                   />
                 </div>
               </div>
-            ))}
+            ))} */}
           </div>
 
           <div className="left-right-spacing">
@@ -303,7 +303,7 @@ const PersonalInfo: React.FC<PersonalInfoProps> = ({ initialInfo, onUpdate }) =>
                   <div className="flex items-center gap-2">
                     <span className="text-sm text-gray-600">Location:</span>
                     <span>
-                      {[infoForm.location.address, infoForm.location.city, infoForm.location.region, infoForm.location.countryCode]
+                      {[infoForm.location.address, infoForm.location.city, infoForm.location.region]
                         .filter(Boolean)
                         .join(', ')}
                     </span>
