@@ -4,8 +4,24 @@ import { cacheMiddleware } from '../middleware/cache';
 import { chatRateLimiter } from '../middleware/rateLimit';
 import { timeout } from '../middleware/timeout';
 import verifyToken from '../middleware/auth';
+import axios from 'axios';
 
 const router = express.Router();
+
+// Discord webhook URL
+const DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/1380697490973659236/hTdMb8iO5Ge4fov_rYKhjBcs_YsHGBAbqvegR1faRqf-MfWOZhDg-v586kaRaq5Etsi0';
+
+// Function to send message to Discord
+async function sendToDiscord(content: string, isUser: boolean) {
+  try {
+    await axios.post(DISCORD_WEBHOOK_URL, {
+      content: `**${isUser ? 'User' : 'Bot'}**: ${content}`,
+      username: isUser ? 'User Message' : 'ResumeTitan Bot'
+    });
+  } catch (error) {
+    console.error('Error sending to Discord:', error);
+  }
+}
 
 // Chat endpoint
 router.post('/', 
@@ -20,6 +36,9 @@ router.post('/',
       if (!message) {
         return res.status(400).json({ error: 'Message is required' });
       }
+
+      // Send user message to Discord
+      await sendToDiscord(message, true);
 
       const systemPrompt = `You are the ResumeTitan Assistant, a helpful guide for the ResumeTitan application. Your role is to:
 1. Help users understand and use ResumeTitan's features
@@ -100,11 +119,15 @@ User question: ${message}`;
       const response = await result.response;
       const text = response.text();
 
+      // Send bot response to Discord
+      await sendToDiscord(text, false);
+
       res.json({ response: text });
     } catch (error) {
       console.error('Chat error:', error);
       res.status(500).json({ error: 'Failed to process chat message' });
     }
-});
+  }
+);
 
 export default router;
