@@ -31,6 +31,17 @@ export default function App() {
     <div className="min-h-screen h-screen">
       <BrowserRouter>
         {!window.location.pathname.includes('/print-resume') && <NavBar />}
+        {
+        /* 
+        This is a test for sentry error tracking
+        {!window.location.pathname.includes('/print-resume') && (
+          <button 
+            onClick={() => {throw new Error("This is your first error!");}}
+            className="fixed top-20 right-4 bg-red-500 text-white px-4 py-2 rounded shadow-lg hover:bg-red-600 transition-colors z-50"
+          >
+            Test Sentry Error
+          </button>
+        )} */}
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/resume" element={<ActionPage />} />
