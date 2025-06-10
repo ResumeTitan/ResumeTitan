@@ -7,10 +7,10 @@ import multer from 'multer';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import path from 'path';
+import * as Sentry from '@sentry/node';
 import authRoutes from './routes/auth';
 import resumeRoutes from './routes/resume';
 import interviewRoutes from './routes/interview';
-// import stripeRoutes from './routes/stripe';
 import coverLetterRoutes from './routes/coverLetter';
 import speechRoutes from './routes/speech';
 import chatRoutes from './routes/chat';
@@ -19,6 +19,15 @@ import chatRoutes from './routes/chat';
 // @ts-ignore
 dotenv.config();
 const app = express();
+
+// Initialize Sentry
+Sentry.init({
+  dsn: process.env.SENTRY_BACKEND_DSN,
+  tracesSampleRate: 1.0,
+});
+
+// The request handler must be the first middleware on the app
+app.use(Sentry.Handlers.requestHandler());
 
 // Cache headers middleware for static assets
 const setCacheHeaders = (req: express.Request, res: express.Response, next: express.NextFunction) => {
@@ -81,10 +90,20 @@ const upload = multer({ storage });
 app.use('/auth', authRoutes);
 app.use('/resume', resumeRoutes);
 app.use('/interview', interviewRoutes);
-// app.use('/checkout', stripeRoutes);
 app.use('/cover-letter', coverLetterRoutes);
 app.use('/speech', speechRoutes);
 app.use('/chat', chatRoutes);
+
+// The error handler must be before any other error middleware and after all controllers
+app.use(Sentry.Handlers.errorHandler());
+
+// Optional fallthrough error handler
+app.use(function onError(err: any, req: express.Request, res: express.Response, next: express.NextFunction) {
+  // The error id is attached to `res.sentry` to be returned
+  // and optionally displayed to the user for support.
+  res.statusCode = 500;
+  res.end(`Internal Server Error: ${err.message}\n`);
+});
 
 /* MONGOOSE SETUP */
 const HOST = process.env.HOST || 'localhost';
@@ -98,4 +117,7 @@ mongoose
       console.log(`Server is running on: http://${address}:${port}`);
     });
   })
-  .catch((error) => console.log(`${error} did not connect`));
+  .catch((error) => {
+    console.log(`${error} did not connect`);
+    Sentry.captureException(error);
+  });
