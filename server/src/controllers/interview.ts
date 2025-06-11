@@ -682,17 +682,16 @@ export const updateInterview = async (req: Request, res: Response) => {
  */
 export const analyzeInterview = async (req: Request, res: Response) => {
   try {
-    const { answer, example, guidance } = req.body;
-    if (!answer || !example || !guidance) {
-      return res.status(400).json({ error: 'Missing required fields' });
+    const { answer, question } = req.body;
+    if (!answer || !question) {
+      return res.status(400).json({ error: 'Missing required fields: answer and question' });
     }
     const prompt = `You are an expert interview coach. Analyze the following answer to an interview question. 
 
-Question Guidance: ${guidance}
-Example Answer: ${example}
+Interview Question: ${question}
 User's Answer: ${answer}
 
-Give specific, actionable feedback on how the answer could be improved, what is good about it, and how well it matches the guidance and example. Respond in 3-5 sentences.`;
+Give specific, actionable feedback on how the answer could be improved, what strengths it demonstrates, and how well it addresses the interview question. Focus on structure, content, and delivery suggestions. Respond in 3-5 sentences.`;
     const result = await geminiClient.generateContent(prompt);
     const response = await result.response;
     const text = response.text();

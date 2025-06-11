@@ -195,9 +195,8 @@ const InterviewPage: React.FC = () => {
     try {
       const question = interview[index];
       const response = await api.post('/interview/analyze', {
-        answer: question.answer,
-        example: question.example,
-        guidance: question.guidance,
+        question: question.question,
+        answer: question.answer
       });
       const newAnalysis = [...analysis];
       newAnalysis[index] = response.data.analysis;
@@ -393,7 +392,7 @@ const InterviewPage: React.FC = () => {
                       className="form-style text-base md:text-lg text-black h-64 md:h-40"
                       value={question.answer}
                       onChange={function(val: string) { handleAnswerChange(index, { target: { value: val } }); }}
-                      placeholder="Type your answer here..."
+                      placeholder="Type or record your answer here..."
                     />
                   </div>
                   <DetailsExpand label={<span className="text-base md:text-lg font-semibold text-black">Example Answer:</span>} description={<span className="text-base md:text-lg text-black">{question.example}</span>} />
