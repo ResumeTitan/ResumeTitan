@@ -1,4 +1,5 @@
 import React, { useRef, useState } from 'react';
+import RecordRTC from 'recordrtc';
 import api from 'api/actions';
 
 // Select the best supported audio MIME type for MediaRecorder
@@ -31,68 +32,106 @@ function isIOSSafari() {
 const AudioRecorder = ({ onTranscript, disabled }) => {
   const [recording, setRecording] = useState(false);
   const [loading, setLoading] = useState(false);
-  const mediaRecorderRef = useRef(null);
-  const audioChunksRef = useRef([]);
+  const recorderRef = useRef(null);
   const streamRef = useRef(null);
 
   // Detect supported mime type once on mount
+  // TODO fix on ios
   const mimeType = getSupportedMimeType() || undefined;
-  if (!mimeType || isIOSSafari()) {
-    // If not supported or on iOS Safari, render nothing (no mic button)
-    return null;
-  }
+  // if (!mimeType || isIOSSafari()) {
+  //   // If not supported or on iOS Safari, render nothing (no mic button)
+  //   return null;
+  // }
 
   const handleStart = async () => {
-    if (!navigator.mediaDevices || !window.MediaRecorder) {
-      alert('Audio recording is not supported in this browser.');
-      return;
+    try {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        alert('Audio recording is not supported in this browser.');
+        return;
+      }
+
+      // Get audio stream
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          sampleRate: 44100
+        } 
+      });
+      
+      streamRef.current = stream;
+
+      // Create RecordRTC instance
+      const recorder = new RecordRTC(stream, {
+        type: 'audio',
+        mimeType: 'audio/wav',
+        recorderType: RecordRTC.StereoAudioRecorder,
+        numberOfAudioChannels: 1,
+        desiredSampRate: 44100,
+        // For better iOS compatibility
+        bufferSize: 4096,
+        // Use WebAudio API for better compatibility
+        useWebAudioAPI: true
+      });
+
+      recorderRef.current = recorder;
+      recorder.startRecording();
+      setRecording(true);
+    } catch (error) {
+      console.error('Error starting recording:', error);
+      alert('Failed to start recording. Please check your microphone permissions.');
     }
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    streamRef.current = stream;
-    audioChunksRef.current = [];
-    const mediaRecorder = new window.MediaRecorder(stream, mimeType ? { mimeType } : undefined);
-    mediaRecorderRef.current = mediaRecorder;
-
-    mediaRecorder.ondataavailable = (e) => {
-      if (e.data.size > 0) {
-        audioChunksRef.current.push(e.data);
-      }
-    };
-
-    mediaRecorder.onstop = async () => {
-      setLoading(true);
-      const audioBlob = new Blob(audioChunksRef.current, { type: mimeType || 'audio/webm' });
-      const formData = new FormData();
-      formData.append('audio', audioBlob, 'recording.webm');
-      try {
-        const res = await api.post('/speech/speech-to-text', formData, {
-          headers: { 'Content-Type': 'multipart/form-data' },
-        });
-        const data = res.data;
-        if (data.transcript) {
-          onTranscript(data.transcript);
-        } else {
-          alert('No transcript returned.');
-        }
-      } catch (err) {
-        alert('Speech-to-text failed.');
-      }
-      // Stop all tracks to release the mic
-      if (streamRef.current) {
-        streamRef.current.getTracks().forEach(track => track.stop());
-        streamRef.current = null;
-      }
-      setLoading(false);
-    };
-
-    mediaRecorder.start();
-    setRecording(true);
   };
 
-  const handleStop = () => {
-    if (mediaRecorderRef.current && recording) {
-      mediaRecorderRef.current.stop();
+  const handleStop = async () => {
+    if (!recorderRef.current || !recording) return;
+
+    try {
       setRecording(false);
+      setLoading(true);
+
+      // Stop recording
+      recorderRef.current.stopRecording(() => {
+        // Get the recorded blob
+        const audioBlob = recorderRef.current.getBlob();
+        
+        // Create form data
+        const formData = new FormData();
+        formData.append('audio', audioBlob, 'recording.wav');
+
+        // Send to speech-to-text API
+        api.post('/speech/speech-to-text', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        })
+        .then(res => {
+          const data = res.data;
+          if (data.transcript) {
+            onTranscript(data.transcript);
+          } else {
+            alert('No transcript returned.');
+          }
+        })
+        .catch(err => {
+          console.error('Speech-to-text error:', err);
+          alert('Speech-to-text failed.');
+        })
+        .finally(() => {
+          // Clean up
+          if (streamRef.current) {
+            streamRef.current.getTracks().forEach(track => track.stop());
+            streamRef.current = null;
+          }
+          if (recorderRef.current) {
+            recorderRef.current.destroy();
+            recorderRef.current = null;
+          }
+          setLoading(false);
+        });
+      });
+    } catch (error) {
+      console.error('Error stopping recording:', error);
+      alert('Failed to stop recording.');
+      setLoading(false);
     }
   };
 
