@@ -8,9 +8,12 @@ import { isUserPremium } from '../../utils/index';
 import LockIcon from '@mui/icons-material/Lock';
 import { AddNewButton, AddNewLockedButton } from 'components/Styled';
 import CloseIcon from '@mui/icons-material/Close';
+import PrintIcon from '@mui/icons-material/Print';
 import Pricing from 'components/Pricing';
 import { UserResource } from '@clerk/types';
 import { useAuth } from '@clerk/clerk-react';
+import InterviewPrintOptions, { PrintOptions } from 'components/InterviewPrintOptions';
+import PrintableInterview from 'components/PrintableInterview';
 import 'styles/index.css';
 import SpeechToTextTextarea from 'components/SpeechToTextTextarea';
 
@@ -33,12 +36,16 @@ const InterviewPage: React.FC = () => {
   const [inputMode, setInputMode] = useState<'link' | 'manual'>('manual');
   const [interview, setInterview] = useState<Interview[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [interviewId, setInterviewId] = useState<string | null>(location.state?.id || null);
   const [showPricingPopup, setShowPricingPopup] = useState(false);
   const [showSaveMessage, setShowSaveMessage] = useState(false);
   const [analysis, setAnalysis] = useState<string[]>([]);
   const [analyzingIndex, setAnalyzingIndex] = useState<number | null>(null);
   const [company, setCompany] = useState('');
   const [showConfirmPopup, setShowConfirmPopup] = useState(false);
+  const [showPrintOptions, setShowPrintOptions] = useState(false);
+  const [printOptions, setPrintOptions] = useState<PrintOptions | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string>('');
 
   // Set up the token function for API calls
   useEffect(() => {
@@ -106,11 +113,12 @@ const InterviewPage: React.FC = () => {
         throw new Error("User not found");
       }
       setIsLoading(true);
+      setErrorMessage(''); // Clear any previous errors
       let interviewId = '';
       if (location.state?.id) {
         interviewId = location.state.id;
       }
-      let payload: any = { interviewId, clerkId: user.id };
+      let payload: any = { interviewId, clerkId: user.id, useJobUrl: inputMode === 'link' };
       if (inputMode === 'link') {
         payload.jobUrl = jobUrl;
       } else {
@@ -127,9 +135,24 @@ const InterviewPage: React.FC = () => {
       if (response.data.interview.jobDescription) {
         setJobDescription(response.data.interview.jobDescription);
       }
+      if (response.data.interview.company) {
+        setCompany(response.data.interview.company);
+      }
+
+      setInterviewId(response.data.interview._id);
       setIsLoading(false);
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
+      setIsLoading(false);
+      
+      // Check if this is a URL parsing error
+      if (inputMode === 'link' && (error.response?.status === 400 || error.response?.data?.errorType === 'URL_PARSE_ERROR')) {
+        setErrorMessage("Failed to load job, please enter manually or try again later");
+        // Automatically switch to manual mode
+        setInputMode('manual');
+      } else {
+        setErrorMessage("An error occurred while generating interview questions");
+      }
     }
   }
 
@@ -140,7 +163,7 @@ const InterviewPage: React.FC = () => {
   const handleSaveInterview = async () => {
     setIsLoading(true);
     try {
-      const response = await api.put(`/interview/${location.state.id}`, {
+      const response = await api.put(`/interview/${interviewId}`, {
         jobTitle,
         jobDescription,
         company,
@@ -172,9 +195,8 @@ const InterviewPage: React.FC = () => {
     try {
       const question = interview[index];
       const response = await api.post('/interview/analyze', {
-        answer: question.answer,
-        example: question.example,
-        guidance: question.guidance,
+        question: question.question,
+        answer: question.answer
       });
       const newAnalysis = [...analysis];
       newAnalysis[index] = response.data.analysis;
@@ -195,6 +217,39 @@ const InterviewPage: React.FC = () => {
     }
   };
 
+  const handlePrintInterview = (options: PrintOptions) => {
+    setPrintOptions(options);
+    // Trigger print after state update
+    setTimeout(() => {
+      // Add class to body to enable interview-specific print styles
+      document.body.classList.add('printing-interview');
+      
+      window.print();
+      
+      // Remove class after printing
+      setTimeout(() => {
+        document.body.classList.remove('printing-interview');
+      }, 1000);
+    }, 100);
+  };
+
+  const hasJobInfo = Boolean(jobTitle || company || jobDescription);
+
+  // Custom tab button style matching cover letter generator
+  const tabButtonStyle = (active: boolean) => ({
+    flex: 1,
+    padding: '6px 0',
+    borderRadius: '8px 8px 0 0',
+    fontWeight: 'bold',
+    fontSize: '1.1rem',
+    background: active ? '#115E59' : '#e2e8f0',
+    color: active ? 'white' : '#115E59',
+    border: 'none',
+    outline: 'none',
+    cursor: 'pointer',
+    transition: 'background 0.2s, color 0.2s',
+  });
+
   /**
    * @description Render the Interview Page
    */
@@ -206,16 +261,43 @@ const InterviewPage: React.FC = () => {
             Enter Details
           </div>
           <div className="p-4">
-            <label htmlFor="inputMode" className="form-label-text">Select Input Method</label>
-            <select
-              id="inputMode"
-              className="form-style mb-4"
-              value={inputMode}
-              onChange={e => setInputMode(e.target.value as 'link' | 'manual')}
-            >
-              <option value="manual">Job Title and Description</option>
-              <option value="link">Job From Link</option>
-            </select>
+            <div style={{ display: 'flex', marginBottom: 16, gap: 2 }}>
+              <button
+                style={tabButtonStyle(inputMode === 'manual')}
+                onClick={() => setInputMode('manual')}
+                type="button"
+              >
+                Job Title/Description
+              </button>
+              <button
+                style={tabButtonStyle(inputMode === 'link')}
+                onClick={() => setInputMode('link')}
+                type="button"
+              >
+                Job URL
+              </button>
+            </div>
+            
+            {/* Error Message */}
+            {errorMessage && (
+              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-800 text-sm">
+                <div className="flex items-center">
+                  <svg className="w-4 h-4 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                  </svg>
+                  <span>{errorMessage}</span>
+                  <button
+                    onClick={() => setErrorMessage('')}
+                    className="ml-auto text-red-600 hover:text-red-800"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            )}
+            
             {inputMode === 'link' ? (
               <div className="w-full pr-2">
                 <label htmlFor="jobUrl" className="form-label-text">Job Posting URL</label>
@@ -263,9 +345,13 @@ const InterviewPage: React.FC = () => {
               </>
             )}
           </div>
-          <div className="p-4 flex flex-row gap-4 items-center">
+          <div className="left-right-spacing p-2">
             <button className="save-button" onClick={onGenerateClick}>Generate Interview Questions</button>
-            <button className="save-button" onClick={handleSaveInterview}>Save Interview</button>
+            <button 
+              className="save-button" 
+              onClick={handleSaveInterview}
+              disabled={isLoading || interview.length === 0}
+            >Save Interview</button>
           </div>
           {showConfirmPopup && (
             <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-30">
@@ -283,8 +369,15 @@ const InterviewPage: React.FC = () => {
 
         {interview.length > 0 && (
           <div className="form-container">
-            <div className="form-text-main">
-              Interview Questions
+            <div className="form-text-main flex justify-between items-center mb-4">
+              <span>Interview Questions</span>
+              <button
+                className="interview-button bg-white flex items-center gap-2"
+                onClick={() => setShowPrintOptions(true)}
+              >
+                <PrintIcon />
+                Print Interview
+              </button>
             </div>
             <div className="interview-questions">
               {interview.map((question, index) => (
@@ -345,21 +438,25 @@ const InterviewPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Pricing Popup */}
-      {/* {showPricingPopup && (
-        <div className="pricing-popup">
-          <div className="absolute top-2 right-4 p-2 bg-red-500 text-white rounded-full">
-            <button
-              onClick={() => setShowPricingPopup(false)}
-            >
-              <CloseIcon fontSize="large" />
-            </button>
-          </div>
-          <div className="relative text-black bg-white p-6 rounded shadow-lg">
-            <Pricing />
-          </div>
-        </div>
-      )} */}
+      {/* Print Options Popup */}
+      {showPrintOptions && (
+        <InterviewPrintOptions
+          onClose={() => setShowPrintOptions(false)}
+          onPrint={handlePrintInterview}
+          hasJobInfo={hasJobInfo}
+        />
+      )}
+
+      {/* Printable Interview Component */}
+      {printOptions && (
+        <PrintableInterview
+          interview={interview}
+          jobTitle={jobTitle}
+          company={company}
+          jobDescription={jobDescription}
+          options={printOptions}
+        />
+      )}
 
       { isLoading && (
         <Spinner />

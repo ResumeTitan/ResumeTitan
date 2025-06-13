@@ -3,6 +3,7 @@ import OnePageResume from './layouts/onepage';
 import ProfessionalResume from './layouts/professional/Resume';
 import MacchiatoResume from './layouts/macchiato/Resume';
 import StudentClassicResume from './layouts/studentClassic/StudentClassicResume';
+import AcademicModernResume from './layouts/academicModern/AcademicModernResume';
 import { ResumeTypeProps } from 'types/types';
 import styled from 'styled-components';
 
@@ -114,6 +115,7 @@ const ResumeContainer = forwardRef<HTMLDivElement, ResumeContainerProps>(({ resu
         {resume.theme === "professional" && <ProfessionalResume resume={resume} />}
         {resume.theme === "macchiato" && <MacchiatoResume resume={resume} />}
         {resume.theme === "student-classic" && <StudentClassicResume resume={resume} />}
+        {resume.theme === "academic-modern" && <AcademicModernResume resume={resume} />}
         {/* Default */}
         {resume.theme === "" && <ProfessionalResume resume={resume} />}
       </StyledContainer>

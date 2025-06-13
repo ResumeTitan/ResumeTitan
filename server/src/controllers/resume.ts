@@ -72,9 +72,7 @@ const UploadedResumeSchema = z.object({
     location: z.object({
       address: z.string().optional(),
       city: z.string().optional(),
-      region: z.string().optional(),
-      postalCode: z.string().optional(),
-      countryCode: z.string().optional()
+      region: z.string().optional()
     }).optional(),
     profiles: z.array(z.object({
       network: z.string().optional(),
@@ -116,7 +114,67 @@ const getStructuredOutput = async (prompt: string, schema: z.ZodType<any>) => {
 const getPrompt = (section: string, data: any, operationType: string = 'generate') => {
   switch (section) {
     case 'summary':
-      return `Generate a professional resume summary for:
+      if (operationType === 'edit' && data.userInput) {
+        return `You are an AI assistant helping to edit a resume summary. Analyze the current summary and apply the user's instructions intelligently.
+
+Current Resume Data: ${JSON.stringify(data)}
+Current Summary: "${data.summary || data.extraNotes || ''}"
+User Instructions: "${data.userInput}"
+
+INSTRUCTIONS FOR AI ASSISTANT:
+The user wants you to modify their resume summary based on their specific request. You should:
+
+1. **Carefully read the user's instructions** and understand what they want to change
+
+2. **Common editing requests and how to handle them:**
+   
+   **LENGTH ADJUSTMENTS:**
+   - "Make this more concise/shorter/brief" → Condense to 1-2 sentences, remove redundant words, keep only the most impactful points
+   - "Make this more detailed/longer/comprehensive" → Expand to 3-4 sentences, add specific skills, quantifiable achievements, or industry keywords
+   - "Make this punchier/more impactful" → Use stronger action words, add metrics, focus on unique value proposition
+   
+   **CONTENT MODIFICATIONS:**
+   - "Add [specific skill/experience]" → Incorporate the mentioned elements naturally into the summary
+   - "Remove [something]" → Eliminate specified content while maintaining flow
+   - "Focus more on [area]" → Emphasize the specified area while de-emphasizing others
+   - "Make it sound more [adjective]" → Adjust tone and word choice accordingly
+   
+   **TARGETING & OPTIMIZATION:**
+   - "Tailor for [industry/role]" → Use industry-specific keywords and relevant skills
+   - "Make it more ATS-friendly" → Include relevant keywords from their background
+   - "Improve grammar/flow" → Fix any issues while maintaining meaning
+
+3. **Length Guidelines:**
+   - **Concise version**: 1-2 sentences (30-50 words)
+   - **Standard version**: 2-3 sentences (50-80 words) 
+   - **Detailed version**: 3-4 sentences (80-120 words)
+   - **Never exceed 4 sentences** - recruiters prefer brevity
+
+4. **Maintain professional resume language** and ensure the summary:
+   - Starts with their professional title or key strength
+   - Includes quantifiable experience when available
+   - Highlights 2-3 key skills or specializations
+   - Ends with their current goal or value proposition
+
+5. **Preserve important information** unless specifically asked to remove it
+
+6. **Use the user's work/education background** for context and relevant keywords
+
+7. **Return ONLY valid JSON**, no additional text or markdown formatting
+
+Requirements:
+- Apply the user's specific instructions precisely
+- Include key skills and experience from their background
+- Optimize for ATS compatibility
+- Fix any grammar/spelling issues
+- Match the requested length/detail level
+
+Format as JSON:
+{
+  "summary": "summary text"
+}`;
+      } else {
+        return `Generate a professional resume summary for:
 Data: ${JSON.stringify(data)}
 
 Requirements:
@@ -129,6 +187,7 @@ Format as JSON:
 {
   "summary": "summary text"
 }`;
+      }
 
     case 'education':
       if (operationType === 'brainstorm' && data.userInput) {
@@ -457,14 +516,30 @@ Format as JSON:
 };
 
 export const postSummary = async (req: Request, res: Response) => {
-  const { summary, work, education, skills, volunteer, basics } = req.body;
+  const { summary, work, education, skills, volunteer, basics, userInput, operationType } = req.body;
   resumeData.basics = basics;
 
-  const prompt = getPrompt('summary', { 
-    extraNotes: summary, work, education, skills, volunteer
-  });
-
   try {
+    // Determine operation type based on request data
+    let opType = operationType || 'generate';
+    if (!opType && userInput) {
+      // If userInput exists but no operationType specified, it's likely editing
+      opType = 'edit';
+    }
+
+    console.log(basics?.summary || summary);
+    console.log(userInput);
+    console.log(opType);
+
+    const prompt = getPrompt('summary', { 
+      summary: basics?.summary || summary, 
+      work, 
+      education, 
+      skills, 
+      volunteer, 
+      userInput 
+    }, opType);
+
     const response = await getStructuredOutput(prompt, SummarySchema);
     res.status(200).json({ message: 'Summary information added successfully', response });
   } catch (error) {
@@ -784,11 +859,8 @@ export const uploadPdfResume = async (req: Request, res: Response) => {
     "url": "website/portfolio URL",
     "summary": "professional summary or objective",
     "location": {
-      "address": "street address",
       "city": "city",
-      "region": "state/province", 
-      "postalCode": "zip/postal code",
-      "countryCode": "country code"
+      "region": "state/province"
     },
     "profiles": [
       {
@@ -861,7 +933,7 @@ Important guidelines:
 If you cannot read the PDF content, return this exact JSON structure with empty values:
 {
   "name": "",
-  "basics": {"name": "", "email": "", "phone": "", "url": "", "summary": "", "location": {"address": "", "city": "", "region": "", "postalCode": "", "countryCode": ""}, "profiles": []},
+  "basics": {"name": "", "email": "", "phone": "", "url": "", "summary": "", "location": {"city": "", "region": ""}, "profiles": []},
   "education": [],
   "work": [],
   "skills": [],
@@ -913,7 +985,7 @@ If you cannot read the PDF content, return this exact JSON structure with empty 
           console.log('- Warning: No basics found, creating empty structure');
           extractedData.basics = {
             name: "", email: "", phone: "", url: "", summary: "",
-            location: { address: "", city: "", region: "", postalCode: "", countryCode: "" },
+            location: { address: "", city: "", region: "" },
             profiles: []
           };
         }

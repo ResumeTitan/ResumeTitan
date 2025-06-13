@@ -204,18 +204,21 @@ const MarkdownContainer = styled.div`
 interface MarkdownPageProps {
   filePath: string;
   title?: string;
+  showBackButton?: boolean;
 }
 
-const BackButton: React.FC<{ className?: string }> = ({ className }) => (
-  <Link to="/docs" className={`back-button ${className || ''}`}>
-    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+const BackButton: React.FC<{ showBackButton?: boolean, className?: string }> = ({ showBackButton, className }) => (
+  showBackButton && (
+    <Link to="/docs" className={`back-button ${className || ''}`}>
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
-    </svg>
-    Back to User Guides
-  </Link>
+      </svg>
+      Back to User Guides
+    </Link>
+  )
 );
 
-const MarkdownPage: React.FC<MarkdownPageProps> = ({ filePath, title }) => {
+const MarkdownPage: React.FC<MarkdownPageProps> = ({ filePath, title, showBackButton }) => {
   const [content, setContent] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>('');
@@ -271,7 +274,7 @@ const MarkdownPage: React.FC<MarkdownPageProps> = ({ filePath, title }) => {
       <MarkdownContainer>
         <div className="container">
           <div className="button-container">
-            <BackButton />
+            <BackButton showBackButton={showBackButton} />
           </div>
           <div className="error">{error}</div>
         </div>
@@ -283,7 +286,7 @@ const MarkdownPage: React.FC<MarkdownPageProps> = ({ filePath, title }) => {
     <MarkdownContainer>
       <div className="container">
         <div className="button-container">
-          <BackButton />
+          <BackButton showBackButton={showBackButton} />
         </div>
         
         <ReactMarkdown 

@@ -31,7 +31,7 @@ const Divider = styled.span`
 
 const BasicsComponent: React.FC<BasicsComponentProps> = ({ basics }) => {
   // Destructure basics object
-  const { name, label, email, phone, location, profiles, summary } = basics;
+  const { name, label, email, phone, location, profiles, summary, url } = basics;
 
   return (
     <div>
@@ -42,7 +42,7 @@ const BasicsComponent: React.FC<BasicsComponentProps> = ({ basics }) => {
         </>
       )}
 
-      {email || phone || location ? (
+      {email || phone || location || url ? (
         <SmallFont id="basicsBlock">
           <div className="contactBlock">
             {email && <span className="email">{email}</span>}
@@ -58,7 +58,14 @@ const BasicsComponent: React.FC<BasicsComponentProps> = ({ basics }) => {
                 <span className="address">
                   {location.city && location.city}
                   {location.region && `, ${location.region}`}
-                  {location.countryCode && `, ${location.countryCode}`}
+                </span>
+              </>
+            )}
+            {url && (
+              <>
+                <Divider>|</Divider>
+                <span className="website">
+                  <a href={url} target="_blank" rel="noopener noreferrer">{url}</a>
                 </span>
               </>
             )}

@@ -161,7 +161,7 @@ const NavBar = () => {
         ) : (
           <div className="flex items-center">
             <button
-              className="text-white font-bold pr-8"
+              className="text-white font-bold pr-8 text-xl"
               onClick={() => navigate('/docs')}
             >
               {'User Guides'}
@@ -183,7 +183,7 @@ const NavBar = () => {
             </SignedOut>
             <SignedIn>
               <button
-                className="text-white font-bold pr-8"
+                className="text-white font-bold pr-8 text-xl"
                 onClick={() => navigate('/dashboard')}
               >
                 {'Dashboard'}

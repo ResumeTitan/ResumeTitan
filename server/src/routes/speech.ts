@@ -19,6 +19,8 @@ function transcodeToWav(inputPath: string, outputPath: string): Promise<void> {
   return new Promise((resolve, reject) => {
     ffmpeg(inputPath)
       .toFormat('wav')
+      .audioFrequency(44100) // Ensure consistent sample rate
+      .audioChannels(1) // Mono channel for speech
       .on('end', () => resolve())
       .on('error', (err) => reject(err))
       .save(outputPath);
@@ -29,7 +31,7 @@ router.post('/speech-to-text', upload.single('audio'), async (req, res) => {
   const inputPath = req.file.path;
   const ext = path.extname(req.file.originalname).toLowerCase();
   let audioPath = inputPath;
-  let needsTranscode = ext === '.mp4' || ext === '.aac' || ext === '.m4a';
+  let needsTranscode = ext === '.mp4' || ext === '.aac' || ext === '.m4a' || ext === '.webm' || !ext;
 
   try {
     // If file is mp4/aac/m4a, transcode to wav
@@ -45,8 +47,8 @@ router.post('/speech-to-text', upload.single('audio'), async (req, res) => {
     const [response] = await client.recognize({
       audio: { content: audioBytes },
       config: {
-        encoding: 'LINEAR16', // for wav
-        sampleRateHertz: 44100, // or 16000, depending on your ffmpeg output
+        encoding: 'LINEAR16', // Always use LINEAR16 since we transcode everything to WAV
+        sampleRateHertz: 44100, // Now guaranteed by ffmpeg transcoding
         languageCode: 'en-US',
       },
     });

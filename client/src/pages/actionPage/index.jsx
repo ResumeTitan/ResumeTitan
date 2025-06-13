@@ -14,7 +14,6 @@ import DescriptionIcon from '@mui/icons-material/Description';
 import { useUser, useAuth } from "@clerk/clerk-react";
 import { useDispatch } from 'react-redux';
 import { setToken } from '../../state/authReducer';
-import { isUserPremium } from 'utils';
 
 
 const CustomDocumentIcon = styled(DescriptionIcon)({

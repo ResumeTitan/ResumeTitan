@@ -29,9 +29,13 @@ function ActionTab({
   /**
    * @function handleSummaryAiCall
    */
-  const handleSummaryAiCall = async () => {
+  const handleSummaryAiCall = async (userInput = '') => {
     setAiSummaryLoading(true);
-    const summaryResponse = await api.post("/resume/summary", resumeIn);
+    const summaryResponse = await api.post("/resume/summary", {
+      ...resumeIn,
+      userInput: userInput, // Always pass the AI assistant text, even if empty
+      operationType: userInput ? 'edit' : 'generate'
+    });
     setAiSummaryLoading(false);
     onUpdateResume({
       ...resumeIn, basics: {

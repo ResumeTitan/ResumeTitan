@@ -136,7 +136,7 @@ export const getCoverLetters = async (req: Request, res: Response): Promise<Resp
   try {
     // @ts-ignore
     const id = req.auth.userId;
-    const coverLetters = await CoverLetter.find({ clerkId: id });
+    const coverLetters = await CoverLetter.find({ clerkId: id }).sort({ createdAt: -1 });
     return res.status(200).json({ coverLetters });
   } catch (error: any) {
     console.log('Error: ', error);

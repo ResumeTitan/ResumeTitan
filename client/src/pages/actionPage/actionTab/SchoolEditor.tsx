@@ -12,6 +12,7 @@ import { EducationType } from 'types/types';
 import 'styles/index.css';
 import { FormContainer } from 'components/Form/styled';
 import DateInput from 'components/Form/DateInput';
+import AIAssistant from 'components/AIAssistant';
 
 const newEducation = {
   id: -1,
@@ -238,14 +239,14 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }: SchoolEdito
       </FormContainer>
 
       <div>
-        <div className="left-right-spacing flex my-2">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
           <div className="flex items-center">
             <label htmlFor={"schoolHighlights"} className="form-label-text">Highlights</label>
           </div>
 
-          <div className="phone-screen-stack">
+          <div className="left-right-spacing">
             <button
-              className="green-button flex items-center justify-center sm:h-12 rounded-lg cursor-pointer"
+              className="primary-action-button"
               onClick={() => showAiAssistant(!aiAssistant)}
             >
               <div>
@@ -254,7 +255,7 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }: SchoolEdito
               </div>
             </button>
             <button
-              className="green-button flex items-center justify-center sm:h-12 rounded-lg cursor-pointer"
+              className="primary-action-button"
               onClick={() => setShowBrainstorm(true)}
             >
               <div>
@@ -263,13 +264,26 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }: SchoolEdito
               </div>
             </button>
             <button
-              className="green-button flex items-center justify-center sm:h-12 rounded-lg cursor-pointer"
+              className="primary-action-button"
               onClick={handleHighlightAdd}
             >
               <span className="p-1">Add</span>
             </button>
           </div>
         </div>
+
+        {aiAssistant && (
+            <AIAssistant
+              placeholder={placeholder}
+              isPlaceholderActive={isPlaceholderActive}
+              aiAssistantMsg={aiAssistantMsg}
+              onMessageChange={setAiAssistantMsg}
+              onSubmit={handleAiAssistCall}
+              onClose={() => showAiAssistant(false)}
+              loading={aiLoading}
+            />
+        )}
+
         {schoolForm.highlights ? schoolForm.highlights.map((item, index) => (
           <div className="left-right-spacing">
             <div className="w-full pr-2 py-1">
@@ -300,28 +314,6 @@ function SchoolEditor({ editingSchool, onSave, onDelete, onCancel }: SchoolEdito
               placeholder="Click Add or Write with AI to start adding accomplishments/skills..."
               disabled
             />
-          </div>
-        </div>
-        )}
-
-        {aiAssistant && (
-        <div className="flex flex-col my-4 animate-fade-in">
-          <div className="section-line" />
-          <div className="flex-center">
-            <div className={`w-full input-placeholder ${isPlaceholderActive ? 'active' : ''}`}>
-              <textarea 
-                className="form-style flex-grow mr-2"
-                placeholder={placeholder}
-                value={aiAssistantMsg}
-                onChange={(e) => setAiAssistantMsg(e.target.value)}
-              />
-            </div>
-          <button
-            className="green-button w-48"
-            onClick={handleAiAssistCall}
-          >
-            Edit with AI
-          </button>
           </div>
         </div>
         )}

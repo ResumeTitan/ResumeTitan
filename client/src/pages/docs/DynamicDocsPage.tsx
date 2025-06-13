@@ -56,6 +56,7 @@ const DynamicDocsPage: React.FC = () => {
     <MarkdownPage 
       filePath={docConfig.file} 
       title={docConfig.title} 
+      showBackButton={true}
     />
   );
 };

@@ -20,13 +20,15 @@ const BasicsSchema = new mongoose.Schema({
     countryCode: { type: String, required: false, default: '' },
     region: { type: String, required: false, default: '' },
   },
-  profiles: [
-    {
+  profiles: {
+    type: Array,
+    items: {
       network: { type: String, required: false, default: '' },
       username: { type: String, required: false, default: '' },
       url: { type: String, required: false, default: '' },
     },
-  ],
+    default: []
+  }
 }
 )
 
