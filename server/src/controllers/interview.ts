@@ -6,6 +6,7 @@ import Resume from '../models/Resume';
 import { ResumeType } from '../types/types';
 import axios from 'axios';
 import puppeteer from 'puppeteer';
+import { callPythonScraper, isPythonAvailable } from '../utils/pythonScraper';
 
 // Comprehensive Zod schemas
 const interviewQuestionSchema = z.object({
@@ -436,6 +437,42 @@ const fetchJobPostingHtml = async (jobUrl: string): Promise<string> => {
   }
 };
 
+/**
+ * @function fetchJobPostingHtmlWithPython
+ * @description Fetch HTML from job posting URL using Python scraper with fallback to existing methods
+ * @param {string} jobUrl 
+ * @returns {Promise<string>}
+ */
+const fetchJobPostingHtmlWithPython = async (jobUrl: string): Promise<string> => {
+  const isIndeed = isIndeedUrl(jobUrl);
+  
+  console.log(`Attempting to scrape ${isIndeed ? 'Indeed' : 'generic'} job URL: ${jobUrl}`);
+  
+  // First, try Python scraper
+  try {
+    const pythonAvailable = await isPythonAvailable();
+    if (pythonAvailable) {
+      console.log('🐍 Using Python scraper...');
+      const result = await callPythonScraper(jobUrl);
+      
+      if (result.success && result.html) {
+        console.log(`✅ Python scraper successful - got ${result.html.length} characters`);
+        return result.html;
+      } else {
+        console.log(`❌ Python scraper failed: ${result.error}`);
+      }
+    } else {
+      console.log('⚠️ Python not available, falling back to existing methods');
+    }
+  } catch (error) {
+    console.log(`❌ Python scraper error: ${error}`);
+  }
+  
+  // Fallback to existing methods
+  console.log('🔄 Falling back to existing scraping methods...');
+  return fetchJobPostingHtml(jobUrl);
+};
+
 export const generateInterviewQuestions = async (req: Request, res: Response) => {
   try {
     const { jobTitle, jobDescription, resumeId } = req.body;
@@ -531,8 +568,8 @@ export const createUpdateInterview = async (req: Request, res: Response) => {
         const isIndeed = isIndeedUrl(jobUrl);
         console.log(`Processing ${isIndeed ? 'Indeed' : 'generic'} job URL: ${jobUrl}`);
         
-        // Fetch HTML using direct axios first, then Puppeteer fallback
-        const html = await fetchJobPostingHtml(jobUrl);
+        // Use the new Python-based scraper with fallback
+        const html = await fetchJobPostingHtmlWithPython(jobUrl);
         htmlForPrompt = html;
         
         // Use Indeed-specific prompt if it's an Indeed URL

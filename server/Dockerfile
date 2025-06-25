@@ -24,6 +24,8 @@ RUN apt-get update && apt-get install gnupg wget -y && \
   apt-get install google-chrome-stable -y --no-install-recommends && \
   rm -rf /var/lib/apt/lists/*
 
+# Install Python
+RUN apt-get update && apt-get install python3 -y
 
 RUN mkdir /app
 WORKDIR /app
@@ -31,6 +33,7 @@ WORKDIR /app
 COPY . .
 
 RUN npm install --force --production
+RUN npm run setup:python
 RUN npm run build
 
 # Set up Puppeteer for PDF downloads
