@@ -1,8 +1,13 @@
 import React from 'react';
 import heroImg from 'assets/heroImg.png';
+import { useUser } from '@clerk/clerk-react';
+import { useNavigate } from 'react-router-dom';
 import 'styles/index.css';
 
 const Hero: React.FC = () => {
+  const { isSignedIn } = useUser();
+  const navigate = useNavigate();
+
   return (
     <div className="mx-auto max-w-7xl p-4 sm:p-6 lg:p-8">
       <div className="grid grid-cols-1 items-center gap-14 lg:grid-cols-2" data-aos="fade-right">
@@ -19,19 +24,30 @@ const Hero: React.FC = () => {
             Looking for a job can be stressful, but creating your resume doesn't have to be. 
             Our AI-powered tool helps you craft a stunning resume in just a few clicks. 
             Simply enter your information, and let our technology do the rest. 
-            Log in or sign up to get started!
+            {!isSignedIn && ' Log in or sign up to get started!'}
           </p>
 
           <div className="flex space-x-8">
-            <a
-              className="primary-action-button text-lg"
-              href="/sign-up"
-            >Sign Up</a>
+          {isSignedIn ? (
+              <button
+                onClick={() => navigate('/dashboard')}
+                className="primary-action-button text-lg"
+              >
+                Go to Dashboard
+              </button>
+            ) : (
+              <>
+                <a
+                  className="primary-action-button text-lg"
+                  href="/sign-up"
+                >Sign Up</a>
 
-            <a
-              className="primary-action-button text-lg"
-              href="/sign-in"
-            >Log In</a>
+                <a
+                  className="primary-action-button text-lg"
+                  href="/sign-in"
+                >Log In</a>
+              </>
+            )}
           </div>
         </div>
 
