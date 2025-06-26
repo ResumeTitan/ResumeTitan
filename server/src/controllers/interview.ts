@@ -204,42 +204,6 @@ ${html}
 Respond ONLY with valid JSON. No explanations or extra text.`;
 };
 
-/**
- * @function normalizeIndeedUrl
- * @description Normalize Indeed URLs to improve parsing success
- * @param {string} url 
- * @returns {string}
- */
-const normalizeIndeedUrl = (url: string): string => {
-  try {
-    const urlObj = new URL(url);
-    
-    if (isIndeedUrl(url)) {
-      // Remove unnecessary parameters that might interfere with scraping
-      const allowedParams = ['jk', 'viewjob', 'q', 'l', 'tk', 'from', 'vjs'];
-      const searchParams = new URLSearchParams();
-      
-      for (const [key, value] of urlObj.searchParams.entries()) {
-        if (allowedParams.includes(key)) {
-          searchParams.set(key, value);
-        }
-      }
-      
-      urlObj.search = searchParams.toString();
-      
-      // Ensure we're using the main Indeed domain
-      if (urlObj.hostname.includes('indeed.')) {
-        urlObj.hostname = 'www.indeed.com';
-      }
-      
-      return urlObj.toString();
-    }
-    
-    return url;
-  } catch {
-    return url; // Return original if URL parsing fails
-  }
-};
 
 /**
  * @function isIndeedUrl
@@ -444,10 +408,6 @@ const fetchJobPostingHtml = async (jobUrl: string): Promise<string> => {
  * @returns {Promise<string>}
  */
 const fetchJobPostingHtmlWithPython = async (jobUrl: string): Promise<string> => {
-  const isIndeed = isIndeedUrl(jobUrl);
-  
-  console.log(`Attempting to scrape ${isIndeed ? 'Indeed' : 'generic'} job URL: ${jobUrl}`);
-  
   // First, try Python scraper
   try {
     const pythonAvailable = await isPythonAvailable();
@@ -467,10 +427,8 @@ const fetchJobPostingHtmlWithPython = async (jobUrl: string): Promise<string> =>
   } catch (error) {
     console.log(`❌ Python scraper error: ${error}`);
   }
-  
-  // Fallback to existing methods
-  console.log('🔄 Falling back to existing scraping methods...');
-  return fetchJobPostingHtml(jobUrl);
+
+  return '';
 };
 
 export const generateInterviewQuestions = async (req: Request, res: Response) => {
@@ -571,7 +529,10 @@ export const createUpdateInterview = async (req: Request, res: Response) => {
         // Use the new Python-based scraper with fallback
         const html = await fetchJobPostingHtmlWithPython(jobUrl);
         htmlForPrompt = html;
-        
+        if (!html) {
+          return res.status(400).json({ error: 'Failed to parse job posting from URL' });
+        }
+
         // Use Indeed-specific prompt if it's an Indeed URL
         prompt = getPromptFromHtml(htmlForPrompt, typedResume || {} as ResumeType, isIndeed);
         response = await getStructuredOutput(prompt, htmlExtractionSchema);

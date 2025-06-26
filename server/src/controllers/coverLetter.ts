@@ -4,6 +4,7 @@ import { z } from 'zod';
 import CoverLetter from '../models/CoverLetter';
 import Resume from '../models/Resume';
 import { ResumeType } from '../types/types';
+import { callPythonScraper, isPythonAvailable } from '../utils/pythonScraper';
 import axios from 'axios';
 
 const coverLetterSchema = z.object({
@@ -194,6 +195,36 @@ export const updateCoverLetter = async (req: Request, res: Response): Promise<Re
 };
 
 /**
+ * @function fetchJobPostingHtmlWithPython
+ * @description Fetch HTML from job posting URL using Python scraper with fallback to existing methods
+ * @param {string} jobUrl 
+ * @returns {Promise<string>}
+ */
+const fetchJobPostingHtmlWithPython = async (jobUrl: string): Promise<string> => {
+  // First, try Python scraper
+  try {
+    const pythonAvailable = await isPythonAvailable();
+    if (pythonAvailable) {
+      console.log('🐍 Using Python scraper...');
+      const result = await callPythonScraper(jobUrl);
+      
+      if (result.success && result.html) {
+        console.log(`✅ Python scraper successful - got ${result.html.length} characters`);
+        return result.html;
+      } else {
+        console.log(`❌ Python scraper failed: ${result.error}`);
+      }
+    } else {
+      console.log('⚠️ Python not available, falling back to existing methods');
+    }
+  } catch (error) {
+    console.log(`❌ Python scraper error: ${error}`);
+  }
+
+  return '';
+};
+
+/**
  * @function createUpdateCoverLetter
  * @description POST Creates or updates a cover letter
  * @param {Request} req 
@@ -239,12 +270,11 @@ export const createUpdateCoverLetter = async (req: Request, res: Response): Prom
     let response;
     if (useJobUrl && jobUrl) {
       try {
-        // Use scraper api (if available) to fetch job posting HTML
-        const SCRAPER_API_KEY = process.env.SCRAPER_API_KEY;
-        const apiUrl = `http://api.scraperapi.com?api_key=${SCRAPER_API_KEY}&url=${encodeURIComponent(jobUrl)}`;
-        const { data: html } = await axios.get(apiUrl, {
-          headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36' }
-        });
+        const html = await fetchJobPostingHtmlWithPython(jobUrl);
+        if (!html) {
+          return res.status(400).json({ error: 'Failed to parse job posting from URL', errorType: 'URL_PARSE_ERROR' });
+        }
+
         prompt = getPromptFromHtml(html, typedResume);
         const jobInfoResponse = await getStructuredOutput(prompt, z.object({ jobTitle: z.string(), company: z.string(), jobDescription: z.string() }));
         jobTitle = jobInfoResponse.jobTitle;
@@ -252,7 +282,7 @@ export const createUpdateCoverLetter = async (req: Request, res: Response): Prom
         jobDescription = jobInfoResponse.jobDescription;
       } catch (err) {
         console.error("Error fetching job info from URL:", err);
-        return res.status(400).json({ error: 'Failed to parse job posting from URL' });
+        return res.status(400).json({ error: 'Failed to parse job posting from URL', errorType: 'URL_PARSE_ERROR' });
       }
     }
 
