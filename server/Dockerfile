@@ -24,12 +24,25 @@ RUN apt-get update && apt-get install gnupg wget -y && \
   apt-get install google-chrome-stable -y --no-install-recommends && \
   rm -rf /var/lib/apt/lists/*
 
+# Install Python and pip properly
+RUN apt-get update && \
+    apt-get install -y \
+    python3 \
+    python3-pip \
+    python3-setuptools \
+    python3-wheel \
+    python3-venv \
+    && rm -rf /var/lib/apt/lists/*
+
+# Verify Python and pip installation
+RUN python3 --version && pip3 --version
 
 RUN mkdir /app
 WORKDIR /app
 
 COPY . .
 
+RUN pip install -r scraper/requirements.txt --break-system-packages
 RUN npm install --force --production
 RUN npm run build
 

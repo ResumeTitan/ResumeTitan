@@ -11,7 +11,9 @@
         "deploy:dev": "flyctl deploy -c fly-dev.toml",
         "deploy:prod": "flyctl deploy -c fly.toml",
         "clean": "rm -rf node_modules && rm package-lock.json",
-        "clean:install": "rm -rf node_modules && rm package-lock.json && npm install"
+        "clean:install": "rm -rf node_modules && rm package-lock.json && npm install",
+        "setup:python": "cd scraper && python3 -m pip install -r requirements.txt",
+        "test:scraper": "cd scraper && python3 test_scraper.py"
     },
     "nodemonConfig": {
         "delay": "1000"
