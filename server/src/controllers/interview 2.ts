@@ -1,0 +1,129 @@
+import { Request, Response } from 'express';
+import { openAiClient } from '../ext/clients';
+import { z } from "zod";
+import Interview from "../models/Interview.js";
+
+const interviewModel = openAiClient.withStructuredOutput(z.object({
+  interview: z.array(z.object({
+    question: z.string(),
+    example: z.string(),
+    guidance: z.string()
+  }))
+}));
+
+const getPrompt = (jobTitle: string, jobDescription: string) => {
+  const prompt = `
+  You are a hiring manager and you are interviewing me for the position of ${jobTitle}.
+  The job description is as follows: ${jobDescription}
+  Please provide me with a list of questions you would ask me during the interview.
+  Along with the list of questions, please provide me with an example answer to each question.
+  Along with the list of questions, please provide guidance on what you are looking for in the answer and how I should respond.
+  Your response must be in JSON format. The format shall have a key called "interview" with an array of questions. Each question shall have the following keys: question, example, guidance.
+  Give at least 10 questions.`;
+
+  return prompt;
+}
+
+/**
+ * createUpdateInterview
+ * @description POST that creates interview questions based on the resume and job description
+ * @param {string} token The user token
+ * @param {string} id The resume id
+ * @returns 
+ */
+export const createUpdateInterview = async (req: Request, res: Response) => {
+  try {
+    const { jobTitle, jobDescription, interviewId, clerkId } = req.body;
+    const gptResponse = await interviewModel.invoke(getPrompt(jobTitle, jobDescription));
+
+    const interview = gptResponse.interview;
+
+    // Save the interview to the database
+    const interviewIn = {
+      interview,
+      jobTitle,
+      jobDescription,
+      clerkId,
+    }
+
+    if (interviewId) {
+      const interviewOut = await Interview.findOneAndUpdate({ _id: interviewId }, interviewIn);
+      res.status(200).json({ interview: interviewOut });
+      return;
+    }
+
+    const interviewOut = await Interview.create(interviewIn);
+    res.status(200).json({ interview: interviewOut });
+  } catch (error: any) {
+    console.log("Error: ", error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+/**
+ * getInterviews
+ * @description GET that retrieves all interviews for a user
+ * @param {string} token The user token
+ * @param {string} userId The user id
+ * @returns 
+ */
+export const getInterviews = async (req: Request, res: Response) => {
+  try {
+    // @ts-ignore
+    const userId = req.auth.userId;
+    const interviews = await Interview.find({ clerkId: userId });
+    res.status(200).json({ interviews });
+  } catch (error: any) {
+    console.log("Error: ", error);
+    res.status(500).json({ error: error.message });
+  }
+}
+
+/**
+ * getInterview
+ * @description GET that retrieves a single interview
+ * @param {Request} req
+ * @param {Response} res
+ */
+export const getInterview = async (req: Request, res: Response) => {
+  try {
+    const interview = await Interview.findById(req.params.id);
+    res.status(200).json({ interview });
+  } catch (error: any) {
+    console.log("Error: ", error);
+    res.status(500).json({ error: error.message });
+  }
+}
+
+/**
+ * @function deleteInterview
+ * @description Delete an interview from an id
+ * @param {Request} req
+ * @param {Response} res
+ */
+export const deleteInterview = async (req: Request, res: Response) => {
+  const id = req.params.id;
+  try {
+    await Interview.findOneAndDelete({ _id: id });
+    res.status(204).send();
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+}
+
+/**
+ * @fuction updateInterview
+ * @description Update an interview
+ * @param {Request} req
+ * @param {Response} res
+ */
+export const updateInterview = async (req: Request, res: Response) => {
+  const id = req.params.id;
+  const interview = req.body;
+  try {
+    await Interview.findOneAndUpdate({ _id: id }, interview);
+    res.status(200).json({ interview });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+}
