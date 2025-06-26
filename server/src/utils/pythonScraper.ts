@@ -95,4 +95,4 @@ export const isPythonAvailable = async (): Promise<boolean> => {
       resolve(false);
     });
   });
-}; 
+};
