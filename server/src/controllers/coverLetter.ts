@@ -6,6 +6,7 @@ import Resume from '../models/Resume';
 import { ResumeType } from '../types/types';
 import { callPythonScraper, isPythonAvailable } from '../utils/pythonScraper';
 import axios from 'axios';
+import Metric from '../models/Metric';
 
 const coverLetterSchema = z.object({
   letter: z.string()
@@ -314,6 +315,10 @@ export const createUpdateCoverLetter = async (req: Request, res: Response): Prom
     }
 
     const newCoverLetter = await CoverLetter.create(coverLetterIn);
+
+    // update metrics
+    await Metric.updateOne({ key: 'COVERLETTERS_TOTAL' }, { $inc: { value: 1 } });
+
     return res.status(201).json({ coverLetter: newCoverLetter });
   } catch (error: any) {
     console.error('Error creating/updating cover letter:', error);

@@ -2,7 +2,7 @@ import React from 'react';
 import About from './About';
 import Hero from './Hero';
 import IntroPage from './IntroPage';
-// import Metrics from './Metrics';
+import Metrics from './Metrics';
 // import Logos from './Logos/Logos';
 // import Pricing from 'components/Pricing';
 import 'styles/index.css';
@@ -14,7 +14,7 @@ const LandingPage: React.FC = () => {
       <Hero />
       {/* <Logos /> */}
       <About />
-      {/* <Metrics /> */}
+      <Metrics />
       {/* <div data-aos="fade-right">
         <Pricing />
       </div> */}

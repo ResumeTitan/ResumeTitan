@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import api from 'api/actions';
 import 'styles/index.css';
 
 interface MetricProps {
@@ -72,23 +73,26 @@ const Metric: React.FC<MetricProps> = ({ number, label, icon }) => {
 };
 
 const Metrics: React.FC = () => {
-  const metrics = [
-    {
-      number: 1542,
-      label: 'Resumes Created',
-      icon: '📄'
-    },
-    {
-      number: 892,
-      label: 'Cover Letters',
-      icon: '✉️'
-    },
-    {
-      number: 634,
-      label: 'Interviews Made',
-      icon: '🎯'
-    }
-  ];
+  const [metrics, setMetrics] = useState<any>({});
+
+    // get metrics from server
+    const getMetrics = async () => {
+      const response = await api.get('/metrics/total');
+      const data = await response.data;
+      // Show resumes, cover letters, and interviews in that order
+      const reorderedData = {
+        Resumes: data.data.resumestotal,
+        CoverLetters: data.data.coverletterstotal,
+        Interviews: data.data.interviewstotal
+      };
+
+      console.log(reorderedData);
+      setMetrics(reorderedData);
+    };
+  
+    useEffect(() => {
+      getMetrics();
+    }, []);
 
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
@@ -107,11 +111,11 @@ const Metrics: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-        {metrics.map((metric, index) => (
+        {Object.entries(metrics).map(([key, metric]: [string, any]) => (
           <Metric
-            key={index}
-            number={metric.number}
-            label={metric.label}
+            key={key}
+            number={metric.value}
+            label={metric.title}
             icon={metric.icon}
           />
         ))}

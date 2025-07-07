@@ -14,6 +14,7 @@ import interviewRoutes from './routes/interview';
 import coverLetterRoutes from './routes/coverLetter';
 import speechRoutes from './routes/speech';
 import chatRoutes from './routes/chat';
+import metricsRoutes from './routes/metrics';
 
 /* CONFIGURATIONS */
 // @ts-ignore
@@ -93,6 +94,7 @@ app.use('/interview', interviewRoutes);
 app.use('/cover-letter', coverLetterRoutes);
 app.use('/speech', speechRoutes);
 app.use('/chat', chatRoutes);
+app.use('/metrics', metricsRoutes);
 
 // The error handler must be before any other error middleware and after all controllers
 app.use(Sentry.Handlers.errorHandler());

@@ -6,6 +6,7 @@ import { geminiClient } from '../ext/clients';
 import puppeteer from 'puppeteer';
 
 import "dotenv/config";
+import Metric from '../models/Metric';
 const CLIENT_URL = process.env.CLIENT_URL;
 
 const EducationSchema = z.object({
@@ -699,9 +700,12 @@ export const updateResume = async (req: Request, res: Response) => {
     }
 
     let resumeOut;
-    if (!resume._id) {
+    if (!resume._id) {      
       const resumeModel = new Resume(resume);
       resumeOut = await resumeModel.save();
+
+      // update metrics
+      await Metric.updateOne({ key: 'RESUMES_TOTAL' }, { $inc: { value: 1 } });
     } else {
       resumeOut = await Resume.findOneAndUpdate({ _id: resume._id }, resume, { new: true, upsert: true });
     }
