@@ -28,8 +28,9 @@ const AboutContainer = styled.div`
 
 const InfoTag = styled.div`
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  align-items: left;
+  justify-content: left;
+  gap: 20px;
   font-size: 14px;
 
   svg {

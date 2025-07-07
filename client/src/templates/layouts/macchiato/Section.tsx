@@ -19,7 +19,7 @@ const Section = styled.div`
 `;
 
 const Container = styled.div`
-  margin: 0 8px;
+  margin: 0 0px;
 `;
 
 // Define the props interface for SectionComponent

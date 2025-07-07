@@ -7,6 +7,7 @@ import { ResumeType } from '../types/types';
 import axios from 'axios';
 import puppeteer from 'puppeteer';
 import { callPythonScraper, isPythonAvailable } from '../utils/pythonScraper';
+import Metric from '../models/Metric';
 
 // Comprehensive Zod schemas
 const interviewQuestionSchema = z.object({
@@ -583,6 +584,9 @@ export const createUpdateInterview = async (req: Request, res: Response) => {
       interviewOut = await Interview.findOneAndUpdate({ _id: interviewId }, interviewIn, { new: true });
     } else {
       interviewOut = await Interview.create(interviewIn);
+
+      // update metrics
+      await Metric.updateOne({ key: 'INTERVIEWS_TOTAL' }, { $inc: { value: 1 } });
     }
 
     res.status(200).json({
