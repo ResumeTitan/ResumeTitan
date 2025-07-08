@@ -13,6 +13,7 @@ export const PrintToPdf = () => {
   const { id } = useParams();
   const [searchParams] = useSearchParams();
   const clerkId = searchParams.get('clerkId');
+  const hasOverflow = searchParams.get('hasOverflow') === 'true';
   const token = useSelector((state: any) => state.token);
 
   useEffect(() => {
@@ -42,6 +43,51 @@ export const PrintToPdf = () => {
 
   return resume && (
     <div data-resume="print-container">
+      <style>
+        {`
+          @page {
+            size: 210mm 297mm;
+            margin: 0;
+          }
+          body {
+            margin: 0;
+            padding: 0;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            height: auto !important;
+            overflow: ${hasOverflow ? 'visible' : 'hidden'} !important;
+          }
+          #root {
+            height: auto !important;
+            overflow: ${hasOverflow ? 'visible' : 'hidden'} !important;
+          }
+          .resume-container {
+            width: 210mm !important;
+            height: ${hasOverflow ? 'auto' : '297mm'} !important;
+            min-height: ${hasOverflow ? '297mm' : 'auto'} !important;
+            transform: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            overflow: ${hasOverflow ? 'visible' : 'hidden'} !important;
+            page-break-inside: ${hasOverflow ? 'auto' : 'avoid'} !important;
+          }
+          .resume-content {
+            width: 210mm !important;
+            height: ${hasOverflow ? 'auto' : '297mm'} !important;
+            page-break-inside: ${hasOverflow ? 'auto' : 'avoid'} !important;
+            page-break-after: ${hasOverflow ? 'auto' : 'avoid'} !important;
+            overflow: ${hasOverflow ? 'visible' : 'hidden'} !important;
+          }
+          .page-container {
+            height: auto !important;
+            overflow: ${hasOverflow ? 'visible' : 'hidden'} !important;
+          }
+          /* Ensure all content is visible */
+          * {
+            overflow: ${hasOverflow ? 'visible' : 'hidden'} !important;
+          }
+        `}
+      </style>
       <ResumeContainer resume={resume} />
     </div>
   )

@@ -773,7 +773,7 @@ export const printResumeToPdf = async (req: Request, res: Response) => {
   }
 
   try {
-    const { id } = req.body;
+    const { id, hasOverflow } = req.body;
     const browser = await puppeteer.launch({ 
       args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
       headless: true,
@@ -792,10 +792,10 @@ export const printResumeToPdf = async (req: Request, res: Response) => {
       'Authorization': `Bearer ${token}`
     });
     
-    console.log("Navigating to", `${CLIENT_URL}/print-resume/${id}?clerkId=${clerkId}`);
+    console.log("Navigating to", `${CLIENT_URL}/print-resume/${id}?clerkId=${clerkId}&hasOverflow=${hasOverflow}`);
     
     // Navigate to the print-resume URL and wait for content
-    await page.goto(`${CLIENT_URL}/print-resume/${id}?clerkId=${clerkId}`, {
+    await page.goto(`${CLIENT_URL}/print-resume/${id}?clerkId=${clerkId}&hasOverflow=${hasOverflow}`, {
       waitUntil: ['networkidle0', 'domcontentloaded'],
       timeout: 30000
     });
@@ -815,7 +815,8 @@ export const printResumeToPdf = async (req: Request, res: Response) => {
         right: '0.4in',
         bottom: '0.4in',
         left: '0.4in'
-      }
+      },
+      preferCSSPageSize: hasOverflow
     });
     await browser.close();
 

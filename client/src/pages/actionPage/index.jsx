@@ -95,7 +95,7 @@ function ActionPage() {
       @media print {
         html, body {
           height: auto;
-          overflow: hidden;
+          overflow: ${hasOverflow ? 'visible' : 'hidden'};
           width: 210mm;
           margin: 0;
           padding: 0;
@@ -106,27 +106,41 @@ function ActionPage() {
         }
         #root {
           height: auto;
-          overflow: hidden;
+          overflow: ${hasOverflow ? 'visible' : 'hidden'};
           width: 210mm;
         }
         .page-container {
           height: auto;
-          overflow: hidden;
+          overflow: ${hasOverflow ? 'visible' : 'hidden'};
           width: 210mm;
         }
         .resume-container {
           width: 210mm !important;
-          height: 297mm !important;
+          height: ${hasOverflow ? 'auto' : '297mm'} !important;
+          min-height: ${hasOverflow ? '297mm' : 'auto'} !important;
           transform: none !important;
           margin: 0 !important;
           padding: 0 !important;
+          overflow: ${hasOverflow ? 'visible' : 'hidden'} !important;
+        }
+        .resume-content {
+          width: 210mm !important;
+          height: ${hasOverflow ? 'auto' : '297mm'} !important;
+          page-break-inside: ${hasOverflow ? 'auto' : 'avoid'} !important;
+          page-break-after: ${hasOverflow ? 'auto' : 'avoid'} !important;
+          overflow: ${hasOverflow ? 'visible' : 'hidden'} !important;
+        }
+        /* Ensure all content is visible when printing */
+        * {
+          overflow: ${hasOverflow ? 'visible' : 'hidden'} !important;
         }
         @media screen and (max-width: 768px) {
           .resume-container {
             transform: scale(1) !important;
             transform-origin: top left !important;
             width: 210mm !important;
-            height: 297mm !important;
+            height: ${hasOverflow ? 'auto' : '297mm'} !important;
+            min-height: ${hasOverflow ? '297mm' : 'auto'} !important;
           }
           .layover-container {
             position: fixed !important;
@@ -236,6 +250,7 @@ function ActionPage() {
         const response = await api.post("/resume/print", {
           id: currentResume._id,
           name: currentResume.name || 'Resume',
+          hasOverflow: hasOverflow
         }, {
           responseType: 'blob'
         });
@@ -277,7 +292,8 @@ function ActionPage() {
       const jobDescriptionStr = useJobDescription ? jobDescription : '';
       const response = await api.post("/resume/create", {
         resume: currentResume,
-        jobDescription: jobDescriptionStr
+        jobDescription: jobDescriptionStr,
+        hasOverflow: hasOverflow,
       });
       const newResume = response.data;
       setResumeLoading(false);

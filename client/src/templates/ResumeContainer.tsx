@@ -70,7 +70,11 @@ const ResumeContainer = forwardRef<HTMLDivElement, ResumeContainerProps>(({ resu
       if (ref && 'current' in ref && ref.current) {
         const contentHeight = ref.current.scrollHeight;
         const containerHeight = ref.current.clientHeight;
-        const hasOverflow = contentHeight > containerHeight;
+        const pageHeight = 297; // A4 height in mm
+        
+        // Calculate how many pages the content needs
+        const pagesNeeded = Math.ceil(contentHeight / containerHeight);
+        const hasOverflow = pagesNeeded > 1;
         
         if (onOverflowChange) {
           onOverflowChange(hasOverflow);
@@ -110,14 +114,16 @@ const ResumeContainer = forwardRef<HTMLDivElement, ResumeContainerProps>(({ resu
   return (
     <ScaledContainer ref={containerRef} $scale={scale}>
       <StyledContainer ref={ref}>
-        {resume.theme === "harvard" && <ProfessionalResume resume={resume} />}
-        {resume.theme === "one-page" && <OnePageResume resume={resume} />}
-        {resume.theme === "professional" && <ProfessionalResume resume={resume} />}
-        {resume.theme === "macchiato" && <MacchiatoResume resume={resume} />}
-        {resume.theme === "student-classic" && <StudentClassicResume resume={resume} />}
-        {resume.theme === "academic-modern" && <AcademicModernResume resume={resume} />}
-        {/* Default */}
-        {resume.theme === "" && <ProfessionalResume resume={resume} />}
+        <div className="resume-content">
+          {resume.theme === "harvard" && <ProfessionalResume resume={resume} />}
+          {resume.theme === "one-page" && <OnePageResume resume={resume} />}
+          {resume.theme === "professional" && <ProfessionalResume resume={resume} />}
+          {resume.theme === "macchiato" && <MacchiatoResume resume={resume} />}
+          {resume.theme === "student-classic" && <StudentClassicResume resume={resume} />}
+          {resume.theme === "academic-modern" && <AcademicModernResume resume={resume} />}
+          {/* Default */}
+          {resume.theme === "" && <ProfessionalResume resume={resume} />}
+        </div>
       </StyledContainer>
     </ScaledContainer>
   );
