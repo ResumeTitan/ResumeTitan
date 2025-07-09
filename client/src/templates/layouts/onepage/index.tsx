@@ -15,13 +15,14 @@ import Volunteer from "./partials/Volunteer";
 // import References from "./References";
 import { ResumeTypeProps } from "types/types";
 import styled from 'styled-components';
+import { getFontFamily } from '../../../utils/fontUtils';
 
-const Layout = styled.div`
+const Layout = styled.div<{ $fontFamily: string }>`
   max-width: 660px;
   margin: 0 auto;
   line-height: calc(1ex / 0.32);
   margin-top: 40px;
-  font-family: "Times New Roman", Times, serif;
+  font-family: ${props => props.$fontFamily};
   color: black;
 `;
 
@@ -52,7 +53,7 @@ const sectionComponents = {
 const OnePageResume: React.FC<ResumeTypeProps> = ({ resume }) => {
   // Render the Resume component
   return (
-    <Layout>
+    <Layout $fontFamily={getFontFamily(resume.font)}>
       {resume.sections.map((section) => {
         const SectionComponent = sectionComponents[section as keyof typeof sectionComponents];
         if (SectionComponent) {

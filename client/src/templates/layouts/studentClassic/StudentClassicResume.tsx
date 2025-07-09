@@ -1,9 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
 import { ResumeTypeProps } from 'types/types';
+import { getFontFamily } from '../../../utils/fontUtils';
 
-const Main = styled.div`
-  font-family: 'Georgia', serif;
+const Main = styled.div<{ $fontFamily: string }>`
+  font-family: ${props => props.$fontFamily};
   font-size: 0.95rem;
   padding: 0 36px 32px 36px;
   background: #fff;
@@ -364,7 +365,7 @@ const StudentClassicResume: React.FC<ResumeTypeProps> = ({ resume }) => {
           )}
         </Contact>
       </Header>
-      <Main>
+      <Main $fontFamily={getFontFamily(resume.font)}>
         {sectionOrder.map((section) => sectionsMap[section] || null)}
       </Main>
     </>

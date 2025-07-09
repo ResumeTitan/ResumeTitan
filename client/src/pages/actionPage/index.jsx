@@ -65,6 +65,7 @@ function ActionPage() {
     awards: [],
 
     theme: "professional", 
+    font: "times-new-roman",
     sections: ["Basics"],
     name: "Resume Name"
   });
@@ -484,6 +485,7 @@ function ActionPage() {
             onUpdateJobDescription={(description) => setJobDescription(description)}
             isJobDescriptionUsed={(checked) => setUseJobDescription(checked)}
             onChangeTheme={(theme) => setCurrentResume({...currentResume, theme: theme})}
+            onChangeFont={(font) => setCurrentResume({...currentResume, font: font})}
             onUpdateSections={handleUpdateSections}
           />
         )}

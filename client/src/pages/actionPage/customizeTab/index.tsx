@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import ThemeSelector from './themeSelector';
+import FontSelector from './fontSelector';
 import SectionList from './SectionList';
 import 'styles/index.css';
 import { ResumeType } from 'types/types';
@@ -11,6 +12,7 @@ interface Props {
   onUpdateJobDescription: (jobDescription: string) => void;
   isJobDescriptionUsed: (isJobDescriptionUsed: boolean) => void;
   onChangeTheme: (theme: string) => void;
+  onChangeFont: (font: string) => void;
   onUpdateSections: (sections: string[]) => void;
 }
 
@@ -21,6 +23,7 @@ const CustomizeTab: React.FC<Props> = ({
   onUpdateJobDescription, 
   isJobDescriptionUsed, 
   onChangeTheme,
+  onChangeFont,
   onUpdateSections
 }) => {
   const [isJobDescriptionChecked, setIsJobDescriptionChecked] = useState(descriptionUsed);
@@ -58,6 +61,22 @@ const CustomizeTab: React.FC<Props> = ({
         ]}
         selectedTheme={resume.theme}
         onSelect={onChangeTheme}
+      />
+    </div>
+    <div className="form-container font-bold">
+      <div className="form-text-main">{"Font"}</div>
+      <FontSelector 
+        resume={resume}
+        fonts={[
+          {id: "times-new-roman", label: "Times New Roman", preview: '"Times New Roman", Times, serif'},
+          {id: "arial", label: "Arial", preview: 'Arial, Helvetica, sans-serif'},
+          {id: "georgia", label: "Georgia", preview: 'Georgia, serif'},
+          {id: "calibri", label: "Calibri", preview: 'Calibri, sans-serif'},
+          {id: "cambria", label: "Cambria", preview: 'Cambria, serif'},
+          {id: "verdana", label: "Verdana", preview: 'Verdana, Geneva, sans-serif'},
+        ]}
+        selectedFont={resume.font || "times-new-roman"}
+        onSelect={onChangeFont}
       />
     </div>
     {/* <div className="form-container">

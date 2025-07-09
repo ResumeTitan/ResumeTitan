@@ -131,6 +131,7 @@ export interface ResumeType {
   _id?: string;
   name?: string;
   theme?: string;
+  font?: string;
   sections?: string[];
 }
 
