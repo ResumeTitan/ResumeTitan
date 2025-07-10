@@ -187,10 +187,25 @@ export const deleteCoverLetter = async (req: Request, res: Response): Promise<Re
 export const updateCoverLetter = async (req: Request, res: Response): Promise<Response> => {
   const id = req.params.id;
   const coverLetter = req.body;
+  
+  console.log('🔍 updateCoverLetter - Received data:');
+  console.log('ID:', id);
+  console.log('Request body:', JSON.stringify(coverLetter, null, 2));
+  console.log('Letter field:', coverLetter.letter);
+  
   try {
-    const updatedCoverLetter = await CoverLetter.findOneAndUpdate({ _id: id }, coverLetter, { new: true });
+    // Use $set to ensure all fields are properly updated
+    const updatedCoverLetter = await CoverLetter.findOneAndUpdate(
+      { _id: id }, 
+      { $set: coverLetter }, 
+      { new: true, runValidators: true }
+    );
+    
+    console.log('✅ Updated cover letter:', JSON.stringify(updatedCoverLetter, null, 2));
+    console.log('Updated letter field:', updatedCoverLetter?.letter);
     return res.status(200).json({ coverLetter: updatedCoverLetter });
   } catch (err: any) {
+    console.error('❌ Error updating cover letter:', err);
     return res.status(500).json({ error: err.message });
   }
 };
