@@ -91,7 +91,8 @@ const UploadedResumeSchema = z.object({
   volunteer: z.array(VolunteerSchema.extend({ id: z.number().optional() })).optional(),
   awards: z.array(AwardsSchema.extend({ id: z.number().optional() })).optional(),
   sections: z.array(z.string()).optional(),
-  theme: z.string().optional()
+  theme: z.string().optional(),
+  font: z.string().optional()
 });
 
 const resumeData: ResumeType = {};
