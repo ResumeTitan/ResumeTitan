@@ -47,7 +47,7 @@ const CoverLetterPDF: React.FC<CoverLetterPDFProps> = ({ coverLetter }) => (
       </View>
       <View style={styles.body}>
         {coverLetter.letter
-          .split(/\r?\n\r?\n/) // Split on double line breaks for paragraphs
+          .split(/\r?\n/) // Split on all line breaks for paragraphs
           .map((paragraph: string, pIdx: number) => (
             <Text key={pIdx} style={styles.paragraph}>
               {paragraph.replace(/\r?\n/g, ' ')}

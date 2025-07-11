@@ -243,7 +243,7 @@ const CoverLetter: React.FC = () => {
     <Container>
       <div style={{ flex: 1, width: '100%' }}>
         <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
-          <ResponsiveFormContainer className="form-container">
+          <div className="form-container mt-1">
             <div className="form-text-main mb-4">
               Cover Letter Information
             </div>
@@ -255,12 +255,12 @@ const CoverLetter: React.FC = () => {
                 value={coverLetter.name}
                 onChange={(event) => setCoverLetter({...coverLetter, name: event.target.value})}
               />
-              <FormField 
+              {/* <FormField 
                 title={"Email"}
                 value={user?.emailAddresses?.[0]?.toString() || ''}
                 onChange={() => {}}
                 disabled
-              />
+              /> */}
               <FormContainer>
                 <FormField 
                   title={"City"}
@@ -412,7 +412,7 @@ const CoverLetter: React.FC = () => {
                 </div>
               )}
             </div>
-          </ResponsiveFormContainer>
+          </div>
         </div>
       </div>
 
