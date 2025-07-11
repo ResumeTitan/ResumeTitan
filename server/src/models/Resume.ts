@@ -58,12 +58,10 @@ const WorkSchema = new mongoose.Schema(
     startDate: {
       type: String,
       description: "Start date",
-      default: ""
     },
     endDate: {
       type: String,
       description: "End date",
-      default: ""
     },
     endDateCurrent: {
       type: Boolean,
@@ -119,12 +117,10 @@ const EducationSchema = new mongoose.Schema({
   startDate: {
     type: String,
     description: "Start date",
-    default: ""
   },
   endDate: {
     type: String,
     description: "End date",
-    default: ""
   },
   endDateCurrent: {
     type: Boolean,
@@ -160,12 +156,10 @@ const VolunteerSchema = new mongoose.Schema({
   startDate: {
     type: String,
     description: "Start date",
-    default: ""
   },
   endDate: {
     type: String,
     description: "End date",
-    default: ""
   },
   endDateCurrent: {
     type: Boolean,
