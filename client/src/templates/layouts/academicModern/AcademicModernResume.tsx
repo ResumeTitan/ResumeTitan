@@ -12,7 +12,8 @@ const Main = styled.div<{ $fontFamily: string }>`
   line-height: 1.4;
 `;
 
-const Header = styled.div`
+const Header = styled.div<{ $fontFamily: string }>`
+  font-family: ${props => props.$fontFamily};
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   padding: 28px 0 16px 0;
   text-align: center;
@@ -26,7 +27,6 @@ const Header = styled.div`
 `;
 
 const Name = styled.h1`
-  font-family: 'Inter', sans-serif;
   font-size: 2.4rem;
   font-weight: 700;
   letter-spacing: -0.02em;
@@ -48,7 +48,6 @@ const Section = styled.div`
 `;
 
 const SectionTitle = styled.h2`
-  font-family: 'Inter', sans-serif;
   font-size: 1.2rem;
   font-weight: 600;
   letter-spacing: -0.01em;
@@ -514,7 +513,7 @@ const AcademicModernResume: React.FC<ResumeTypeProps> = ({ resume }) => {
 
   return (
     <>
-      <Header>
+      <Header $fontFamily={getFontFamily(resume.font)}>
         <Name>{basics.name}</Name>
         <Contact>
           {basics.location?.city}, {basics.location?.region}

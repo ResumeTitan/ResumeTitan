@@ -18,14 +18,12 @@ const SkillSection = styled.section`
 `;
 
 const SkillTitle = styled.h3`
-  font-family: "Lato", Helvetica, Arial, sans-serif;
   font-weight: 700;
   font-size: 14px;
   letter-spacing: 0.4px;
 `;
 
 const SkillLevel = styled.h4`
-  font-family: "Lato", Helvetica, Arial, sans-serif;
   font-weight: 700;
   font-size: 12px;
   text-transform: capitalize;
@@ -37,7 +35,6 @@ const KeywordsContainer = styled.div`
 `;
 
 const Keyword = styled.h6`
-  font-family: "Lato", Helvetica, Arial, sans-serif;
   font-weight: 400;
   font-size: 10px;
   margin: 0.15em;

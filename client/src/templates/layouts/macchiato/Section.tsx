@@ -5,7 +5,6 @@ const Section = styled.div`
   max-width: 700px;
 
   h2 {
-    font-family: "Josefin Sans", Helvetica, Arial, sans-serif;
     font-weight: 800;
     font-size: 16px;
     letter-spacing: .5px;

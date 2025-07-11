@@ -5,7 +5,7 @@ export const getFontFamily = (fontId: string): string => {
     'georgia': 'Georgia, serif',
     'calibri': 'Calibri, sans-serif',
     'cambria': 'Cambria, serif',
-    'verdana': 'Verdana, Geneva, sans-serif',
+    'sans-serif': 'sans-serif',
   };
   
   return fontMap[fontId] || fontMap['times-new-roman'];

@@ -18,7 +18,6 @@ const AwardSection = styled.section`
 `;
 
 const AwardTitle = styled.h3`
-  font-family: "Lato", Helvetica, Arial, sans-serif;
   font-weight: 700;
   font-size: 14px;
   letter-spacing: 0.4px;
@@ -26,7 +25,6 @@ const AwardTitle = styled.h3`
 `;
 
 const AwardAwarder = styled.h4`
-  font-family: "Lato", Helvetica, Arial, sans-serif;
   font-weight: 400;
   font-size: 11px;
   color: #666;
@@ -34,7 +32,6 @@ const AwardAwarder = styled.h4`
 `;
 
 const AwardDate = styled.h5`
-  font-family: "Lato", Helvetica, Arial, sans-serif;
   font-weight: 400;
   font-size: 10px;
   color: #888;
@@ -42,7 +39,6 @@ const AwardDate = styled.h5`
 `;
 
 const AwardSummary = styled.p`
-  font-family: "Lato", Helvetica, Arial, sans-serif;
   font-weight: 400;
   font-size: 10px;
   color: #333;

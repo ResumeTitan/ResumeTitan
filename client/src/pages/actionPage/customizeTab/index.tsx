@@ -73,7 +73,7 @@ const CustomizeTab: React.FC<Props> = ({
           {id: "georgia", label: "Georgia", preview: 'Georgia, serif'},
           {id: "calibri", label: "Calibri", preview: 'Calibri, sans-serif'},
           {id: "cambria", label: "Cambria", preview: 'Cambria, serif'},
-          {id: "verdana", label: "Verdana", preview: 'Verdana, Geneva, sans-serif'},
+          {id: "sans-serif", label: "Sans Serif", preview: 'sans-serif'},
         ]}
         selectedFont={resume.font || "times-new-roman"}
         onSelect={onChangeFont}
