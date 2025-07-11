@@ -1,16 +1,18 @@
 import React from 'react';
 import styled from 'styled-components';
 import { ResumeTypeProps } from 'types/types';
+import { getFontFamily } from '../../../utils/fontUtils';
 
-const Main = styled.div`
-  font-family: 'Georgia', serif;
+const Main = styled.div<{ $fontFamily: string }>`
+  font-family: ${props => props.$fontFamily};
   font-size: 0.95rem;
   padding: 0 36px 32px 36px;
   background: #fff;
   color: black;
 `;
 
-const Header = styled.div`
+const Header = styled.div<{ $fontFamily: string }>`
+  font-family: ${props => props.$fontFamily};
   background: #ece8dd;
   padding: 32px 0 16px 0;
   text-align: center;
@@ -20,11 +22,9 @@ const Header = styled.div`
   right: 50%;
   margin-left: -50vw;
   margin-right: -50vw;
-  font-family: 'Georgia', serif;
 `;
 
 const Name = styled.h1`
-  font-family: 'Georgia', serif;
   font-size: 2.4rem;
   letter-spacing: 0.08em;
   margin: 0;
@@ -36,7 +36,6 @@ const Contact = styled.div`
   margin: 12px 0 0 0;
   font-size: 1rem;
   color: #555;
-  font-family: 'Georgia', serif;
 `;
 
 const Section = styled.div`
@@ -45,7 +44,6 @@ const Section = styled.div`
 `;
 
 const SectionTitle = styled.h2`
-  font-family: 'Georgia', serif;
   font-size: 1.1rem;
   letter-spacing: 0.15em;
   text-transform: uppercase;
@@ -76,7 +74,6 @@ const EduList = styled.div`
 `;
 
 const Email = styled.a`
-  font-family: 'Georgia', serif;
   color: #555;
   text-decoration: underline dotted;
   font-size: 1rem;
@@ -337,7 +334,7 @@ const StudentClassicResume: React.FC<ResumeTypeProps> = ({ resume }) => {
 
   return (
     <>
-      <Header>
+      <Header $fontFamily={getFontFamily(resume.font)}>
         <Name>{basics.name}</Name>
         <Contact>
           {basics.location?.city}, {basics.location?.region}
@@ -368,7 +365,7 @@ const StudentClassicResume: React.FC<ResumeTypeProps> = ({ resume }) => {
           )}
         </Contact>
       </Header>
-      <Main>
+      <Main $fontFamily={getFontFamily(resume.font)}>
         {sectionOrder.map((section) => sectionsMap[section] || null)}
       </Main>
     </>

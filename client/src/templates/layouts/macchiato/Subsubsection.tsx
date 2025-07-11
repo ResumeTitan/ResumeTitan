@@ -3,7 +3,6 @@ import styled from 'styled-components';
 
 const Subsection = styled.div`
   h4 {
-    font-family: "Lato", Helvetica, Arial, sans-serif;
     font-weight: 300;
     font-size: 14px;
   }

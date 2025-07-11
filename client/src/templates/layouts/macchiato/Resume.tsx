@@ -15,6 +15,7 @@ import References from './References';
 import Certificates from './Certificates';
 import styled from 'styled-components';
 import { ResumeTypeProps } from 'types/types';
+import { getFontFamily } from '../../../utils/fontUtils';
 
 // Define styled components
 const Page = styled.main`
@@ -26,10 +27,10 @@ const Page = styled.main`
   color: #000;
 `;
 
-const ResumeContent = styled.div`
+const ResumeContent = styled.div<{ $fontFamily: string }>`
   display: flex;
   flex-wrap: wrap;
-  font-family: 'Lato', Helvetica, Arial, sans-serif;
+  font-family: ${props => props.$fontFamily};
 `;
 
 const LeftColumn = styled.aside`
@@ -110,8 +111,8 @@ const Resume: React.FC<ResumeTypeProps> = ({ resume }) => {
 
   return (
     <Page id="resume">
-      <ResumeHeader basics={resume.basics} />
-      <ResumeContent>
+      <ResumeHeader basics={resume.basics} font={getFontFamily(resume.font)} />
+      <ResumeContent $fontFamily={getFontFamily(resume.font)}>
         <LeftColumn>
           <Basics basics={resume.basics} />
           {leftSections.map(renderSection)}

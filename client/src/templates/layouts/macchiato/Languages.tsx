@@ -18,7 +18,6 @@ const LanguageSection = styled.section`
 `;
 
 const LanguageName = styled.h3`
-  font-family: "Lato", Helvetica, Arial, sans-serif;
   font-weight: 700;
   font-size: 14px;
   letter-spacing: 0.4px;
@@ -26,7 +25,6 @@ const LanguageName = styled.h3`
 `;
 
 const LanguageFluency = styled.h4`
-  font-family: "Lato", Helvetica, Arial, sans-serif;
   font-weight: 400;
   font-size: 11px;
   color: #666;

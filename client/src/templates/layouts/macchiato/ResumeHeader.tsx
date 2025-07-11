@@ -4,6 +4,7 @@ import { BasicsType } from 'types/types';
 
 interface ResumeHeaderProps {
   basics: BasicsType;
+  font?: string;
 }
 
 const Header = styled.header`
@@ -16,15 +17,15 @@ const ProfileHeader = styled.div`
   flex-direction: column;
 `;
 
-const Name = styled.h1`
-  font-family: "Josefin Sans", Helvetica, Arial, sans-serif;
+const Name = styled.h1<{ $fontFamily: string }>`
+  font-family: ${props => props.$fontFamily};
   font-weight: 700;
   font-size: 40px;
   letter-spacing: 1.5px;
 `;
 
-const Label = styled.h2`
-  font-family: "Josefin Sans", Helvetica, Arial, sans-serif;
+const Label = styled.h2<{ $fontFamily: string }>`
+  font-family: ${props => props.$fontFamily};
   font-weight: 300;
   font-size: 16px;
   letter-spacing: 0.5px;
@@ -39,14 +40,14 @@ const ProfilePic = styled.div`
   }
 `;
 
-const ResumeHeader: React.FC<ResumeHeaderProps> = ({ basics }) => {
+const ResumeHeader: React.FC<ResumeHeaderProps> = ({ basics, font }) => {
   if (!basics) return null;
 
   return (
     <Header>
       <ProfileHeader>
-        <Name>{basics.name}</Name>
-        <Label>{basics.label}</Label>
+        <Name $fontFamily={font || '"Josefin Sans", Helvetica, Arial, sans-serif'}>{basics.name}</Name>
+        <Label $fontFamily={font || '"Josefin Sans", Helvetica, Arial, sans-serif'}>{basics.label}</Label>
       </ProfileHeader>
       {/* {basics.picture && (
         <ProfilePic>

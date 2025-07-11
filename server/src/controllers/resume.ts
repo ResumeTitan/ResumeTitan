@@ -10,35 +10,35 @@ import Metric from '../models/Metric';
 const CLIENT_URL = process.env.CLIENT_URL;
 
 const EducationSchema = z.object({
-  institution: z.string().optional(),
-  studyType: z.string().optional(),
-  area: z.string().optional(),
-  startDate: z.string().optional(),
-  endDate: z.string().optional(),
+  institution: z.string().nullish(),
+  studyType: z.string().nullish(),
+  area: z.string().nullish(),
+  startDate: z.string().nullish(),
+  endDate: z.string().nullish(),
   highlights: z.array(z.string()).optional()
 });
 
 const VolunteerSchema = z.object({
-  organization: z.string().optional(),
-  position: z.string().optional(),
-  url: z.string().optional(),
-  startDate: z.string().optional(),
-  endDate: z.string().optional(),
+  organization: z.string().nullish(),
+  position: z.string().nullish(),
+  url: z.string().nullish(),
+  startDate: z.string().nullish(),
+  endDate: z.string().nullish(),
   highlights: z.array(z.string()).optional()
 });
 
 const WorkSchema = z.object({
-  position: z.string().optional(),
-  name: z.string().optional(),
-  startDate: z.string().optional(),
-  endDate: z.string().optional(),
+  position: z.string().nullish(),
+  name: z.string().nullish(),
+  startDate: z.string().nullish(),
+  endDate: z.string().nullish(),
   highlights: z.array(z.string()).optional()
 });
 
 const SkillsSchema = z.object({
   skills: z.array(z.object({
     name: z.string(),
-    level: z.string().optional(),
+    level: z.string().nullish(),
     keywords: z.array(z.string()).optional()
   })).optional()
 });
@@ -48,18 +48,18 @@ const SummarySchema = z.object({
 });
 
 const AwardsSchema = z.object({
-  title: z.string().optional(),
-  date: z.string().optional(),
-  awarder: z.string().optional(),
-  summary: z.string().optional()
+  title: z.string().nullish(),
+  date: z.string().nullish(),
+  awarder: z.string().nullish(),
+  summary: z.string().nullish()
 });
 
 const ResumeDataSchema = z.object({
   summary: z.string(),
-  education: z.array(EducationSchema).optional(),
-  work: z.array(WorkSchema).optional(),
-  skills: SkillsSchema.optional(),
-  awards: z.array(AwardsSchema).optional()
+  education: z.array(EducationSchema).nullish(),
+  work: z.array(WorkSchema).nullish(),
+  skills: SkillsSchema.nullish(),
+  awards: z.array(AwardsSchema).nullish()
 });
 
 const UploadedResumeSchema = z.object({
@@ -91,7 +91,8 @@ const UploadedResumeSchema = z.object({
   volunteer: z.array(VolunteerSchema.extend({ id: z.number().optional() })).optional(),
   awards: z.array(AwardsSchema.extend({ id: z.number().optional() })).optional(),
   sections: z.array(z.string()).optional(),
-  theme: z.string().optional()
+  theme: z.string().optional(),
+  font: z.string().optional()
 });
 
 const resumeData: ResumeType = {};
@@ -930,7 +931,7 @@ Important guidelines:
 2. If a field is not present, use empty string "" or empty array []
 3. Assign sequential IDs starting from 1 for education, work, volunteer, and awards
 4. Include only sections that have actual content in the "sections" array
-5. Format dates consistently (e.g., "Jan 2020", "2020-01-01")
+5. Format dates consistently (e.g., "2020-01-01")
 6. Return ONLY valid JSON, no additional text or markdown formatting
 7. If you cannot extract certain information, use empty values rather than making assumptions
 8. Return the date type as a string in the format "YYYY-MM-DD"

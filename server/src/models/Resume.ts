@@ -242,6 +242,11 @@ const ResumeSchema = new mongoose.Schema({
     description: "Theme of the resume selected by the user",
     default: "professional"
   },
+  font: {
+    type: String,
+    description: "Font of the resume selected by the user",
+    default: "times-new-roman"
+  },
   clerkId: {
     type: String,
     required: true,
