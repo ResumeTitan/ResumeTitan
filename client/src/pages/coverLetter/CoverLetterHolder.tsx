@@ -10,7 +10,7 @@ const CoverLetterContainer = styled.div`
   flex: 2;
   font-size: 16px;
   padding: 10px;
-  width: 100%;
+  width: 8.5in;
   max-width: 8.5in;
   border: 1px solid #ccc;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
