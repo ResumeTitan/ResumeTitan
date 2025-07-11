@@ -56,10 +56,8 @@ const Experience: React.FC<ExperienceProps> = ({
       <Meta>
         <Title>{title}</Title>
         <div className="secondary">
-          {date ? (
-            <DateComponent date={date} />
-          ) : (
-            <DateRange startDate={startDate} endDate={endDate} />
+          {(startDate || endDate) && (
+            <DateRange startDate={startDate} endDate={endDate} /> 
           )}
         </div>
       </Meta>
