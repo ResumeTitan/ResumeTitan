@@ -1,165 +1,259 @@
-# ResumeTitan User Guide - Resume Builder
+# Resume Builder Guide
 
-Welcome to the Resume Builder! This guide will walk you through how to use the resume building feature on our platform to create a professional resume quickly and easily.
-
----
-
-## Getting Started
-
-1. **Log in to your account** on the website.
-2. You will be taken to your **Dashboard**. Under **My Resumes**, click **Add New**.
+Welcome to ResumeTitan's Resume Builder! This comprehensive guide will help you create professional, ATS-optimized resumes that stand out to employers.
 
 ---
 
-## Upload from PDF
+## Quick Start Guide
 
-Already have a resume in PDF format? You can quickly import your existing resume instead of starting from scratch!
+### Step 1: Access the Resume Builder
+1. **Log in** to your ResumeTitan account
+2. Navigate to your **Dashboard**
+3. Click **"Add New"** under the Resume section
 
-### How to Upload Your PDF Resume
+### Step 2: Choose Your Approach
+You have two options to get started:
 
-1. Look for the **"Upload from PDF"** button next to the **"Print Resume"** button at the top of the page.
-2. **Click "Upload from PDF"** and select your PDF file from your computer.
-3. **Wait for processing** - Our AI will analyze your PDF and automatically extract:
+**Option A: Start Fresh**
+- Begin with a blank template
+- Add your information section by section
+- Use AI assistance to enhance your content
+
+**Option B: Upload Existing Resume**
+- Upload a PDF or DOCX file
+- Let our AI extract and organize your information
+- Review and refine the extracted content
+
+---
+
+## Upload Existing Resume
+
+Already have a resume? You can quickly import your existing document and let our AI enhance it!
+
+### Supported File Formats
+- **PDF files** (recommended)
+- **DOCX files** (Microsoft Word documents)
+
+### How to Upload Your Resume
+
+1. **Click "Upload Resume"** in the resume builder
+2. **Select your file** from your computer
+3. **Wait for AI processing** - Our system will automatically extract:
    - Personal information (name, email, phone, location)
    - Work experience with job titles, companies, and descriptions
    - Education details including schools, degrees, and dates
    - Skills and certifications
-   - Any other relevant sections from your resume
+   - Volunteer work and awards
 
-### What Happens After Upload
+### After Upload Processing
 
-- Your resume data will be **automatically populated** into the appropriate sections
-- You can **review and edit** any extracted information to ensure accuracy
-- **Add, remove, or modify** sections as needed
-- Use our **AI tools** to further enhance and polish your content
+✅ **Automatic Population**: Your data is organized into the appropriate sections  
+✅ **Review & Edit**: Check all extracted information for accuracy  
+✅ **Enhance with AI**: Use our tools to improve and polish your content  
+✅ **Add Missing Sections**: Include any additional information as needed  
 
-### Tips for Best PDF Upload Results
+### Tips for Best Upload Results
 
-- Use a **clean, well-formatted PDF** for better text extraction
-- Ensure your PDF is **text-based** (not a scanned image)
-- **Review all extracted data** carefully after upload
-- **Save your work** after making any adjustments
+- **Use text-based PDFs** (not scanned images) for better extraction
+- **Ensure good formatting** in your original document
+- **Review extracted data** carefully for accuracy
+- **Save your work** after making adjustments
 
-> **Note:** PDF upload uses advanced AI to parse your resume, but you should always review the extracted information for accuracy and completeness.
+> **Pro Tip**: Even with AI extraction, always review and refine your content to ensure it perfectly represents your experience.
 
 ---
 
-## Filling Out Your Resume
+## Building Your Resume Sections
 
-The Resume Builder is organized into sections for easy editing.
+The Resume Builder is organized into clear sections for easy editing and professional formatting.
 
-### 1. Basic Information
+### Personal Information
 
-Start by entering your essential personal details:
+Start with your essential contact details:
 
-- Full Name  
+**Required Information:**
+- Full Name
 - Email Address  
-- Phone Number  
-- Location (City, State)  
-- LinkedIn/GitHub (optional)  
+- Phone Number
+- Location (City, State)
 
-### 2. Adding Resume Sections
+**Optional Information:**
+- LinkedIn Profile
+- GitHub Profile (for technical roles)
+- Personal Website/Portfolio
 
-After your basic info, you can start building out the rest of your resume by adding customizable sections.
+### Professional Summary
 
-#### Work Experience
+Create a compelling 2-3 sentence summary that:
+- Highlights your key strengths and experience
+- Mentions your target role or industry
+- Includes relevant keywords for ATS systems
 
-Include:
+### Work Experience
 
-- Job Title  
-- Company Name  
-- Location  
-- Start and End Dates  
-- Description of Responsibilities/Achievements  
+**Essential Details to Include:**
+- Job Title
+- Company Name
+- Location (City, State)
+- Start and End Dates
+- Key Responsibilities and Achievements
 
-#### Education
+**Best Practices:**
+- Use action verbs to start bullet points
+- Include quantifiable achievements (numbers, percentages)
+- Focus on relevant experience for your target role
+- List most recent positions first
 
-Include:
+### Education
 
-- School/Institution  
-- Degree or Certification  
-- Field of Study  
-- Graduation Date  
-- Relevant coursework or honors (optional)  
+**Include:**
+- School/Institution Name
+- Degree or Certification
+- Field of Study
+- Graduation Date
+- GPA (if 3.5 or higher)
+- Relevant coursework or honors
 
-#### Volunteering
+### Skills
 
-Include:
+**How to Organize:**
+- Group related skills together
+- Include proficiency levels if relevant
+- Focus on skills mentioned in job descriptions
+- Add both technical and soft skills
 
-- Organization Name  
-- Role/Title  
-- Duration  
-- Description of your contributions  
+### Additional Sections
 
-> You can **add multiple entries** to each section as needed. Use the **"Add New"** button under each section to keep building.
+**Volunteer Experience:**
+- Organization Name
+- Role/Title
+- Duration
+- Key contributions and impact
+
+**Certifications:**
+- Certification name
+- Issuing organization
+- Date earned
+- Expiration date (if applicable)
+
+**Awards & Honors:**
+- Award name
+- Issuing organization
+- Date received
+- Brief description of achievement
+
+> **Pro Tip**: You can add multiple entries to each section. Use the **"Add New"** button to continue building your resume.
 
 ---
 
-## Using AI Assistance to Build Your Resume
+## AI-Powered Resume Enhancement
 
-Each resume section includes **AI-powered tools** to help you write compelling, professional content more efficiently.
+ResumeTitan's AI tools help you create compelling, professional content that stands out to employers and passes ATS systems.
 
-### Write with AI - Content Generator
+### AI Content Generation
 
-Instead of manually writing bullet points, you can provide a **short description** of the experience, and the AI will generate multiple resume-ready bullet points for you. The more information provided, the more tailored the highlights will be to you.
+**Generate Professional Bullet Points**
+Instead of starting from scratch, provide a brief description of your experience and let AI create polished, professional bullet points.
 
 **Example:**
 
-_Input Description:_  
-> Managed social media channels, created content
+*Your Input:*
+> "Managed social media for a small business"
 
-_Generated Bullet Points:_
-- Increased social media engagement by 40% through targeted content strategies  
-- Designed and published 50+ posts across platforms weekly  
-- Analyzed campaign performance to guide future content initiatives  
+*AI Generated Bullet Points:*
+- Increased social media engagement by 40% through targeted content strategies
+- Designed and published 50+ posts across platforms weekly
+- Analyzed campaign performance to guide future content initiatives
 
-### AI Assitant - Editing & Enhancement
+### AI Content Enhancement
 
-Already have bullet points but want to improve them? Use the AI assistant to **refine**, **reword**, or **expand** them.
+**Improve Existing Content**
+Already have bullet points? Use AI to refine, reword, or expand them for better impact.
 
-You can highlight one or multiple bullet points and give the assistant a prompt.
+#### Effective AI Prompts
 
-#### Sample AI Prompts for Editing
-
-Each section offers an AI assistant. This is meant for spot edits, along with adding and removing existing highlights. The prompt you give the AI Assistant can be applied to one, multiple or all of the bullet points in the section. Here are some example prompts you can use:
-
-##### Rewording
+**For Rewording:**
 - "Make this more professional"
 - "Rephrase using action verbs"
 - "Change the tone to be more confident"
 
-##### Expanding
+**For Expanding:**
 - "Add more measurable impact"
 - "Include tools or technologies used"
 - "Mention team collaboration or leadership"
 
-##### Condensing
+**For Condensing:**
 - "Make this more concise"
 - "Summarize in one short bullet"
 
-##### Mixed Improvements
-- "Improve grammar and add numbers if relevant"
+**For Role-Specific Tailoring:**
 - "Polish this for a tech resume"
 - "Tailor this for a marketing manager role"
+- "Optimize for ATS systems"
+
+### AI Summary Generation
+
+**Create Compelling Professional Summaries**
+Let AI help you craft a powerful 2-3 sentence summary that:
+- Highlights your key strengths
+- Includes relevant keywords
+- Targets your desired role
+- Optimizes for ATS systems
 
 ---
 
-## Saving & Managing Resumes
+## Saving & Managing Your Resumes
 
-- Once you've entered your information, click the **"Save"** button in the section, or at the bottom of the page to store your resume.
-- Return to the **Dashboard** anytime to **edit** or **delete** existing resumes.
+### Save Your Work
+- **Auto-save**: Your work is automatically saved as you type
+- **Manual save**: Click the **"Save"** button to ensure your changes are stored
+- **Multiple versions**: Create different resumes for different job applications
+
+### Manage Your Resumes
+- **Dashboard access**: Return to your dashboard anytime to view all resumes
+- **Edit existing**: Click on any resume to continue editing
+- **Duplicate**: Create variations of your resume for different roles
+- **Delete**: Remove resumes you no longer need
 
 ---
 
-## Tips for Best Results
+## Resume Best Practices
 
-- Keep descriptions **concise** but **impactful**.  
-- Double-check for **grammar and spelling**.
-- Tailor each resume to match different job roles.
-- Use the **AI tools** to iterate and polish—don't settle for your first draft!
+### Content Guidelines
+- **Keep it concise**: Aim for 1-2 pages maximum
+- **Use action verbs**: Start bullet points with strong action words
+- **Quantify achievements**: Include numbers and percentages where possible
+- **Focus on relevance**: Tailor content to your target role
+- **Proofread carefully**: Check for grammar, spelling, and consistency
+
+
+
+### Professional Tips
+- **Customize for each job**: Adjust content based on the specific role
+- **Update regularly**: Keep your resume current with new experiences
+- **Get feedback**: Ask trusted colleagues to review your resume
+- **Use AI tools**: Leverage our AI features to enhance your content
+- **Test your resume**: Apply to a few positions to see how it performs
 
 ---
 
-For more help, contact us at info@resumetitan.com.
+## Troubleshooting
 
-Happy resume building!
+### Common Issues
+- **Content not saving**: Check your internet connection and try refreshing
+- **AI not working**: Ensure you're logged in and try again in a few minutes
+- **Formatting issues**: Use our templates for consistent formatting
+- **Upload problems**: Ensure your file is PDF or DOCX format
+
+### Getting Help
+- **Check this guide**: Review the sections above for detailed instructions
+- **Contact support**: Email us at support@resumetitan.com
+- **Visit our FAQ**: Check the [Getting Started Guide](/docs/getting-started) for common questions
+
+---
+
+## Next Steps
+
+Ready to create your resume? [Start building now](/resume) or [prepare for interviews](/interview) to complete your job application toolkit.
+
+**Need help?** Contact our support team at support@resumetitan.com

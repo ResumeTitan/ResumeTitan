@@ -211,9 +211,11 @@ const AcademicModernResume: React.FC<ResumeTypeProps> = ({ resume }) => {
                 </a>
               )}
             </div>
+            {project.startDate && (
             <SubTitle style={{ marginBottom: '6px', fontSize: '0.85rem' }}>
               {formatDate(project.startDate)} – {project.endDate ? formatDate(project.endDate) : 'Present'}
             </SubTitle>
+            )}
             {project.description && (
               <div style={{ marginBottom: '6px', color: '#444', fontSize: '0.85rem' }}>{project.description}</div>
             )}
@@ -240,10 +242,10 @@ const AcademicModernResume: React.FC<ResumeTypeProps> = ({ resume }) => {
             backgroundColor: '#fafbff'
           }}>
             <b style={{ color: '#1a1a1a', fontSize: '0.95rem' }}>{award.title}</b>
-            <SubTitle style={{ fontSize: '0.85rem' }}>{award.awarder}</SubTitle>
-            <div style={{ color: '#666', fontSize: '0.8rem', marginTop: '2px' }}>
+            {award.awarder && <SubTitle style={{ fontSize: '0.85rem' }}>{award.awarder}</SubTitle>}
+            {award.date && <div style={{ color: '#666', fontSize: '0.8rem', marginTop: '2px' }}>
               {formatDate(award.date)}
-            </div>
+            </div>}
             {award.summary && (
               <div style={{ marginTop: 6, color: '#444', fontSize: '0.85rem' }}>{award.summary}</div>
             )}
@@ -263,10 +265,10 @@ const AcademicModernResume: React.FC<ResumeTypeProps> = ({ resume }) => {
             backgroundColor: '#f8faff'
           }}>
             <b style={{ color: '#1a1a1a', fontSize: '0.95rem' }}>{cert.name}</b>
-            <SubTitle style={{ fontSize: '0.85rem' }}>{cert.issuer}</SubTitle>
-            <div style={{ color: '#666', fontSize: '0.8rem', marginTop: '2px' }}>
+            {cert.issuer && <SubTitle style={{ fontSize: '0.85rem' }}>{cert.issuer}</SubTitle>}
+            {cert.date && <div style={{ color: '#666', fontSize: '0.8rem', marginTop: '2px' }}>
               {formatDate(cert.date)}
-            </div>
+            </div>}
             {cert.url && (
               <div style={{ marginTop: 6 }}>
                 <a 
@@ -310,10 +312,10 @@ const AcademicModernResume: React.FC<ResumeTypeProps> = ({ resume }) => {
                 → View Publication
               </a>
             )}
-            <SubTitle style={{ fontSize: '0.85rem' }}>{pub.publisher}</SubTitle>
-            <div style={{ color: '#666', fontSize: '0.8rem', marginTop: '2px' }}>
+            {pub.publisher && <SubTitle style={{ fontSize: '0.85rem' }}>{pub.publisher}</SubTitle>}
+            {pub.releaseDate && <div style={{ color: '#666', fontSize: '0.8rem', marginTop: '2px' }}>
               {formatDate(pub.releaseDate)}
-            </div>
+            </div>}
             {pub.summary && (
               <div style={{ marginTop: 6, color: '#444', fontSize: '0.85rem' }}>{pub.summary}</div>
             )}
@@ -414,10 +416,10 @@ const AcademicModernResume: React.FC<ResumeTypeProps> = ({ resume }) => {
             backgroundColor: '#fafbff'
           }}>
             <b style={{ fontSize: '1rem', color: '#1a1a1a' }}>{v.position}</b>
-            <SubTitle style={{ fontSize: '0.85rem' }}>{v.organization}</SubTitle>
-            <div style={{ color: '#666', fontSize: '0.8rem', marginTop: '2px' }}>
+            {v.organization && <SubTitle style={{ fontSize: '0.85rem' }}>{v.organization}</SubTitle>}
+            {v.startDate && <div style={{ color: '#666', fontSize: '0.8rem', marginTop: '2px' }}>
               {formatDate(v.startDate)} – {v.endDate ? formatDate(v.endDate) : 'Present'}
-            </div>
+            </div>}
             {v.highlights && v.highlights.length > 0 && (
               <KeyAchievements>
                 Key Achievements:
@@ -442,10 +444,10 @@ const AcademicModernResume: React.FC<ResumeTypeProps> = ({ resume }) => {
             backgroundColor: '#fafbff'
           }}>
             <b style={{ fontSize: '1.1rem', color: '#1a1a1a' }}>{w.position}</b>
-            <SubTitle style={{ fontSize: '0.95rem', marginTop: '2px' }}>{w.name}</SubTitle>
-            <div style={{ color: '#666', fontSize: '0.8rem', marginTop: '2px' }}>
+            {w.name && <SubTitle style={{ fontSize: '0.95rem', marginTop: '2px' }}>{w.name}</SubTitle>}
+            {w.startDate && <div style={{ color: '#666', fontSize: '0.8rem', marginTop: '2px' }}>
               {formatDate(w.startDate)} – {w.endDate ? formatDate(w.endDate) : 'Present'}
-            </div>
+            </div>}
             {w.summary && (
               <div style={{ marginTop: 8, color: '#444', fontSize: '0.85rem' }}>{w.summary}</div>
             )}
@@ -477,9 +479,11 @@ const AcademicModernResume: React.FC<ResumeTypeProps> = ({ resume }) => {
               {e.studyType && <span style={{ fontWeight: '500' }}>{e.studyType}</span>}
               {e.area && <span>{e.studyType ? ' in ' : ''}{e.area}</span>}
             </div>
+            {e.startDate && (
             <div style={{ color: '#666', fontSize: '0.8rem', marginTop: '2px' }}>
               {formatDate(e.startDate)} – {e.endDate ? formatDate(e.endDate) : 'Present'}
             </div>
+            )}
             {e.score && (
               <div style={{ marginTop: '6px', color: '#667eea', fontWeight: '500', fontSize: '0.85rem' }}>
                 GPA: {e.score}

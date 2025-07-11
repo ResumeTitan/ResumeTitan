@@ -1,5 +1,6 @@
 import React from 'react';
 import { VolunteerType } from 'types/types';
+import { formatDate } from '../../../../utils';
 import { SectionContent, SectionBlock, SectionName } from './Partials';
 
 interface VolunteerSectionProps {
@@ -24,7 +25,7 @@ const VolunteerSection: React.FC<VolunteerSectionProps> = ({ volunteer }) => {
                   </span>
                   {vol.startDate && (
                     <span className="date">
-                      {vol.startDate} &mdash; {vol.endDate || 'Present'}
+                      {formatDate(vol.startDate)} &mdash; {vol.endDate ? formatDate(vol.endDate) : 'Present'}
                     </span>
                   )}
                   {vol.url && (

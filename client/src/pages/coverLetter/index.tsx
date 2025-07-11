@@ -200,14 +200,14 @@ const CoverLetter: React.FC = () => {
       if (!user) {
         throw new Error("User not found");
       }
+
       setIsLoading(true);
-      let payload: any = { clerkId: user.id };
-      if (inputMode === 'link') {
-        payload.coverLetter = { ...coverLetter, jobUrl, useJobUrl: true };
-      } else {
-        payload.coverLetter = { ...coverLetter, useJobUrl: false };
-      }
-      const response = await api.put(`cover-letter/${coverLetter._id}`, payload);
+      
+      // Send only the cover letter data, not the entire payload
+      const coverLetterData = { ...coverLetter };
+      
+      console.log('Saving cover letter data:', coverLetterData);
+      const response = await api.put(`cover-letter/${coverLetter._id}`, coverLetterData);
       setCoverLetter(response.data.coverLetter);
       setIsLoading(false);
       setShowSaveMessage(true);
@@ -362,7 +362,7 @@ const CoverLetter: React.FC = () => {
               <FormArea 
                 title={"Cover Letter"}
                 value={coverLetter.letter}
-                rows={10}
+                rows={15}
                 onChange={(event) => setCoverLetter({...coverLetter, letter: event.target.value})}
               />
             )}

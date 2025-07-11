@@ -933,6 +933,7 @@ Important guidelines:
 5. Format dates consistently (e.g., "Jan 2020", "2020-01-01")
 6. Return ONLY valid JSON, no additional text or markdown formatting
 7. If you cannot extract certain information, use empty values rather than making assumptions
+8. Return the date type as a string in the format "YYYY-MM-DD"
 
 If you cannot read the PDF content, return this exact JSON structure with empty values:
 {
