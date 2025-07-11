@@ -151,9 +151,11 @@ const StudentClassicResume: React.FC<ResumeTypeProps> = ({ resume }) => {
                 </a>
               </span>
             )}
-            <SubTitle>
-              {formatDate(project.startDate)} – {project.endDate ? formatDate(project.endDate) : 'Present'}
-            </SubTitle>
+            {project.startDate && (
+              <SubTitle>
+                {formatDate(project.startDate)} – {project.endDate ? formatDate(project.endDate) : 'Present'}
+              </SubTitle>
+            )}
             {project.description && <div>{project.description}</div>}
             {project.highlights && project.highlights.length > 0 && (
               <KeyAchievements>
@@ -173,8 +175,8 @@ const StudentClassicResume: React.FC<ResumeTypeProps> = ({ resume }) => {
         {awards.map((award, idx) => (
           <div key={idx} style={{ marginBottom: 8 }}>
             <b>{award.title}</b>
-            <SubTitle>{award.awarder}</SubTitle>
-            <div>{formatDate(award.date)}</div>
+            {award.awarder && <SubTitle>{award.awarder}</SubTitle>}
+            {award.date && <div>{formatDate(award.date)}</div>}
             {award.summary && <div style={{ marginTop: 4 }}>{award.summary}</div>}
           </div>
         ))}
@@ -186,8 +188,8 @@ const StudentClassicResume: React.FC<ResumeTypeProps> = ({ resume }) => {
         {certificates.map((cert, idx) => (
           <div key={idx} style={{ marginBottom: 8 }}>
             <b>{cert.name}</b>
-            <SubTitle>{cert.issuer}</SubTitle>
-            <div>{formatDate(cert.date)}</div>
+            {cert.issuer && <SubTitle>{cert.issuer}</SubTitle>}
+            {cert.date && <div>{formatDate(cert.date)}</div>}
             {cert.url && (
               <div style={{ marginTop: 4 }}>
                 <a href={cert.url} style={{ color: '#555', textDecoration: 'underline dotted' }}>
@@ -205,8 +207,8 @@ const StudentClassicResume: React.FC<ResumeTypeProps> = ({ resume }) => {
         {publications.map((pub, idx) => (
             <div key={idx} style={{ marginBottom: 8 }}>
             <b>{pub.name}</b>
-            <SubTitle>{pub.publisher}</SubTitle>
-            <div>{formatDate(pub.releaseDate)}</div>
+            {pub.publisher && <SubTitle>{pub.publisher}</SubTitle>}
+            {pub.releaseDate && <div>{formatDate(pub.releaseDate)}</div>}
             {pub.url && (
               <div style={{ marginTop: 4 }}>
                 <a href={pub.url} style={{ color: '#555', textDecoration: 'underline dotted' }}>
@@ -225,7 +227,7 @@ const StudentClassicResume: React.FC<ResumeTypeProps> = ({ resume }) => {
         {languages.map((lang, idx) => (
           <div key={idx} style={{ marginBottom: 8 }}>
             <b>{lang.language}</b>
-            {lang.fluency && <span style={{ color: '#555', marginLeft: 8 }}>({lang.fluency})</span>}
+            {lang.fluency && <div style={{ color: '#555', marginLeft: 8 }}>({lang.fluency})</div>}
           </div>
         ))}
       </Section>
@@ -262,8 +264,8 @@ const StudentClassicResume: React.FC<ResumeTypeProps> = ({ resume }) => {
         {volunteer.map((v, idx) => (
           <div key={idx} style={{ marginBottom: 8 }}>
             <b>{v.position}</b>
-            <SubTitle>{v.organization}</SubTitle>
-            <div>{formatDate(v.startDate)} – {v.endDate ? formatDate(v.endDate) : 'Present'}</div>
+            {v.organization && <SubTitle>{v.organization}</SubTitle>}
+            {v.startDate && <div>{formatDate(v.startDate)} – {v.endDate ? formatDate(v.endDate) : 'Present'}</div>}
             {v.highlights && v.highlights.length > 0 && (
               <KeyAchievements>
                 Key Achievements:
@@ -282,8 +284,8 @@ const StudentClassicResume: React.FC<ResumeTypeProps> = ({ resume }) => {
         {work.map((w, idx) => (
           <div key={idx} style={{ marginBottom: 8 }}>
             <b>{w.position}</b>
-            <SubTitle>{w.name}</SubTitle>
-            <div>{formatDate(w.startDate)} – {w.endDate ? formatDate(w.endDate) : 'Present'}</div>
+            {w.name && <SubTitle>{w.name}</SubTitle>}
+            {w.startDate && <div>{formatDate(w.startDate)} – {w.endDate ? formatDate(w.endDate) : 'Present'}</div>}
             {w.summary && <div>{w.summary}</div>}
             {w.highlights && w.highlights.length > 0 && (
               <KeyAchievements>
@@ -307,9 +309,11 @@ const StudentClassicResume: React.FC<ResumeTypeProps> = ({ resume }) => {
               {e.studyType && <span>{e.studyType}</span>}
               {e.area && <span>{e.studyType ? ' in ' : ''}{e.area}</span>}
             </div>
-            <div>
-              {formatDate(e.startDate)} – {e.endDate ? formatDate(e.endDate) : 'Present'}
-            </div>
+            {e.startDate && (
+              <div>
+                {formatDate(e.startDate)} – {e.endDate ? formatDate(e.endDate) : 'Present'}
+              </div>
+            )}
             {e.score && <div>GPA: {e.score}</div>}
             {e.courses && e.courses.length > 0 && (
               <EduList>

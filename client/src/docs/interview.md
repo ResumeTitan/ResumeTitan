@@ -1,78 +1,86 @@
-# ResumeTitan User Guide - Interview Preparation
+# Interview Prep Guide
 
-Our Interview Prep tool helps you get ready for your next job interview by generating relevant questions based on the job you’re applying for — and providing personalized feedback on your answers.
-
----
-
-## Getting Started
-
-1. **Log in to your account** on the website.
-2. From your **Dashboard**, under **“My Interviews”** click **“Add New”**
+Welcome to ResumeTitan's Interview Prep tool! This guide will help you get the most out of our AI-powered interview practice features so you can walk into your next interview with confidence.
 
 ---
 
-## Providing Job Information
+## Quick Start Guide
 
-To tailor the interview questions, you’ll need to provide details about the position:
+### Step 1: Access Interview Prep
+1. **Log in** to your ResumeTitan account
+2. Go to your **Dashboard**
+3. Click **"Add New"** under the Interview section
 
-### 1. Job Title & Description
+### Step 2: Provide Job Information
+You have two ways to help the AI generate relevant questions:
 
-- Enter the **job title** you are applying for.  
-- Paste the **job description** or main responsibilities.
+**Option A: Manual Entry**
+- Enter the job title and company name
+- Paste the job description or main responsibilities
 
-### 2. Or Paste a Job Posting URL
-
-- Provide a direct link to the job posting.
-- The AI will extract relevant details to generate interview questions.
-
----
-
-## Generating Interview Questions
-
-- After entering the job info, click **“Generate Interview Questions.”**  
-- The tool will return several interview questions tailored to the role.
+**Option B: Job URL Import**
+- Paste the direct URL of the job posting
+- Let our AI extract and analyze the job requirements
 
 ---
 
-## Answering Interview Questions
+## Generating & Practicing Interview Questions
 
-For each question, you will see:
+- Click **"Generate Interview Questions"** after entering job info
+- The tool will create a set of questions tailored to your target role
+- Each question includes:
+  - **Answer text box** for your response (you can **type** or **record** your answer)
+  - **Example Answer** for inspiration
+  - **How to Answer** tips for strategy
 
-- An **Answer text box** where you can type your answer.  
-- An **Example Answer** section to guide you with a sample response.  
-- A **How to Answer** section providing tips and strategies for crafting your best answer.
-
----
-
-## Using AI to Improve Your Answers
-
-Once you've written your answer, click the **“Analyze My Answer”** button.
-
-The AI assistant will:
-
-- Evaluate your response for clarity, relevance, and professionalism.  
-- Provide actionable feedback and suggestions for improvement.  
-- Highlight any areas that could be stronger or more concise.
+### Practicing Your Answers
+- **Type** your answer in the provided box, or **use the microphone button to record** your spoken response
+- Use the example and tips as a guide, but make your answer personal
+- Practice answering aloud to improve your delivery
 
 ---
 
-## Tips for Best Use
+## Using AI for Answer Feedback
 
-- Be honest and authentic in your answers.  
-- Use the example answers and guidance as inspiration, but tailor your responses to your own experiences.  
-- Iterate your answers based on AI feedback to boost confidence.  
-- Practice answering aloud to improve your delivery.
+After writing your answer, click **"Analyze My Answer"** to get instant feedback:
+- The AI will evaluate your response for clarity, relevance, and professionalism
+- You'll receive actionable suggestions for improvement
+- Use the feedback to revise and strengthen your answers
 
----
-
-## Saving & Reviewing
-
-- Save your answers to review and refine them later.  
-- Use the Dashboard to revisit saved interview prep sessions anytime.  
-- Download your Q&A for offline practice.
+### Sample AI Prompts
+- "Make my answer more concise"
+- "Add a specific achievement"
+- "Make this sound more confident"
+- "Tailor this for a management role"
 
 ---
 
-For further assistance, contact us at info@resumetitan.com.
+## Best Practices for Interview Prep
 
-Prepare well, and good luck with your interview!
+- **Be authentic**: Use your real experiences and achievements
+- **Use STAR method**: Structure answers as Situation, Task, Action, Result
+- **Quantify results**: Include numbers and measurable outcomes
+- **Research the company**: Tailor answers to the company's values and needs
+- **Prepare questions**: Have thoughtful questions ready for the interviewer
+- **Practice delivery**: Rehearse aloud to build confidence
+
+---
+
+## Saving, Reviewing & Downloading
+
+- **Save your answers** to review and refine later
+- **Revisit sessions** anytime from your Dashboard
+- **Download your Q&A** for offline practice or to bring to your interview
+
+---
+
+## Troubleshooting & Support
+
+- **Questions not generating?** Double-check your job info and try again
+- **AI feedback not working?** Make sure you're logged in and try refreshing
+- **Formatting issues?** Copy your answers to a text editor for further editing
+- **Need more help?** Contact us at support@resumetitan.com
+
+---
+
+Good luck with your interview preparation!
