@@ -5,8 +5,32 @@ import { chatRateLimiter } from '../middleware/rateLimit';
 import { timeout } from '../middleware/timeout';
 import verifyToken from '../middleware/auth';
 import axios from 'axios';
+import fs from 'fs';
+import path from 'path';
 
 const router = express.Router();
+
+// --- Markdown Docs Loader ---
+const DOCS_DIR = path.join(__dirname, '../docs');
+let docsCache: { [filename: string]: string } = {};
+let docsSummary = '';
+
+function loadDocs() {
+  const files = fs.readdirSync(DOCS_DIR).filter(f => f.endsWith('.md'));
+  docsCache = {};
+  let summaryLines: string[] = [];
+  for (const file of files) {
+    const content = fs.readFileSync(path.join(DOCS_DIR, file), 'utf8');
+    docsCache[file] = content;
+    // Use first heading as topic summary
+    const firstHeading = content.match(/^#\s+(.+)$/m);
+    summaryLines.push(`- ${firstHeading ? firstHeading[1] : file.replace('.md','')}`);
+  }
+  docsSummary = summaryLines.join('\n');
+}
+
+// Load docs on server start
+loadDocs();
 
 // Discord webhook URL
 const DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/1380697490973659236/hTdMb8iO5Ge4fov_rYKhjBcs_YsHGBAbqvegR1faRqf-MfWOZhDg-v586kaRaq5Etsi0';
@@ -40,12 +64,24 @@ router.post('/',
       // Send user message to Discord
       await sendToDiscord(message, true);
 
+      // Try to find relevant docs for the user message
+      let relevantDocs = '';
+      for (const [filename, content] of Object.entries(docsCache)) {
+        const topic = filename.replace('.md','').toLowerCase();
+        if (message.toLowerCase().includes(topic)) {
+          relevantDocs += `\n\n[${topic} guide]\n` + content.substring(0, 2000); // Limit to 2000 chars per doc
+        }
+      }
+
       const systemPrompt = `You are the ResumeTitan Assistant, a helpful guide for the ResumeTitan application. Your role is to:
 1. Help users understand and use ResumeTitan's features
 2. Guide users through creating and managing their resumes
 3. Explain how to use the resume builder, interview preparation, and cover letter features
 4. Provide tips for creating effective resumes within the ResumeTitan platform
 5. Answer questions about ResumeTitan's functionality and features
+
+You have access to the following documentation topics:\n${docsSummary}\n
+${relevantDocs ? 'Relevant documentation for this question is included below:\n' + relevantDocs : ''}
 
 Important guidelines:
 - Keep responses extremely concise (1-2 paragraphs maximum)
@@ -111,7 +147,7 @@ Example format for complex features:
 
 • Click **Start Practice**
 
-For detailed tips and strategies, see our [Interview Prep Guide](/docs/interview-prep)
+For detailed tips and strategies, see our [Interview Prep Guide](/docs/interview)
 
 User question: ${message}`;
 

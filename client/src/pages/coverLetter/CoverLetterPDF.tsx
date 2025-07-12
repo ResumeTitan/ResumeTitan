@@ -39,7 +39,7 @@ const CoverLetterPDF: React.FC<CoverLetterPDFProps> = ({ coverLetter }) => (
       <View style={styles.section}>
         <Text style={styles.name}>{coverLetter.name}</Text>
         <Text style={styles.info}>{coverLetter.city}, {coverLetter.state}</Text>
-        <Text style={styles.info}>{new Date(coverLetter.date).toDateString()}</Text>
+        <Text style={styles.info}>{new Date(coverLetter.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</Text>
       </View>
       <View style={styles.section}>
         <Text style={styles.info}>{coverLetter.jobTitle}</Text>

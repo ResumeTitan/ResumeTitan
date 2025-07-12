@@ -60,7 +60,7 @@ const CoverLetterTemplate: React.FC<Props> = ({ coverLetter }) => {
       <CoverLetter>
         <p>{coverLetter.name}</p>
         <p>{`${coverLetter.city || '[City]'}, ${coverLetter.state || '[State]'}`}</p>
-        <p>{new Date(coverLetter.date).toDateString()}</p>
+        <p>{new Date(coverLetter.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
         <br />
         <p>{`${coverLetter.jobTitle || '[Job Title]'}`}</p>
         <p>{`${coverLetter.company || '[Company Name]'}`}</p>

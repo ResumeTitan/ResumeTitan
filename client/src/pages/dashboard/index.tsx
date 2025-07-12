@@ -256,7 +256,7 @@ export const Dashboard: React.FC = () => {
   return (
     <div className="bg-white text-white">
       <div className="dashboard-container">
-        <div className="dashboard-header">My Resumes:</div>
+        <div className="dashboard-header">My Resumes</div>
         <button className="dashboard-button" onClick={() => navigate('/resume')}>Add New</button>
         <div className="overflow-x-scroll overflow-y-hidden h-[22rem] hide-scrollbar">
           <div className="transform scale-25 flex origin-top-left">
@@ -266,7 +266,7 @@ export const Dashboard: React.FC = () => {
       </div>
 
       <DashboardContainer 
-        title={"My Cover Letters:"} 
+        title={"My Cover Letters"} 
         items={coverLetters}
         // TODO why is this erroring in typescript
         // @ts-ignore
@@ -278,7 +278,7 @@ export const Dashboard: React.FC = () => {
       </DashboardContainer>
 
       <DashboardContainer
-        title={"My Interviews: "}
+        title={"My Interviews"}
         items={interviews}
         // TODO why is this erroring in typescript
         // @ts-ignore

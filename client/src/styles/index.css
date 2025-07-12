@@ -347,3 +347,14 @@ body {
 .animate-fade-in-out {
   animation: fadeInOut 2s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
+/* NavBar button uniformity */
+.nav-btn {
+  min-width: 140px;
+  height: 48px;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+}
