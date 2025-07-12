@@ -12,7 +12,8 @@ import {
   updateResume, 
   deleteResume, 
   printResumeToPdf,
-  uploadPdfResume
+  uploadPdfResume,
+  atsAnalyze
 } from "../controllers/resume.js";
 import verifyToken from "../middleware/auth";
 
@@ -45,5 +46,6 @@ router.post("/work", verifyToken, postWork);
 router.post("/skills", verifyToken, postSkills);
 router.post("/volunteer", verifyToken, postVolunteer);
 router.post("/resume", verifyToken, postResume);
+router.post('/ats-analyze', verifyToken, atsAnalyze);
 
 export default router;

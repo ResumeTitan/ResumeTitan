@@ -97,6 +97,12 @@ const UploadedResumeSchema = z.object({
 
 const resumeData: ResumeType = {};
 
+const AtsAnalysisSchema = z.object({
+  score: z.number().min(0).max(100),
+  improvement: z.string().optional(),
+  positive: z.string().optional()
+});
+
 // Helper function to get structured output from Gemini
 const getStructuredOutput = async (prompt: string, schema: z.ZodType<any>) => {
   const result = await geminiClient.generateContent(prompt);
@@ -1036,5 +1042,41 @@ If you cannot read the PDF content, return this exact JSON structure with empty 
       error: 'Failed to process PDF upload',
       details: error instanceof Error ? error.message : 'Unknown error occurred'
     });
+  }
+};
+
+export const atsAnalyze = async (req: Request, res: Response) => {
+  try {
+    const { resume } = req.body;
+    if (!resume) {
+      return res.status(400).json({ error: 'Resume is required' });
+    }
+    // Compose a prompt for Gemini
+    const prompt = `You are an expert ATS (Applicant Tracking System) evaluator. Analyze the following resume and provide:
+1. An overall ATS score (0-100) based on keyword relevance, formatting, and best practices
+2. A short paragraph of positive feedback (what is good about this resume)
+3. A short paragraph of improvement feedback (how to improve ATS score)
+
+Return ONLY valid JSON in this format:
+{
+  "score": <number>,
+  "positive": "Your resume uses strong action verbs and clear formatting.",
+  "improvement": "Add more industry-specific keywords and quantify achievements."
+}
+
+Resume data:
+${JSON.stringify(resume)}
+`;
+    const result = await geminiClient.generateContent(prompt);
+    const response = await result.response;
+    const text = response.text();
+    // Remove markdown code block formatting if present
+    const cleanText = text.replace(/```json\n?|```/g, '').trim();
+    const json = JSON.parse(cleanText);
+    const parsed = AtsAnalysisSchema.parse(json);
+    res.json(parsed);
+  } catch (error: any) {
+    console.error('ATS analysis error:', error);
+    res.status(500).json({ error: 'Failed to analyze resume' });
   }
 };
