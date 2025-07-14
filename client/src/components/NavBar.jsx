@@ -30,7 +30,7 @@ const NavBar = () => {
 
   React.useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth < 768) {
+      if (window.innerWidth < 870) {
         setMobileScreen(true);
       } else {
         setMobileScreen(false);
@@ -79,7 +79,7 @@ const NavBar = () => {
       {isMobileMenuOpen && (
         <div className="flex flex-col absolute top-16 right-0 bg-white border-2 border-black rounded-lg shadow-lg animate-slideUpFadeIn z-50">
           <button
-            className="text-main-green font-bold p-4 w-full border-b-2 border-black text-left hover:bg-lightest-green transition ease-in-out duration-300"
+            className="text-main-green font-bold p-4 w-full border-b-2 border-black text-left hover:bg-light-green transition-all duration-300 ease-in-out"
             onClick={() => {
               setIsMobileMenuOpen(false);
               navigate('/docs');
@@ -89,7 +89,7 @@ const NavBar = () => {
           </button>
           <SignedOut>
             <button
-              className="text-main-green font-bold p-4 w-full border-b-2 border-black text-left hover:bg-lightest-green transition ease-in-out duration-300"
+              className="text-main-green font-bold p-4 w-full border-b-2 border-black text-left hover:bg-light-green transition-all duration-300 ease-in-out"
               onClick={() => {
                 setIsMobileMenuOpen(false);
                 navigate('/sign-in');
@@ -100,7 +100,7 @@ const NavBar = () => {
           </SignedOut>
           <SignedIn>
             <button
-              className="text-main-green font-bold p-4 w-full border-b-2 border-black text-left hover:bg-lightest-green transition ease-in-out duration-300"
+              className="text-main-green font-bold p-4 w-full border-b-2 border-black text-left hover:bg-light-green transition-all duration-300 ease-in-out"
               onClick={() => {
                 setIsMobileMenuOpen(false);
                 navigate('/dashboard');
@@ -109,7 +109,7 @@ const NavBar = () => {
               {'Dashboard'}
             </button>
             <button 
-              className="p-4 border-b-2 border-black text-left hover:bg-lightest-green transition ease-in-out duration-300 flex items-center justify-between"
+              className="p-4 w-full border-b-2 border-black text-left hover:bg-light-green transition-all duration-300 ease-in-out flex items-center justify-between"
               onClick={() => {
                 const userButton = document.querySelector('.cl-userButtonTrigger');
                 if (userButton) {
@@ -161,7 +161,7 @@ const NavBar = () => {
         ) : (
           <div className="flex items-center">
             <button
-              className="text-white font-bold pr-8 text-xl"
+              className="nav-btn text-white font-bold text-xl hover:bg-light-green transition-all duration-300 ease-in-out rounded"
               onClick={() => navigate('/docs')}
             >
               {'User Guides'}
@@ -174,27 +174,37 @@ const NavBar = () => {
                 {'Pricing'}
               </a> */}
               <a
-                id="loginBtn"
-                href="/sign-in"
-                className="login-button"
-              >
-                {'Login'}
-              </a>
+                  id="loginBtn"
+                 href="/sign-in"
+                 className="login-button nav-btn hover:bg-light-green transition-all duration-300 ease-in-out rounded"
+                >
+                  {'Login'}
+                </a>
             </SignedOut>
             <SignedIn>
               <button
-                className="text-white font-bold pr-8 text-xl"
+                className="nav-btn text-white font-bold text-xl hover:bg-light-green transition-all duration-300 ease-in-out rounded"
                 onClick={() => navigate('/dashboard')}
               >
                 {'Dashboard'}
               </button>
-              {/* <button
-                className="text-white font-bold pr-8"
-                onClick={() => navigate('/pricing')}
-              >
-                {'Pricing'}
-              </button> */}
-              <UserButton afterSignOutUrl='/' />
+              <button 
+              className="nav-btn text-left text-white hover:bg-light-green transition-all duration-300 ease-in-out rounded flex items-center justify-between"
+              onClick={() => {
+                const userButton = document.querySelector('.cl-userButtonTrigger');
+                if (userButton) {
+                  userButton.click();
+                }
+              }}
+            >
+              <div className="flex items-center">
+                <span className="text-white font-bold">Hello, </span>
+                <span className="text-white ml-1">{user?.fullName || 'User'}</span>
+              </div>
+              <div className="ml-4">
+                <UserButton afterSignOutUrl='/'/>
+              </div>
+            </button>
             </SignedIn>
           </div>
         )}

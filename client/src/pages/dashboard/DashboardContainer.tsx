@@ -1,12 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import EditIcon from '@mui/icons-material/Edit';
 import CloseIcon from '@mui/icons-material/Close';
 import { CoverLetterType } from 'types/types';
 import { UserResource } from '@clerk/types';
-// import { isUserPremium } from '../../utils/index';
-// import LockIcon from '@mui/icons-material/Lock';
+import { isUserPremium } from '../../utils/index';
+import LockIcon from '@mui/icons-material/Lock';
 import { AddNewButton, AddNewLockedButton } from 'components/Styled';
+import Alert from '@mui/material/Alert';
+import Snackbar from '@mui/material/Snackbar';
 
 interface DashboardContainerProps {
   title?: string;
@@ -128,6 +130,17 @@ const ScrollContainer = styled.div`
 `;
 
 const DashboardContainer: React.FC<DashboardContainerProps> = ({ title, items, user, onEdit, onDelete, onAdd, onChange, children }) => {
+  const size = items.length;
+  const [showError, setShowError] = useState(false);
+
+  const handleLockedButtonClick = () => {
+    setShowError(true);
+  };
+
+  const handleCloseError = () => {
+    setShowError(false);
+  };
+
   return (
     <Container>
       <Header>
@@ -144,7 +157,13 @@ const DashboardContainer: React.FC<DashboardContainerProps> = ({ title, items, u
           <span className="pr-2">Add New</span><LockIcon /></AddNewLockedButton>
       )} */}
 
-      <AddNewButton onClick={() => onAdd(false)}>Add New</AddNewButton>
+      {size < 8 ? (
+        <AddNewButton onClick={() => onAdd(false)}>Add New</AddNewButton>
+      ) : (
+        <AddNewLockedButton onClick={handleLockedButtonClick}>
+          <span className="pr-2">Add New</span><LockIcon />
+        </AddNewLockedButton>
+      )}
       
       <ScrollContainer>
         {items && items.map((item) => (
@@ -169,6 +188,17 @@ const DashboardContainer: React.FC<DashboardContainerProps> = ({ title, items, u
         ))}
         {children}
       </ScrollContainer>
+      
+      <Snackbar
+        open={showError}
+        autoHideDuration={6000}
+        onClose={handleCloseError}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert onClose={handleCloseError} severity="error" sx={{ width: '100%' }}>
+          Maximum of 8 {title?.toLowerCase() || 'items'} allowed. Please upgrade to add more.
+        </Alert>
+      </Snackbar>
     </Container>
   );
 };

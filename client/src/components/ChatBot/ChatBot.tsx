@@ -63,6 +63,58 @@ const ChatBot: React.FC = () => {
     scrollToBottom();
   }, [messages]);
 
+  // Function to detect potential hallucination patterns
+  const detectHallucination = (response: string): boolean => {
+    const hallucinationPatterns = [
+      /design\s+tab/i,
+      /font\s+settings/i,
+      /theme\s+editor/i,
+      /customization\s+panel/i,
+      /style\s+options/i,
+      /format\s+menu/i,
+      /appearance\s+settings/i,
+      /visual\s+editor/i,
+      /design\s+mode/i,
+      /styling\s+options/i,
+      /font\s+dropdown/i,
+      /font\s+menu/i,
+      /change\s+font/i,
+      /font\s+selection/i,
+      /typography\s+settings/i,
+      /text\s+formatting/i,
+      /font\s+customization/i
+    ];
+    
+    return hallucinationPatterns.some(pattern => pattern.test(response));
+  };
+
+  // Function to provide fallback response for hallucination
+  const getFallbackResponse = (userMessage: string): string => {
+    const lowerMessage = userMessage.toLowerCase();
+    
+    if (lowerMessage.includes('font') || lowerMessage.includes('design') || lowerMessage.includes('style')) {
+      return "Font customization is not currently available in ResumeTitan. Our templates use professional, ATS-friendly fonts optimized for ATS systems. For more information about our formatting options, see the 'Customization & Formatting' section in our [Getting Started Guide](/docs/getting-started).";
+    }
+    
+    if (lowerMessage.includes('resume')) {
+      return "I don't have specific information about that resume feature. Please check our [Resume Guide](/docs/resume) for detailed instructions and tips.";
+    }
+    
+    if (lowerMessage.includes('interview')) {
+      return "I don't have specific information about that interview feature. Please check our [Interview Guide](/docs/interview) for comprehensive interview preparation help.";
+    }
+    
+    if (lowerMessage.includes('cover letter')) {
+      return "I don't have specific information about that cover letter feature. Please check our [Cover Letter Guide](/docs/cover-letter) for step-by-step guidance.";
+    }
+    
+    if (lowerMessage.includes('documentation') || lowerMessage.includes('docs') || lowerMessage.includes('guide')) {
+      return "Our documentation includes: [Getting Started Guide](/docs/getting-started) for basics, [Resume Guide](/docs/resume) for resume help, [Interview Guide](/docs/interview) for interview prep, and [Cover Letter Guide](/docs/cover-letter) for cover letters. Which would you like to learn more about?";
+    }
+    
+    return "I don't have specific information about that. Please check our [Getting Started Guide](/docs/getting-started) for general help, or contact our support team at info@resumetitan.com for assistance.";
+  };
+
   const handleSend = async () => {
     if (!input.trim()) return;
 
@@ -73,7 +125,14 @@ const ChatBot: React.FC = () => {
 
     try {
       const response = await api.post('/chat', { message: userMessage });
-      const truncatedResponse = truncateMessage(response.data.response);
+      let responseText = response.data.response;
+      
+      // Check for potential hallucination
+      if (detectHallucination(responseText)) {
+        responseText = getFallbackResponse(userMessage);
+      }
+      
+      const truncatedResponse = truncateMessage(responseText);
       addMessage(truncatedResponse, false);
     } catch (error) {
       console.error('Error sending message:', error);

@@ -45,6 +45,7 @@ COPY . .
 RUN pip install -r scraper/requirements.txt --break-system-packages
 RUN npm install --force --production
 RUN npm run build
+RUN cp -r src/docs dist/
 
 # Set up Puppeteer for PDF downloads
 RUN npx puppeteer browsers install chrome
