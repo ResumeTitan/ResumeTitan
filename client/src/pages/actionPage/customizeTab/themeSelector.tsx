@@ -22,7 +22,26 @@ const ThemeSelector: React.FC<ThemeSelectorProps> = ({ resume, themes, selectedT
             style={{ background: '#f9f9f9' }}
           >
             <div className="p-2 flex flex-col items-center">
-              <div style={{ width: 180, height: 255, overflow: 'hidden', borderRadius: 8, boxShadow: selectedTheme === theme.id ? '0 0 0 4px #3b82f6' : '0 1px 4px rgba(0,0,0,0.08)', position: 'relative', background: '#fff', display: 'block', padding: 0 }}>
+              <div style={{ 
+                width: 180, 
+                height: 255, 
+                overflow: 'auto', 
+                borderRadius: 8, 
+                boxShadow: selectedTheme === theme.id ? '0 0 0 4px #3b82f6' : '0 1px 4px rgba(0,0,0,0.08)', 
+                position: 'relative', 
+                background: '#fff', 
+                display: 'block', 
+                padding: 0,
+                scrollbarWidth: 'none',
+                msOverflowStyle: 'none'
+              }}>
+                <style>
+                  {`
+                    div::-webkit-scrollbar {
+                      display: none;
+                    }
+                  `}
+                </style>
                 <div style={{ position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%, -50%) scale(0.22)', width: 820, height: 1160 }}>
                   <ResumeContainer resume={previewResume} />
                 </div>
