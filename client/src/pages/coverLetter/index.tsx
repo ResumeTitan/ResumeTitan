@@ -206,7 +206,6 @@ const CoverLetter: React.FC = () => {
       // Send only the cover letter data, not the entire payload
       const coverLetterData = { ...coverLetter };
       
-      console.log('Saving cover letter data:', coverLetterData);
       const response = await api.put(`cover-letter/${coverLetter._id}`, coverLetterData);
       setCoverLetter(response.data.coverLetter);
       setIsLoading(false);

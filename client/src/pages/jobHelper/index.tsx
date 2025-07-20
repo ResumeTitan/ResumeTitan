@@ -55,7 +55,6 @@ const JobHelper: React.FC = () => {
   //   async function load() {
   //     let newCoverLetter = coverLetter;
   //     if (location.state) {
-  //       console.log("loading cover letter");
   //       const id = location.state.id;
   //       newCoverLetter = await loadCoverLetter(id);
   //       newCoverLetter["_id"] = id;

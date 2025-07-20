@@ -10,7 +10,6 @@ export const createStripeSession = async (
   email: string,
   plan: string,
 ) => {
-  console.log("hit endpoint");
   const response = await fetch(`${API_URL}/checkout/session`, {
     method: 'POST',
     headers: {

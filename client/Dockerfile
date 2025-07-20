@@ -7,9 +7,6 @@ LABEL fly_launch_runtime="Node.js"
 # Node.js app lives here
 WORKDIR /app
 
-# Set production environment
-ENV NODE_ENV=production
-
 # Throw-away build stage to reduce size of final image
 FROM base as build
 
@@ -23,6 +20,9 @@ RUN npm install
 
 # Copy application code
 COPY --link . .
+
+# Set production environment
+ENV NODE_ENV=production
 
 # Build application
 RUN npx env-cmd -f .env.${NODE_ENV} npm run build
