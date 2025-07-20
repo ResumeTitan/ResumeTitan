@@ -12,6 +12,10 @@ const availableDocs = {
     file: 'resume.md',
     title: 'Resume Builder User Guide'
   },
+  'ai-prompts': {
+    file: 'ai-prompts.md',
+    title: 'Suggested AI Prompts'
+  },
   'cover-letter': {
     file: 'cover-letter.md',
     title: 'Cover Letter Generator User Guide'
