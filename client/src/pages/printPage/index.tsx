@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom'
-import { useSelector } from 'react-redux';
 import ResumeContainer from 'templates/ResumeContainer';
 import { ResumeType } from 'types/types';
-import { getResume } from 'api/resume';
+import api from 'api/actions';
 import Spinner from 'components/Spinner';
 
 export const PrintToPdf = () => {
@@ -13,14 +12,14 @@ export const PrintToPdf = () => {
   const { id } = useParams();
   const [searchParams] = useSearchParams();
   const clerkId = searchParams.get('clerkId');
-  const token = useSelector((state: any) => state.token);
 
   useEffect(() => {
     const loadResume = async () => {
       try {
         setLoading(true);
         setError(null);
-        const { resume: loadedResume } = await getResume(token, id, clerkId);
+        const { data } = await api.get(`/resume?id=${id}&clerkId=${clerkId}`);
+        const { resume: loadedResume } = data;
         setResume(loadedResume);
       } catch (err: any) {
         console.error('Error loading resume:', err);
@@ -30,7 +29,19 @@ export const PrintToPdf = () => {
       }
     }
     loadResume();
-  }, [id, token, clerkId]);
+  }, [id, clerkId]);
+
+  // Set document title to resume name when resume is loaded
+  useEffect(() => {
+    if (resume?.name) {
+      document.title = resume.name;
+    }
+    
+    // Reset title when component unmounts
+    return () => {
+      document.title = 'ResumeTitan';
+    };
+  }, [resume]);
 
   if (loading) {
     return <Spinner />;

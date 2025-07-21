@@ -38,6 +38,5 @@ export const isUserPremium = (user: UserResource | null | undefined) => {
     return false;
   }
 
-  console.log(new Date(user.publicMetadata.premiumUntil as string) > new Date());
   return new Date(user.publicMetadata.premiumUntil as string) > new Date()
 }

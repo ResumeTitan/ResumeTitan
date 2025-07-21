@@ -2,10 +2,9 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { setUserId } from '../../state/authReducer';
-import { reloadUser } from 'api/resume';
+import api from 'api/actions';
 
 const SuccessPage = () => {
-  const token = useSelector((state: any) => state.token);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -13,10 +12,8 @@ const SuccessPage = () => {
   React.useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await reloadUser(token);
-        if (response.ok) {
-          const data = await response.json();
-          console.log(data);
+        const { data } = await api.get('/auth/reload');
+        if (data) {
           dispatch(setUserId(data.userId));
         }
       } catch (error) {

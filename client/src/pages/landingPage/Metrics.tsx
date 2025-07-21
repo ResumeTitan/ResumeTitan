@@ -86,7 +86,6 @@ const Metrics: React.FC = () => {
         Interviews: data.data.interviewstotal
       };
 
-      console.log(reorderedData);
       setMetrics(reorderedData);
     };
   

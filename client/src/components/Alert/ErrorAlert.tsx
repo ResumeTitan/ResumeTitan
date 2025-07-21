@@ -8,8 +8,6 @@ const ErrorAlert = ({
   children: React.ReactNode
   onClose: () => void
 }) => {
-  console.log("showing error message");
-
   return (
   <div className={`alert error-alert`} role="alert">
     <div className={`ml-3 text-sm font-medium`}>
