@@ -1,5 +1,5 @@
 import React from 'react';
-import AssessmentIcon from '@mui/icons-material/Assessment';
+import PaletteIcon from '@mui/icons-material/Palette';
 import SchoolIcon from '@mui/icons-material/School';
 import WorkIcon from '@mui/icons-material/Work';
 import CardMembershipIcon from '@mui/icons-material/CardMembership';
@@ -21,7 +21,7 @@ const SectionList: React.FC<SectionListProps> = ({ sections, saveSections }) => 
     Basics: <PersonIcon fontSize='large' />,
     Education: <SchoolIcon fontSize="large" />,
     Work: <WorkIcon fontSize="large" />,
-    Projects: <AssessmentIcon fontSize="large" />,
+    Projects: <PaletteIcon fontSize="large" />,
     Certificates: <CardMembershipIcon fontSize="large" />,
     Publications: <LibraryBooksIcon fontSize="large" />,
     Volunteer: <VolunteerActivismIcon fontSize="large" />,

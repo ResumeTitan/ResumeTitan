@@ -6,6 +6,7 @@ import Volunteers from './Volunteer';
 import Jobs from './Jobs';
 import Skills from './Skills';
 import Awards from './Awards';
+import Projects from './Projects';
 import Summary from './Summary';
 import Popup from '../Popup';
 import api from 'api/actions';
@@ -24,6 +25,7 @@ function ActionTab({
   const [popupOpen, setPopupOpen] = useState(false);
   const [aiSkillsLoading, setAiSkillsLoading] = useState(false);
   const [aiSummaryLoading, setAiSummaryLoading] = useState(false);
+  const [aiProjectsLoading, setAiProjectsLoading] = useState(false);
 
 
   /**
@@ -59,6 +61,23 @@ function ActionTab({
     onUpdateResume({
       ...resumeIn,
       skills: skillsResponse.data.response.skills
+    });
+  }
+
+  /**
+   * @function handleProjectsAiCall
+   */
+  const handleProjectsAiCall = async (userInput = '') => {
+    setAiProjectsLoading(true);
+    const projectsResponse = await api.post("/resume/projects", {
+      ...resumeIn,
+      userInput: userInput, // Always pass the AI assistant text, even if empty
+      operationType: userInput ? 'edit' : 'generate'
+    });
+    setAiProjectsLoading(false);
+    onUpdateResume({
+      ...resumeIn,
+      projects: projectsResponse.data.response.projects
     });
   }
 
@@ -239,6 +258,53 @@ function ActionTab({
     onUpdateResume({...resumeIn, skills});
   }
 
+  const handleSaveProject = (projectForm) => {
+    if (projectForm.id) {
+      const updatedProjects = resumeIn.projects.map((project) => {
+        if (project.id === projectForm.id) {
+          return projectForm;
+        } else { 
+          return project;
+        }
+      });
+      onUpdateResume({
+        ...resumeIn,
+        projects: updatedProjects
+      });
+    } else {
+      projectForm.id = resumeIn.projects.length + 1;
+      onUpdateResume({
+        ...resumeIn,
+        projects: [...resumeIn.projects, projectForm]
+      });
+    }
+  }
+
+  const handleDeleteProject = (id) => {
+    const updatedProjects = resumeIn.projects.filter((project) => project.id !== id);
+    onUpdateResume({
+      ...resumeIn,
+      projects: updatedProjects
+    });
+  }
+
+  const handleSwapProjects = (up, index) => {
+    const tempProjects = resumeIn.projects;
+    if (up && index > 0) {
+      const temp = tempProjects[index];
+      tempProjects[index] = tempProjects[index - 1];
+      tempProjects[index - 1] = temp;
+    } else if (!up && index < tempProjects.length - 1) {
+      const temp = tempProjects[index];
+      tempProjects[index] = tempProjects[index + 1];
+      tempProjects[index + 1] = temp;
+    }
+    onUpdateResume({
+      ...resumeIn,
+      projects: tempProjects
+    });
+  }
+
   const handleUpdateBasics = (basics) => {
     onUpdateResume({...resumeIn, basics});
   }
@@ -289,6 +355,15 @@ function ActionTab({
           aiLoading={false}
           onUpdate={(awards) => onUpdateResume({...resumeIn, awards})}
           onAiCall={() => {}}
+        />
+      )}
+
+      {resumeIn.sections.includes("Projects") && (
+        <Projects 
+          projects={resumeIn.projects || []} 
+          onSave={handleSaveProject}
+          onDelete={handleDeleteProject}
+          onSwap={handleSwapProjects}
         />
       )}
 

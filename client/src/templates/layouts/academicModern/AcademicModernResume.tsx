@@ -216,9 +216,6 @@ const AcademicModernResume: React.FC<ResumeTypeProps> = ({ resume }) => {
               {formatDate(project.startDate)} – {project.endDate ? formatDate(project.endDate) : 'Present'}
             </SubTitle>
             )}
-            {project.description && (
-              <div style={{ marginBottom: '6px', color: '#444', fontSize: '0.85rem' }}>{project.description}</div>
-            )}
             {project.highlights && project.highlights.length > 0 && (
               <KeyAchievements>
                 Key Features:

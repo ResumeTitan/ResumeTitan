@@ -5,15 +5,22 @@ import { formatDate } from '../../../utils';
 
 const Container = styled.div`
   background: white;
-  padding: 10mm 12mm 8mm 12mm;
-  width: 100%;
-  height: 100%;
+  padding: 10mm 8mm 8mm 8mm;
+  height: 297mm;
   font-family: 'Georgia', 'Times New Roman', Times, serif;
   color: #222;
   box-sizing: border-box;
   overflow: hidden;
   font-size: 10pt;
   line-height: 1.2;
+  margin: 0 auto;
+  
+  @media print {
+    width: 210mm;
+    height: 297mm;
+    margin: 0;
+    padding: 10mm 8mm 8mm 8mm;
+  }
 `;
 
 const Name = styled.div`
@@ -55,6 +62,8 @@ const JobHeader = styled.div`
   font-size: 11pt;
   margin-bottom: 1mm;
   line-height: 1.2;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 `;
 
 const JobSubHeader = styled.div`
@@ -89,8 +98,13 @@ const SkillsSection = styled.div`
   margin-bottom: 1mm;
 `;
 
+const BottomSpacer = styled.div`
+  height: 8mm;
+  min-height: 8mm;
+`;
+
 const MeyerResume: React.FC<{ resume: ResumeType }> = ({ resume }) => {
-  const { basics, work = [], education = [], skills = [], awards = [], volunteer = [], sections = [] } = resume;
+  const { basics, work = [], education = [], skills = [], awards = [], volunteer = [], projects = [], sections = [] } = resume;
 
   return (
     <Container>
@@ -112,7 +126,7 @@ const MeyerResume: React.FC<{ resume: ResumeType }> = ({ resume }) => {
             <JobSubHeader>
               <span>{job.position}</span>
               <span>
-                {job.startDate ? ` ${formatDate(job.startDate)}` : ''} {job.endDate ? ` - ${formatDate(job.endDate)}` : ''}
+                {job.startDate ? ` ${formatDate(job.startDate)}` : ''} {job.endDate ? ` - ${formatDate(job.endDate)}` : ''} {job.endDateCurrent ? ' - Present' : ''}
               </span>
             </JobSubHeader>
             {job.highlights && job.highlights.length > 0 && (
@@ -150,6 +164,33 @@ const MeyerResume: React.FC<{ resume: ResumeType }> = ({ resume }) => {
         ))}
       </Section>
 
+      {/* Projects */}
+      {projects && projects.length > 0 && (
+        <Section>
+          <SectionTitle>Projects</SectionTitle>
+          {projects.map((project, i) => (
+            <div key={i}>
+              <JobHeader>
+                <span>{project.name}</span>
+              </JobHeader>
+              <JobSubHeader>
+                <span>{project.url && <a href={project.url} target="_blank" rel="noopener noreferrer" style={{ color: '#222', textDecoration: 'none' }}>{project.url}</a>}</span>
+                <span>
+                  {project.startDate ? ` ${formatDate(project.startDate)}` : ''} {project.endDate ? ` - ${formatDate(project.endDate)}` : ''} {project.endDateCurrent ? ' - Present' : ''}
+                </span>
+              </JobSubHeader>
+              {project.highlights && project.highlights.length > 0 && (
+                <Bullets>
+                  {project.highlights.map((hl, j) => (
+                    <Bullet key={j}>{hl}</Bullet>
+                  ))}
+                </Bullets>
+              )}
+            </div>
+          ))}
+        </Section>
+      )}
+
       {/* Skills*/}
       <Section>
         <SectionTitle>Skills</SectionTitle>
@@ -159,6 +200,8 @@ const MeyerResume: React.FC<{ resume: ResumeType }> = ({ resume }) => {
           </SkillsSection>
         ))}
       </Section>
+      
+      <BottomSpacer />
     </Container>
   );
 };

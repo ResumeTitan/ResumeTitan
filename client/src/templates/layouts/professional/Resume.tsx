@@ -15,12 +15,10 @@ import { ResumeTypeProps } from 'types/types';
 import { getFontFamily } from '../../../utils/fontUtils';
 
 const Layout = styled.div<{ $fontFamily: string }>`
-  margin: 0 auto;
   line-height: calc(1ex / 0.32);
-  margin-bottom: 40px;
-  margin-top: 20px;
   font-family: ${props => props.$fontFamily};
   color: black;
+  height: 297mm;
 `;
 
 const sectionComponents = {

@@ -9,6 +9,7 @@ import VolunteerActivismIcon from '@mui/icons-material/VolunteerActivism';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 import BuildIcon from '@mui/icons-material/Build';
+import PaletteIcon from '@mui/icons-material/Palette';
 import CloseIcon from '@mui/icons-material/Close';
 import 'styles/index.css';
 
@@ -45,6 +46,7 @@ const ButtonGridComponent: React.FC<ButtonGridProps> = ({ onAdd, onClose }) => {
     { label: 'Volunteer', icon: <VolunteerActivismIcon fontSize="large" /> },
     { label: 'Skills', icon: <BuildIcon fontSize="large" /> },
     { label: 'Awards', icon: <EmojiEventsIcon fontSize="large" /> },
+    { label: 'Projects', icon: <PaletteIcon fontSize="large" /> },
   ];
 
   return (

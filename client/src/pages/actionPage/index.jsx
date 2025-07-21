@@ -63,6 +63,7 @@ function ActionPage() {
     skills: [],
     volunteer: [],
     awards: [],
+    projects: [],
 
     theme: "professional", 
     font: "times-new-roman",
