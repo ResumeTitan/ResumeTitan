@@ -71,11 +71,12 @@ const Pricing: React.FC = () => {
         email: user.emailAddresses[0].emailAddress, 
         plan: planId
       });
-      console.log(response);
+
       // @ts-ignore
       const url = response.data.sessionUrl;
-      console.log(url);
-      if (url) window.open(url, '_self');
+      if (url) {
+        window.open(url, '_self');
+      }
     } catch (error) {
       alert('Something went wrong. Please try again');
     }

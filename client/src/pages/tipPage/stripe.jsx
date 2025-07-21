@@ -8,7 +8,6 @@ const BuyButtonComponent = ({ amount }) => {
   async function handleTipClick() {
     try {
       const response = await createStripeSession(currentUser.email, "7days");
-      console.log(response);
       const url = response.sessionUrl;
       if (url) window.open(url, '_self');
     } catch (error) {

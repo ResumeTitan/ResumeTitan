@@ -70,6 +70,11 @@ const DocsPage: React.FC = () => {
       description: 'Learn how to use the Resume Builder to create a professional resume.'
     },
     {
+      path: 'ai-prompts',
+      title: 'Suggested AI Prompts',
+      description: 'Discover the best AI prompts for the best results.'
+    },
+    {
       path: 'cover-letter',
       title: 'Cover Letter Generator User Guide',
       description: 'Learn how to use the Cover Letter Generator to create a professional cover letter.'

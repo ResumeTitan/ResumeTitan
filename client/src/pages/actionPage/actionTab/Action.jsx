@@ -85,7 +85,6 @@ function ActionTab({
   }
 
   const handleSaveVolunteer = (volunteerForm) => {
-    console.log("saving volunteer: ", volunteerForm);
     if (volunteerForm.id) {
       const updatedVolunteer = resumeIn.volunteer.map((vol) => {
         if (vol.id === volunteerForm.id) {

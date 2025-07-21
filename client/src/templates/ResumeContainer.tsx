@@ -24,11 +24,13 @@ const StyledContainer = styled.div`
   position: relative;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   overflow: hidden;
+  transform-origin: top left;
 
   @media print {
     box-shadow: none;
     width: 210mm;
     height: 297mm;
+    transform: none;
   }
 `;
 
@@ -37,13 +39,13 @@ const ScaledContainer = styled.div<ScaledContainerProps>`
   height: 100%;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   padding: 20px;
   overflow: auto;
+  background-color: #f5f5f5;
 
   @media screen {
     & > ${StyledContainer} {
-      transform-origin: top left;
       transform: scale(${props => props.$scale || 1});
     }
   }
@@ -51,6 +53,7 @@ const ScaledContainer = styled.div<ScaledContainerProps>`
   @media print {
     padding: 0;
     overflow: visible;
+    background-color: white;
     
     & > ${StyledContainer} {
       transform: none;
@@ -61,7 +64,7 @@ const ScaledContainer = styled.div<ScaledContainerProps>`
 `;
 
 const ResumeContainer = forwardRef<HTMLDivElement, ResumeContainerProps>(({ resume, onOverflowChange }, ref) => {
-  // Calculate scale based on container width
+  // Calculate scale based on container width while maintaining A4 aspect ratio
   const [scale, setScale] = React.useState(1);
   const containerRef = React.useRef<HTMLDivElement>(null);
 
@@ -93,13 +96,28 @@ const ResumeContainer = forwardRef<HTMLDivElement, ResumeContainerProps>(({ resu
     };
   }, [resume, onOverflowChange, ref]);
 
-  // Update scale on window resize
+  // Update scale on window resize - maintain A4 aspect ratio
   useEffect(() => {
     const updateScale = () => {
       if (containerRef.current) {
         const containerWidth = containerRef.current.clientWidth - 40; // Account for padding
-        const scale = containerWidth / 210; // 210mm is A4 width
-        setScale(Math.min(scale, 1)); // Don't scale up, only down
+        const containerHeight = containerRef.current.clientHeight - 40; // Account for padding
+        
+        // A4 dimensions: 210mm x 297mm (aspect ratio: 1:1.414)
+        const a4Width = 210; // mm
+        const a4Height = 297; // mm
+        const a4AspectRatio = a4Height / a4Width; // 1.414
+        
+        // Calculate scale based on width
+        const scaleByWidth = containerWidth / a4Width;
+        
+        // Calculate scale based on height
+        const scaleByHeight = containerHeight / a4Height;
+        
+        // Use the smaller scale to ensure the entire A4 page fits
+        const newScale = Math.min(scaleByWidth, scaleByHeight, 1); // Don't scale up beyond 1
+        
+        setScale(newScale);
       }
     };
 
