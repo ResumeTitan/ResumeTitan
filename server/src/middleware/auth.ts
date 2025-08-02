@@ -37,7 +37,12 @@ const authMiddleware = async (req: any, res: any, next: any) => {
     const token = authHeader.split(' ')[1];
     
     // Use the Clerk middleware to verify the token
-    await verifyToken(req, res, () => {
+    verifyToken(req, res, (err: any) => {
+      if (err) {
+        console.error("Clerk verification error:", err);
+        return res.status(401).json({ msg: "Authentication failed" });
+      }
+      
       // The token is verified, now get the user ID
       const userId = req.auth?.userId;
       if (!userId) {

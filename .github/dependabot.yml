@@ -5,7 +5,30 @@
 
 version: 2
 updates:
-  - package-ecosystem: "npm" # See documentation for possible values
-    directory: "/" # Location of package manifests
+  - package-ecosystem: "npm"
+    directory: "/server"
     schedule:
       interval: "weekly"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "ResumeTitan/ResumeTitan"
+    assignees:
+      - "ResumeTitan/ResumeTitan"
+    commit-message:
+      prefix: "server"
+      prefix-development: "server"
+      include: "scope"
+
+  - package-ecosystem: "npm"
+    directory: "/client"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "ResumeTitan/ResumeTitan"
+    assignees:
+      - "ResumeTitan/ResumeTitan"
+    commit-message:
+      prefix: "client"
+      prefix-development: "client"
+      include: "scope"

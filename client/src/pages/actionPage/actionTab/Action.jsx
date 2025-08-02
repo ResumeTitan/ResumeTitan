@@ -222,6 +222,15 @@ function ActionTab({
     });
   }
 
+  const handleSwapVolunteer = (indexA, indexB) => {
+    const tempVolunteer = resumeIn.volunteer;
+    swapArrayElements(tempVolunteer, indexA, indexB);
+    onUpdateResume({
+      ...resumeIn,
+      volunteer: tempVolunteer
+    });
+  }
+
   const handleUpdateResumeName = (name) => {
     onUpdateResume({...resumeIn, name});
   }
@@ -277,6 +286,7 @@ function ActionTab({
           volunteerExperience={resumeIn.volunteer} 
           onSave={handleSaveVolunteer}
           onDelete={handleDeleteVolunteer}
+          onReorder={handleSwapVolunteer}
       />)}
 
       {resumeIn.sections.includes("Skills") && (

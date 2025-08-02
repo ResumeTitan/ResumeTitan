@@ -1,0 +1,26 @@
+{
+  "short_name": "ResumeTitan",
+  "name": "ResumeTitan - AI-Powered Resume Builder",
+  "description": "Build your professional resume with AI. Expert-designed templates to help you stand out and get hired faster.",
+  "icons": [
+    {
+      "src": "logo.png",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/png"
+    },
+    {
+      "src": "logo.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "logo.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#156458",
+  "background_color": "#ffffff"
+} 
