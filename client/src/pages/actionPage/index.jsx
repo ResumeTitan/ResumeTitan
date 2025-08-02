@@ -70,7 +70,7 @@ function ActionPage() {
     sections: ["Basics"],
     name: "Resume Name"
   });
-  const [isOpen, setIsOpen] = useState(false);
+
   const [resumeLoading, setResumeLoading] = useState(false);
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState(1);
@@ -78,8 +78,9 @@ function ActionPage() {
   const [useJobDescription, setUseJobDescription] = useState(false);
   const [showPrintError, setShowPrintError] = useState(false);
   const resumeRef = useRef();
-  const [previewScale, setPreviewScale] = useState(0.4);
+
   const [hasOverflow, setHasOverflow] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const handleOverflowChange = (hasOverflow) => {
     setHasOverflow(hasOverflow);
@@ -220,48 +221,11 @@ function ActionPage() {
    * @todo Fix printing for mobile, gets too many notifications, generate on backend
    */
   const handleSaveToPdf = async () => {
-    // TODO: Uncomment this if we want to check for premium users
-    // if (!isUserPremium(user)) {
-    //   setShowPrintError(true);
-    //   return;
-    // }
-
-    try {
-      // Save the resume first
-      await handleSaveResume(false);
-
-      // Check if we're on mobile
-      const isMobile = window.innerWidth <= 768;
-      
-      if (isMobile) {
-        setResumeLoading(true);
-        const response = await api.post("/resume/print", {
-          id: currentResume._id,
-          name: currentResume.name || 'Resume',
-        }, {
-          responseType: 'blob'
-        });
-
-        // Create a blob URL and trigger download
-        const blob = new Blob([response.data], { type: 'application/pdf' });
-        const url = window.URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `${currentResume.name || 'Resume'}.pdf`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        window.URL.revokeObjectURL(url);
-        setResumeLoading(false);
-      } else {
-        // Use the print function for desktop
-        await handlePrint();
-      }
-    } catch (error) {
-      console.error('Error saving to PDF:', error);
-      setResumeLoading(false);
-      throw error;
+    if (!currentResume._id) {
+      setShowPrintError(true);
+      return;
     }
+    handlePrintResume();
   };
 
   /**
@@ -411,37 +375,17 @@ function ActionPage() {
     }
   };
 
+  const handlePrintResume = async () => {
+    await handleSaveResume(false);
+    navigate(`/print-resume/${currentResume._id || 'new'}?clerkId=${user?.id}`);
+  }
+
   // Set up the token function for API calls
   React.useEffect(() => {
     setTokenFunction(getToken);
   }, [getToken]);
 
-  React.useEffect(() => {
-    if (isOpen) {
-      const updateScale = () => {
-        const width = window.innerWidth;
-        if (width <= 300) {
-          setPreviewScale(0.3);
-        } else if (width <= 400) {
-          setPreviewScale(0.4);
-        } else if (width <= 500) {
-          setPreviewScale(0.5);
-        } else if (width <= 650) {
-          setPreviewScale(0.6);
-        } else {
-          setPreviewScale(0.7);
-        }
-      };
-      updateScale();
-      window.addEventListener('resize', updateScale);
-      // Prevent background scroll
-      document.body.style.overflow = 'hidden';
-      return () => {
-        window.removeEventListener('resize', updateScale);
-        document.body.style.overflow = '';
-      };
-    }
-  }, [isOpen]);
+
 
   return (
     <div className="page-container">
@@ -461,13 +405,7 @@ function ActionPage() {
         </ErrorAlert>
         </div>
       )}
-      {hasOverflow && (
-        <div className="mb-4 p-4 bg-yellow-100 border border-yellow-400 rounded">
-          <p className="text-yellow-700">
-            Warning: Your resume content exceeds one page. Consider removing some content or adjusting formatting.
-          </p>
-        </div>
-      )}
+
         <Tabs openTab={activeTab} setOpenTab={(tab) => setActiveTab(tab)} />
         {activeTab === 1 && (
           <ActionTab 
@@ -495,64 +433,26 @@ function ActionPage() {
           <button onClick={() => handleSaveResume(true)} className="save-button">Save and Exit</button>
         </div>
 
-        <div onClick={() => setIsOpen(true)} className="fixed bottom-4 left-8 hover:cursor-pointer xl:hidden">
+        <div onClick={handlePrintResume} className="fixed bottom-4 left-8 hover:cursor-pointer 2xl:hidden">
           <CustomDocumentIcon />
         </div>
 
       </div>
       {/* Desktop View */}
-      <div className="overflow-hidden p-2 hidden xl:block w-full">
-        <div className="w-full p-2">
+      <div className="hidden 2xl:block">
+        <div className="p-2 h-min-[297mm]">
           <ResumeContainer 
             ref={resumeRef} 
             resume={currentResume} 
             onOverflowChange={handleOverflowChange}
+            currentPage={currentPage}
+            onPageChange={setCurrentPage}
+            isMobile={false}
           />
         </div>
       </div>
 
-      {/* Mobile View */}
-      {isOpen && (
-        <div className="layover-container" onClick={() => setIsOpen(false)} style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          zIndex: 9999,
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center'
-        }}>
-          <div className="resume-container-wrapper" style={{
-            width: '100%',
-            height: '100%',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            overflow: 'hidden',
-            padding: '10px'
-          }}>
-            <div style={{
-              transform: `scale(${previewScale})`,
-              transformOrigin: 'center center',
-              width: '794px',
-              height: '1122px',
-              position: 'relative',
-              backgroundColor: 'white',
-              borderRadius: '8px',
-              boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
-            }}>
-              <ResumeContainer 
-                ref={resumeRef} 
-                resume={currentResume} 
-                onOverflowChange={handleOverflowChange}
-              />
-            </div>
-          </div>
-        </div>
-      )}
+
     </div>
   );
 }

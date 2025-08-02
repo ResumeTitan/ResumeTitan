@@ -126,7 +126,7 @@ const CoverLetter: React.FC = () => {
     const response = await api.get(`/resume/user?userId=${id}`);
     const resumesIn = response.data.resumes;
 
-    if (resumesIn.length >= 0) {
+    if (resumesIn.length > 0) {
       setUserResumes(resumesIn);
       return resumesIn[0]._id;
     } else {
@@ -152,7 +152,9 @@ const CoverLetter: React.FC = () => {
           newCoverLetter["name"] = user.fullName || 'Your Name';
         }
         const resumeId = await loadResumes(user.id);
-        newCoverLetter["resumeId"] = resumeId;
+        if (resumeId) {
+          newCoverLetter["resumeId"] = resumeId;
+        }
       }
 
       setCoverLetter(newCoverLetter);
@@ -342,6 +344,7 @@ const CoverLetter: React.FC = () => {
                   />
                 </>
               )}
+              {userResumes && userResumes.length > 0 && (
               <FormDropdown 
                 title={"Select Resume"}
                 onChange={(event) => {
@@ -354,7 +357,8 @@ const CoverLetter: React.FC = () => {
                 {userResumes && userResumes.map((resume: any) => (
                   <option value={resume.id}>{resume.name}</option>
                 ))}
-              </FormDropdown>
+                </FormDropdown>
+              )}
             </div>
 
             {coverLetter.letter && (

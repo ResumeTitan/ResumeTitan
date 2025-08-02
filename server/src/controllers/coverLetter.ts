@@ -138,7 +138,7 @@ export const getCoverLetters = async (req: Request, res: Response): Promise<Resp
   try {
     // @ts-ignore
     const id = req.auth.userId;
-    const coverLetters = await CoverLetter.find({ clerkId: id }).sort({ createdAt: -1 });
+    const coverLetters = await CoverLetter.find({ clerkId: id }).sort({ modifiedAt: -1 });
     return res.status(200).json({ coverLetters });
   } catch (error: any) {
     console.log('Error: ', error);
@@ -228,7 +228,7 @@ const fetchJobPostingHtmlWithPython = async (jobUrl: string): Promise<string> =>
         console.log(`✅ Python scraper successful - got ${result.html.length} characters`);
         return result.html;
       } else {
-        console.log(`❌ Python scraper failed: ${result.error}`);
+        console.log(`❌ Python scraper failed: ${result.error} ${result.html}`);
       }
     } else {
       console.log('⚠️ Python not available, falling back to existing methods');
@@ -253,34 +253,35 @@ export const createUpdateCoverLetter = async (req: Request, res: Response): Prom
     let { jobTitle, jobDescription, company, resumeId, jobUrl, useJobUrl } = coverLetter;
 
     // Generate the cover letter content
-    const resume = await Resume.findById(resumeId);
-    if (!resume) {
-      return res.status(404).json({ error: 'Resume not found' });
+    let typedResume;
+    if (resumeId) {
+      const resume = await Resume.findById(resumeId);
+      if (!resume) {
+        return res.status(404).json({ error: 'Resume not found' });
+      }
+      const resumeData = resume.toObject();
+      const basics = {
+        ...resumeData.basics,
+        label: resumeData.basics.label || '',
+        image: resumeData.basics.image || '',
+        phone: resumeData.basics.phone || '',
+        url: resumeData.basics.url || '',
+        summary: resumeData.basics.summary || '',
+        location: {
+          address: resumeData.basics.location?.address || '',
+          postalCode: resumeData.basics.location?.postalCode || '',
+          city: resumeData.basics.location?.city || '',
+          countryCode: resumeData.basics.location?.countryCode || '',
+          region: resumeData.basics.location?.region || '',
+        },    
+        profiles: resumeData.basics.profiles || [],
+      };
+      typedResume = {
+        ...resumeData,
+        _id: resumeData._id.toString(),
+        basics
+      } as unknown as ResumeType;
     }
-
-    // Convert Mongoose document to plain object and ensure required fields
-    const resumeData = resume.toObject();
-    const basics = {
-      ...resumeData.basics,
-      label: resumeData.basics.label || '',
-      image: resumeData.basics.image || '',
-      phone: resumeData.basics.phone || '',
-      url: resumeData.basics.url || '',
-      summary: resumeData.basics.summary || '',
-      location: {
-        address: resumeData.basics.location?.address || '',
-        postalCode: resumeData.basics.location?.postalCode || '',
-        city: resumeData.basics.location?.city || '',
-        countryCode: resumeData.basics.location?.countryCode || '',
-        region: resumeData.basics.location?.region || '',
-      },
-      profiles: resumeData.basics.profiles || [],
-    };
-    const typedResume = {
-      ...resumeData,
-      _id: resumeData._id.toString(),
-      basics
-    } as unknown as ResumeType;
 
     let prompt = '';
     let response;

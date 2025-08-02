@@ -224,12 +224,12 @@ export const Dashboard: React.FC = () => {
 
   const resumeWidgets = resumes.map((resume, index) => (
     <ResumeCardHolder key={resume._id}>
-      <div className="p-2">
-        <ResumeContainer resume={resume} />
-      </div>
       <ResumeTitle>
         {resume.name}
       </ResumeTitle>
+      <div className="p-2">
+        <ResumeContainer resume={resume} />
+      </div>
       <ResumeEditButton
         onClick={() => handleClickResume(resume._id)}
       >

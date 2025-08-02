@@ -1,27 +1,36 @@
+import React from 'react';
+import { ResumeType } from 'types/types';
 import styled from 'styled-components';
-import Projects from './Projects';
+import { formatDate } from '../../../utils';
 import Basics from './Basics';
 import Education from './Education';
 import Work from './Work';
 import Volunteer from './Volunteer';
-import Certificates from './Certificates';
-import Publications from './Publications';
+import Projects from './Projects';
 import Awards from './Awards';
 import Skills from './Skills';
 import Interests from './Interests';
 import Languages from './Languages';
 import References from './References';
-import { ResumeTypeProps } from 'types/types';
-import { getFontFamily } from '../../../utils/fontUtils';
+import Certificates from './Certificates';
+import Publications from './Publications';
 
-const Layout = styled.div<{ $fontFamily: string }>`
-  line-height: calc(1ex / 0.32);
-  font-family: ${props => props.$fontFamily};
-  color: black;
-  width: 100%;
-  max-width: 210mm;
+const Container = styled.div`
+  background: white;
+  padding: 10mm 8mm 8mm 8mm;
+  font-family: 'Georgia', 'Times New Roman', Times, serif;
+  color: #222;
+  box-sizing: border-box;
+  overflow: hidden;
+  font-size: 10pt;
+  line-height: 1.2;
   margin: 0 auto;
-  padding: 20px;
+  
+  @media print {
+    width: 210mm;
+    margin: 0;
+    padding: 10mm 8mm 8mm 8mm;
+  }
 `;
 
 const sectionComponents = {
@@ -30,18 +39,18 @@ const sectionComponents = {
   Work: Work,
   Volunteer: Volunteer,
   Projects: Projects,
-  Certificates: Certificates,
-  Publications: Publications,
   Awards: Awards,
-  Languages: Languages,
   Skills: Skills,
   Interests: Interests,
+  Languages: Languages,
   References: References,
+  Certificates: Certificates,
+  Publications: Publications,
 };
 
-const Resume: React.FC<ResumeTypeProps> = ({ resume }) => {
+const StrattonResume: React.FC<{ resume: ResumeType }> = ({ resume }) => {
   return (
-    <Layout $fontFamily={getFontFamily(resume.font)}>
+    <Container>
       {resume.sections.map((section) => {
         const SectionComponent = sectionComponents[section as keyof typeof sectionComponents];
         if (SectionComponent) {
@@ -49,8 +58,8 @@ const Resume: React.FC<ResumeTypeProps> = ({ resume }) => {
         }
         return null;
       })}
-    </Layout>
+    </Container>
   );
 };
 
-export default Resume;
+export default StrattonResume; 

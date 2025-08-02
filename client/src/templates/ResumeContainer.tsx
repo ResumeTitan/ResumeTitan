@@ -4,7 +4,7 @@ import ProfessionalResume from './layouts/professional/Resume';
 import MacchiatoResume from './layouts/macchiato/Resume';
 import StudentClassicResume from './layouts/studentClassic/StudentClassicResume';
 import AcademicModernResume from './layouts/academicModern/AcademicModernResume';
-import MeyerResume from './layouts/meyer/Resume';
+import StrattonResume from './layouts/stratton/Resume';
 import { ResumeTypeProps } from 'types/types';
 import styled from 'styled-components';
 
@@ -18,7 +18,7 @@ interface ResumeContainerProps extends ResumeTypeProps {
 
 const StyledContainer = styled.div`
   width: 210mm;
-  height: 297mm;
+  min-height: 297mm;
   background-color: white;
   margin: 0 auto;
   position: relative;
@@ -31,6 +31,20 @@ const StyledContainer = styled.div`
     width: 210mm;
     height: 297mm;
     transform: none;
+  }
+`;
+
+const PageBreakIndicator = styled.div`
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 0;
+  border-top: 2px dotted #ccc;
+  pointer-events: none;
+  z-index: 1;
+
+  @media print {
+    display: none;
   }
 `;
 
@@ -66,9 +80,10 @@ const ScaledContainer = styled.div<ScaledContainerProps>`
 const ResumeContainer = forwardRef<HTMLDivElement, ResumeContainerProps>(({ resume, onOverflowChange }, ref) => {
   // Calculate scale based on container width while maintaining A4 aspect ratio
   const [scale, setScale] = React.useState(1);
+  const [pageBreaks, setPageBreaks] = React.useState<number[]>([]);
   const containerRef = React.useRef<HTMLDivElement>(null);
 
-  // Check for content overflow
+  // Check for content overflow and calculate page breaks
   useEffect(() => {
     const checkOverflow = () => {
       if (ref && 'current' in ref && ref.current) {
@@ -79,6 +94,26 @@ const ResumeContainer = forwardRef<HTMLDivElement, ResumeContainerProps>(({ resu
         if (onOverflowChange) {
           onOverflowChange(hasOverflow);
         }
+
+        // Calculate page breaks every 297mm (A4 height)
+        // Use the actual container width to calculate the correct height
+        const containerWidth = ref.current.clientWidth;
+        const a4Width = 210; // mm
+        const a4Height = 297; // mm
+        const a4AspectRatio = a4Height / a4Width;
+        
+        // Calculate the actual rendered height based on the container width
+        const renderedHeight = containerWidth * a4AspectRatio;
+        
+        const pageBreakPositions: number[] = [];
+        let currentPosition = renderedHeight;
+
+        while (currentPosition < contentHeight) {
+          pageBreakPositions.push(currentPosition);
+          currentPosition += renderedHeight;
+        }
+
+        setPageBreaks(pageBreakPositions);
       }
     };
 
@@ -121,10 +156,14 @@ const ResumeContainer = forwardRef<HTMLDivElement, ResumeContainerProps>(({ resu
       }
     };
 
-    updateScale();
+    // Add a small delay to ensure DOM is fully rendered
+    const timeoutId = setTimeout(updateScale, 100);
     window.addEventListener('resize', updateScale);
-    return () => window.removeEventListener('resize', updateScale);
-  }, []);
+    return () => {
+      clearTimeout(timeoutId);
+      window.removeEventListener('resize', updateScale);
+    };
+  }, [resume]); // Add resume as dependency to recalculate scale when resume changes
 
   return (
     <ScaledContainer ref={containerRef} $scale={scale}>
@@ -135,9 +174,17 @@ const ResumeContainer = forwardRef<HTMLDivElement, ResumeContainerProps>(({ resu
         {resume.theme === "macchiato" && <MacchiatoResume resume={resume} />}
         {resume.theme === "student-classic" && <StudentClassicResume resume={resume} />}
         {resume.theme === "academic-modern" && <AcademicModernResume resume={resume} />}
-        {resume.theme === "meyer" && <MeyerResume resume={resume} />}
+        {resume.theme === "stratton" && <StrattonResume resume={resume} />}
         {/* Default */}
         {resume.theme === "" && <ProfessionalResume resume={resume} />}
+        
+        {/* Page break indicators */}
+        {pageBreaks.map((position, index) => (
+          <PageBreakIndicator
+            key={index}
+            style={{ top: `${position}px` }}
+          />
+        ))}
       </StyledContainer>
     </ScaledContainer>
   );

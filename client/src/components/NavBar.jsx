@@ -182,20 +182,20 @@ const NavBar = () => {
                 </a>
             </SignedOut>
             <SignedIn>
-              <button
-                className="nav-btn text-white font-bold text-xl hover:bg-light-green transition-all duration-300 ease-in-out rounded"
-                onClick={() => navigate('/dashboard')}
-              >
-                {'Dashboard'}
-              </button>
-              <button 
-              className="nav-btn text-left text-white hover:bg-light-green transition-all duration-300 ease-in-out rounded flex items-center justify-between"
-              onClick={() => {
-                const userButton = document.querySelector('.cl-userButtonTrigger');
-                if (userButton) {
-                  userButton.click();
-                }
-              }}
+                          <button
+              className="nav-btn text-white font-bold text-xl hover:bg-light-green transition-all duration-300 ease-in-out rounded"
+              onClick={() => navigate('/dashboard')}
+            >
+              {'Dashboard'}
+            </button>
+            <button 
+            className="nav-btn text-left text-white hover:bg-light-green transition-all duration-300 ease-in-out rounded flex items-center justify-between"
+            onClick={() => {
+              const userButton = document.querySelector('.cl-userButtonTrigger');
+              if (userButton) {
+                userButton.click();
+              }
+            }}
             >
               <div className="flex items-center">
                 <span className="text-white font-bold">Hello, </span>
@@ -205,8 +205,8 @@ const NavBar = () => {
                 <UserButton afterSignOutUrl='/'/>
               </div>
             </button>
-            </SignedIn>
-          </div>
+          </SignedIn>
+        </div>
         )}
       </nav>
     </div>

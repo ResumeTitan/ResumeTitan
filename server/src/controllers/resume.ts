@@ -838,7 +838,7 @@ export const updateResume = async (req: Request, res: Response) => {
 export const getResumes = async (req: Request, res: Response) => {
   const userId = req.query.userId;
   try {
-    const resumes = await Resume.find({ clerkId: userId }).sort({ createdAt: -1 });
+    const resumes = await Resume.find({ clerkId: userId }).sort({ modifiedAt: -1 });
     res.status(200).json({ resumes });
   } catch (err: any) {
     res.status(500).json({ msg: err.message });
@@ -918,10 +918,18 @@ export const printResumeToPdf = async (req: Request, res: Response) => {
     });
 
     // Wait for the resume container using data attribute
-    await page.waitForSelector('[data-resume="print-container"]', { timeout: 5000 });
+    await page.waitForSelector('[data-resume="print-container"]', { timeout: 10000 });
     
     // Wait for any animations or dynamic content to settle
-    await page.evaluate(() => new Promise(resolve => setTimeout(resolve, 1000)));
+    await page.evaluate(() => new Promise(resolve => setTimeout(resolve, 2000)));
+    
+    // Additional wait to ensure React components are fully rendered
+    await page.waitForFunction(`
+      () => {
+        const container = document.querySelector('[data-resume="print-container"]');
+        return container && container.children.length > 0;
+      }
+    `, { timeout: 10000 });
 
     const pdfBuffer = await page.pdf({
       format: 'A4',
@@ -932,7 +940,8 @@ export const printResumeToPdf = async (req: Request, res: Response) => {
         right: '0.4in',
         bottom: '0.4in',
         left: '0.4in'
-      }
+      },
+      preferCSSPageSize: true
     });
     await browser.close();
 

@@ -1,5 +1,4 @@
 import axios from 'axios';
-import store from 'state';
 
 // configuration
 const API_URL = process.env.REACT_APP_API_URL;
@@ -29,3 +28,14 @@ api.interceptors.request.use(async function (config) {
 });
 
 export default api;
+
+// Metrics API functions
+export const fetchDateRangeMetrics = async (startDate, endDate) => {
+  try {
+    const response = await api.get(`/metrics/date-range?startDate=${startDate}&endDate=${endDate}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching metrics:', error);
+    throw error;
+  }
+};
