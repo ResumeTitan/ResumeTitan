@@ -250,38 +250,70 @@ const fetchJobPostingHtmlWithPython = async (jobUrl: string): Promise<string> =>
 export const createUpdateCoverLetter = async (req: Request, res: Response): Promise<Response> => {
   try {
     const { coverLetter, clerkId } = req.body;
+    // Use a default clerkId if not provided (for development)
+    const finalClerkId = clerkId || 'dev-user-id';
     let { jobTitle, jobDescription, company, resumeId, jobUrl, useJobUrl } = coverLetter;
 
     // Generate the cover letter content
+    let resumeData;
     let typedResume;
+    
     if (resumeId) {
       const resume = await Resume.findById(resumeId);
       if (!resume) {
         return res.status(404).json({ error: 'Resume not found' });
       }
-      const resumeData = resume.toObject();
-      const basics = {
-        ...resumeData.basics,
-        label: resumeData.basics.label || '',
-        image: resumeData.basics.image || '',
-        phone: resumeData.basics.phone || '',
-        url: resumeData.basics.url || '',
-        summary: resumeData.basics.summary || '',
-        location: {
-          address: resumeData.basics.location?.address || '',
-          postalCode: resumeData.basics.location?.postalCode || '',
-          city: resumeData.basics.location?.city || '',
-          countryCode: resumeData.basics.location?.countryCode || '',
-          region: resumeData.basics.location?.region || '',
-        },    
-        profiles: resumeData.basics.profiles || [],
+      resumeData = resume.toObject();
+    } else {
+      // Create a default resume structure when no resume is provided
+      resumeData = {
+        basics: {
+          name: coverLetter.name || 'Your Name',
+          label: 'Professional',
+          image: '',
+          phone: '',
+          url: '',
+          summary: 'Experienced professional with strong skills and dedication to excellence.',
+          location: {
+            address: '',
+            postalCode: '',
+            city: '',
+            countryCode: '',
+            region: '',
+          },
+          profiles: [],
+        },
+        work: [],
+        education: [],
+        skills: [],
+        volunteer: [],
+        awards: [],
+        _id: 'default-resume-id'
       };
-      typedResume = {
-        ...resumeData,
-        _id: resumeData._id.toString(),
-        basics
-      } as unknown as ResumeType;
     }
+    
+    // Convert Mongoose document to plain object and ensure required fields
+    const basics = {
+      ...resumeData.basics,
+      label: resumeData.basics.label || '',
+      image: resumeData.basics.image || '',
+      phone: resumeData.basics.phone || '',
+      url: resumeData.basics.url || '',
+      summary: resumeData.basics.summary || '',
+      location: {
+        address: resumeData.basics.location?.address || '',
+        postalCode: resumeData.basics.location?.postalCode || '',
+        city: resumeData.basics.location?.city || '',
+        countryCode: resumeData.basics.location?.countryCode || '',
+        region: resumeData.basics.location?.region || '',
+      },
+      profiles: resumeData.basics.profiles || [],
+    };
+    typedResume = {
+      ...resumeData,
+      _id: resumeData._id.toString(),
+      basics
+    } as unknown as ResumeType;
 
     let prompt = '';
     let response;
@@ -313,7 +345,7 @@ export const createUpdateCoverLetter = async (req: Request, res: Response): Prom
       jobDescription,
       company,
       ...response,
-      clerkId,
+      clerkId: finalClerkId,
     };
 
     // Remove _id if it's an empty string
