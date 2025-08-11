@@ -3,7 +3,7 @@ name: Auto Version Bump
 on:
   push:
     branches:
-      - main
+      - develop
   workflow_dispatch:
 
 jobs:
@@ -70,7 +70,7 @@ jobs:
 
           Client: ${{ steps.client-version.outputs.current_client_version }} → ${{ steps.bump-client.outputs.new_client_version }}
           Server: ${{ steps.server-version.outputs.current_server_version }} → ${{ steps.bump-server.outputs.new_server_version }}"
-          git push origin main
+          git push origin develop
 
       - name: Create GitHub Release
         uses: actions/create-release@v1
