@@ -84,7 +84,7 @@ const CoverLetter: React.FC = () => {
   const { getToken } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
-  const [userResumes, setUserResumes] = React.useState([]);
+  const [userResumes, setUserResumes] = React.useState<ResumeType[]>([]);
   const [isLoading, setIsLoading] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState('');
   const [coverLetter, setCoverLetter] = React.useState<CoverLetterType>({
@@ -126,11 +126,12 @@ const CoverLetter: React.FC = () => {
     const response = await api.get(`/resume/user?userId=${id}`);
     const resumesIn = response.data.resumes;
 
-    if (resumesIn.length >= 0) {
+    if (resumesIn && resumesIn.length > 0) {
       setUserResumes(resumesIn);
       return resumesIn[0]._id;
     } else {
-      return 0;
+      setUserResumes([]);
+      return null;
     }
   }
 
@@ -152,7 +153,9 @@ const CoverLetter: React.FC = () => {
           newCoverLetter["name"] = user.fullName || 'Your Name';
         }
         const resumeId = await loadResumes(user.id);
-        newCoverLetter["resumeId"] = resumeId;
+        if (resumeId) {
+          newCoverLetter["resumeId"] = resumeId;
+        }
       }
 
       setCoverLetter(newCoverLetter);
@@ -342,19 +345,26 @@ const CoverLetter: React.FC = () => {
                   />
                 </>
               )}
+              {userResumes && userResumes.length > 0 && (
               <FormDropdown 
                 title={"Select Resume"}
                 onChange={(event) => {
-                  const resumeId = userResumes.find((res: ResumeType) => res.name === event.target.value);
-                  if (resumeId) {
-                    setCoverLetter({...coverLetter, resumeId})}
+                  const selectedResume = userResumes.find((res: ResumeType) => res.name === event.target.value);
+                  if (selectedResume) {
+                    setCoverLetter({...coverLetter, resumeId: selectedResume._id});
                   }
-                }
+                }}
               >
-                {userResumes && userResumes.map((resume: any) => (
-                  <option value={resume.id}>{resume.name}</option>
-                ))}
+                {userResumes && userResumes.length > 0 ? (
+                  userResumes.map((resume: ResumeType) => (
+                    <option key={resume._id} value={resume.name}>{resume.name}</option>
+                  ))
+                ) : (
+                  <option value="">No resumes available</option>
+                )}
               </FormDropdown>
+              )}
+
             </div>
 
             {coverLetter.letter && (
@@ -372,22 +382,20 @@ const CoverLetter: React.FC = () => {
               >
                 {isLoading ? 'Writing...' : 'Write Cover Letter with AI'}
               </button>
-              <button>
-                <PDFDownloadLink
-                  document={<CoverLetterPDF coverLetter={coverLetter} />}
-                  fileName="cover-letter.pdf"
-                >
-                  {/* @ts-ignore */}
-                  {({ loading }) => (
-                    <button
-                      className="interview-button"
-                      style={{ marginTop: '1rem' }}
-                    >
-                      {loading ? 'Preparing PDF...' : 'Download PDF'}
-                    </button>
-                  )}
-                </PDFDownloadLink>
-              </button>
+              <PDFDownloadLink
+                document={<CoverLetterPDF coverLetter={coverLetter} />}
+                fileName="cover-letter.pdf"
+              >
+                {/* @ts-ignore */}
+                {({ loading }) => (
+                  <button
+                    className="interview-button"
+                    style={{ marginTop: '1rem' }}
+                  >
+                    {loading ? 'Preparing PDF...' : 'Download PDF'}
+                  </button>
+                )}
+              </PDFDownloadLink>
 
               {coverLetter.letter && (
                 <button

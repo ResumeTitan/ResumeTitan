@@ -57,16 +57,7 @@ const Projects: React.FC<ProjectsProps> = ({ projects }) => {
             }}>
               {formatDate(project.startDate)} – {project.endDate ? formatDate(project.endDate) : 'Present'}
             </div>
-            {project.description && (
-              <p style={{
-                fontFamily: '"Lato", Helvetica, Arial, sans-serif',
-                fontSize: '12px',
-                lineHeight: '1.4',
-                margin: '0 0 8px 0'
-              }}>
-                {project.description}
-              </p>
-            )}
+
             {project.highlights && project.highlights.length > 0 && (
               <HighlightsList>
                 {project.highlights.map((highlight, idx) => (

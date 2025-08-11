@@ -21,7 +21,6 @@ const Work: React.FC<WorkProps> = ({ projects }) => {
             title={w.name}
             startDate={w.startDate}
             endDate={w.endDate}
-            summary={w.description}
             highlights={w.highlights}
             key={key}
           />

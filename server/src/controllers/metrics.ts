@@ -1,5 +1,9 @@
 import { Request, Response } from 'express';
 import Metric from '../models/Metric';
+import Resume from '../models/Resume';
+import User from '../models/User';
+import Interview from '../models/Interview';
+import CoverLetter from '../models/CoverLetter';
 
 /**
  * @function getTotalMetrics
@@ -167,6 +171,124 @@ export const getMetricsByKey = async (req: Request, res: Response): Promise<void
     res.status(500).json({
       success: false,
       error: 'Failed to fetch metric',
+      message: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+};
+
+/**
+ * @function getDateRangeMetrics
+ * @description GET endpoint to retrieve metrics for a specific date range
+ * @param {Request} req - Express request object
+ * @param {Response} res - Express response object
+ * @returns {Promise<void>}
+ */
+export const getDateRangeMetrics = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { startDate, endDate } = req.query;
+
+    // Validate date parameters
+    if (!startDate || !endDate) {
+      res.status(400).json({
+        success: false,
+        error: 'Start date and end date are required'
+      });
+      return;
+    }
+
+    const start = new Date(startDate as string);
+    const end = new Date(endDate as string);
+
+    // Validate date format
+    if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+      res.status(400).json({
+        success: false,
+        error: 'Invalid date format. Use ISO 8601 format (YYYY-MM-DD)'
+      });
+      return;
+    }
+
+    // Set end date to end of day
+    end.setHours(23, 59, 59, 999);
+
+    // Calculate edited resumes (modifiedAt > createdAt + 2 hours)
+    const twoHoursInMs = 2 * 60 * 60 * 1000;
+    
+    // Perform various queries for different metrics
+    const [
+      newResumes,
+      editedResumes,
+      newInterviews,
+      newCoverLetters,
+      totalResumes,
+      totalEditedResumes,
+      totalInterviews,
+      totalCoverLetters
+    ] = await Promise.all([
+      // New items in date range
+      Resume.countDocuments({ createdAt: { $gte: start, $lte: end } }),
+      Resume.countDocuments({
+        updatedAt: { $gte: start, $lte: end },
+        createdAt: { $lt: start },
+        $expr: {
+          $gt: [
+            { $subtract: ['$updatedAt', '$createdAt'] },
+            twoHoursInMs
+          ]
+        }
+      }),
+      Interview.countDocuments({ createdAt: { $gte: start, $lte: end } }),
+      CoverLetter.countDocuments({ createdAt: { $gte: start, $lte: end } }),
+      
+      // Total items (all time)
+      Resume.countDocuments({}),
+      Resume.countDocuments({
+        $expr: {
+          $gt: [
+            { $subtract: ['$updatedAt', '$createdAt'] },
+            twoHoursInMs
+          ]
+        }
+      }),
+      Interview.countDocuments({}),
+      CoverLetter.countDocuments({})
+    ]);
+
+    const metrics = {
+      dateRange: {
+        start: start.toISOString().split('T')[0],
+        end: end.toISOString().split('T')[0]
+      },
+      newItems: {
+        resumes: newResumes,
+        editedResumes: editedResumes,
+        interviews: newInterviews,
+        coverLetters: newCoverLetters
+      },
+      totals: {
+        resumes: totalResumes,
+        editedResumes: totalEditedResumes,
+        interviews: totalInterviews,
+        coverLetters: totalCoverLetters
+      },
+      growth: {
+        resumes: totalResumes > 0 ? ((newResumes / totalResumes) * 100).toFixed(2) : '0',
+        editedResumes: totalEditedResumes > 0 ? ((editedResumes / totalEditedResumes) * 100).toFixed(2) : '0',
+        interviews: totalInterviews > 0 ? ((newInterviews / totalInterviews) * 100).toFixed(2) : '0',
+        coverLetters: totalCoverLetters > 0 ? ((newCoverLetters / totalCoverLetters) * 100).toFixed(2) : '0'
+      }
+    };
+
+    res.status(200).json({
+      success: true,
+      data: metrics
+    });
+
+  } catch (error) {
+    console.error('Error fetching date range metrics:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fetch date range metrics',
       message: error instanceof Error ? error.message : 'Unknown error'
     });
   }

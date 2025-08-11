@@ -348,7 +348,15 @@ body {
   animation: fadeInOut 2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* Hide chat bot when printing */
+@media print {
+  .chat-bot-button {
+    display: none !important;
+  }
+}
+
 /* NavBar button uniformity */
+
 .nav-btn {
   min-width: 140px;
   height: 48px;

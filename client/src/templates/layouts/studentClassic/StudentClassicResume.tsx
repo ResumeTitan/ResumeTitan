@@ -6,7 +6,6 @@ import { getFontFamily } from '../../../utils/fontUtils';
 const Main = styled.div<{ $fontFamily: string }>`
   font-family: ${props => props.$fontFamily};
   font-size: 0.95rem;
-  padding: 0 36px 32px 36px;
   background: #fff;
   color: black;
 `;
@@ -14,14 +13,10 @@ const Main = styled.div<{ $fontFamily: string }>`
 const Header = styled.div<{ $fontFamily: string }>`
   font-family: ${props => props.$fontFamily};
   background: #ece8dd;
-  padding: 32px 0 16px 0;
+  padding: 32px 36px 16px 36px;
   text-align: center;
-  width: 100vw;
-  position: relative;
-  left: 50%;
-  right: 50%;
-  margin-left: -50vw;
-  margin-right: -50vw;
+  margin-bottom: 32px;
+  box-sizing: border-box;
 `;
 
 const Name = styled.h1`
@@ -152,7 +147,6 @@ const StudentClassicResume: React.FC<ResumeTypeProps> = ({ resume }) => {
                 {formatDate(project.startDate)} – {project.endDate ? formatDate(project.endDate) : 'Present'}
               </SubTitle>
             )}
-            {project.description && <div>{project.description}</div>}
             {project.highlights && project.highlights.length > 0 && (
               <KeyAchievements>
                 Key Features:
@@ -333,7 +327,7 @@ const StudentClassicResume: React.FC<ResumeTypeProps> = ({ resume }) => {
   const sectionOrder = resume.sections || ["Profile", "Education", "Work", "Skills", "Projects", "Volunteer", "Awards"];
 
   return (
-    <>
+    <Main $fontFamily={getFontFamily(resume.font)}>
       <Header $fontFamily={getFontFamily(resume.font)}>
         <Name>{basics.name}</Name>
         <Contact>
@@ -365,10 +359,8 @@ const StudentClassicResume: React.FC<ResumeTypeProps> = ({ resume }) => {
           )}
         </Contact>
       </Header>
-      <Main $fontFamily={getFontFamily(resume.font)}>
-        {sectionOrder.map((section) => sectionsMap[section] || null)}
-      </Main>
-    </>
+      {sectionOrder.map((section) => sectionsMap[section] || null)}
+    </Main>
   );
 };
 

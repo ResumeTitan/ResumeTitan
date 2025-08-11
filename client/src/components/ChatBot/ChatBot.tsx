@@ -163,6 +163,7 @@ const ChatBot: React.FC = () => {
   if (!isOpen) {
     return (
       <button
+        className="chat-bot-button"
         onClick={() => setIsOpen(true)}
         style={{
           position: 'fixed',

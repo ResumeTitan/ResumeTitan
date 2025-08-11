@@ -2,7 +2,7 @@ import React, { ReactNode } from 'react';
 import styled from 'styled-components';
 
 const Section = styled.div`
-  max-width: 760px;
+  width: 100%;
   margin: 0 auto 18px;
 
   h2 {
@@ -22,7 +22,8 @@ const Section = styled.div`
 `;
 
 const Container = styled.div`
-  margin: 0 8px;
+  margin: 0;
+  width: 100%;
 `;
 
 // Define the props interface for SectionComponent

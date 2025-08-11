@@ -17,12 +17,6 @@ const Header = styled.div<{ $fontFamily: string }>`
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   padding: 28px 0 16px 0;
   text-align: center;
-  width: 100vw;
-  position: relative;
-  left: 50%;
-  right: 50%;
-  margin-left: -50vw;
-  margin-right: -50vw;
   color: white;
 `;
 
@@ -215,9 +209,6 @@ const AcademicModernResume: React.FC<ResumeTypeProps> = ({ resume }) => {
             <SubTitle style={{ marginBottom: '6px', fontSize: '0.85rem' }}>
               {formatDate(project.startDate)} – {project.endDate ? formatDate(project.endDate) : 'Present'}
             </SubTitle>
-            )}
-            {project.description && (
-              <div style={{ marginBottom: '6px', color: '#444', fontSize: '0.85rem' }}>{project.description}</div>
             )}
             {project.highlights && project.highlights.length > 0 && (
               <KeyAchievements>

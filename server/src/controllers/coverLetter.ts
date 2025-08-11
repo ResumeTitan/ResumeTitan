@@ -138,7 +138,7 @@ export const getCoverLetters = async (req: Request, res: Response): Promise<Resp
   try {
     // @ts-ignore
     const id = req.auth.userId;
-    const coverLetters = await CoverLetter.find({ clerkId: id }).sort({ createdAt: -1 });
+    const coverLetters = await CoverLetter.find({ clerkId: id }).sort({ modifiedAt: -1 });
     return res.status(200).json({ coverLetters });
   } catch (error: any) {
     console.log('Error: ', error);
@@ -228,7 +228,7 @@ const fetchJobPostingHtmlWithPython = async (jobUrl: string): Promise<string> =>
         console.log(`✅ Python scraper successful - got ${result.html.length} characters`);
         return result.html;
       } else {
-        console.log(`❌ Python scraper failed: ${result.error}`);
+        console.log(`❌ Python scraper failed: ${result.error} ${result.html}`);
       }
     } else {
       console.log('⚠️ Python not available, falling back to existing methods');
@@ -250,16 +250,49 @@ const fetchJobPostingHtmlWithPython = async (jobUrl: string): Promise<string> =>
 export const createUpdateCoverLetter = async (req: Request, res: Response): Promise<Response> => {
   try {
     const { coverLetter, clerkId } = req.body;
+    // Use a default clerkId if not provided (for development)
+    const finalClerkId = clerkId || 'dev-user-id';
     let { jobTitle, jobDescription, company, resumeId, jobUrl, useJobUrl } = coverLetter;
 
     // Generate the cover letter content
-    const resume = await Resume.findById(resumeId);
-    if (!resume) {
-      return res.status(404).json({ error: 'Resume not found' });
+    let resumeData;
+    let typedResume;
+    
+    if (resumeId) {
+      const resume = await Resume.findById(resumeId);
+      if (!resume) {
+        return res.status(404).json({ error: 'Resume not found' });
+      }
+      resumeData = resume.toObject();
+    } else {
+      // Create a default resume structure when no resume is provided
+      resumeData = {
+        basics: {
+          name: coverLetter.name || 'Your Name',
+          label: 'Professional',
+          image: '',
+          phone: '',
+          url: '',
+          summary: 'Experienced professional with strong skills and dedication to excellence.',
+          location: {
+            address: '',
+            postalCode: '',
+            city: '',
+            countryCode: '',
+            region: '',
+          },
+          profiles: [],
+        },
+        work: [],
+        education: [],
+        skills: [],
+        volunteer: [],
+        awards: [],
+        _id: 'default-resume-id'
+      };
     }
-
+    
     // Convert Mongoose document to plain object and ensure required fields
-    const resumeData = resume.toObject();
     const basics = {
       ...resumeData.basics,
       label: resumeData.basics.label || '',
@@ -276,7 +309,7 @@ export const createUpdateCoverLetter = async (req: Request, res: Response): Prom
       },
       profiles: resumeData.basics.profiles || [],
     };
-    const typedResume = {
+    typedResume = {
       ...resumeData,
       _id: resumeData._id.toString(),
       basics
@@ -312,7 +345,7 @@ export const createUpdateCoverLetter = async (req: Request, res: Response): Prom
       jobDescription,
       company,
       ...response,
-      clerkId,
+      clerkId: finalClerkId,
     };
 
     // Remove _id if it's an empty string

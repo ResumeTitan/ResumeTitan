@@ -37,11 +37,13 @@ export interface EducationType {
 }
 
 export interface WorkType {
+  id: number;
   name: string;
   position: string;
   website: string;
   startDate: string;
   endDate: string;
+  endDateCurrent: boolean;
   summary: string;
   highlights: string[];
 }
@@ -58,16 +60,13 @@ export interface VolunteerType {
 }
 
 export interface ProjectType {
+  id: number;
   name: string;
-  description: string;
-  highlights: string[];
-  keywords: string[];
   startDate: string;
   endDate: string;
+  endDateCurrent: boolean;
+  highlights: string[];
   url: string;
-  roles: string[];
-  entity: string;
-  type: string;
 }
 
 export interface CertificateType {

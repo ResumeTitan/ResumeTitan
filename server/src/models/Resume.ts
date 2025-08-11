@@ -193,6 +193,45 @@ const SkillsSchema = new mongoose.Schema({
   }
 });
 
+const ProjectsSchema = new mongoose.Schema({
+  id: {
+    type: Number,
+    description: "Project ID from the current resume",
+  },
+  name: {
+    type: String,
+    description: "Name of the project",
+  },
+  startDate: {
+    type: String,
+    description: "Start date",
+  },
+  endDate: {
+    type: String,
+    description: "End date",
+  },
+  endDateCurrent: {
+    type: Boolean,
+    description: "Is this project currently ongoing",
+    default: false
+  },
+  description: {
+    type: String,
+    description: "Description of the project",
+  },
+  highlights: {
+    type: Array,
+    items: {
+      type: String
+    },
+    description: "AI generated content"
+  },
+  url: {
+    type: String,
+    description: "URL of the project",
+  },
+});
+
 const ResumeSchema = new mongoose.Schema({
   basics: {
     type: BasicsSchema,
@@ -216,6 +255,13 @@ const ResumeSchema = new mongoose.Schema({
     type: Array,
     items: {
       type: VolunteerSchema
+    },
+    default: []
+  },
+  projects: {
+    type: Array,
+    items: {
+      type: ProjectsSchema
     },
     default: []
   },

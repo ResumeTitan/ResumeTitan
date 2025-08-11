@@ -26,6 +26,10 @@ export const ChatContainer = styled.div`
       opacity: 1;
     }
   }
+
+  @media print {
+    display: none !important;
+  }
 `;
 
 export const ChatHeader = styled.div`

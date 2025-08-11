@@ -4,6 +4,7 @@ import {
   postSummary,
   postEducation,
   postWork,
+  postProjects,
   postSkills,
   postVolunteer,
   postResume,
@@ -42,6 +43,7 @@ router.delete("/delete/:id", verifyToken, deleteResume);
 router.post("/summary", verifyToken, postSummary);
 router.post("/education", verifyToken, postEducation);
 router.post("/work", verifyToken, postWork);
+router.post("/projects", verifyToken, postProjects);
 router.post("/skills", verifyToken, postSkills);
 router.post("/volunteer", verifyToken, postVolunteer);
 router.post("/resume", verifyToken, postResume);

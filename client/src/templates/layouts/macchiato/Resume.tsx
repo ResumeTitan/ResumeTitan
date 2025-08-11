@@ -20,7 +20,6 @@ import { getFontFamily } from '../../../utils/fontUtils';
 // Define styled components
 const Page = styled.main`
   width: 100%;
-  min-height: 100%;
   border-top: 12px solid #56817A;
   padding: 36px 22px 30px 34px;
   background-color: #fff;

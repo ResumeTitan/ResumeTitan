@@ -619,7 +619,7 @@ export const getInterviews = async (req: Request, res: Response) => {
   try {
     // @ts-ignore
     const userId = req.auth.userId;
-    const interviews = await Interview.find({ clerkId: userId }).sort({ createdAt: -1 });
+    const interviews = await Interview.find({ clerkId: userId }).sort({ modifiedAt: -1 });
     res.status(200).json({ interviews });
   } catch (error: any) {
     console.log("Error: ", error);
