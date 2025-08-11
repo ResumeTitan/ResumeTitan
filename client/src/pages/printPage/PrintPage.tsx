@@ -110,13 +110,42 @@ const PageBreakIndicator = styled.div`
   position: absolute;
   left: 0;
   right: 0;
-  height: 0;
+  height: 8px;
   border-top: 4px dotted #ccc;
-  pointer-events: none;
+  pointer-events: auto;
   z-index: 1;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+  margin-top: -4px;
+
+  &:hover {
+    border-top: 4px dotted #666;
+  }
 
   @media print {
     display: none;
+  }
+`;
+
+const Tooltip = styled.div`
+  position: absolute;
+  top: -35px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #333;
+  color: white;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+
+  ${PageBreakIndicator}:hover & {
+    opacity: 1;
   }
 `;
 
@@ -229,7 +258,7 @@ export const PrintPage: React.FC = () => {
         return <StudentClassicResume resume={resume} />;
       case "academic-modern":
         return <AcademicModernResume resume={resume} />;
-      case "meyer":
+      case "stratton":
         return <StrattonResume resume={resume} />;
       default:
         return <ProfessionalResume resume={resume} />;
@@ -281,7 +310,9 @@ export const PrintPage: React.FC = () => {
             <PageBreakIndicator
               key={index}
               style={{ top: `${position}px` }}
-            />
+            >
+              <Tooltip>Page will break here</Tooltip>
+            </PageBreakIndicator>
           ))}
         </ResumeContent>
       </ResumeContainer>

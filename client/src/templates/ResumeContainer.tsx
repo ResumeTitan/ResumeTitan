@@ -34,20 +34,6 @@ const StyledContainer = styled.div`
   }
 `;
 
-const PageBreakIndicator = styled.div`
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: 0;
-  border-top: 2px dotted #ccc;
-  pointer-events: none;
-  z-index: 1;
-
-  @media print {
-    display: none;
-  }
-`;
-
 const ScaledContainer = styled.div<ScaledContainerProps>`
   width: 100%;
   height: 100%;
@@ -80,7 +66,6 @@ const ScaledContainer = styled.div<ScaledContainerProps>`
 const ResumeContainer = forwardRef<HTMLDivElement, ResumeContainerProps>(({ resume, onOverflowChange }, ref) => {
   // Calculate scale based on container width while maintaining A4 aspect ratio
   const [scale, setScale] = React.useState(1);
-  const [pageBreaks, setPageBreaks] = React.useState<number[]>([]);
   const containerRef = React.useRef<HTMLDivElement>(null);
 
   // Check for content overflow and calculate page breaks
@@ -113,7 +98,6 @@ const ResumeContainer = forwardRef<HTMLDivElement, ResumeContainerProps>(({ resu
           currentPosition += renderedHeight;
         }
 
-        setPageBreaks(pageBreakPositions);
       }
     };
 
@@ -177,14 +161,7 @@ const ResumeContainer = forwardRef<HTMLDivElement, ResumeContainerProps>(({ resu
         {resume.theme === "stratton" && <StrattonResume resume={resume} />}
         {/* Default */}
         {resume.theme === "" && <ProfessionalResume resume={resume} />}
-        
-        {/* Page break indicators */}
-        {pageBreaks.map((position, index) => (
-          <PageBreakIndicator
-            key={index}
-            style={{ top: `${position}px` }}
-          />
-        ))}
+
       </StyledContainer>
     </ScaledContainer>
   );
