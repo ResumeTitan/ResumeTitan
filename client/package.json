@@ -10,7 +10,7 @@
         "@clerk/clerk-react": "^5.2.9",
         "@clerk/types": "^4.35.0",
         "@emotion/styled": "^11.14.1",
-        "@mui/icons-material": "^5.10.9",
+        "@mui/icons-material": "^7.3.1",
         "@mui/x-date-pickers": "^6.19.5",
         "@react-pdf/renderer": "^3.1.12",
         "@reduxjs/toolkit": "^1.8.6",
