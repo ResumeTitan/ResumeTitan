@@ -37,7 +37,7 @@
         "@google/generative-ai": "^0.2.1",
         "@prisma/client": "4.5.0",
         "@sentry/node": "^7.91.0",
-        "@sentry/profiling-node": "^9.27.0",
+        "@sentry/profiling-node": "^10.4.0",
         "@sparticuz/chromium": "^123.0.1",
         "@types/body-parser": "^1.19.5",
         "@types/cors": "^2.8.17",
