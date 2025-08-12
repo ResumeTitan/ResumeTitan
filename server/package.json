@@ -34,7 +34,7 @@
         "@emotion/react": "11.10.6",
         "@emotion/styled": "11.10.6",
         "@google-cloud/speech": "^5.4.0",
-        "@google/generative-ai": "^0.2.1",
+        "@google/generative-ai": "^0.24.1",
         "@prisma/client": "4.5.0",
         "@sentry/node": "^7.91.0",
         "@sentry/profiling-node": "^9.27.0",
