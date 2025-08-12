@@ -67,7 +67,7 @@
         "node-fetch": "3.3.0",
         "passport": "0.6.0",
         "passport-google-oauth20": "2.0.0",
-        "patch-package": "^6.4.7",
+        "patch-package": "^8.0.0",
         "puppeteer": "^22.15.0",
         "styled-components": "^6.1.12",
         "zod": "^3.22.4"
