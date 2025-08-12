@@ -14,7 +14,7 @@
         "@mui/x-date-pickers": "^6.19.5",
         "@react-pdf/renderer": "^3.1.12",
         "@reduxjs/toolkit": "^1.8.6",
-        "@sentry/react": "^9.28.1",
+        "@sentry/react": "^10.4.0",
         "aos": "^3.0.0-beta.6",
         "axios": "^1.7.4",
         "dayjs": "^1.11.10",
