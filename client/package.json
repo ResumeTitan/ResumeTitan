@@ -71,7 +71,7 @@
     },
     "devDependencies": {
         "@flydotio/dockerfile": "^0.2.14",
-        "dotenv": "^16.4.5",
+        "dotenv": "^17.2.3",
         "env-cmd": "^10.1.0",
         "react-scripts": "^5.0.1",
         "webpack": "^5.94.0",
