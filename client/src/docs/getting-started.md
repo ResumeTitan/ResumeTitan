@@ -23,6 +23,38 @@ Let our AI optimize your content for better results and ATS compatibility.
 ### Step 5: Review & Download
 Preview your work and export as a professional PDF document.
 
+## PDF Downloads
+
+ResumeTitan supports PDF downloads for all your documents:
+
+### Resume PDF Downloads
+- **Download Button**: Look for the **"Download PDF"** button in the resume builder
+- **Professional Quality**: High-resolution PDFs optimized for printing and digital sharing
+- **ATS Compatible**: PDFs maintain ATS-friendly formatting
+- **Multiple Formats**: Download individual resumes or bulk export
+
+### Cover Letter PDF Downloads
+- **Download Button**: Find the **"Download PDF"** button in the cover letter generator
+- **Professional Layout**: Industry-standard formatting and structure
+- **Print Ready**: Optimized for both digital and print applications
+- **Customizable**: Match your resume's style and branding
+
+### How to Download PDFs
+
+**Method 1: Download Button**
+1. **Complete your document** (resume or cover letter)
+2. **Click "Download PDF"** button
+3. **Wait for processing** (usually takes a few seconds)
+4. **Save to your device** when prompted
+
+**Method 2: Print to PDF (Resume Editor)**
+1. **Open your resume** in the editor
+2. **Click "Print Resume"** button
+3. **Select "Print to PDF"** in your browser's print dialog
+4. **Choose save location** and save the PDF
+
+> **Pro Tip**: Both methods work on desktop and mobile devices. The print method gives you more control over print settings.
+
 ---
 
 ## Features

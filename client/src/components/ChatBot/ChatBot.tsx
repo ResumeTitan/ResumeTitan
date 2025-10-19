@@ -92,6 +92,10 @@ const ChatBot: React.FC = () => {
   const getFallbackResponse = (userMessage: string): string => {
     const lowerMessage = userMessage.toLowerCase();
     
+    if (lowerMessage.includes('pdf') || lowerMessage.includes('download')) {
+      return "Yes, ResumeTitan supports PDF downloads! You have two options: 1) Use the **Download PDF** button in the resume builder or cover letter generator, or 2) In the resume editor, click **Print Resume** and select 'Print to PDF' in your browser. For detailed instructions, see our [Getting Started Guide](/docs/getting-started).";
+    }
+    
     if (lowerMessage.includes('font') || lowerMessage.includes('design') || lowerMessage.includes('style')) {
       return "Font customization is not currently available in ResumeTitan. Our templates use professional, ATS-friendly fonts optimized for ATS systems. For more information about our formatting options, see the 'Customization & Formatting' section in our [Getting Started Guide](/docs/getting-started).";
     }

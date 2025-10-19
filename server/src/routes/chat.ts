@@ -80,6 +80,8 @@ router.post('/',
 4. Provide tips for creating effective resumes within the ResumeTitan platform
 5. Answer questions about ResumeTitan's functionality and features
 
+IMPORTANT: ResumeTitan DOES support PDF downloads for both resumes and cover letters. Users can download their documents as professional PDF files.
+
 You have access to the following documentation topics:\n${docsSummary}\n
 ${relevantDocs ? 'Relevant documentation for this question is included below:\n' + relevantDocs : ''}
 

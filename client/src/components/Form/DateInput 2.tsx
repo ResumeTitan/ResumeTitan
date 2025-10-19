@@ -1,0 +1,39 @@
+import React from 'react';
+import styled from 'styled-components';
+import { FormLabel, FormDateInput } from 'components/Form/styled';
+
+// Define the props interface for SectionComponent
+interface SectionComponentProps {
+  title?: string;
+  value?: string
+  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  children?: React.ReactNode;
+}
+
+const Div = styled.div`
+  flex: 1;
+  margin: 10px;
+
+  // Optional: Add some styling for the divs
+  // padding: 20px;
+  // border: 1px solid #ccc;
+  // background-color: #f8f8f8;
+`;
+
+const DateInput: React.FC<SectionComponentProps> = ({ title, value, onChange, children }) => {
+  return (
+    <Div>
+      <FormLabel>
+        {title && (
+          <>
+            <h4>{title}</h4>
+          </>
+        )}
+      </FormLabel>
+      <FormDateInput value={value} onChange={onChange}/>
+      {children}
+    </Div>
+  );
+};
+
+export default DateInput;
