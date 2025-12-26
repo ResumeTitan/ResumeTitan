@@ -13,9 +13,8 @@
      "experimentalDecorators": true,
      "sourceMap": true,
      "skipLibCheck": true,
-     "baseUrl": ".",
      "paths": {
-      "*": ["node_modules/*"]
+      "*": ["./node_modules/*"]
     },
   },
   "include": ["src/**/*.ts"],

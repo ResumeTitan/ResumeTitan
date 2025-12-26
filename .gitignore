@@ -17,3 +17,4 @@ tests/**/results.json
 .vscode
 package.json
 package-lock.json
+client/.svelte-kit

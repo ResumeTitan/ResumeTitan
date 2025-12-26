@@ -1084,8 +1084,6 @@ If you cannot read the PDF content, return this exact JSON structure with empty 
   "theme": "professional"
 }`;
 
-    console.log('Sending PDF to Gemini for analysis...');
-    
     try {
       const result = await geminiClient.generateContent([
         prompt,

@@ -1,0 +1,127 @@
+/**
+ * Resume Template Themes
+ *
+ * Each resume template has its own color scheme defined here.
+ * Templates apply these via the .theme-{name} class on the resume container.
+ */
+
+/* Professional Theme - Classic black and white */
+.theme-professional {
+	--resume-primary: #000000;
+	--resume-secondary: #333333;
+	--resume-accent: #115e59;
+	--resume-border: #000000;
+	--resume-bg: #ffffff;
+	--resume-text: #000000;
+	--resume-text-muted: #555555;
+	--resume-link: #115e59;
+}
+
+/* Harvard Theme - Same as Professional */
+.theme-harvard {
+	--resume-primary: #000000;
+	--resume-secondary: #333333;
+	--resume-accent: #a51c30;
+	--resume-border: #000000;
+	--resume-bg: #ffffff;
+	--resume-text: #000000;
+	--resume-text-muted: #555555;
+	--resume-link: #a51c30;
+}
+
+/* Macchiato Theme - Teal accents with sidebar */
+.theme-macchiato {
+	--resume-primary: #56817a;
+	--resume-secondary: #333333;
+	--resume-accent: #56817a;
+	--resume-border: #56817a;
+	--resume-bg: #ffffff;
+	--resume-text: #000000;
+	--resume-text-muted: #555555;
+	--resume-link: #56817a;
+	--resume-sidebar-bg: #f8f9fa;
+}
+
+/* Stratton Theme - Serif, formal style */
+.theme-stratton {
+	--resume-primary: #2c3e50;
+	--resume-secondary: #34495e;
+	--resume-accent: #2c3e50;
+	--resume-border: #2c3e50;
+	--resume-bg: #ffffff;
+	--resume-text: #222222;
+	--resume-text-muted: #555555;
+	--resume-link: #2c3e50;
+	--resume-font-family: 'Georgia', 'Times New Roman', Times, serif;
+}
+
+/* One Page Theme - Minimal, compact */
+.theme-onepage {
+	--resume-primary: #333333;
+	--resume-secondary: #555555;
+	--resume-accent: #333333;
+	--resume-border: #cfcfcf;
+	--resume-bg: #ffffff;
+	--resume-text: #333333;
+	--resume-text-muted: #777777;
+	--resume-link: #333333;
+	--resume-separator: dashed 1px #cfcfcf;
+}
+
+/* Student Classic Theme - Traditional academic style */
+.theme-student-classic {
+	--resume-primary: #bdb76b;
+	--resume-secondary: #555555;
+	--resume-accent: #bdb76b;
+	--resume-border: #bdb76b;
+	--resume-bg: #ffffff;
+	--resume-header-bg: #ece8dd;
+	--resume-text: #000000;
+	--resume-text-muted: #555555;
+	--resume-link: #555555;
+}
+
+/* Academic Modern Theme - Modern gradient style */
+.theme-academic-modern {
+	--resume-primary: #667eea;
+	--resume-secondary: #764ba2;
+	--resume-accent: #667eea;
+	--resume-border: #e1e8ff;
+	--resume-bg: #ffffff;
+	--resume-header-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	--resume-text: #333333;
+	--resume-text-muted: #555555;
+	--resume-link: #667eea;
+	--resume-card-bg: #f8faff;
+	--resume-tag-bg: #667eea;
+	--resume-tag-text: #ffffff;
+}
+
+/* Common Resume Styles */
+.resume-container {
+	background: var(--resume-bg, #ffffff);
+	color: var(--resume-text, #000000);
+	font-family: var(--resume-font-family, inherit);
+}
+
+.resume-container a {
+	color: var(--resume-link, #115e59);
+	text-decoration: none;
+}
+
+.resume-container a:hover {
+	text-decoration: underline;
+}
+
+.resume-section-title {
+	color: var(--resume-primary, #000000);
+	border-bottom: 1px solid var(--resume-border, #000000);
+}
+
+.resume-section-subtitle {
+	color: var(--resume-secondary, #333333);
+}
+
+.resume-muted {
+	color: var(--resume-text-muted, #555555);
+}

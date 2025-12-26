@@ -12,6 +12,7 @@ import authRoutes from './routes/auth';
 import resumeRoutes from './routes/resume';
 import interviewRoutes from './routes/interview';
 import coverLetterRoutes from './routes/coverLetter';
+import workshopRoutes from './routes/workshop';
 import speechRoutes from './routes/speech';
 import chatRoutes from './routes/chat';
 import metricsRoutes from './routes/metrics';
@@ -84,14 +85,12 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-/* ROUTES WITH FILES */
-// app.post('/posts', verifyToken, upload.single('picture'), createPost);
-
 /* ROUTES */
 app.use('/auth', authRoutes);
 app.use('/resume', resumeRoutes);
 app.use('/interview', interviewRoutes);
 app.use('/cover-letter', coverLetterRoutes);
+app.use('/workshop', workshopRoutes);
 app.use('/speech', speechRoutes);
 app.use('/chat', chatRoutes);
 app.use('/metrics', metricsRoutes);

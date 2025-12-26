@@ -1,0 +1,25 @@
+/* Theme CSS imports - must come before @tailwind for layer merging */
+@import './lib/styles/themes/colors.css';
+@import './lib/styles/themes/resume-themes.css';
+@import './lib/styles/themes/clerk.css';
+
+/* Component and utility CSS imports */
+@import './lib/styles/components.css';
+@import './lib/styles/animations.css';
+@import './lib/styles/print.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Base styles */
+@layer base {
+	img {
+		@apply inline-block;
+	}
+
+	html,
+	body {
+		@apply m-0 p-0 w-full h-full font-sans;
+	}
+}
