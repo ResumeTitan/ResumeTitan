@@ -8,17 +8,24 @@
 import { writable, derived } from 'svelte/store';
 import { browser } from '$app/environment';
 
+/** Basic user profile info from Clerk. */
 export interface UserInfo {
 	id: string;
 	fullName?: string;
 	email?: string;
 }
 
+/** Complete auth state including theme preference. */
 export interface AuthState {
+	/** UI theme preference. */
 	mode: 'light' | 'dark';
+	/** Clerk user ID. */
 	userId: string;
+	/** JWT auth token for API requests. */
 	token: string;
+	/** User profile info. */
 	user: UserInfo | null;
+	/** Whether the auth modal is visible. */
 	showAuthModal: boolean;
 }
 
@@ -148,11 +155,17 @@ function createAuthStore() {
 	};
 }
 
+/**
+ * Main auth store. Persists to localStorage.
+ * Use derived stores below for simple boolean checks.
+ */
 export const authStore = createAuthStore();
 
-// Derived stores for common checks
+/** True when user has both a token and userId. */
 export const isAuthenticated = derived(authStore, ($auth) => !!$auth.token && !!$auth.userId);
 
+/** True when theme is set to dark mode. */
 export const isDarkMode = derived(authStore, ($auth) => $auth.mode === 'dark');
 
+/** True when the auth modal should be displayed. */
 export const showAuthModal = derived(authStore, ($auth) => $auth.showAuthModal);

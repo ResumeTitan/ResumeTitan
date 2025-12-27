@@ -6,7 +6,8 @@
       "Bash(npm install)",
       "Bash(npm view:*)",
       "Bash(npx svelte-check:*)",
-      "Bash(npx svelte-kit:*)"
+      "Bash(npx svelte-kit:*)",
+      "Bash(wc:*)"
     ]
   }
 }

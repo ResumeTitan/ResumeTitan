@@ -13,20 +13,28 @@ import { get } from 'svelte/store';
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001';
 const DEFAULT_TIMEOUT = 30000;
 
+/** Configuration options for API requests. */
 export interface RequestConfig {
+	/** HTTP method. Defaults to GET. */
 	method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+	/** Request body (will be JSON-stringified). */
 	body?: unknown;
+	/** Additional headers to include. */
 	headers?: Record<string, string>;
+	/** Request timeout in ms. Defaults to 30000. */
 	timeout?: number;
+	/** Whether to include auth token. Defaults to true. */
 	includeAuth?: boolean;
 }
 
+/** Extended Error with HTTP status and error code. */
 export interface ApiError extends Error {
 	status?: number;
 	code?: string;
 	details?: unknown;
 }
 
+/** Creates an ApiError with optional status and code. */
 function createApiError(message: string, status?: number, code?: string): ApiError {
 	const error = new Error(message) as ApiError;
 	error.status = status;
@@ -34,6 +42,10 @@ function createApiError(message: string, status?: number, code?: string): ApiErr
 	return error;
 }
 
+/**
+ * HTTP client for API requests with automatic auth handling.
+ * Fetches Clerk session tokens and includes them in requests.
+ */
 class ApiClient {
 	private baseUrl: string;
 
@@ -41,6 +53,7 @@ class ApiClient {
 		this.baseUrl = baseUrl;
 	}
 
+	/** Builds headers with auth token from Clerk session or auth store. */
 	private async getAuthHeaders(): Promise<Record<string, string>> {
 		const headers: Record<string, string> = {
 			'Content-Type': 'application/json'
@@ -66,6 +79,13 @@ class ApiClient {
 		return headers;
 	}
 
+	/**
+	 * Sends an HTTP request to the API.
+	 * @param endpoint - API path (e.g., '/resume/123')
+	 * @param config - Request options
+	 * @returns Parsed JSON response
+	 * @throws ApiError on non-2xx responses or timeout
+	 */
 	async request<T>(endpoint: string, config: RequestConfig = {}): Promise<T> {
 		const {
 			method = 'GET',
@@ -116,33 +136,36 @@ class ApiClient {
 		}
 	}
 
-	// Convenience methods
+	/** Sends a GET request. */
 	get<T>(endpoint: string, config?: Omit<RequestConfig, 'method' | 'body'>): Promise<T> {
 		return this.request<T>(endpoint, { ...config, method: 'GET' });
 	}
 
+	/** Sends a POST request. */
 	post<T>(endpoint: string, body?: unknown, config?: Omit<RequestConfig, 'method'>): Promise<T> {
 		return this.request<T>(endpoint, { ...config, method: 'POST', body });
 	}
 
+	/** Sends a PUT request. */
 	put<T>(endpoint: string, body?: unknown, config?: Omit<RequestConfig, 'method'>): Promise<T> {
 		return this.request<T>(endpoint, { ...config, method: 'PUT', body });
 	}
 
+	/** Sends a PATCH request. */
 	patch<T>(endpoint: string, body?: unknown, config?: Omit<RequestConfig, 'method'>): Promise<T> {
 		return this.request<T>(endpoint, { ...config, method: 'PATCH', body });
 	}
 
+	/** Sends a DELETE request. */
 	delete<T>(endpoint: string, config?: Omit<RequestConfig, 'method' | 'body'>): Promise<T> {
 		return this.request<T>(endpoint, { ...config, method: 'DELETE' });
 	}
 }
 
-// Singleton instance
+/** Singleton API client instance configured with VITE_API_URL. */
 export const api = new ApiClient(API_URL);
 
-// Alias for compatibility
+/** @deprecated Use `api` instead. Kept for compatibility. */
 export const apiClient = api;
 
-// Export for testing or custom instances
 export { ApiClient };

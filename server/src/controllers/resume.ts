@@ -1,3 +1,10 @@
+/**
+ * Resume Controller
+ *
+ * Handles resume CRUD operations and AI-powered content generation.
+ * Uses Gemini for generating/editing resume sections (summary, work, education, etc.).
+ */
+
 import { Response, Request } from 'express';
 import Resume from '../models/Resume';
 import { z } from "zod";
@@ -107,7 +114,10 @@ const UploadedResumeSchema = z.object({
 
 const resumeData: ResumeType = {};
 
-// Helper function to get structured output from Gemini
+/**
+ * Sends a prompt to Gemini and parses the response as JSON validated against a Zod schema.
+ * Strips markdown code fences if present in the response.
+ */
 const getStructuredOutput = async (prompt: string, schema: z.ZodType<any>) => {
   const result = await geminiClient.generateContent(prompt);
   const response = await result.response;
@@ -666,12 +676,7 @@ export const postEducation = async (req: Request, res: Response) => {
   }
 };
 
-/**
- * @function postWork
- * @description POST Handle AI call for work highlights
- * @param {Request} req
- * @param {Response} res
- */
+/** Generates or edits work experience highlights using AI. */
 export const postWork = async (req: Request, res: Response) => {
   try {
     const { job, userInput, operationType } = req.body;
@@ -701,12 +706,7 @@ export const postWork = async (req: Request, res: Response) => {
   }
 };
 
-/**
- * @function postVolunteer
- * @description POST Handle AI call for volunteer highlights
- * @param {Request} req
- * @param {Response} res
- */
+/** Generates or edits volunteer experience highlights using AI. */
 export const postVolunteer = async (req: Request, res: Response) => {
   try {
     const { volunteer, userInput, operationType } = req.body;
@@ -800,10 +800,8 @@ export const postResume = async (req: Request, res: Response) => {
 };
 
 /**
- * @function updateResume
- * @description PUT Update resume from user edits
- * @param {Request} req
- * @param {Response} res
+ * Creates or updates a resume. Creates new if no _id provided, updates existing otherwise.
+ * Increments RESUMES_TOTAL metric on new resume creation.
  */
 export const updateResume = async (req: Request, res: Response) => {
   try {
@@ -834,7 +832,7 @@ export const updateResume = async (req: Request, res: Response) => {
   }
 };
 
-/* Get resumes */
+/** Retrieves all resumes for a user, sorted by most recently modified. */
 export const getResumes = async (req: Request, res: Response) => {
   const userId = req.query.userId;
   try {
@@ -845,7 +843,7 @@ export const getResumes = async (req: Request, res: Response) => {
   }
 };
 
-/* Get resume by id */
+/** Retrieves a single resume by ID. Only returns if the user owns it. */
 export const getResume = async (req: Request, res: Response) => {
   const id = req.query.id;
   // @ts-ignore
@@ -865,7 +863,7 @@ export const getResume = async (req: Request, res: Response) => {
   }
 };
 
-/* Delete resume by id */
+/** Deletes a resume by ID. */
 export const deleteResume = async (req: Request, res: Response) => {
   const id = req.params.id;
   try {
@@ -877,10 +875,8 @@ export const deleteResume = async (req: Request, res: Response) => {
 };
 
 /**
- * @function printResumeToPdf
- * @descripton Uses puppeteer library to render resume page then save as pdf
- * @param {Request} req
- * @param {Response} res
+ * Renders a resume to PDF using headless Puppeteer.
+ * Navigates to the client print page and captures the rendered output.
  */
 export const printResumeToPdf = async (req: Request, res: Response) => {
   // @ts-ignore

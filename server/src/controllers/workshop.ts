@@ -1,16 +1,23 @@
+/**
+ * Workshop Controller
+ *
+ * Handles collaborative resume editing sessions. Workshops allow multiple users
+ * to view a resume and leave comments. Only the owner can edit; others can comment.
+ */
+
 import { Response, Request } from 'express';
 import Workshop from '../models/Workshop';
 import Resume from '../models/Resume';
 import { randomUUID } from 'crypto';
 import "dotenv/config";
 
-// Helper to generate user color
+/** Assigns a random avatar color from a predefined palette. */
 function generateUserColor(): string {
   const colors = ['#115E59', '#7C3AED', '#DC2626', '#2563EB', '#059669', '#D97706', '#7C2D12', '#4338CA'];
   return colors[Math.floor(Math.random() * colors.length)];
 }
 
-// Helper to get initials from name
+/** Extracts up to 2 initials from a name (e.g., "John Doe" -> "JD"). */
 function getInitials(name: string): string {
   return name
     .split(' ')
@@ -20,7 +27,7 @@ function getInitials(name: string): string {
     .slice(0, 2);
 }
 
-/* Get all workshops (owned + shared) */
+/** Retrieves all workshops the user owns or has been invited to. */
 export const getWorkshops = async (req: Request, res: Response) => {
   // @ts-ignore
   const clerkId = req.auth?.userId;
@@ -45,7 +52,7 @@ export const getWorkshops = async (req: Request, res: Response) => {
   }
 };
 
-/* Get workshop by id (owner or participant) */
+/** Retrieves a workshop by ID. Returns role info (owner vs commenter). */
 export const getWorkshop = async (req: Request, res: Response) => {
   const id = req.params.id;
   // @ts-ignore
@@ -87,7 +94,10 @@ export const getWorkshop = async (req: Request, res: Response) => {
   }
 };
 
-/* Get workshop by share token */
+/**
+ * Retrieves a workshop via its share token. Adds the user as a participant
+ * if not already present. Redirects owners to the main workshop page.
+ */
 export const getWorkshopByShareToken = async (req: Request, res: Response) => {
   const { token } = req.params;
   // @ts-ignore
@@ -149,7 +159,7 @@ export const getWorkshopByShareToken = async (req: Request, res: Response) => {
   }
 };
 
-/* Toggle workshop sharing */
+/** Enables or disables sharing for a workshop. Generates a share token if needed. */
 export const toggleWorkshopSharing = async (req: Request, res: Response) => {
   const { id } = req.params;
   const { enabled } = req.body;
@@ -186,7 +196,7 @@ export const toggleWorkshopSharing = async (req: Request, res: Response) => {
   }
 };
 
-/* Update workshop by id */
+/** Updates workshop metadata (currently only name). Owner only. */
 export const updateWorkshop = async (req: Request, res: Response) => {
   const id = req.params.id;
   const { name } = req.body;
@@ -218,7 +228,7 @@ export const updateWorkshop = async (req: Request, res: Response) => {
   }
 };
 
-/* Delete workshop by id */
+/** Deletes a workshop. Owner only. */
 export const deleteWorkshop = async (req: Request, res: Response) => {
   const id = req.params.id;
   // @ts-ignore
@@ -241,7 +251,7 @@ export const deleteWorkshop = async (req: Request, res: Response) => {
   }
 };
 
-/* Create new workshop */
+/** Creates a new workshop linked to an existing resume. Owner is auto-added as participant. */
 export const createWorkshop = async (req: Request, res: Response) => {
   const { resumeId, name, ownerName, ownerEmail } = req.body;
   // @ts-ignore
@@ -288,7 +298,7 @@ export const createWorkshop = async (req: Request, res: Response) => {
   }
 };
 
-/* Add comment to workshop */
+/** Adds a new top-level comment to a workshop. Available to owners and participants. */
 export const addComment = async (req: Request, res: Response) => {
   const { id } = req.params;
   const { text, section, authorName, authorEmail } = req.body;
@@ -343,7 +353,7 @@ export const addComment = async (req: Request, res: Response) => {
   }
 };
 
-/* Reply to a comment */
+/** Adds a reply to an existing comment. */
 export const replyToComment = async (req: Request, res: Response) => {
   const { id, commentId } = req.params;
   const { text, authorName, authorEmail } = req.body;
@@ -400,7 +410,7 @@ export const replyToComment = async (req: Request, res: Response) => {
   }
 };
 
-/* Resolve/unresolve a comment */
+/** Marks a comment as resolved or unresolved. Only owner or comment author can do this. */
 export const resolveComment = async (req: Request, res: Response) => {
   const { id, commentId } = req.params;
   const { resolved } = req.body;

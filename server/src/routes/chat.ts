@@ -1,3 +1,52 @@
+/**
+ * Chat Routes
+ *
+ * AI chatbot endpoint for ResumeTitan assistant.
+ * Uses Gemini with documentation context to answer user questions.
+ *
+ * @openapi
+ * /chat:
+ *   post:
+ *     summary: Chat with ResumeTitan assistant
+ *     description: |
+ *       AI-powered chatbot that answers questions about ResumeTitan features.
+ *       Uses Gemini with documentation context. Rate limited and cached.
+ *     tags: [Chat]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - message
+ *             properties:
+ *               message:
+ *                 type: string
+ *                 description: User's question or message
+ *     responses:
+ *       200:
+ *         description: AI response
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 response:
+ *                   type: string
+ *                   description: Markdown-formatted response
+ *       400:
+ *         description: Message is required
+ *       401:
+ *         description: Not authenticated
+ *       429:
+ *         description: Rate limit exceeded
+ *       500:
+ *         description: AI processing failed
+ */
+
 import express from 'express';
 import { geminiClient } from '../ext/clients';
 import { cacheMiddleware } from '../middleware/cache';

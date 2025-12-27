@@ -1,4 +1,9 @@
-import React from 'react';
+/**
+ * Resume Types (Server)
+ *
+ * TypeScript interfaces for resume data structures used by the API.
+ * These follow the JSON Resume schema with extensions for our application.
+ */
 
 // Define the types for each section of the resume
 export interface BasicsType {
@@ -135,12 +140,7 @@ export interface ResumeType {
   sections?: string[];
 }
 
-// ResumeTypeProps for components
+/** Props interface for components that receive a resume. */
 export interface ResumeTypeProps {
   resume: ResumeType;
-}
-
-export interface IconDataType {
-  label: string;
-  icon: React.ReactElement;
 }
