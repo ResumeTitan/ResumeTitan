@@ -28,6 +28,8 @@ interface SharedWorkshopResponse {
   resume: ResumeType;
   role: WorkshopRole;
   canEdit: boolean;
+  redirectToWorkshop: boolean;
+  workshopId: string;
 }
 
 interface ShareResponse {

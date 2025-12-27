@@ -39,9 +39,9 @@
 	// Get current user from workshop participants
 	$: currentUser = workshop?.participants.find(p => p.clerkId === $authStore.userId) || {
 		clerkId: $authStore.userId || '',
-		name: $authStore.userName || 'You',
-		email: $authStore.userEmail || '',
-		initials: ($authStore.userName || 'Y').split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2),
+		name: $authStore.user?.fullName || 'You',
+		email: $authStore.user?.email || '',
+		initials: ($authStore.user?.fullName || 'Y').split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2),
 		color: '#115E59',
 		isOnline: true,
 		isActive: true
@@ -94,8 +94,8 @@
 		try {
 			const result = await workshopApi.getByShareToken(
 				shareToken,
-				$authStore.userName || 'Anonymous',
-				$authStore.userEmail
+				$authStore.user!.fullName || 'Anonymous',
+				$authStore.user!.email
 			);
 
 			// If owner accesses via share link, redirect to main workshop page
