@@ -1,5 +1,11 @@
 import type { Config } from 'tailwindcss';
 
+/**
+ * Tailwind CSS Configuration
+ *
+ * Colors are defined as CSS custom properties in src/lib/styles/themes/colors.css
+ * and referenced here for Tailwind utility classes. This ensures a single source of truth.
+ */
 export default {
 	content: ['./src/**/*.{html,js,svelte,ts,css}'],
 	theme: {
@@ -12,17 +18,28 @@ export default {
 		},
 		extend: {
 			colors: {
-				'main-green': '#115E59',
-				'dark-green': '#0e4a45',
-				'darker-green': '#0b3733',
-				'darkest-green': '#082421',
-				'lightest-green': '#e0f2f1',
-				'lighter-green': '#b2dfdb',
-				'light-green': '#80cbc4',
-				'main-opposite': '#59115e',
-				'analogous-green': '#115e45',
-				'analogous-blue': '#115e73',
-				background: '#475569'
+				// Primary brand colors - teal palette
+				'main-green': 'var(--color-main-green, #115E59)',
+				'dark-green': 'var(--color-dark-green, #0e4a45)',
+				'darker-green': 'var(--color-darker-green, #0b3733)',
+				'darkest-green': 'var(--color-darkest-green, #082421)',
+				'lightest-green': 'var(--color-lightest-green, #e0f2f1)',
+				'lighter-green': 'var(--color-lighter-green, #b2dfdb)',
+				'light-green': 'var(--color-light-green, #80cbc4)',
+
+				// Complementary colors
+				'main-opposite': 'var(--color-main-opposite, #59115e)',
+				'analogous-green': 'var(--color-analogous-green, #115e45)',
+				'analogous-blue': 'var(--color-analogous-blue, #115e73)',
+
+				// Semantic colors
+				success: 'var(--color-success, #10b981)',
+				error: 'var(--color-error, #ef4444)',
+				warning: 'var(--color-warning, #f59e0b)',
+				info: 'var(--color-info, #3b82f6)',
+
+				// Layout
+				background: 'var(--color-background, #475569)'
 			},
 			scale: {
 				'25': '0.25',

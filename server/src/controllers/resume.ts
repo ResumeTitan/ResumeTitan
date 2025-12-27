@@ -114,6 +114,34 @@ const UploadedResumeSchema = z.object({
 
 const resumeData: ResumeType = {};
 
+type AIOperationType = 'generate' | 'edit' | 'brainstorm';
+
+/**
+ * Determines the AI operation type based on request parameters.
+ * @param operationType - Explicitly provided operation type (takes precedence)
+ * @param userInput - User's custom input/instructions
+ * @param hasExistingContent - Whether the item already has highlights/content
+ * @returns The operation type: 'generate', 'edit', or 'brainstorm'
+ */
+function determineOperationType(
+  operationType?: string,
+  userInput?: string,
+  hasExistingContent?: boolean
+): AIOperationType {
+  // Explicit type takes precedence
+  if (operationType) {
+    return operationType as AIOperationType;
+  }
+
+  // If no user input, default to generate
+  if (!userInput) {
+    return 'generate';
+  }
+
+  // With user input: edit if content exists, brainstorm if starting fresh
+  return hasExistingContent ? 'edit' : 'brainstorm';
+}
+
 /**
  * Sends a prompt to Gemini and parses the response as JSON validated against a Zod schema.
  * Strips markdown code fences if present in the response.
@@ -619,24 +647,19 @@ export const postSummary = async (req: Request, res: Response) => {
   resumeData.basics = basics;
 
   try {
-    // Determine operation type based on request data
-    let opType = operationType || 'generate';
-    if (!opType && userInput) {
-      // If userInput exists but no operationType specified, it's likely editing
-      opType = 'edit';
-    }
+    const opType = determineOperationType(operationType, userInput, true);
 
     console.log(basics?.summary || summary);
     console.log(userInput);
     console.log(opType);
 
-    const prompt = getPrompt('summary', { 
-      summary: basics?.summary || summary, 
-      work, 
-      education, 
-      skills, 
-      volunteer, 
-      userInput 
+    const prompt = getPrompt('summary', {
+      summary: basics?.summary || summary,
+      work,
+      education,
+      skills,
+      volunteer,
+      userInput
     }, opType);
 
     const response = await getStructuredOutput(prompt, SummarySchema);
@@ -655,16 +678,8 @@ export const postEducation = async (req: Request, res: Response) => {
     }
     resumeData.education.push(education);
 
-    // Determine operation type based on request data
-    let opType = operationType || 'generate';
-    if (!opType && userInput) {
-      // If userInput exists but no operationType specified, determine based on context
-      if (education.highlights && education.highlights.length > 0) {
-        opType = 'edit'; // Has existing highlights, likely editing
-      } else {
-        opType = 'brainstorm'; // No existing highlights, likely brainstorming
-      }
-    }
+    const hasHighlights = education.highlights && education.highlights.length > 0;
+    const opType = determineOperationType(operationType, userInput, hasHighlights);
 
     const prompt = getPrompt('education', { ...education, userInput }, opType);
     const response = await getStructuredOutput(prompt, EducationSchema);
@@ -685,16 +700,8 @@ export const postWork = async (req: Request, res: Response) => {
     }
     resumeData.work.push(job);
 
-    // Determine operation type based on request data
-    let opType = operationType || 'generate';
-    if (!opType && userInput) {
-      // If userInput exists but no operationType specified, determine based on context
-      if (job.highlights && job.highlights.length > 0) {
-        opType = 'edit'; // Has existing highlights, likely editing
-      } else {
-        opType = 'brainstorm'; // No existing highlights, likely brainstorming
-      }
-    }
+    const hasHighlights = job.highlights && job.highlights.length > 0;
+    const opType = determineOperationType(operationType, userInput, hasHighlights);
 
     const prompt = getPrompt('work', { ...job, userInput }, opType);
     const response = await getStructuredOutput(prompt, WorkSchema);
@@ -715,16 +722,8 @@ export const postVolunteer = async (req: Request, res: Response) => {
     }
     resumeData.volunteer.push(volunteer);
 
-    // Determine operation type based on request data
-    let opType = operationType || 'generate';
-    if (!opType && userInput) {
-      // If userInput exists but no operationType specified, determine based on context
-      if (volunteer.highlights && volunteer.highlights.length > 0) {
-        opType = 'edit'; // Has existing highlights, likely editing
-      } else {
-        opType = 'brainstorm'; // No existing highlights, likely brainstorming
-      }
-    }
+    const hasHighlights = volunteer.highlights && volunteer.highlights.length > 0;
+    const opType = determineOperationType(operationType, userInput, hasHighlights);
 
     const prompt = getPrompt('volunteer', { ...volunteer, userInput }, opType);
     const response = await getStructuredOutput(prompt, VolunteerSchema);
@@ -744,16 +743,8 @@ export const postProjects = async (req: Request, res: Response) => {
     }
     resumeData.projects.push(project);
 
-    // Determine operation type based on request data
-    let opType = operationType || 'generate';
-    if (!opType && userInput) {
-      // If userInput exists but no operationType specified, determine based on context
-      if (project.highlights && project.highlights.length > 0) {
-        opType = 'edit'; // Has existing highlights, likely editing
-      } else {
-        opType = 'brainstorm'; // No existing highlights, likely brainstorming
-      }
-    }
+    const hasHighlights = project.highlights && project.highlights.length > 0;
+    const opType = determineOperationType(operationType, userInput, hasHighlights);
 
     const prompt = getPrompt('projects', { ...project, userInput }, opType);
     const response = await getStructuredOutput(prompt, ProjectsSchema);
@@ -770,12 +761,7 @@ export const postSkills = async (req: Request, res: Response) => {
   resumeData.skills = skills;
 
   try {
-    // Determine operation type based on request data
-    let opType = operationType || 'generate';
-    if (!opType && userInput) {
-      // If userInput exists but no operationType specified, it's likely editing
-      opType = 'edit';
-    }
+    const opType = determineOperationType(operationType, userInput, true);
 
     const prompt = getPrompt('skills', { skills, work, education, summary, volunteer, userInput }, opType);
     const response = await getStructuredOutput(prompt, SkillsSchema);

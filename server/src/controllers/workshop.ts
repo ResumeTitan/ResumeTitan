@@ -27,6 +27,34 @@ function getInitials(name: string): string {
     .slice(0, 2);
 }
 
+/**
+ * Finds a workshop that the user can access (as owner or participant).
+ * @returns Object with workshop and isOwner flag, or null if not found/accessible.
+ */
+async function findAccessibleWorkshop(
+  workshopId: string,
+  clerkId: string
+): Promise<{ workshop: any; isOwner: boolean } | null> {
+  // First try to find as owner
+  let workshop = await Workshop.findOne({ _id: workshopId, clerkId });
+  if (workshop) {
+    return { workshop, isOwner: true };
+  }
+
+  // Check if user has shared access
+  workshop = await Workshop.findOne({
+    _id: workshopId,
+    shareEnabled: true,
+    'participants.clerkId': clerkId
+  });
+
+  if (workshop) {
+    return { workshop, isOwner: false };
+  }
+
+  return null;
+}
+
 /** Retrieves all workshops the user owns or has been invited to. */
 export const getWorkshops = async (req: Request, res: Response) => {
   // @ts-ignore
@@ -63,30 +91,16 @@ export const getWorkshop = async (req: Request, res: Response) => {
       return res.status(401).json({ msg: "User not authenticated" });
     }
 
-    // First try to find as owner
-    let workshop = await Workshop.findOne({ _id: id, clerkId });
-    let role = 'owner';
+    const result = await findAccessibleWorkshop(id, clerkId);
 
-    // If not owner, check if shared and user has access
-    if (!workshop) {
-      workshop = await Workshop.findOne({
-        _id: id,
-        shareEnabled: true,
-        'participants.clerkId': clerkId
-      });
-      role = 'commenter';
-    }
-
-    if (!workshop) {
+    if (!result) {
       return res.status(404).json({ msg: "Workshop not found" });
     }
 
-    const isOwner = workshop.clerkId === clerkId;
-
     res.status(200).json({
-      workshop,
-      role: isOwner ? 'owner' : 'commenter',
-      canEdit: isOwner
+      workshop: result.workshop,
+      role: result.isOwner ? 'owner' : 'commenter',
+      canEdit: result.isOwner
     });
   } catch (err: any) {
     console.error('Error getting workshop:', err);
@@ -310,21 +324,13 @@ export const addComment = async (req: Request, res: Response) => {
       return res.status(401).json({ msg: "User not authenticated" });
     }
 
-    // Find workshop - either owner or shared
-    let workshop = await Workshop.findOne({ _id: id, clerkId });
+    const result = await findAccessibleWorkshop(id, clerkId);
 
-    if (!workshop) {
-      // Check if user has shared access
-      workshop = await Workshop.findOne({
-        _id: id,
-        shareEnabled: true,
-        'participants.clerkId': clerkId
-      });
-    }
-
-    if (!workshop) {
+    if (!result) {
       return res.status(404).json({ msg: "Workshop not found or access denied" });
     }
+
+    const { workshop } = result;
 
     // Find participant info for color/initials
     const participant = workshop.participants.find((p: any) => p.clerkId === clerkId);
@@ -365,20 +371,13 @@ export const replyToComment = async (req: Request, res: Response) => {
       return res.status(401).json({ msg: "User not authenticated" });
     }
 
-    let workshop = await Workshop.findOne({ _id: id, clerkId });
+    const result = await findAccessibleWorkshop(id, clerkId);
 
-    if (!workshop) {
-      workshop = await Workshop.findOne({
-        _id: id,
-        shareEnabled: true,
-        'participants.clerkId': clerkId
-      });
-    }
-
-    if (!workshop) {
+    if (!result) {
       return res.status(404).json({ msg: "Workshop not found or access denied" });
     }
 
+    const { workshop } = result;
     const comment = workshop.comments.find((c: any) => c.id === commentId);
 
     if (!comment) {
