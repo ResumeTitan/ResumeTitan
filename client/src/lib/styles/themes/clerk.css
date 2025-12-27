@@ -6,44 +6,44 @@
 
 /* Clerk card styling */
 .cl-card {
-	border-radius: 4px !important;
+    border-radius: 4px !important;
 }
 
 /* Primary button in Clerk forms */
 .cl-formButtonPrimary {
-	background-color: var(--color-main-green, #115e59) !important;
-	color: white !important;
+    background-color: var(--color-main-green, #115e59) !important;
+    color: white !important;
 }
 
 .cl-formButtonPrimary:hover {
-	background-color: var(--color-dark-green, #0e4a45) !important;
+    background-color: var(--color-dark-green, #0e4a45) !important;
 }
 
 /* Sign-in page root container */
 .cl-signIn-root {
-	background-color: var(--color-main-green, #115e59);
-	min-height: 100vh;
-	width: 100%;
-	display: flex;
-	justify-content: center;
-	align-items: center;
+    background-color: var(--color-main-green, #115e59);
+    min-height: 100vh;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 /* Sign-up page root container */
 .cl-signUp-root {
-	background-color: var(--color-main-green, #115e59);
-	min-height: 100vh;
-	width: 100%;
-	display: flex;
-	justify-content: center;
-	align-items: center;
+    background-color: var(--color-main-green, #115e59);
+    min-height: 100vh;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 /* User button customization */
 .cl-userButtonPopoverCard {
-	border-radius: 8px !important;
+    border-radius: 8px !important;
 }
 
 .cl-userButtonTrigger {
-	border-radius: 50% !important;
+    border-radius: 50% !important;
 }

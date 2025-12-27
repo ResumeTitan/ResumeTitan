@@ -23,7 +23,7 @@
 
 import express from 'express';
 import { reload, handleClerk } from '../controllers/auth';
-import verifyToken from "../middleware/auth";
+import verifyToken from '../middleware/auth';
 
 const router = express.Router();
 

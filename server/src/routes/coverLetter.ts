@@ -29,9 +29,9 @@
  *           format: date-time
  */
 
-import express from "express";
-import verifyToken from "../middleware/auth";
-import { getCoverLetters, getCoverLetter, createUpdateCoverLetter, updateCoverLetter, deleteCoverLetter } from "../controllers/coverLetter";
+import express from 'express';
+import verifyToken from '../middleware/auth';
+import { getCoverLetters, getCoverLetter, createUpdateCoverLetter, updateCoverLetter, deleteCoverLetter } from '../controllers/coverLetter';
 
 const router = express.Router();
 
@@ -49,7 +49,7 @@ const router = express.Router();
  *       401:
  *         description: Not authenticated
  */
-router.get("/", verifyToken, getCoverLetters);
+router.get('/', verifyToken, getCoverLetters);
 
 /**
  * @openapi
@@ -73,7 +73,7 @@ router.get("/", verifyToken, getCoverLetters);
  *       404:
  *         description: Cover letter not found
  */
-router.get("/:id", verifyToken, getCoverLetter);
+router.get('/:id', verifyToken, getCoverLetter);
 
 /**
  * @openapi
@@ -98,7 +98,7 @@ router.get("/:id", verifyToken, getCoverLetter);
  *       500:
  *         description: Server error
  */
-router.post("/", verifyToken, createUpdateCoverLetter);
+router.post('/', verifyToken, createUpdateCoverLetter);
 
 /**
  * @openapi
@@ -126,7 +126,7 @@ router.post("/", verifyToken, createUpdateCoverLetter);
  *       401:
  *         description: Not authenticated
  */
-router.put("/:id", verifyToken, updateCoverLetter);
+router.put('/:id', verifyToken, updateCoverLetter);
 
 /**
  * @openapi
@@ -148,6 +148,6 @@ router.put("/:id", verifyToken, updateCoverLetter);
  *       401:
  *         description: Not authenticated
  */
-router.delete("/:id", verifyToken, deleteCoverLetter);
+router.delete('/:id', verifyToken, deleteCoverLetter);
 
 export default router;

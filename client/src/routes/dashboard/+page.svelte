@@ -44,7 +44,7 @@
                 resumeApi.getByUser($authStore.userId),
                 coverLetterApi.getAll(),
                 interviewApi.getAll(),
-                workshopApi.getAll()
+                workshopApi.getAll(),
             ]);
 
             resumes = resumeRes.resumes || [];
@@ -83,7 +83,7 @@
 
         try {
             await resumeApi.delete(id);
-            resumes = resumes.filter((r) => r._id !== id);
+            resumes = resumes.filter(r => r._id !== id);
         } catch (e) {
             error = 'Failed to delete resume. Please try again.';
         }
@@ -94,7 +94,7 @@
 
         try {
             await workshopApi.delete(id);
-            ownedWorkshops = ownedWorkshops.filter((w) => w._id !== id);
+            ownedWorkshops = ownedWorkshops.filter(w => w._id !== id);
         } catch (e) {
             error = 'Failed to delete workshop. Please try again.';
         }
@@ -124,9 +124,7 @@
             <section class="dashboard-container">
                 <div class="dashboard-header flex justify-between items-center">
                     <span>My Resumes ({resumes.length})</span>
-                    <Button size="sm" on:click={createNewResume}>
-                        + New Resume
-                    </Button>
+                    <Button size="sm" on:click={createNewResume}>+ New Resume</Button>
                 </div>
 
                 <div class="p-4">
@@ -138,11 +136,7 @@
                     {:else}
                         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                             {#each resumes as resume (resume._id)}
-                                <ResumeCard
-                                    {resume}
-                                    on:edit={(e) => editResume(e.detail)}
-                                    on:delete={(e) => deleteResume(e.detail)}
-                                />
+                                <ResumeCard {resume} on:edit={e => editResume(e.detail)} on:delete={e => deleteResume(e.detail)} />
                             {/each}
                         </div>
                     {/if}
@@ -273,7 +267,9 @@
                         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                             {#each sharedWorkshops as workshop (workshop._id)}
                                 <a href="/workshop/{workshop._id}" class="block">
-                                    <div class="border-2 border-blue-200 bg-blue-50 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer">
+                                    <div
+                                        class="border-2 border-blue-200 bg-blue-50 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer"
+                                    >
                                         <h3 class="font-medium truncate">{workshop.name || 'Untitled Workshop'}</h3>
                                         <p class="text-sm text-blue-600 mt-1">
                                             Shared by {workshop.ownerName || 'Unknown'}

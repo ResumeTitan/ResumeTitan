@@ -94,20 +94,20 @@
  *             $ref: '#/components/schemas/Comment'
  */
 
-import express from "express";
+import express from 'express';
 import {
-  createWorkshop,
-  getWorkshop,
-  getWorkshops,
-  updateWorkshop,
-  deleteWorkshop,
-  getWorkshopByShareToken,
-  toggleWorkshopSharing,
-  addComment,
-  replyToComment,
-  resolveComment,
-} from "../controllers/workshop";
-import verifyToken from "../middleware/auth";
+    createWorkshop,
+    getWorkshop,
+    getWorkshops,
+    updateWorkshop,
+    deleteWorkshop,
+    getWorkshopByShareToken,
+    toggleWorkshopSharing,
+    addComment,
+    replyToComment,
+    resolveComment,
+} from '../controllers/workshop';
+import verifyToken from '../middleware/auth';
 
 const router = express.Router();
 
@@ -158,7 +158,7 @@ const router = express.Router();
  *       500:
  *         description: Server error
  */
-router.post("/", verifyToken, createWorkshop);
+router.post('/', verifyToken, createWorkshop);
 
 /**
  * @openapi
@@ -190,7 +190,7 @@ router.post("/", verifyToken, createWorkshop);
  *       500:
  *         description: Server error
  */
-router.get("/", verifyToken, getWorkshops);
+router.get('/', verifyToken, getWorkshops);
 
 /**
  * @openapi
@@ -249,7 +249,7 @@ router.get("/", verifyToken, getWorkshops);
  *       500:
  *         description: Server error
  */
-router.get("/shared/:token", verifyToken, getWorkshopByShareToken);
+router.get('/shared/:token', verifyToken, getWorkshopByShareToken);
 
 /**
  * @openapi
@@ -289,7 +289,7 @@ router.get("/shared/:token", verifyToken, getWorkshopByShareToken);
  *       500:
  *         description: Server error
  */
-router.get("/:id", verifyToken, getWorkshop);
+router.get('/:id', verifyToken, getWorkshop);
 
 /**
  * @openapi
@@ -332,7 +332,7 @@ router.get("/:id", verifyToken, getWorkshop);
  *       500:
  *         description: Server error
  */
-router.put("/:id", verifyToken, updateWorkshop);
+router.put('/:id', verifyToken, updateWorkshop);
 
 /**
  * @openapi
@@ -366,7 +366,7 @@ router.put("/:id", verifyToken, updateWorkshop);
  *       500:
  *         description: Server error
  */
-router.delete("/:id", verifyToken, deleteWorkshop);
+router.delete('/:id', verifyToken, deleteWorkshop);
 
 /**
  * @openapi
@@ -415,7 +415,7 @@ router.delete("/:id", verifyToken, deleteWorkshop);
  *       500:
  *         description: Server error
  */
-router.post("/:id/share", verifyToken, toggleWorkshopSharing);
+router.post('/:id/share', verifyToken, toggleWorkshopSharing);
 
 /**
  * @openapi
@@ -467,7 +467,7 @@ router.post("/:id/share", verifyToken, toggleWorkshopSharing);
  *       500:
  *         description: Server error
  */
-router.post("/:id/comment", verifyToken, addComment);
+router.post('/:id/comment', verifyToken, addComment);
 
 /**
  * @openapi
@@ -521,7 +521,7 @@ router.post("/:id/comment", verifyToken, addComment);
  *       500:
  *         description: Server error
  */
-router.post("/:id/comment/:commentId/reply", verifyToken, replyToComment);
+router.post('/:id/comment/:commentId/reply', verifyToken, replyToComment);
 
 /**
  * @openapi
@@ -573,6 +573,6 @@ router.post("/:id/comment/:commentId/reply", verifyToken, replyToComment);
  *       500:
  *         description: Server error
  */
-router.patch("/:id/comment/:commentId/resolve", verifyToken, resolveComment);
+router.patch('/:id/comment/:commentId/resolve', verifyToken, resolveComment);
 
 export default router;

@@ -5,26 +5,26 @@
  */
 
 export interface CoverLetterType {
-	_id: string;
-	resumeId: string;
-	letter: string;
-	name: string;
-	date: Date;
-	city: string;
-	state: string;
-	jobTitle: string;
-	jobDescription: string;
-	company: string;
+    _id: string;
+    resumeId: string;
+    letter: string;
+    name: string;
+    date: Date;
+    city: string;
+    state: string;
+    jobTitle: string;
+    jobDescription: string;
+    company: string;
 }
 
 export interface CoverLetterCreateRequest {
-	resumeId?: string;
-	jobTitle: string;
-	jobDescription: string;
-	company: string;
+    resumeId?: string;
+    jobTitle: string;
+    jobDescription: string;
+    company: string;
 }
 
 export interface CoverLetterGenerateResponse {
-	letter: string;
-	coverLetter?: CoverLetterType;
+    letter: string;
+    coverLetter?: CoverLetterType;
 }

@@ -21,26 +21,26 @@ export * from './workshop';
 
 // Common types
 export interface ApiResponse<T> {
-	data?: T;
-	error?: string;
-	message?: string;
+    data?: T;
+    error?: string;
+    message?: string;
 }
 
 export interface PaginatedResponse<T> {
-	items: T[];
-	total: number;
-	page: number;
-	pageSize: number;
-	hasMore: boolean;
+    items: T[];
+    total: number;
+    page: number;
+    pageSize: number;
+    hasMore: boolean;
 }
 
 export interface User {
-	id: string;
-	email: string;
-	firstName?: string;
-	lastName?: string;
-	imageUrl?: string;
-	isPremium: boolean;
+    id: string;
+    email: string;
+    firstName?: string;
+    lastName?: string;
+    imageUrl?: string;
+    isPremium: boolean;
 }
 
 export type AlertVariant = 'success' | 'error' | 'warning' | 'info';

@@ -24,8 +24,8 @@ const app = express();
 
 // Initialize Sentry
 Sentry.init({
-  dsn: process.env.SENTRY_BACKEND_DSN,
-  tracesSampleRate: 1.0,
+    dsn: process.env.SENTRY_BACKEND_DSN,
+    tracesSampleRate: 1.0,
 });
 
 // The request handler must be the first middleware on the app
@@ -33,32 +33,40 @@ app.use(Sentry.Handlers.requestHandler());
 
 // Cache headers middleware for static assets
 const setCacheHeaders = (req: express.Request, res: express.Response, next: express.NextFunction) => {
-  const ext = path.extname(req.url).toLowerCase();
-  
-  // Set cache headers based on file type
-  if (ext === '.js' || ext === '.css') {
-    // JavaScript and CSS files - cache for 1 year
-    res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
-    res.setHeader('Expires', new Date(Date.now() + 31536000000).toUTCString());
-  } else if (ext === '.png' || ext === '.jpg' || ext === '.jpeg' || ext === '.gif' || ext === '.webp' || ext === '.svg' || ext === '.ico') {
-    // Images - cache for 1 month
-    res.setHeader('Cache-Control', 'public, max-age=2592000');
-    res.setHeader('Expires', new Date(Date.now() + 2592000000).toUTCString());
-  } else if (ext === '.woff' || ext === '.woff2' || ext === '.ttf' || ext === '.eot') {
-    // Fonts - cache for 1 year
-    res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
-    res.setHeader('Expires', new Date(Date.now() + 31536000000).toUTCString());
-  } else if (ext === '.pdf' || ext === '.doc' || ext === '.docx') {
-    // Documents - cache for 1 week
-    res.setHeader('Cache-Control', 'public, max-age=604800');
-    res.setHeader('Expires', new Date(Date.now() + 604800000).toUTCString());
-  } else {
-    // Other static files - cache for 1 day
-    res.setHeader('Cache-Control', 'public, max-age=86400');
-    res.setHeader('Expires', new Date(Date.now() + 86400000).toUTCString());
-  }
-  
-  next();
+    const ext = path.extname(req.url).toLowerCase();
+
+    // Set cache headers based on file type
+    if (ext === '.js' || ext === '.css') {
+        // JavaScript and CSS files - cache for 1 year
+        res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+        res.setHeader('Expires', new Date(Date.now() + 31536000000).toUTCString());
+    } else if (
+        ext === '.png' ||
+        ext === '.jpg' ||
+        ext === '.jpeg' ||
+        ext === '.gif' ||
+        ext === '.webp' ||
+        ext === '.svg' ||
+        ext === '.ico'
+    ) {
+        // Images - cache for 1 month
+        res.setHeader('Cache-Control', 'public, max-age=2592000');
+        res.setHeader('Expires', new Date(Date.now() + 2592000000).toUTCString());
+    } else if (ext === '.woff' || ext === '.woff2' || ext === '.ttf' || ext === '.eot') {
+        // Fonts - cache for 1 year
+        res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+        res.setHeader('Expires', new Date(Date.now() + 31536000000).toUTCString());
+    } else if (ext === '.pdf' || ext === '.doc' || ext === '.docx') {
+        // Documents - cache for 1 week
+        res.setHeader('Cache-Control', 'public, max-age=604800');
+        res.setHeader('Expires', new Date(Date.now() + 604800000).toUTCString());
+    } else {
+        // Other static files - cache for 1 day
+        res.setHeader('Cache-Control', 'public, max-age=86400');
+        res.setHeader('Expires', new Date(Date.now() + 86400000).toUTCString());
+    }
+
+    next();
 };
 
 app.use(express.json());
@@ -76,12 +84,12 @@ app.use('/assets', setCacheHeaders, express.static(path.join(__dirname, 'public/
 
 /* FILE STORAGE */
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'public/assets');
-  },
-  filename: function (req, file, cb) {
-    cb(null, file.originalname);
-  },
+    destination: function (req, file, cb) {
+        cb(null, 'public/assets');
+    },
+    filename: function (req, file, cb) {
+        cb(null, file.originalname);
+    },
 });
 const upload = multer({ storage });
 
@@ -100,10 +108,10 @@ app.use(Sentry.Handlers.errorHandler());
 
 // Optional fallthrough error handler
 app.use(function onError(err: any, req: express.Request, res: express.Response, next: express.NextFunction) {
-  // The error id is attached to `res.sentry` to be returned
-  // and optionally displayed to the user for support.
-  res.statusCode = 500;
-  res.end(`Internal Server Error: ${err.message}\n`);
+    // The error id is attached to `res.sentry` to be returned
+    // and optionally displayed to the user for support.
+    res.statusCode = 500;
+    res.end(`Internal Server Error: ${err.message}\n`);
 });
 
 /* MONGOOSE SETUP */
@@ -111,14 +119,14 @@ const HOST = process.env.HOST || 'localhost';
 const PORT = process.env.PORT || 3001;
 
 mongoose
-  .connect(process.env.MONGO_URL as string)
-  .then(() => {
-    const server = app.listen(PORT as number, HOST, () => {
-      const { address, port } = server.address() as any;
-      console.log(`Server is running on: http://${address}:${port}`);
+    .connect(process.env.MONGO_URL as string)
+    .then(() => {
+        const server = app.listen(PORT as number, HOST, () => {
+            const { address, port } = server.address() as any;
+            console.log(`Server is running on: http://${address}:${port}`);
+        });
+    })
+    .catch(error => {
+        console.log(`${error} did not connect`);
+        Sentry.captureException(error);
     });
-  })
-  .catch((error) => {
-    console.log(`${error} did not connect`);
-    Sentry.captureException(error);
-  });

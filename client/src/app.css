@@ -14,12 +14,12 @@
 
 /* Base styles */
 @layer base {
-	img {
-		@apply inline-block;
-	}
+    img {
+        @apply inline-block;
+    }
 
-	html,
-	body {
-		@apply m-0 p-0 w-full h-full font-sans;
-	}
+    html,
+    body {
+        @apply m-0 p-0 w-full h-full font-sans;
+    }
 }

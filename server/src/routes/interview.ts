@@ -32,16 +32,16 @@
  *                 type: string
  */
 
-import express from "express";
+import express from 'express';
 import {
-  createUpdateInterview,
-  getInterviews,
-  getInterview,
-  updateInterview,
-  deleteInterview,
-  analyzeInterview
-} from "../controllers/interview";
-import verifyToken from "../middleware/auth";
+    createUpdateInterview,
+    getInterviews,
+    getInterview,
+    updateInterview,
+    deleteInterview,
+    analyzeInterview,
+} from '../controllers/interview';
+import verifyToken from '../middleware/auth';
 
 const router = express.Router();
 
@@ -68,7 +68,7 @@ const router = express.Router();
  *       500:
  *         description: Server error
  */
-router.post("/", verifyToken, createUpdateInterview);
+router.post('/', verifyToken, createUpdateInterview);
 
 /**
  * @openapi
@@ -84,7 +84,7 @@ router.post("/", verifyToken, createUpdateInterview);
  *       401:
  *         description: Not authenticated
  */
-router.get("/", verifyToken, getInterviews);
+router.get('/', verifyToken, getInterviews);
 
 /**
  * @openapi
@@ -108,7 +108,7 @@ router.get("/", verifyToken, getInterviews);
  *       404:
  *         description: Interview not found
  */
-router.get("/:id", verifyToken, getInterview);
+router.get('/:id', verifyToken, getInterview);
 
 /**
  * @openapi
@@ -130,7 +130,7 @@ router.get("/:id", verifyToken, getInterview);
  *       401:
  *         description: Not authenticated
  */
-router.delete("/:id", verifyToken, deleteInterview);
+router.delete('/:id', verifyToken, deleteInterview);
 
 /**
  * @openapi
@@ -158,7 +158,7 @@ router.delete("/:id", verifyToken, deleteInterview);
  *       401:
  *         description: Not authenticated
  */
-router.put("/:id", verifyToken, updateInterview);
+router.put('/:id', verifyToken, updateInterview);
 
 /**
  * @openapi
@@ -190,6 +190,6 @@ router.put("/:id", verifyToken, updateInterview);
  *       500:
  *         description: AI analysis failed
  */
-router.post("/analyze", verifyToken, analyzeInterview);
+router.post('/analyze', verifyToken, analyzeInterview);
 
 export default router;

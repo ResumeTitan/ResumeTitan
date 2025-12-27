@@ -174,40 +174,40 @@
  *           type: string
  */
 
-import express from "express";
-import multer from "multer";
+import express from 'express';
+import multer from 'multer';
 import {
-  postSummary,
-  postEducation,
-  postWork,
-  postProjects,
-  postSkills,
-  postVolunteer,
-  postResume,
-  getResume,
-  getResumes,
-  updateResume,
-  deleteResume,
-  printResumeToPdf,
-  uploadPdfResume
-} from "../controllers/resume.js";
-import verifyToken from "../middleware/auth";
+    postSummary,
+    postEducation,
+    postWork,
+    postProjects,
+    postSkills,
+    postVolunteer,
+    postResume,
+    getResume,
+    getResumes,
+    updateResume,
+    deleteResume,
+    printResumeToPdf,
+    uploadPdfResume,
+} from '../controllers/resume.js';
+import verifyToken from '../middleware/auth';
 
 const router = express.Router();
 
 // Configure multer for file uploads
 const upload = multer({
-  storage: multer.memoryStorage(),
-  limits: {
-    fileSize: 10 * 1024 * 1024, // 10MB limit
-  },
-  fileFilter: (req, file, cb) => {
-    if (file.mimetype === 'application/pdf') {
-      cb(null, true);
-    } else {
-      cb(null, false);
-    }
-  },
+    storage: multer.memoryStorage(),
+    limits: {
+        fileSize: 10 * 1024 * 1024, // 10MB limit
+    },
+    fileFilter: (req, file, cb) => {
+        if (file.mimetype === 'application/pdf') {
+            cb(null, true);
+        } else {
+            cb(null, false);
+        }
+    },
 });
 
 /**
@@ -243,7 +243,7 @@ const upload = multer({
  *       500:
  *         description: Server error
  */
-router.get("/", verifyToken, getResume);
+router.get('/', verifyToken, getResume);
 
 /**
  * @openapi
@@ -278,7 +278,7 @@ router.get("/", verifyToken, getResume);
  *       500:
  *         description: Server error
  */
-router.get("/user", verifyToken, getResumes);
+router.get('/user', verifyToken, getResumes);
 
 /**
  * @openapi
@@ -314,7 +314,7 @@ router.get("/user", verifyToken, getResumes);
  *       500:
  *         description: PDF generation failed
  */
-router.post("/print", verifyToken, printResumeToPdf);
+router.post('/print', verifyToken, printResumeToPdf);
 
 /**
  * @openapi
@@ -352,7 +352,7 @@ router.post("/print", verifyToken, printResumeToPdf);
  *       500:
  *         description: AI parsing failed
  */
-router.post("/upload-pdf", verifyToken, upload.single('pdf'), uploadPdfResume);
+router.post('/upload-pdf', verifyToken, upload.single('pdf'), uploadPdfResume);
 
 /**
  * @openapi
@@ -384,7 +384,7 @@ router.post("/upload-pdf", verifyToken, upload.single('pdf'), uploadPdfResume);
  *       500:
  *         description: Server error
  */
-router.put("/update", verifyToken, updateResume);
+router.put('/update', verifyToken, updateResume);
 
 /**
  * @openapi
@@ -417,7 +417,7 @@ router.put("/update", verifyToken, updateResume);
  *       500:
  *         description: Server error
  */
-router.delete("/delete/:id", verifyToken, deleteResume);
+router.delete('/delete/:id', verifyToken, deleteResume);
 
 /**
  * @openapi
@@ -467,7 +467,7 @@ router.delete("/delete/:id", verifyToken, deleteResume);
  *       500:
  *         description: AI generation failed
  */
-router.post("/summary", verifyToken, postSummary);
+router.post('/summary', verifyToken, postSummary);
 
 /**
  * @openapi
@@ -506,7 +506,7 @@ router.post("/summary", verifyToken, postSummary);
  *       500:
  *         description: AI generation failed
  */
-router.post("/education", verifyToken, postEducation);
+router.post('/education', verifyToken, postEducation);
 
 /**
  * @openapi
@@ -545,7 +545,7 @@ router.post("/education", verifyToken, postEducation);
  *       500:
  *         description: AI generation failed
  */
-router.post("/work", verifyToken, postWork);
+router.post('/work', verifyToken, postWork);
 
 /**
  * @openapi
@@ -584,7 +584,7 @@ router.post("/work", verifyToken, postWork);
  *       500:
  *         description: AI generation failed
  */
-router.post("/projects", verifyToken, postProjects);
+router.post('/projects', verifyToken, postProjects);
 
 /**
  * @openapi
@@ -638,7 +638,7 @@ router.post("/projects", verifyToken, postProjects);
  *       500:
  *         description: AI generation failed
  */
-router.post("/skills", verifyToken, postSkills);
+router.post('/skills', verifyToken, postSkills);
 
 /**
  * @openapi
@@ -677,7 +677,7 @@ router.post("/skills", verifyToken, postSkills);
  *       500:
  *         description: AI generation failed
  */
-router.post("/volunteer", verifyToken, postVolunteer);
+router.post('/volunteer', verifyToken, postVolunteer);
 
 /**
  * @openapi
@@ -703,6 +703,6 @@ router.post("/volunteer", verifyToken, postVolunteer);
  *       500:
  *         description: AI generation failed
  */
-router.post("/resume", verifyToken, postResume);
+router.post('/resume', verifyToken, postResume);
 
 export default router;

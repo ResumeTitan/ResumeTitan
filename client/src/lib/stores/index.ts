@@ -8,16 +8,16 @@ export { authStore, isAuthenticated, isDarkMode } from './auth';
 export type { AuthState } from './auth';
 
 export {
-	resumeStore,
-	resumeBasics,
-	resumeWork,
-	resumeEducation,
-	resumeSkills,
-	resumeProjects,
-	resumeVolunteer,
-	resumeTheme,
-	resumeFont,
-	resumeSections
+    resumeStore,
+    resumeBasics,
+    resumeWork,
+    resumeEducation,
+    resumeSkills,
+    resumeProjects,
+    resumeVolunteer,
+    resumeTheme,
+    resumeFont,
+    resumeSections,
 } from './resume';
 
 export { uiStore, isLoading, hasActiveModal, toasts } from './ui';
