@@ -97,6 +97,13 @@
 				$authStore.userName || 'Anonymous',
 				$authStore.userEmail
 			);
+
+			// If owner accesses via share link, redirect to main workshop page
+			if (result.redirectToWorkshop && result.workshopId) {
+				goto(`/workshop/${result.workshopId}`);
+				return;
+			}
+
 			workshop = result.workshop;
 			resume = result.resume;
 			role = result.role || 'commenter';

@@ -107,7 +107,15 @@ export const getWorkshopByShareToken = async (req: Request, res: Response) => {
 
     const isOwner = workshop.clerkId === clerkId;
 
-    // Add user to participants if not already there
+    // If owner accesses via share link, redirect them to the main workshop page
+    if (isOwner) {
+      return res.status(200).json({
+        redirectToWorkshop: true,
+        workshopId: workshop._id
+      });
+    }
+
+    // Add user to participants if not already there (never add owner)
     const existingParticipant = workshop.participants.find(
       (p: any) => p.clerkId === clerkId
     );
@@ -132,8 +140,8 @@ export const getWorkshopByShareToken = async (req: Request, res: Response) => {
     res.status(200).json({
       workshop,
       resume,
-      role: isOwner ? 'owner' : 'commenter',
-      canEdit: isOwner
+      role: 'commenter',
+      canEdit: false
     });
   } catch (err: any) {
     console.error('Error getting shared workshop:', err);
