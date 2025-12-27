@@ -18,7 +18,7 @@
 <div class="user-presence-bar flex items-center gap-2">
 	<!-- User Avatars -->
 	<div class="flex -space-x-2">
-		{#each visibleUsers as user (user.id)}
+		{#each visibleUsers as user (user.clerkId)}
 			<div class="relative" title="{user.name} {user.isOnline ? '(online)' : '(offline)'}">
 				<!-- Avatar -->
 				<div
@@ -71,5 +71,12 @@
 <style>
 	.user-presence-bar {
 		/* Container styles */
+	}
+
+	/* Hide "X active" text on mobile */
+	@media (max-width: 768px) {
+		.user-presence-bar span:last-child {
+			display: none;
+		}
 	}
 </style>

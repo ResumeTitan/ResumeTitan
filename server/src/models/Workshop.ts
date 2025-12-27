@@ -1,14 +1,19 @@
 import mongoose from "mongoose";
+import { randomUUID } from 'crypto';
 
 const WorkshopUserSchema = new mongoose.Schema(
   {
-    id: {
+    clerkId: {
       type: String,
-      description: "User id for workshop participants",
+      description: "Clerk user id",
     },
     name: {
       type: String,
       description: "Display name of the participant",
+    },
+    email: {
+      type: String,
+      description: "User email",
     },
     avatar: {
       type: String,
@@ -32,6 +37,11 @@ const WorkshopUserSchema = new mongoose.Schema(
       description: "Whether the user is currently active",
       default: false,
     },
+    joinedAt: {
+      type: Date,
+      description: "When the user joined the workshop",
+      default: Date.now,
+    },
   },
   { _id: false }
 );
@@ -42,9 +52,25 @@ const WorkshopCommentSchema = new mongoose.Schema(
       type: String,
       description: "Unique id for the comment",
     },
-    author: {
-      type: WorkshopUserSchema,
-      description: "Author of the comment",
+    authorClerkId: {
+      type: String,
+      description: "Clerk ID of the comment author",
+    },
+    authorName: {
+      type: String,
+      description: "Display name of the author",
+    },
+    authorEmail: {
+      type: String,
+      description: "Email of the author",
+    },
+    authorInitials: {
+      type: String,
+      description: "Initials of the author",
+    },
+    authorColor: {
+      type: String,
+      description: "Color assigned to the author",
     },
     text: {
       type: String,
@@ -53,6 +79,7 @@ const WorkshopCommentSchema = new mongoose.Schema(
     timestamp: {
       type: Date,
       description: "When the comment was created",
+      default: Date.now,
     },
     section: {
       type: String,
@@ -62,6 +89,10 @@ const WorkshopCommentSchema = new mongoose.Schema(
       type: Boolean,
       description: "Whether the comment is resolved",
       default: false,
+    },
+    resolvedBy: {
+      type: String,
+      description: "Clerk ID of user who resolved",
     },
     replies: {
       type: Array,
@@ -76,19 +107,37 @@ const WorkshopSchema = new mongoose.Schema(
   {
     clerkId: {
       type: String,
-      // required: true,
       description: "The clerk id of the user who owns the workshop",
+    },
+    ownerName: {
+      type: String,
+      description: "Display name of the owner",
+    },
+    ownerEmail: {
+      type: String,
+      description: "Email of the owner",
     },
     resumeId: {
       type: String,
       ref: "Resume",
-      // required: true,
       description: "Resume tied to this workshop",
     },
     name: {
       type: String,
       description: "Name of the workshop",
       default: "Workshop",
+    },
+    // Sharing fields
+    shareToken: {
+      type: String,
+      description: "Unique token for sharing",
+      unique: true,
+      sparse: true,
+    },
+    shareEnabled: {
+      type: Boolean,
+      description: "Whether sharing is enabled",
+      default: false,
     },
     participants: {
       type: [WorkshopUserSchema],
@@ -103,6 +152,14 @@ const WorkshopSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+// Generate share token before saving if enabled but no token exists
+WorkshopSchema.pre('save', function(next) {
+  if (this.shareEnabled && !this.shareToken) {
+    this.shareToken = randomUUID();
+  }
+  next();
+});
 
 const Workshop = mongoose.model("Workshop", WorkshopSchema);
 export default Workshop;

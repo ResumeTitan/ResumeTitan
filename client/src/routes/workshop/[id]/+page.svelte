@@ -10,14 +10,15 @@
 	import { goto } from '$app/navigation';
 	import { workshopApi, resumeApi } from '$api';
 	import { resumeStore, isAuthenticated, authStore } from '$stores';
-	import type { WorkshopType, ResumeType, WorkshopUser, WorkshopComment } from '$types';
+	import type { WorkshopType, WorkshopRole, ResumeType, WorkshopUser, WorkshopComment } from '$types';
 
 	import Spinner from '$components/ui/Spinner.svelte';
 	import Alert from '$components/ui/Alert.svelte';
 	import ResumeEditorCore from '$components/editors/ResumeEditorCore.svelte';
 	import {
 		WorkshopHeader,
-		CommentsSidebar
+		CommentsSidebar,
+		ShareModal
 	} from '$components/workshop';
 
 	// Page state
@@ -28,114 +29,36 @@
 	let error = '';
 	let lastSaved: Date | null = null;
 	let mode: 'editing' | 'preview' = 'editing';
-	let showComments = true;
+	let showComments = false;
+	let showShareModal = false;
+	let role: WorkshopRole = 'owner';
+	let canEdit = true;
 
 	$: workshopId = $page.params.id || '';
 
 	// ============================================
-	// MOCK DATA - Replace with real data later
+	// DERIVED DATA
 	// ============================================
 
-	const mockUsers: WorkshopUser[] = [
-		{
-			id: 'user-1',
-			name: 'You',
-			initials: 'Y',
-			color: '#115E59',
-			isOnline: true,
-			isActive: true
-		},
-		{
-			id: 'user-2',
-			name: 'Michael Chen',
-			initials: 'MC',
-			color: '#7C3AED',
-			isOnline: true,
-			isActive: false
-		},
-		{
-			id: 'user-3',
-			name: 'Sarah Johnson',
-			initials: 'SJ',
-			color: '#DC2626',
-			isOnline: true,
-			isActive: false
-		},
-		{
-			id: 'user-4',
-			name: 'Alex Kim',
-			initials: 'AK',
-			color: '#2563EB',
-			isOnline: false,
-			isActive: false
-		}
-	];
+	// Get current user from workshop participants
+	$: currentUser = workshop?.participants.find(p => p.clerkId === $authStore.userId) || {
+		clerkId: $authStore.userId || '',
+		name: $authStore.userName || 'You',
+		email: $authStore.userEmail || '',
+		initials: ($authStore.userName || 'Y').split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2),
+		color: '#115E59',
+		isOnline: true,
+		isActive: true
+	};
 
-	let comments: WorkshopComment[] = [
-		{
-			id: 'comment-1',
-			author: mockUsers[1],
-			text: 'The professional summary could be more impactful. Consider starting with your years of experience and key achievements. Maybe something like "7+ years of full-stack development experience with proven track record of delivering scalable web applications."',
-			timestamp: new Date(Date.now() - 30 * 60 * 1000), // 30 minutes ago
-			section: 'Professional Summary',
-			resolved: false,
-			replies: []
-		},
-		{
-			id: 'comment-2',
-			author: mockUsers[2],
-			text: 'Great job on the work experience section! The bullet points are clear and quantified.',
-			timestamp: new Date(Date.now() - 25 * 60 * 1000), // 25 minutes ago
-			section: 'Work Experience',
-			resolved: false,
-			replies: [
-				{
-					id: 'reply-1',
-					author: mockUsers[0],
-					text: 'Thanks! I tried to follow the STAR method.',
-					timestamp: new Date(Date.now() - 20 * 60 * 1000),
-					resolved: false,
-					replies: []
-				}
-			]
-		},
-		{
-			id: 'comment-3',
-			author: mockUsers[1],
-			text: 'Consider adding more technical skills - especially cloud platforms like AWS or GCP.',
-			timestamp: new Date(Date.now() - 15 * 60 * 1000),
-			section: 'Skills',
-			resolved: true,
-			replies: []
-		},
-		{
-			id: 'comment-4',
-			author: mockUsers[2],
-			text: 'The education section looks good, but you might want to add relevant coursework or GPA if it was above 3.5.',
-			timestamp: new Date(Date.now() - 10 * 60 * 1000),
-			section: 'Education',
-			resolved: false,
-			replies: []
-		},
-		{
-			id: 'comment-5',
-			author: mockUsers[3],
-			text: 'Should we add a Projects section? It would be great to showcase some personal or open-source work.',
-			timestamp: new Date(Date.now() - 5 * 60 * 1000),
-			resolved: false,
-			replies: []
-		},
-		{
-			id: 'comment-6',
-			author: mockUsers[1],
-			text: 'Overall, this is looking really solid! Just a few more tweaks and it will be perfect.',
-			timestamp: new Date(Date.now() - 2 * 60 * 1000),
-			resolved: false,
-			replies: []
-		}
-	];
+	// Get comments from workshop
+	$: comments = workshop?.comments || [];
 
-	const currentUser = mockUsers[0];
+	// Get participants for user presence
+	$: participants = workshop?.participants || [];
+
+	// Track if we've already initiated loading to prevent duplicate calls
+	let loadingInitiated = false;
 
 	// ============================================
 	// LIFECYCLE
@@ -144,26 +67,36 @@
 	onMount(async () => {
 		// Wait for Clerk to be ready before checking auth or loading data
 		const { getClerk } = await import('$lib/utils/clerk.client');
-		const clerk = await getClerk();
+		let clerk = await getClerk();
 
-		// Wait for Clerk session to be available (handles page reload case)
-		if (!clerk?.session) {
-			// Give Clerk a moment to restore the session on reload
+		// Wait for Clerk session to be available (handles page reload/navigation case)
+		// Poll for up to 3 seconds to allow session restoration
+		let attempts = 0;
+		const maxAttempts = 30;
+		while (attempts < maxAttempts) {
+			clerk = await getClerk();
+			if (clerk?.session) break;
 			await new Promise(resolve => setTimeout(resolve, 100));
+			attempts++;
 		}
 
-		if (!$isAuthenticated) {
+		// Check if we have a valid Clerk session (this is the source of truth)
+		const hasValidSession = !!clerk?.session;
+
+		if (!hasValidSession) {
 			authStore.openAuthModal();
 			return;
 		}
 
 		if (workshopId) {
+			loadingInitiated = true;
 			await loadWorkshop();
 		}
 	});
 
 	// Watch for authentication changes - only trigger if we haven't loaded yet
-	$: if ($isAuthenticated && workshopId && loading && !resume && !error) {
+	$: if ($isAuthenticated && workshopId && loading && !resume && !error && !loadingInitiated) {
+		loadingInitiated = true;
 		loadWorkshop();
 	}
 
@@ -179,6 +112,8 @@
         try {
             const workshopResp = await workshopApi.getById(workshopId);
 			workshop = workshopResp.workshop;
+			role = workshopResp.role || 'owner';
+			canEdit = workshopResp.canEdit ?? true;
 			const resumeResp = await resumeApi.getById(workshop.resumeId);
             resume = resumeResp.resume;
             resumeStore.set(resume);
@@ -214,9 +149,28 @@
 		goto('/dashboard');
 	}
 
+	let nameUpdateTimeout: ReturnType<typeof setTimeout>;
+
 	function handleNameChange(event: CustomEvent<{ name: string }>) {
 		if (workshop) {
 			workshop.name = event.detail.name;
+
+			// Debounce the save - wait 500ms after user stops typing
+			clearTimeout(nameUpdateTimeout);
+			nameUpdateTimeout = setTimeout(() => {
+				saveWorkshopName(event.detail.name);
+			}, 500);
+		}
+	}
+
+	async function saveWorkshopName(name: string) {
+		if (!workshop) return;
+
+		try {
+			await workshopApi.update(workshopId, { name });
+		} catch (e) {
+			console.error('Failed to save workshop name:', e);
+			error = 'Failed to save workshop name. Please try again.';
 		}
 	}
 
@@ -235,9 +189,20 @@
 	}
 
     function handleShare() {
-        // TODO: Implement share functionality
-        alert('Share functionality coming soon!');
+        showShareModal = true;
     }
+
+	async function handleShareToggle(event: CustomEvent<{ enabled: boolean }>) {
+		if (!workshop) return;
+
+		try {
+			const result = await workshopApi.toggleSharing(workshopId, event.detail.enabled);
+			workshop = result.workshop;
+		} catch (e) {
+			console.error('Failed to toggle sharing:', e);
+			error = 'Failed to update sharing settings. Please try again.';
+		}
+	}
 
     function handleHistory() {
         // TODO: Implement version history
@@ -248,51 +213,87 @@
 	// COMMENT HANDLERS
 	// ============================================
 
-	function handleAddComment(event: CustomEvent<{ text: string }>) {
-		const newComment: WorkshopComment = {
-			id: `comment-${Date.now()}`,
-			author: currentUser,
-			text: event.detail.text,
-			timestamp: new Date(),
-			resolved: false,
-			replies: []
-		};
-		comments = [newComment, ...comments];
+	async function handleAddComment(event: CustomEvent<{ text: string }>) {
+		if (!workshop) return;
+
+		try {
+			const result = await workshopApi.addComment(workshopId, {
+				text: event.detail.text,
+				authorName: currentUser.name,
+				authorEmail: currentUser.email
+			});
+			// Add new comment to the front of the list
+			workshop = {
+				...workshop,
+				comments: [result.comment, ...workshop.comments]
+			};
+		} catch (e) {
+			console.error('Failed to add comment:', e);
+			error = 'Failed to add comment. Please try again.';
+		}
 	}
 
-	function handleReply(event: CustomEvent<{ commentId: string; text: string }>) {
+	async function handleReply(event: CustomEvent<{ commentId: string; text: string }>) {
+		if (!workshop) return;
 		const { commentId, text } = event.detail;
-		comments = comments.map((comment) => {
-			if (comment.id === commentId) {
-				return {
-					...comment,
-					replies: [
-						...comment.replies,
-						{
-							id: `reply-${Date.now()}`,
-							author: currentUser,
-							text,
-							timestamp: new Date(),
-							resolved: false,
-							replies: []
-						}
-					]
-				};
-			}
-			return comment;
-		});
+
+		try {
+			const result = await workshopApi.replyToComment(workshopId, commentId, {
+				text,
+				authorName: currentUser.name,
+				authorEmail: currentUser.email
+			});
+			// Update the comment with the new reply
+			workshop = {
+				...workshop,
+				comments: workshop.comments.map((comment) => {
+					if (comment.id === commentId) {
+						return {
+							...comment,
+							replies: [...comment.replies, result.reply]
+						};
+					}
+					return comment;
+				})
+			};
+		} catch (e) {
+			console.error('Failed to reply:', e);
+			error = 'Failed to add reply. Please try again.';
+		}
 	}
 
-	function handleResolve(event: CustomEvent<{ commentId: string }>) {
-		comments = comments.map((comment) =>
-			comment.id === event.detail.commentId ? { ...comment, resolved: true } : comment
-		);
+	async function handleResolve(event: CustomEvent<{ commentId: string }>) {
+		if (!workshop) return;
+
+		try {
+			await workshopApi.resolveComment(workshopId, event.detail.commentId, true);
+			workshop = {
+				...workshop,
+				comments: workshop.comments.map((comment) =>
+					comment.id === event.detail.commentId ? { ...comment, resolved: true } : comment
+				)
+			};
+		} catch (e) {
+			console.error('Failed to resolve comment:', e);
+			error = 'Failed to resolve comment. Please try again.';
+		}
 	}
 
-	function handleUnresolve(event: CustomEvent<{ commentId: string }>) {
-		comments = comments.map((comment) =>
-			comment.id === event.detail.commentId ? { ...comment, resolved: false } : comment
-		);
+	async function handleUnresolve(event: CustomEvent<{ commentId: string }>) {
+		if (!workshop) return;
+
+		try {
+			await workshopApi.resolveComment(workshopId, event.detail.commentId, false);
+			workshop = {
+				...workshop,
+				comments: workshop.comments.map((comment) =>
+					comment.id === event.detail.commentId ? { ...comment, resolved: false } : comment
+				)
+			};
+		} catch (e) {
+			console.error('Failed to unresolve comment:', e);
+			error = 'Failed to unresolve comment. Please try again.';
+		}
 	}
 
 	function handleResumeChange() {
@@ -304,7 +305,7 @@
 </script>
 
 <svelte:head>
-	<title>{resume?.name || 'Workshop'} - ResumeTitan</title>
+	<title>{workshop?.name || resume?.name || 'Workshop'} - ResumeTitan</title>
 </svelte:head>
 
 <div class="workshop-page">
@@ -320,11 +321,13 @@
 		<!-- Workshop Header -->
 		<WorkshopHeader
 			{resume}
-			users={mockUsers}
+			workshopName={workshop?.name || ''}
+			users={participants}
 			{lastSaved}
 			{saving}
 			{mode}
 			{commentCount}
+			{role}
 			on:save={saveWorkshop}
 			on:togglePreview={togglePreview}
 			on:toggleComments={toggleComments}
@@ -334,6 +337,19 @@
 			on:nameChange={handleNameChange}
 			on:themeChange={handleThemeChange}
 		/>
+
+		<!-- Share Modal -->
+		{#if workshop}
+			<ShareModal
+				isOpen={showShareModal}
+				workshopId={workshopId}
+				workshopName={workshop.name}
+				shareEnabled={workshop.shareEnabled}
+				shareToken={workshop.shareToken}
+				on:close={() => showShareModal = false}
+				on:toggle={handleShareToggle}
+			/>
+		{/if}
 
 		<!-- Main Content Area -->
 		<div class="workshop-content">
@@ -349,7 +365,7 @@
 					/>
 				</div>
 
-				<!-- Comments Panel - Snapped to right edge -->
+				<!-- Comments Panel - Snapped to right edge (desktop only) -->
 				{#if showComments}
 					<aside class="comments-section">
 						<CommentsSidebar
@@ -367,6 +383,21 @@
 				{/if}
 			</div>
 		</div>
+
+		<!-- Mobile Comments Overlay - rendered outside flex container for proper positioning -->
+		<div class="mobile-comments-container">
+			<CommentsSidebar
+				{comments}
+				{currentUser}
+				isOpen={showComments}
+				variant="overlay"
+				on:close={() => (showComments = false)}
+				on:addComment={handleAddComment}
+				on:reply={handleReply}
+				on:resolve={handleResolve}
+				on:unresolve={handleUnresolve}
+			/>
+		</div>
 	{/if}
 </div>
 
@@ -374,6 +405,7 @@
 	.workshop-page {
 		min-height: 100vh;
 		background-color: #f9fafb;
+		overflow-x: hidden;
 	}
 
 	.workshop-flex {
@@ -387,17 +419,28 @@
 		padding-right: 0;
 	}
 
-	/* Responsive: stack on mobile */
-	@media (max-width: 1024px) {
+	/* Desktop: show aside comments, hide mobile container */
+	.comments-section {
+		display: block;
+	}
+
+	.mobile-comments-container {
+		display: none;
+	}
+
+	/* Mobile: hide aside comments, show mobile container */
+	@media (max-width: 768px) {
 		.workshop-flex {
 			flex-direction: column;
+			gap: 0.5rem;
 		}
 
-		.workshop-comments {
-			width: 100%;
-			position: static;
-			height: 500px;
-			overflow: hidden;
+		.comments-section {
+			display: none;
+		}
+
+		.mobile-comments-container {
+			display: block;
 		}
 	}
 </style>

@@ -63,21 +63,17 @@
 		<!-- Author Avatar -->
 		<div
 			class="w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center text-xs font-medium text-white"
-			style="background-color: {comment.author.color}"
+			style="background-color: {comment.authorColor}"
 		>
-			{#if comment.author.avatar}
-				<img src={comment.author.avatar} alt={comment.author.name} class="w-full h-full rounded-full object-cover" />
-			{:else}
-				{comment.author.initials}
-			{/if}
+			{comment.authorInitials}
 		</div>
 
 		<!-- Comment Content -->
 		<div class="flex-1 min-w-0">
 			<!-- Header -->
 			<div class="flex items-center gap-2 flex-wrap">
-				<span class="font-medium text-sm text-gray-900">{comment.author.name}</span>
-				<span class="text-xs text-gray-400">{formatTimestamp(comment.timestamp)}</span>
+				<span class="font-medium text-sm text-gray-900">{comment.authorName}</span>
+				<span class="text-xs text-gray-400">{formatTimestamp(new Date(comment.timestamp))}</span>
 				{#if comment.section}
 					<span class="text-xs text-main-green bg-lighter-green px-2 py-0.5 rounded">
 						{comment.section}
@@ -130,20 +126,16 @@
 					<!-- Reply Author Avatar -->
 					<div
 						class="w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center text-xs font-medium text-white"
-						style="background-color: {reply.author.color}"
+						style="background-color: {reply.authorColor}"
 					>
-						{#if reply.author.avatar}
-							<img src={reply.author.avatar} alt={reply.author.name} class="w-full h-full rounded-full object-cover" />
-						{:else}
-							{reply.author.initials}
-						{/if}
+						{reply.authorInitials}
 					</div>
 
 					<!-- Reply Content -->
 					<div class="flex-1 min-w-0">
 						<div class="flex items-center gap-2">
-							<span class="font-medium text-xs text-gray-900">{reply.author.name}</span>
-							<span class="text-xs text-gray-400">{formatTimestamp(reply.timestamp)}</span>
+							<span class="font-medium text-xs text-gray-900">{reply.authorName}</span>
+							<span class="text-xs text-gray-400">{formatTimestamp(new Date(reply.timestamp))}</span>
 						</div>
 						<p class="text-sm text-gray-700 mt-0.5">{reply.text}</p>
 					</div>

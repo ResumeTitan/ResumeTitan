@@ -3,8 +3,9 @@
 	 * CommentsSidebar
 	 *
 	 * Slide-in panel showing all comments with filtering (All/Open/Resolved).
+	 * On mobile, displays as fullscreen overlay with slide-in animation.
 	 */
-	import { createEventDispatcher } from 'svelte';
+	import { createEventDispatcher, onMount, onDestroy } from 'svelte';
 	import { fly } from 'svelte/transition';
 	import type { WorkshopComment, WorkshopUser, CommentFilter } from '$types';
 	import CommentThread from './CommentThread.svelte';
@@ -16,6 +17,22 @@
 	export let variant: 'overlay' | 'anchored' = 'overlay';
 
 	let filter: CommentFilter = 'all';
+	let isMobile = false;
+
+	function checkMobile() {
+		isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
+	}
+
+	onMount(() => {
+		checkMobile();
+		window.addEventListener('resize', checkMobile);
+	});
+
+	onDestroy(() => {
+		if (typeof window !== 'undefined') {
+			window.removeEventListener('resize', checkMobile);
+		}
+	});
 
 	const dispatch = createEventDispatcher<{
 		close: void;
@@ -54,8 +71,9 @@
 
 {#if isOpen}
 	<div
-		class="comments-sidebar fixed right-0 top-0 h-full w-80 bg-white shadow-2xl flex flex-col"
-		transition:fly={{ x: 320, duration: 300 }}
+		class="comments-sidebar bg-white shadow-2xl"
+		class:comments-sidebar-mobile={isMobile}
+		transition:fly={{ x: isMobile ? window.innerWidth : 320, duration: 300 }}
 	>
 		<!-- Header -->
 		<div class="flex items-center justify-between p-4 border-b border-gray-200">
@@ -147,10 +165,10 @@
 	</div>
 {/if}
 
-<!-- Backdrop -->
-{#if isOpen && variant === 'overlay'}
+<!-- Backdrop - show on overlay variant OR on mobile -->
+{#if isOpen && (variant === 'overlay' || isMobile)}
 	<div
-		class="fixed inset-0 bg-black bg-opacity-20 z-40"
+		class="comments-backdrop fixed inset-0 bg-black bg-opacity-20 z-40"
 		on:click={() => dispatch('close')}
 		on:keydown={(e) => e.key === 'Escape' && dispatch('close')}
 		role="button"
@@ -158,3 +176,31 @@
 		transition:fly={{ duration: 200 }}
 	></div>
 {/if}
+
+<style>
+	/* Mobile fullscreen overlay styles */
+	.comments-sidebar-mobile {
+		position: fixed !important;
+		top: 0 !important;
+		left: 0 !important;
+		right: 0 !important;
+		bottom: 0 !important;
+		width: 100% !important;
+		height: 100vh !important;
+		max-height: 100vh !important;
+		z-index: 50 !important;
+		border-radius: 0 !important;
+		border: none !important;
+	}
+
+	.comments-backdrop {
+		z-index: 45;
+	}
+
+	/* Ensure mobile sidebar is above backdrop */
+	@media (max-width: 768px) {
+		:global(.comments-sidebar) {
+			z-index: 50 !important;
+		}
+	}
+</style>

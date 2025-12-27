@@ -19,11 +19,15 @@
 		const clerk = await getClerk();
 		if (!clerk) return;
 
+		// Track if we've ever had a valid session to prevent false logouts
+		let hadValidSession = false;
+
 		const syncSession = async () => {
 			const session = clerk.session;
 			const user = clerk.user;
 
 			if (session && user) {
+				hadValidSession = true;
 				authStore.setUser({
 					id: user.id,
 					fullName: user.fullName || undefined,
@@ -34,15 +38,27 @@
 				if (token) {
 					authStore.setToken(token);
 				}
-			} else {
+			} else if (!hadValidSession) {
+				// Only clear auth if we never had a valid session
+				// This prevents clearing auth when Clerk briefly reports no session
 				authStore.clearAuth();
 			}
 		};
 
 		await syncSession();
 
+		// Debounce timer to prevent rapid auth state changes when switching tabs
+		let clearAuthTimeout: ReturnType<typeof setTimeout> | null = null;
+
 		clerk.addListener((resources) => {
+			// Clear any pending logout
+			if (clearAuthTimeout) {
+				clearTimeout(clearAuthTimeout);
+				clearAuthTimeout = null;
+			}
+
 			if (resources.session && resources.user) {
+				hadValidSession = true;
 				authStore.setUser({
 					id: resources.user.id,
 					fullName: resources.user.fullName || undefined,
@@ -56,7 +72,14 @@
 				return;
 			}
 
-			authStore.clearAuth();
+			// Debounce the clearAuth call - wait 500ms to ensure it's a real logout
+			// not just a temporary state when switching browser tabs
+			clearAuthTimeout = setTimeout(() => {
+				// Double-check there's still no session before clearing
+				if (!clerk.session) {
+					authStore.clearAuth();
+				}
+			}, 500);
 		});
 	});
 </script>

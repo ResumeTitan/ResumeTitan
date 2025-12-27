@@ -11,7 +11,8 @@
     let resumes: ResumeType[] = [];
     let coverLetters: CoverLetterType[] = [];
     let interviews: InterviewType[] = [];
-    let workshops: WorkshopType[] = [];
+    let ownedWorkshops: WorkshopType[] = [];
+    let sharedWorkshops: WorkshopType[] = [];
     let loading = true;
     let error = '';
     let hasAttemptedLoad = false;
@@ -49,7 +50,8 @@
             resumes = resumeRes.resumes || [];
             coverLetters = coverLetterRes.coverLetters || [];
             interviews = interviewRes.interviews || [];
-            workshops = workshopRes.workshops || [];
+            ownedWorkshops = workshopRes.owned || [];
+            sharedWorkshops = workshopRes.shared || [];
             error = '';
         } catch (e: any) {
             console.error('Dashboard load error:', e);
@@ -92,11 +94,13 @@
 
         try {
             await workshopApi.delete(id);
-            workshops = workshops.filter((w) => w._id !== id);
+            ownedWorkshops = ownedWorkshops.filter((w) => w._id !== id);
         } catch (e) {
             error = 'Failed to delete workshop. Please try again.';
         }
     }
+
+    $: totalWorkshops = ownedWorkshops.length + sharedWorkshops.length;
 </script>
 
 <svelte:head>
@@ -208,17 +212,17 @@
                 </div>
             </section>
 
-            <!-- Workshop Section -->
+            <!-- My Workshops Section -->
             <section class="dashboard-container">
                 <div class="dashboard-header flex justify-between items-center">
-                    <span>Workshops ({workshops.length})</span>
+                    <span>My Workshops ({ownedWorkshops.length})</span>
                     <a href="/workshop">
                         <Button size="sm">+ New Workshop</Button>
                     </a>
                 </div>
 
                 <div class="p-4">
-                    {#if workshops.length === 0}
+                    {#if ownedWorkshops.length === 0}
                         <div class="text-center py-8">
                             <p class="text-gray-500 mb-4">No workshops yet.</p>
                             <a href="/workshop">
@@ -227,11 +231,18 @@
                         </div>
                     {:else}
                         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                            {#each workshops as workshop (workshop._id)}
+                            {#each ownedWorkshops as workshop (workshop._id)}
                                 <a href="/workshop/{workshop._id}" class="block">
                                     <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer">
-                                        <h3 class="font-medium truncate">{workshop.name || 'Untitled Workshop'}</h3>
-                                        <p class="text-sm text-gray-500">
+                                        <div class="flex items-start justify-between">
+                                            <h3 class="font-medium truncate flex-1">{workshop.name || 'Untitled Workshop'}</h3>
+                                            {#if workshop.shareEnabled}
+                                                <span class="ml-2 px-2 py-0.5 bg-green-100 text-green-700 text-xs rounded-full">
+                                                    Shared
+                                                </span>
+                                            {/if}
+                                        </div>
+                                        <p class="text-sm text-gray-500 mt-1">
                                             {workshop.comments?.length || 0} comments
                                         </p>
                                         <p class="text-sm text-gray-400">
@@ -250,6 +261,36 @@
                     {/if}
                 </div>
             </section>
+
+            <!-- Shared With Me Section -->
+            {#if sharedWorkshops.length > 0}
+                <section class="dashboard-container">
+                    <div class="dashboard-header flex justify-between items-center bg-blue-700">
+                        <span>Shared With Me ({sharedWorkshops.length})</span>
+                    </div>
+
+                    <div class="p-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {#each sharedWorkshops as workshop (workshop._id)}
+                                <a href="/workshop/{workshop._id}" class="block">
+                                    <div class="border-2 border-blue-200 bg-blue-50 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer">
+                                        <h3 class="font-medium truncate">{workshop.name || 'Untitled Workshop'}</h3>
+                                        <p class="text-sm text-blue-600 mt-1">
+                                            Shared by {workshop.ownerName || 'Unknown'}
+                                        </p>
+                                        <p class="text-sm text-gray-500 mt-1">
+                                            {workshop.comments?.length || 0} comments
+                                        </p>
+                                        <p class="text-sm text-gray-400">
+                                            {workshop.participants?.length || 1} participant{workshop.participants?.length !== 1 ? 's' : ''}
+                                        </p>
+                                    </div>
+                                </a>
+                            {/each}
+                        </div>
+                    </div>
+                </section>
+            {/if}
         {/if}
     </div>
 </div>
