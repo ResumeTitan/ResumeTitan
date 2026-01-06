@@ -68,8 +68,10 @@ export const CHATBOT_CONFIG = {
 
 // Resume configuration
 export const RESUME_CONFIG = {
-    A4_WIDTH_MM: 210,
-    A4_HEIGHT_MM: 297,
+    LETTER_WIDTH_IN: 8.5,
+    LETTER_HEIGHT_IN: 11,
+    LETTER_WIDTH_PX: 816, // 8.5in * 96dpi
+    LETTER_HEIGHT_PX: 1056, // 11in * 96dpi
     MIN_SCALE: 0.25,
     MAX_SCALE: 1.0,
 } as const;
@@ -183,6 +185,7 @@ export const RESUME_SECTIONS: ReadonlyArray<{ value: string; label: string; requ
     { value: 'Volunteer', label: 'Volunteer Experience' },
     { value: 'Awards', label: 'Awards' },
     { value: 'Certificates', label: 'Certificates' },
+    { value: 'Publications', label: 'Publications' },
     { value: 'Languages', label: 'Languages' },
     { value: 'Interests', label: 'Interests' },
     { value: 'References', label: 'References' },

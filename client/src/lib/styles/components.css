@@ -372,6 +372,66 @@
      * RESUME EDITOR
      * ============================================ */
 
+
+    .resume-container-wrapper {
+        @apply w-full flex justify-center overflow-hidden;
+        --page-w: 8.5in;
+        --page-h: 11in;
+        --page-pad: 0.5in;
+    }
+
+    .resume-container {
+        width: var(--page-w);
+        min-height: var(--page-h);
+        background: white;
+        color: black;
+        box-sizing: border-box;
+        padding: 0;
+
+        /* printing + preview stability */
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    @media print {
+        /* Hide your app chrome - but NOT resume headers */
+        body > header,
+        nav,
+        .sidebar,
+        .toolbar,
+        .resume-preview,
+        .nav-bar,
+        footer {
+            display: none !important;
+        }
+
+        /* Show a print-only container */
+        .print-root {
+            display: block !important;
+        }
+
+        /* Remove shadows / backgrounds used in preview */
+        .resume-container {
+            transform: none !important;
+            box-shadow: none !important;
+            margin: 0 !important;
+        }
+
+        @page {
+            size: letter; /* or A4 */
+            margin: 0;    /* because you control padding inside .resume-page */
+        }
+    }
+
+
+    .resume-preview {
+        display: grid;
+        place-items: start center;
+        overflow: auto;
+        padding: 1rem;
+        background: #f3f4f6; /* gray */
+    }
+
     /* Editor layout */
     .resume-editor-core {
         @apply flex flex-col gap-6;
@@ -407,6 +467,15 @@
     /* Two column form row */
     .form-row {
         @apply grid grid-cols-2 gap-4;
+    }
+
+    /* Utility spacing classes */
+    .space-y-3 > * + * {
+        margin-top: 0.75rem;
+    }
+
+    .space-y-5 > * + * {
+        margin-top: 1.25rem;
     }
 
     /* Form list (work experience, education items) */
@@ -581,28 +650,15 @@
             flex-direction: column;
         }
 
-        /* Comments sidebar mobile animation */
-        .comments-sidebar-mobile {
-            animation: slideInFromRight 0.3s ease-out;
+        .comments-sidebar-mobile.is-open {
+            animation: slideInFromRight 250ms ease-out forwards;
         }
 
-        @keyframes slideInFromRight {
-            from {
-                transform: translateX(100%);
-            }
-            to {
-                transform: translateX(0);
-            }
+        .comments-sidebar-mobile.is-closing {
+            animation: slideOutToRight 250ms ease-out forwards;
         }
 
-        @keyframes slideOutToRight {
-            from {
-                transform: translateX(0);
-            }
-            to {
-                transform: translateX(100%);
-            }
-        }
+
 
         /* Backdrop for mobile comments */
         .comments-backdrop {

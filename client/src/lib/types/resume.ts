@@ -72,11 +72,16 @@ export interface VolunteerType {
 export interface ProjectType {
     id: number;
     name: string;
+    description: string;
+    highlights: string[];
+    keywords: string[];
     startDate: string;
     endDate: string;
     endDateCurrent: boolean;
-    highlights: string[];
     url: string;
+    roles: string[];
+    entity: string;
+    type: string;
 }
 
 export interface CertificateType {

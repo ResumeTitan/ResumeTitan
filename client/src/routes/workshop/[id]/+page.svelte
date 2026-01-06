@@ -210,6 +210,12 @@
         alert('Version history coming soon!');
     }
 
+    function handleExport() {
+        if (!resume) return;
+        // Open print page in new tab for PDF export
+        window.open(`/print-resume/${resume._id}`, '_blank');
+    }
+
     // ============================================
     // COMMENT HANDLERS
     // ============================================
@@ -333,6 +339,7 @@
             on:togglePreview={togglePreview}
             on:toggleComments={toggleComments}
             on:share={handleShare}
+            on:export={handleExport}
             on:history={handleHistory}
             on:back={handleBack}
             on:nameChange={handleNameChange}

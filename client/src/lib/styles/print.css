@@ -27,19 +27,34 @@
 
     /* Page setup */
     @page {
-        size: A4;
+        size: letter; /* US Letter: 8.5in x 11in */
         margin: 0;
     }
 
     /* Resume container print styles */
     .resume-container {
-        width: 210mm;
-        min-height: 297mm;
+        width: 8.5in;
+        min-height: auto;
         padding: 0;
         margin: 0;
         background: white !important;
         box-shadow: none !important;
         border: none !important;
+        transform: none !important; /* Remove scaling for print */
+    }
+
+    /* Hide page break indicators when printing */
+    .page-break-indicator {
+        display: none !important;
+    }
+
+    /* Remove any wrapper transforms */
+    .resume-scale-wrapper {
+        transform: none !important;
+    }
+
+    .resume-container-wrapper {
+        overflow: visible !important;
     }
 
     /* Ensure colors print correctly */

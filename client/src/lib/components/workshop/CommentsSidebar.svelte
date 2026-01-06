@@ -6,7 +6,6 @@
      * On mobile, displays as fullscreen overlay with slide-in animation.
      */
     import { createEventDispatcher, onMount, onDestroy } from 'svelte';
-    import { fly } from 'svelte/transition';
     import type { WorkshopComment, WorkshopUser, CommentFilter } from '$types';
     import CommentThread from './CommentThread.svelte';
     import CommentInput from './CommentInput.svelte';
@@ -73,7 +72,8 @@
     <div
         class="comments-sidebar bg-white shadow-2xl"
         class:comments-sidebar-mobile={isMobile}
-        transition:fly={{ x: isMobile ? window.innerWidth : 320, duration: 300 }}
+        class:is-open={isOpen}
+        class:is-closing={!isOpen}
     >
         <!-- Header -->
         <div class="flex items-center justify-between p-4 border-b border-gray-200">
@@ -174,26 +174,10 @@
         on:keydown={e => e.key === 'Escape' && dispatch('close')}
         role="button"
         tabindex="0"
-        transition:fly={{ duration: 200 }}
     ></div>
 {/if}
 
 <style>
-    /* Mobile fullscreen overlay styles */
-    .comments-sidebar-mobile {
-        position: fixed !important;
-        top: 0 !important;
-        left: 0 !important;
-        right: 0 !important;
-        bottom: 0 !important;
-        width: 100% !important;
-        height: 100vh !important;
-        max-height: 100vh !important;
-        z-index: 50 !important;
-        border-radius: 0 !important;
-        border: none !important;
-    }
-
     .comments-backdrop {
         z-index: 45;
     }

@@ -100,6 +100,24 @@
     }
 }
 
+@keyframes slideInFromRight {
+    from {
+        transform: translateX(100%);
+    }
+    to {
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideOutToRight {
+    from {
+        transform: translateX(100%);
+    }
+    to {
+        transform: translateX(0);
+    }
+}
+
 /* Animation utility classes */
 .animate-slideUpFadeIn {
     animation: slideUpAndFadeIn 0.5s ease-out forwards;

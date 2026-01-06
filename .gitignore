@@ -1,8 +1,8 @@
 node_modules
 server/node_modules
-server/dist
 server/.env*
 server/.cache
+server/dist
 server/package-lock.json
 server/google-credentials.json
 client/node_modules
@@ -15,6 +15,5 @@ client/.env*
 tests/**/.env
 tests/**/results.json
 .vscode
-package.json
-package-lock.json
 client/.svelte-kit
+node_modules

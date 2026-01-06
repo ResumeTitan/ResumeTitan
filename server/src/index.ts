@@ -69,15 +69,28 @@ const setCacheHeaders = (req: express.Request, res: express.Response, next: expr
     next();
 };
 
+// Parse JSON requests
 app.use(express.json());
 app.use(bodyParser.raw({ type: 'application/json' }));
-app.use(helmet());
-app.use(helmet.crossOriginResourcePolicy({ policy: 'cross-origin' }));
-app.use(morgan('common'));
 // @ts-ignore
 app.use(bodyParser.json({ limit: '30mb', extended: true }));
 app.use(bodyParser.urlencoded({ limit: '30mb', extended: true }));
-app.use(cors());
+
+app.use(helmet());
+app.use(helmet.crossOriginResourcePolicy({ policy: 'cross-origin' }));
+app.use(morgan('common'));
+
+// Set up Cross Origin Resource Sharing (should only be receiving from frontend)
+const corsOptions = {
+    origin: [
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "https://resumegpt-client-dev.fly.dev",
+        "https://www.resumetitan.com",
+    ]
+}
+
+app.use(cors(corsOptions));
 
 // Apply cache headers to static assets
 app.use('/assets', setCacheHeaders, express.static(path.join(__dirname, 'public/assets')));

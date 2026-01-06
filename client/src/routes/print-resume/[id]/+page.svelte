@@ -3,16 +3,36 @@
     import { page } from '$app/stores';
     import { browser } from '$app/environment';
     import { resumeApi } from '$api';
+    import { getFontFamily } from '$utils';
     import type { ResumeType } from '$types';
-    import ResumeContainer from '$components/resume/ResumeContainer.svelte';
     import Spinner from '$components/ui/Spinner.svelte';
     import Button from '$components/ui/Button.svelte';
+
+    // Template imports
+    import ProfessionalResume from '$components/resume/templates/professional/Resume.svelte';
+    import MacchiatoResume from '$components/resume/templates/macchiato/Resume.svelte';
+    import StrattonResume from '$components/resume/templates/stratton/Resume.svelte';
+    import OnepageResume from '$components/resume/templates/onepage/Resume.svelte';
+    import StudentClassicResume from '$components/resume/templates/studentClassic/Resume.svelte';
+    import AcademicModernResume from '$components/resume/templates/academicModern/Resume.svelte';
 
     let resume: ResumeType | null = null;
     let loading = true;
     let error = '';
 
+    const templates: Record<string, typeof ProfessionalResume> = {
+        professional: ProfessionalResume,
+        harvard: ProfessionalResume,
+        macchiato: MacchiatoResume,
+        stratton: StrattonResume,
+        onepage: OnepageResume,
+        'student-classic': StudentClassicResume,
+        'academic-modern': AcademicModernResume,
+    };
+
     $: resumeId = $page.params.id || '';
+    $: CurrentTemplate = resume ? (templates[resume.theme] || ProfessionalResume) : ProfessionalResume;
+    $: fontFamily = resume ? getFontFamily(resume.font) : 'inherit';
 
     onMount(async () => {
         if (resumeId) {
@@ -40,9 +60,9 @@
         }
     }
 
-    function goBack() {
+    function closeTab() {
         if (browser) {
-            window.history.back();
+            window.close();
         }
     }
 </script>
@@ -50,10 +70,18 @@
 <svelte:head>
     <title>{resume?.basics?.name || 'Resume'} - Print</title>
     <style>
+        @page {
+            size: letter;
+            margin: 0;
+        }
+
         @media print {
-            body {
-                margin: 0;
-                padding: 0;
+            html, body {
+                margin: 0 !important;
+                padding: 0 !important;
+                width: 8.5in;
+                height: 11in;
+                overflow: visible !important;
             }
             .no-print {
                 display: none !important;
@@ -64,7 +92,7 @@
 
 <!-- Print Controls (hidden when printing) -->
 <div class="no-print fixed top-4 right-4 z-50 flex gap-2 bg-white shadow-lg rounded-lg p-2">
-    <Button variant="ghost" on:click={goBack}>Back</Button>
+    <Button variant="ghost" on:click={closeTab}>Close</Button>
     <Button variant="primary" on:click={handlePrint}>Print / Save as PDF</Button>
 </div>
 
@@ -77,17 +105,19 @@
         <p class="text-red-500">{error}</p>
     </div>
 {:else if resume}
-    <div class="print-page">
-        <ResumeContainer {resume} autoScale={false} scale={1} />
+    <div class="print-page resume-container theme-{resume.theme}" style="font-family: {fontFamily};">
+        <svelte:component this={CurrentTemplate} {resume} />
     </div>
 {/if}
 
 <style>
     .print-page {
-        width: 210mm;
-        min-height: 297mm;
+        width: 8.5in;
+        min-height: 11in;
         margin: 0 auto;
         background: white;
+        color: black;
+        box-sizing: border-box;
     }
 
     @media screen {
@@ -100,7 +130,10 @@
     @media print {
         .print-page {
             margin: 0;
+            padding: 0;
             box-shadow: none;
+            width: 100%;
+            min-height: auto;
         }
     }
 </style>

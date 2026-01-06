@@ -7,6 +7,7 @@
 @import './lib/styles/components.css';
 @import './lib/styles/animations.css';
 @import './lib/styles/print.css';
+@import './lib/styles/resume-page-breaks.css';
 
 @tailwind base;
 @tailwind components;

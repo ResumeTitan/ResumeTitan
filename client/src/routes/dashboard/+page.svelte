@@ -6,7 +6,7 @@
     import type { ResumeType, CoverLetterType, InterviewType, WorkshopType } from '$types';
     import Button from '$components/ui/Button.svelte';
     import Spinner from '$components/ui/Spinner.svelte';
-    import ResumeCard from '$components/resume/ResumeCard.svelte';
+    import ResumeContainer from '$lib/components/resume/ResumeContainer.svelte';
 
     let resumes: ResumeType[] = [];
     let coverLetters: CoverLetterType[] = [];
@@ -120,23 +120,50 @@
                 {error}
             </div>
         {:else}
-            <!-- Resumes Section -->
+            <!-- My Workshops Section -->
             <section class="dashboard-container">
                 <div class="dashboard-header flex justify-between items-center">
-                    <span>My Resumes ({resumes.length})</span>
-                    <Button size="sm" on:click={createNewResume}>+ New Resume</Button>
+                    <span>My Resumes ({ownedWorkshops.length})</span>
+                    <a href="/workshop">
+                        <Button size="sm">+ New Resume</Button>
+                    </a>
                 </div>
 
                 <div class="p-4">
-                    {#if resumes.length === 0}
-                        <div class="text-center py-12">
-                            <p class="text-gray-500 mb-4">You haven't created any resumes yet.</p>
-                            <Button on:click={createNewResume}>Create Your First Resume</Button>
+                    {#if ownedWorkshops.length === 0}
+                        <div class="text-center py-8">
+                            <p class="text-gray-500 mb-4">No workshops yet.</p>
+                            <a href="/workshop">
+                                <Button>Start Workshop</Button>
+                            </a>
                         </div>
                     {:else}
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                            {#each resumes as resume (resume._id)}
-                                <ResumeCard {resume} on:edit={e => editResume(e.detail)} on:delete={e => deleteResume(e.detail)} />
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {#each ownedWorkshops as workshop (workshop._id)}
+                                <a href="/workshop/{workshop._id}" class="block">
+                                    <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer">
+                                        <div class="flex items-start justify-between">
+                                            <h3 class="font-medium truncate flex-1">{workshop.name || 'Untitled Workshop'}</h3>
+                                            {#if workshop.shareEnabled}
+                                                <span class="ml-2 px-2 py-0.5 bg-green-100 text-green-700 text-xs rounded-full">
+                                                    Shared
+                                                </span>
+                                            {/if}
+                                        </div>
+                                        <p class="text-sm text-gray-500 mt-1">
+                                            {workshop.comments?.length || 0} comments
+                                        </p>
+                                        <p class="text-sm text-gray-400">
+                                            {workshop.participants?.length || 1} participant{workshop.participants?.length !== 1 ? 's' : ''}
+                                        </p>
+                                        <button
+                                            class="mt-2 text-xs text-red-500 hover:text-red-700"
+                                            on:click|preventDefault|stopPropagation={() => deleteWorkshop(workshop._id)}
+                                        >
+                                            Delete
+                                        </button>
+                                    </div>
+                                </a>
                             {/each}
                         </div>
                     {/if}
@@ -200,56 +227,6 @@
                                         {interview.questions?.length || 0} questions
                                     </p>
                                 </div>
-                            {/each}
-                        </div>
-                    {/if}
-                </div>
-            </section>
-
-            <!-- My Workshops Section -->
-            <section class="dashboard-container">
-                <div class="dashboard-header flex justify-between items-center">
-                    <span>My Workshops ({ownedWorkshops.length})</span>
-                    <a href="/workshop">
-                        <Button size="sm">+ New Workshop</Button>
-                    </a>
-                </div>
-
-                <div class="p-4">
-                    {#if ownedWorkshops.length === 0}
-                        <div class="text-center py-8">
-                            <p class="text-gray-500 mb-4">No workshops yet.</p>
-                            <a href="/workshop">
-                                <Button>Start Workshop</Button>
-                            </a>
-                        </div>
-                    {:else}
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                            {#each ownedWorkshops as workshop (workshop._id)}
-                                <a href="/workshop/{workshop._id}" class="block">
-                                    <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer">
-                                        <div class="flex items-start justify-between">
-                                            <h3 class="font-medium truncate flex-1">{workshop.name || 'Untitled Workshop'}</h3>
-                                            {#if workshop.shareEnabled}
-                                                <span class="ml-2 px-2 py-0.5 bg-green-100 text-green-700 text-xs rounded-full">
-                                                    Shared
-                                                </span>
-                                            {/if}
-                                        </div>
-                                        <p class="text-sm text-gray-500 mt-1">
-                                            {workshop.comments?.length || 0} comments
-                                        </p>
-                                        <p class="text-sm text-gray-400">
-                                            {workshop.participants?.length || 1} participant{workshop.participants?.length !== 1 ? 's' : ''}
-                                        </p>
-                                        <button
-                                            class="mt-2 text-xs text-red-500 hover:text-red-700"
-                                            on:click|preventDefault|stopPropagation={() => deleteWorkshop(workshop._id)}
-                                        >
-                                            Delete
-                                        </button>
-                                    </div>
-                                </a>
                             {/each}
                         </div>
                     {/if}

@@ -15,7 +15,6 @@
     import type { WorkshopUser, ResumeType } from '$types';
     import { RESUME_THEMES } from '$config';
     import Button from '$components/ui/Button.svelte';
-    import FormDropdown from '$components/forms/FormDropdown.svelte';
     import UserPresenceBar from './UserPresenceBar.svelte';
 
     export let resume: ResumeType;
@@ -144,6 +143,7 @@
 
         <!-- Right: Action Buttons -->
         <div class="actions-section flex items-center gap-2">
+            {#if mode === 'editing'}
             <Button variant="ghost" size="sm" on:click={() => dispatch('togglePreview')}>
                 <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -156,6 +156,25 @@
                 </svg>
                 <span class="btn-text">Preview</span>
             </Button>
+            {:else}
+            <Button variant="ghost" size="sm" on:click={() => dispatch('togglePreview')}>
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path 
+                        d="M21.2799 6.40005L11.7399 15.94C10.7899 16.89 7.96987 17.33 7.33987 16.7C6.70987 16.07 7.13987 13.25 8.08987 12.3L17.6399 2.75002C17.8754 2.49308 18.1605 2.28654 18.4781 2.14284C18.7956 1.99914 19.139 1.92124 19.4875 1.9139C19.8359 1.90657 20.1823 1.96991 20.5056 2.10012C20.8289 2.23033 21.1225 2.42473 21.3686 2.67153C21.6147 2.91833 21.8083 3.21243 21.9376 3.53609C22.0669 3.85976 22.1294 4.20626 22.1211 4.55471C22.1128 4.90316 22.0339 5.24635 21.8894 5.5635C21.7448 5.88065 21.5375 6.16524 21.2799 6.40005V6.40005Z" 
+                        stroke-width="2" 
+                        stroke-linecap="round" 
+                        stroke-linejoin="round"
+                    />
+                    <path 
+                        d="M11 4H6C4.93913 4 3.92178 4.42142 3.17163 5.17157C2.42149 5.92172 2 6.93913 2 8V18C2 19.0609 2.42149 20.0783 3.17163 20.8284C3.92178 21.5786 4.93913 22 6 22H17C19.21 22 20 20.2 20 18V13" 
+                        stroke-width="2" 
+                        stroke-linecap="round" 
+                        stroke-linejoin="round"
+                    />
+                </svg>
+                <span class="btn-text">Editing</span>
+            </Button>
+            {/if}
 
             <Button variant="primary" size="sm" loading={saving} on:click={() => dispatch('save')}>
                 <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -274,7 +293,6 @@
 
         .title-input {
             font-size: 0.875rem;
-            max-width: 150px;
         }
 
         .doc-icon,
@@ -292,7 +310,7 @@
         }
 
         .save-text {
-            max-width: 100px;
+            max-width: 200px;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
