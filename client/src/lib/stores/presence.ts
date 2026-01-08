@@ -21,12 +21,19 @@ function createPresenceStore() {
         subscribe,
 
         /**
-         * Set the full list of participants
+         * Set the full list of participants (with deduplication)
          */
         setParticipants(participants: WorkshopParticipant[]): void {
+            // Deduplicate by userId, keeping the last occurrence
+            const uniqueMap = new Map<string, WorkshopParticipant>();
+            participants.forEach(p => {
+                uniqueMap.set(p.userId, p);
+            });
+            const uniqueParticipants = Array.from(uniqueMap.values());
+
             update(state => ({
                 ...state,
-                participants,
+                participants: uniqueParticipants,
             }));
         },
 

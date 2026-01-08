@@ -67,7 +67,6 @@ export function setupWorkshopSockets(io: Server): void {
 
                 // Join the workshop room
                 socket.join(workshopId);
-                console.log(`User ${userId} joined workshop ${workshopId}`);
 
                 // Track this connection
                 if (!workshopConnections.has(workshopId)) {
@@ -82,10 +81,11 @@ export function setupWorkshopSockets(io: Server): void {
                     return;
                 }
 
-                // Check if user is already a participant
-                let participant = workshop.participants.find((p: any) => p.clerkId === userId);
+                // Check if user is already a participant (handle duplicates)
+                const existingParticipants = workshop.participants.filter((p: any) => p.clerkId === userId);
+                let participant;
 
-                if (!participant) {
+                if (existingParticipants.length === 0) {
                     // Add new participant
                     const initials = getInitials(userName);
                     const color = getRandomColor();
@@ -105,9 +105,22 @@ export function setupWorkshopSockets(io: Server): void {
 
                     participant = workshop.participants[workshop.participants.length - 1];
                 } else {
+                    // If there are duplicates, remove all but the first one
+                    if (existingParticipants.length > 1) {
+                        console.warn(`Found ${existingParticipants.length} duplicate participants for user ${userId} in workshop ${workshopId}`);
+                        // Keep only the first occurrence, remove duplicates
+                        const firstParticipant = existingParticipants[0];
+                        workshop.participants = workshop.participants.filter((p: any) => {
+                            return p.clerkId !== userId || p === firstParticipant;
+                        });
+                    }
+
                     // Update existing participant status
-                    participant.isOnline = true;
-                    participant.isActive = true;
+                    participant = workshop.participants.find((p: any) => p.clerkId === userId);
+                    if (participant) {
+                        participant.isOnline = true;
+                        participant.isActive = true;
+                    }
                     await workshop.save();
                 }
 

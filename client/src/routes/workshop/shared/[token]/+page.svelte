@@ -4,11 +4,13 @@
      *
      * Accessed via share token link. Allows authenticated users to view and comment on a workshop.
      */
-    import { onMount } from 'svelte';
+    import { onMount, onDestroy } from 'svelte';
     import { page } from '$app/stores';
     import { goto } from '$app/navigation';
     import { workshopApi, resumeApi } from '$api';
     import { resumeStore, isAuthenticated, authStore } from '$stores';
+    import { presenceStore } from '$lib/stores/presence';
+    import { workshopSocket } from '$lib/services/websocket';
     import type { WorkshopType, WorkshopRole, ResumeType, WorkshopUser, WorkshopComment } from '$types';
 
     import Spinner from '$components/ui/Spinner.svelte';
@@ -76,12 +78,103 @@
 
         if (shareToken) {
             await loadSharedWorkshop();
+            await setupWebSocket();
         }
+    });
+
+    onDestroy(() => {
+        // Clean up WebSocket connection when leaving the page
+        workshopSocket.leaveWorkshop();
+        presenceStore.reset();
     });
 
     // Watch for authentication changes
     $: if ($isAuthenticated && shareToken && loading && !resume && !error) {
         loadSharedWorkshop();
+    }
+
+    // ============================================
+    // WEBSOCKET SETUP
+    // ============================================
+
+    async function setupWebSocket() {
+        if (!shareToken || !workshop) {
+            return;
+        }
+
+        // Get Clerk user info
+        const { getClerk } = await import('$lib/utils/clerk.client');
+        const clerk = await getClerk();
+
+        if (!clerk?.user) {
+            console.error('No Clerk user found for WebSocket setup');
+            return;
+        }
+
+        const userId = clerk.user.id;
+        const userName = clerk.user.fullName || clerk.user.primaryEmailAddress?.emailAddress || 'Anonymous';
+        const userEmail = clerk.user.primaryEmailAddress?.emailAddress || '';
+        const userAvatar = clerk.user.imageUrl || '';
+
+        // Connect to WebSocket server
+        workshopSocket.connect();
+
+        // Join the workshop room
+        workshopSocket.joinWorkshop({
+            workshopId: workshop._id,
+            userId,
+            userName,
+            userEmail,
+            userAvatar,
+        });
+
+        // Listen for participants list
+        workshopSocket.on('participants-list', (data: { participants: any[] }) => {
+            console.log('📋 Received participants list:', data.participants);
+            presenceStore.setParticipants(data.participants);
+            presenceStore.setConnected(true);
+        });
+
+        // Listen for user joined events
+        workshopSocket.on('user-joined', (data: any) => {
+            console.log('👋 User joined:', data.userName);
+            presenceStore.userJoined({
+                userId: data.userId,
+                userName: data.userName,
+                userEmail: data.userEmail,
+                userAvatar: data.userAvatar,
+                initials: data.initials,
+                color: data.color,
+                isOnline: data.isOnline,
+                isActive: data.isActive,
+            });
+        });
+
+        // Listen for user left events
+        workshopSocket.on('user-left', (data: { userId: string }) => {
+            console.log('👋 User left:', data.userId);
+            presenceStore.userLeft(data.userId);
+        });
+
+        // Listen for user active events
+        workshopSocket.on('user-active', (data: { userId: string }) => {
+            console.log('✅ User active:', data.userId);
+            presenceStore.userActive(data.userId);
+        });
+
+        // Listen for user idle events
+        workshopSocket.on('user-idle', (data: { userId: string }) => {
+            console.log('💤 User idle:', data.userId);
+            presenceStore.userIdle(data.userId);
+        });
+
+        // Listen for errors
+        workshopSocket.on('error', (data: { message: string }) => {
+            console.error('❌ WebSocket error:', data.message);
+            error = data.message;
+        });
+
+        console.log('🔌 WebSocket setup complete for workshop:', workshop._id);
     }
 
     // ============================================
@@ -94,7 +187,14 @@
         error = '';
 
         try {
-            const result = await workshopApi.getByShareToken(shareToken, $authStore.user!.fullName || 'Anonymous', $authStore.user!.email);
+            // Get Clerk user info
+            const { getClerk } = await import('$lib/utils/clerk.client');
+            const clerk = await getClerk();
+
+            const userName = clerk?.user?.fullName || clerk?.user?.primaryEmailAddress?.emailAddress || 'Anonymous';
+            const userEmail = clerk?.user?.primaryEmailAddress?.emailAddress || '';
+
+            const result = await workshopApi.getByShareToken(shareToken, userName, userEmail);
 
             // If owner accesses via share link, redirect to main workshop page
             if (result.redirectToWorkshop && result.workshopId) {

@@ -16,14 +16,19 @@
         }
     });
 
-    // Get online participants from the store, excluding current user, sorted by active status (active first)
+    // Get all participants (online and offline), excluding current user, sorted by online status (online first)
     const participants = $derived(
         $presenceStore.participants
-            .filter(p => p.isOnline && p.userId !== currentUserId)
+            .filter(p => p.userId !== currentUserId)
             .sort((a, b) => {
-                // Active users first
-                if (a.isActive && !b.isActive) return -1;
-                if (!a.isActive && b.isActive) return 1;
+                // Online users first
+                if (a.isOnline && !b.isOnline) return -1;
+                if (!a.isOnline && b.isOnline) return 1;
+                // Among online users, active first
+                if (a.isOnline && b.isOnline) {
+                    if (a.isActive && !b.isActive) return -1;
+                    if (!a.isActive && b.isActive) return 1;
+                }
                 return 0;
             })
     );
@@ -33,7 +38,8 @@
     {#each participants as participant (participant.userId)}
         <div
             class="avatar-wrapper"
-            title="{participant.userName} ({participant.isActive ? 'Active' : 'Idle'})"
+            class:offline={!participant.isOnline}
+            title="{participant.userName} ({participant.isActive ? 'Active' : participant.isOnline ? 'Idle' : 'Offline'})"
         >
             {#if participant.userAvatar}
                 <img
@@ -51,11 +57,13 @@
                 </div>
             {/if}
 
-            <!-- Online/Active indicator -->
-            {#if participant.isActive}
-                <span class="status-dot active" title="Active"></span>
-            {:else if participant.isOnline}
-                <span class="status-dot idle" title="Idle"></span>
+            <!-- Online/Active indicator - only show if online -->
+            {#if participant.isOnline}
+                {#if participant.isActive}
+                    <span class="status-dot active" title="Active"></span>
+                {:else}
+                    <span class="status-dot idle" title="Idle"></span>
+                {/if}
             {/if}
         </div>
     {/each}
@@ -73,6 +81,12 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        opacity: 1;
+        transition: opacity 0.3s ease;
+    }
+
+    .avatar-wrapper.offline {
+        opacity: 0.4;
     }
 
     .avatar-image,
@@ -98,6 +112,10 @@
     .avatar-wrapper:hover .avatar-initials {
         transform: scale(1.1);
         z-index: 10;
+    }
+
+    .avatar-wrapper.offline:hover {
+        opacity: 0.6;
     }
 
     .status-dot {
