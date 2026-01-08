@@ -307,6 +307,12 @@ const ResumeSchema = new mongoose.Schema(
             description: 'Order of sections to show on resume',
             default: ['Basics'],
         },
+        designTokens: {
+            type: Object,
+            description: 'Template-agnostic design customization tokens',
+            required: false,
+            default: undefined,
+        },
     },
     { timestamps: true }
 );

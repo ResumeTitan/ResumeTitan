@@ -15,7 +15,7 @@
     import type { WorkshopUser, ResumeType } from '$types';
     import { RESUME_THEMES } from '$config';
     import Button from '$components/ui/Button.svelte';
-    import UserPresenceBar from './UserPresenceBar.svelte';
+    import CollaboratorAvatars from './CollaboratorAvatars.svelte';
 
     export let resume: ResumeType;
     export let workshopName = '';
@@ -91,7 +91,7 @@
             </div>
         </div>
 
-        <!-- Right: Last Saved & Users -->
+        <!-- Right: Last Saved & Collaborators -->
         <div class="header-right flex items-center gap-4">
             <span class="save-status text-sm text-gray-400 flex items-center gap-1">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -100,12 +100,12 @@
                 <span class="save-text">{formatLastSaved(lastSaved)}</span>
             </span>
 
-            <UserPresenceBar {users} />
+            <CollaboratorAvatars />
         </div>
     </div>
 
-    <!-- Row 2: Mode & Actions -->
-    <div class="header-row-2 flex items-center justify-between px-4 py-2">
+    <!-- Row 2: Mode & Actions (Sticky) -->
+    <div class="header-row-2 header-row-2-sticky flex items-center justify-between px-4 py-2">
         <!-- Left: Mode Badge & Template Selector -->
         <div class="mode-section flex items-center gap-4">
             <span
@@ -264,6 +264,15 @@
 </header>
 
 <style>
+    /* Sticky second row */
+    .header-row-2-sticky {
+        position: sticky;
+        top: 0;
+        z-index: 40;
+        background: white;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
     /* Mobile responsive styles */
     @media (max-width: 768px) {
         .header-row-1 {

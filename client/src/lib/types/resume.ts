@@ -5,6 +5,8 @@
  * Migrated from client/src/types/types.ts
  */
 
+import type { DesignTokens } from './designTokens';
+
 export interface LocationType {
     address: string;
     postalCode: string;
@@ -146,6 +148,7 @@ export interface ResumeType {
     theme: string;
     font: string;
     sections: string[];
+    designTokens?: DesignTokens; // Optional: template-agnostic customization tokens
 }
 
 export interface ResumeTypeProps {

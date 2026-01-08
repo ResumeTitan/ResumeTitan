@@ -7,6 +7,8 @@ import multer from 'multer';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import path from 'path';
+import { createServer } from 'http';
+import { Server } from 'socket.io';
 import * as Sentry from '@sentry/node';
 import authRoutes from './routes/auth';
 import resumeRoutes from './routes/resume';
@@ -16,6 +18,7 @@ import workshopRoutes from './routes/workshop';
 import speechRoutes from './routes/speech';
 import chatRoutes from './routes/chat';
 import metricsRoutes from './routes/metrics';
+import { setupWorkshopSockets } from './sockets/workshop';
 
 /* CONFIGURATIONS */
 // @ts-ignore
@@ -127,6 +130,15 @@ app.use(function onError(err: any, req: express.Request, res: express.Response, 
     res.end(`Internal Server Error: ${err.message}\n`);
 });
 
+/* SOCKET.IO SETUP */
+const httpServer = createServer(app);
+const io = new Server(httpServer, {
+    cors: corsOptions
+});
+
+// Set up workshop socket handlers
+setupWorkshopSockets(io);
+
 /* MONGOOSE SETUP */
 const HOST = process.env.HOST || 'localhost';
 const PORT = process.env.PORT || 3001;
@@ -134,9 +146,9 @@ const PORT = process.env.PORT || 3001;
 mongoose
     .connect(process.env.MONGO_URL as string)
     .then(() => {
-        const server = app.listen(PORT as number, HOST, () => {
-            const { address, port } = server.address() as any;
-            console.log(`Server is running on: http://${address}:${port}`);
+        httpServer.listen(PORT as number, HOST, () => {
+            console.log(`Server is running on: http://${HOST}:${PORT}`);
+            console.log(`WebSocket server is ready`);
         });
     })
     .catch(error => {

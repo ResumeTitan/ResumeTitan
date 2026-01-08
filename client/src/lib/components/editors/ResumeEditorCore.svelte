@@ -39,6 +39,10 @@
     import LanguageForm from './LanguageForm.svelte';
     import ReferenceForm from './ReferenceForm.svelte';
     import VolunteerForm from './VolunteerForm.svelte';
+    import DesignTokensEditor from './DesignTokensEditor.svelte';
+
+    import type { DesignTokens } from '$lib/types/designTokens';
+    import { mergeWithDefaults } from '$lib/config/designTokenDefaults';
 
     // Props
     export let resume: ResumeType;
@@ -49,6 +53,7 @@
 
     // Internal state
     let activeTab = 'action';
+    let resumeContainerElement: HTMLElement | null = null;
 
     // Editor state for modals
     let editingWork: WorkType | null = null;
@@ -474,6 +479,17 @@
         }
         dispatch('change', { field: 'sections', value: resume.sections });
     }
+
+    function handleDesignTokensChange(tokens: DesignTokens) {
+        if (readonly) return;
+        resume = { ...resume, designTokens: tokens };
+        dispatch('change', { field: 'designTokens', value: tokens });
+    }
+
+    // Initialize design tokens with defaults if not present
+    $: if (resume && !resume.designTokens) {
+        resume = { ...resume, designTokens: mergeWithDefaults(undefined) };
+    }
 </script>
 
 <div class="editor-wrapper" class:with-preview={showPreview && showEditor && previewPosition === 'right'}>
@@ -829,17 +845,17 @@
                         </div>
                     {/if}
                 {:else if currentTab === 'customize'}
-                    <!-- Font Selection -->
+                    <!-- Theme Selection -->
                     <div class="section-box">
-                        <div class="section-header">Font</div>
+                        <div class="section-header">Template</div>
                         <div class="section-content">
                             <FormDropdown
-                                id="font"
-                                label="Font Family"
-                                value={resume.font}
-                                options={[...RESUME_FONTS]}
+                                id="theme"
+                                label="Resume Theme"
+                                value={resume.theme}
+                                options={[...RESUME_THEMES]}
                                 disabled={readonly}
-                                on:change={e => handleFontChange(e.detail)}
+                                on:change={e => handleThemeChange(e.detail)}
                             />
                         </div>
                     </div>
@@ -866,6 +882,36 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- Font Selection -->
+                    <div class="section-box">
+                        <div class="section-header">Font</div>
+                        <div class="section-content">
+                            <FormDropdown
+                                id="font"
+                                label="Font Family"
+                                value={resume.font}
+                                options={[...RESUME_FONTS]}
+                                disabled={readonly}
+                                on:change={e => handleFontChange(e.detail)}
+                            />
+                        </div>
+                    </div>
+
+                    <!-- Design Tokens Editor -->
+                    <div class="section-box">
+                        <div class="section-header">Advanced Design Controls</div>
+                        <div class="section-content">
+                            {#if resume.designTokens}
+                                <DesignTokensEditor
+                                    tokens={resume.designTokens}
+                                    containerElement={resumeContainerElement}
+                                    {readonly}
+                                    on:change={e => handleDesignTokensChange(e.detail)}
+                                />
+                            {/if}
+                        </div>
+                    </div>
                 {/if}
             </Tabs>
         </div>
@@ -876,7 +922,11 @@
         <div class="preview-panel" class:full-width={!showEditor || previewPosition === 'bottom'}>
             <div class="preview-wrapper">
                 <div class="preview-box">
-                    <ResumeContainer {resume} autoScale={true} />
+                    <ResumeContainer
+                        {resume}
+                        autoScale={true}
+                        bind:containerElement={resumeContainerElement}
+                    />
                 </div>
             </div>
         </div>

@@ -43,6 +43,7 @@
         "@types/cors": "^2.8.17",
         "@types/morgan": "^1.9.9",
         "@types/multer": "^1.4.11",
+        "@types/socket.io": "^3.0.1",
         "axios": "^1.9.0",
         "bcrypt": "^5.1.0",
         "cheerio": "^1.0.0",
@@ -69,6 +70,7 @@
         "passport-google-oauth20": "2.0.0",
         "patch-package": "^6.4.7",
         "puppeteer": "^22.15.0",
+        "socket.io": "^4.8.3",
         "styled-components": "^6.1.12",
         "uuid": "^13.0.0",
         "zod": "^3.22.4"

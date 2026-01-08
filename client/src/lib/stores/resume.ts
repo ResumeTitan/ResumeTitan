@@ -20,6 +20,8 @@ import type {
     ReferenceType,
 } from '$types';
 import { DEFAULT_RESUME } from '$types';
+import type { DesignTokens } from '$lib/types/designTokens';
+import { mergeWithDefaults } from '$lib/config/designTokenDefaults';
 
 function createResumeStore() {
     const { subscribe, set, update } = writable<ResumeType>(DEFAULT_RESUME);
@@ -266,6 +268,26 @@ function createResumeStore() {
             }),
 
         /**
+         * Set design tokens (template-agnostic customization)
+         */
+        setDesignTokens: (designTokens: DesignTokens) =>
+            update(r => {
+                hasChanges.set(true);
+                return { ...r, designTokens };
+            }),
+
+        /**
+         * Update partial design tokens
+         */
+        updateDesignTokens: (updates: Partial<DesignTokens>) =>
+            update(r => {
+                hasChanges.set(true);
+                const currentTokens = mergeWithDefaults(r.designTokens);
+                const updatedTokens = mergeWithDefaults({ ...currentTokens, ...updates });
+                return { ...r, designTokens: updatedTokens };
+            }),
+
+        /**
          * Mark changes as saved
          */
         markSaved: () => hasChanges.set(false),
@@ -289,3 +311,6 @@ export const resumeVolunteer = derived(resumeStore, $resume => $resume.volunteer
 export const resumeTheme = derived(resumeStore, $resume => $resume.theme);
 export const resumeFont = derived(resumeStore, $resume => $resume.font);
 export const resumeSections = derived(resumeStore, $resume => $resume.sections);
+export const resumeDesignTokens = derived(resumeStore, $resume =>
+    mergeWithDefaults($resume.designTokens)
+);

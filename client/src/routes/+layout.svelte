@@ -9,8 +9,9 @@
     import { getClerk } from '$lib/utils/clerk.client';
     import '../app.css';
 
-    // Check if current page is a print page
+    // Check if current page is a print page or workshop page
     $: isPrintPage = $page.url.pathname.includes('/print-resume');
+    $: isWorkshopPage = $page.url.pathname.includes('/workshop/');
 
     // Get user name from store or empty
     $: userName = $authStore.user?.fullName || $authStore.user?.email || '';
@@ -93,7 +94,7 @@
 </svelte:head>
 
 <div class="min-h-screen flex flex-col">
-    {#if !isPrintPage}
+    {#if !isPrintPage && !isWorkshopPage}
         <NavBar isAuthenticated={$isAuthenticated} {userName} />
     {/if}
 
@@ -101,7 +102,7 @@
         <slot />
     </main>
 
-    {#if !isPrintPage}
+    {#if !isPrintPage && !isWorkshopPage}
         <Footer />
         <ChatBot />
     {/if}

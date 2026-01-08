@@ -3,6 +3,8 @@
     import type { ResumeType } from '$types';
     import { getFontFamily } from '$utils';
     import { RESUME_CONFIG } from '$config';
+    import { applyTokens } from '$lib/utils/applyTokens';
+    import { mergeWithDefaults } from '$lib/config/designTokenDefaults';
 
     // Template imports
     import ProfessionalResume from './templates/professional/Resume.svelte';
@@ -21,6 +23,9 @@
     let contentElement: HTMLDivElement;
     let scaleWrapperElement: HTMLDivElement;
     let calculatedScale = 1;
+
+    // Export contentElement for design tokens editor
+    export { contentElement as containerElement };
     let baseScale = 1;
     let userZoom = 1;
     let initialPinchDistance = 0;
@@ -39,6 +44,12 @@
     $: CurrentTemplate = templates[resume.theme] || ProfessionalResume;
     $: fontFamily = getFontFamily(resume.font);
     $: themeClass = `theme-${resume.theme}`;
+
+    // Apply design tokens as CSS variables
+    $: if (contentElement && resume.designTokens) {
+        const tokens = mergeWithDefaults(resume.designTokens);
+        applyTokens(contentElement, tokens);
+    }
 
     // Calculate base scale based on container width
     function calculateScale() {
