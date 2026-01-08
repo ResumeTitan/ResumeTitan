@@ -1,15 +1,16 @@
-import Clerk from '@clerk/clerk-js';
 import { browser } from '$app/environment';
 
-let clerk: Clerk | null = null;
-let clerkLoadPromise: Promise<Clerk | null> | null = null;
+type ClerkType = any;
+
+let clerk: ClerkType | null = null;
+let clerkLoadPromise: Promise<ClerkType | null> | null = null;
 let lastError: string | null = null;
 
 export function getLastClerkError(): string | null {
     return lastError;
 }
 
-export async function getClerk(): Promise<Clerk | null> {
+export async function getClerk(): Promise<ClerkType | null> {
     if (!browser) {
         lastError = 'Not in browser environment';
         return null;
@@ -31,6 +32,9 @@ export async function getClerk(): Promise<Clerk | null> {
                 console.error(lastError);
                 return null;
             }
+
+            console.log('Clerk init: Importing Clerk...');
+            const { Clerk } = await import('@clerk/clerk-js');
 
             console.log('Clerk init: Creating Clerk instance...');
             const clerkInstance = new Clerk(publishableKey);

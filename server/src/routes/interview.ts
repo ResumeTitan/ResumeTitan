@@ -40,7 +40,7 @@ import {
     updateInterview,
     deleteInterview,
     analyzeInterview,
-} from '../controllers/interview';
+} from '../controllers/interview.js';
 import verifyToken from '../middleware/auth';
 
 const router = express.Router();

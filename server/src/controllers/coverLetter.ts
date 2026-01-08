@@ -5,7 +5,6 @@ import CoverLetter from '../models/CoverLetter';
 import Resume from '../models/Resume';
 import { ResumeType } from '../types/types';
 import { callPythonScraper, isPythonAvailable } from '../utils/pythonScraper';
-import axios from 'axios';
 import Metric from '../models/Metric';
 
 const coverLetterSchema = z.object({
