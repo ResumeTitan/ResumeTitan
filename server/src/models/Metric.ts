@@ -17,7 +17,7 @@ const MetricSchema = new mongoose.Schema<Metric>({
     title: { type: String, required: true },
     icon: { type: String },
     description: { type: String },
-    lastUpdated: { type: Date, default: Date.now }
+    lastUpdated: { type: Date, default: Date.now },
 });
 
 // Create the model

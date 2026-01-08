@@ -1,0 +1,686 @@
+/**
+ * Component Styles
+ *
+ * Tailwind @apply-based component classes for reusable styling.
+ * Organized by component type for easy maintenance.
+ */
+
+@layer components {
+    /* ============================================
+     * BUTTONS
+     * ============================================ */
+
+    /* Primary action button - main CTA */
+    .btn-primary {
+        @apply border-2 rounded-lg font-medium text-lg px-5 py-2.5 m-1 text-center bg-white text-teal-800 border-black hover:bg-teal-800 hover:text-white hover:cursor-pointer transition ease-in-out duration-300;
+    }
+
+    .btn-primary:disabled {
+        @apply bg-gray-300 text-gray-500 cursor-not-allowed border-gray-400;
+    }
+
+    /* Secondary action button - destructive/cancel */
+    .btn-secondary {
+        @apply border-2 rounded-lg font-medium text-lg px-5 py-2.5 m-1 text-center bg-white text-red-700 border-red-500 hover:bg-red-600 hover:text-white hover:border-red-600 transition duration-300 ease-in-out;
+    }
+
+    .btn-secondary:disabled {
+        @apply bg-gray-300 text-gray-500 cursor-not-allowed border-gray-400;
+    }
+
+    /* Add button - for adding new items */
+    .btn-add {
+        @apply border-2 rounded-lg font-medium text-sm lg:text-xl px-5 py-2.5 m-1 text-black text-center border-black hover:bg-teal-800 hover:text-white hover:cursor-pointer transition ease-in-out duration-200;
+    }
+
+    .btn-add-small {
+        @apply border-2 border-black text-black text-center font-medium rounded-lg text-xl px-5 py-2.5 m-1 hover:bg-teal-800 hover:text-white hover:cursor-pointer transition ease-in-out duration-200;
+    }
+
+    /* Save button */
+    .btn-save {
+        @apply border-2 rounded-lg font-medium text-lg px-5 py-2.5 m-1 text-center bg-white text-teal-800 border-black hover:bg-teal-800 hover:text-white hover:cursor-pointer transition ease-in-out duration-300;
+    }
+
+    .btn-save:disabled {
+        @apply bg-gray-300 text-gray-500 cursor-not-allowed border-gray-400;
+    }
+
+    /* Remove button - for deleting items */
+    .btn-remove {
+        @apply text-black border-2 border-black text-center font-medium rounded-lg text-xl px-5 py-2.5 m-1 hover:bg-red-800 hover:text-white hover:cursor-pointer transition ease-in-out duration-300;
+    }
+
+    /* Remove content button - inline delete */
+    .btn-remove-content {
+        @apply inline-block align-middle text-red-800 text-center font-bold rounded-lg text-lg bg-white p-2 border-2 border-red-800 hover:bg-red-800 hover:text-white hover:cursor-pointer transition ease-in-out duration-300;
+    }
+
+    /* Green button - general purpose */
+    .btn-green {
+        @apply text-white text-center font-medium rounded-lg text-xs sm:text-base font-bold py-1 px-4 border-2 border-black text-black mx-1 hover:bg-teal-800 hover:cursor-pointer hover:border-main-green hover:text-white transition ease-in-out duration-300;
+    }
+
+    /* Submit button */
+    .btn-submit {
+        @apply bg-gray-200 text-black text-center font-medium rounded-lg text-sm sm:text-lg md:text-xl border-2 hover:bg-light-green hover:cursor-pointer transition ease-in-out duration-300;
+    }
+
+    /* Generate button - AI generation */
+    .btn-generate {
+        @apply bg-white text-lighter-green text-center font-medium rounded-lg text-lg w-full px-5 py-3 m-1 hover:bg-lighter-green hover:cursor-pointer hover:text-white border-4 border-black transition ease-in-out duration-300;
+    }
+
+    /* Interview button */
+    .btn-interview {
+        @apply text-black text-center border-2 border-black font-medium rounded-lg text-sm px-5 py-2.5 m-1 hover:bg-lighter-green hover:cursor-pointer transition ease-in-out duration-200;
+    }
+
+    /* Action button */
+    .btn-action {
+        @apply bg-main-green p-4 font-bold leading-none rounded text-white border hover:border-transparent hover:bg-gray-200 hover:text-teal-800 hover:border-black items-center transition duration-300 ease-in-out;
+    }
+
+    /* Login button */
+    .btn-login {
+        @apply p-2 font-bold leading-none border border-4 rounded text-white border-white hover:border-transparent hover:bg-white hover:text-teal-800 items-center transition duration-300 ease-in-out;
+    }
+
+    /* Disabled button state */
+    .btn-disabled {
+        @apply text-slate-400 border-2 border-slate-400 text-center font-medium rounded-lg text-xl px-5 py-2.5 m-1;
+    }
+
+    /* NavBar button */
+    .nav-btn {
+        min-width: 140px;
+        height: 48px;
+        padding: 0 24px;
+        @apply flex items-center justify-center whitespace-nowrap;
+    }
+
+    /* ============================================
+     * FORMS
+     * ============================================ */
+
+    /* Form section container */
+    .form-section {
+        @apply rounded-lg border border-black border-2 px-4 bg-main-green w-full text-white;
+    }
+
+    /* Form input style */
+    .form-style {
+        @apply border border-black text-base rounded-lg block w-full p-2.5 bg-gray-100 text-black;
+    }
+
+    .form-style:disabled {
+        @apply bg-gray-200 text-black cursor-not-allowed opacity-70;
+    }
+
+    /* Form main header text */
+    .form-text-main {
+        @apply bg-main-green text-white font-bold border-b-2 border-black rounded-t p-4 text-2xl;
+    }
+
+    /* Form secondary clickable area */
+    .form-secondary-area {
+        @apply p-4 border-b border-black bg-white text-black hover:cursor-pointer hover:bg-gray-300 transition ease-in-out duration-300;
+    }
+
+    /* Form single header with hover */
+    .form-single-header {
+        @apply bg-main-green text-white font-bold border-b-2 border-black rounded-t p-4 text-2xl hover:bg-darker-green hover:cursor-pointer transition ease-in-out duration-300;
+    }
+
+    /* Form container */
+    .form-container {
+        @apply border border-black border-2 rounded-lg w-full my-4 bg-white;
+    }
+
+    /* Form label text */
+    .form-label-text {
+        @apply text-lg lg:text-2xl font-medium text-black;
+    }
+
+    /* ============================================
+     * TABS (New Clean Style)
+     * ============================================ */
+
+    /* Tabs container */
+    .tabs-container {
+        @apply w-full;
+    }
+
+    /* Tabs list */
+    .tabs-list {
+        @apply flex relative;
+    }
+
+    /* Tabs underline variant */
+    .tabs-underline {
+        @apply bg-transparent border-b-2 border-gray-200;
+    }
+
+    /* Tabs pills variant */
+    .tabs-pills {
+        @apply bg-gray-100 rounded-lg p-1 gap-1;
+    }
+
+    /* Tab button */
+    .tab-btn {
+        @apply flex-1 py-3 px-6 text-base font-semibold text-black border-none cursor-pointer transition-all duration-200 relative;
+    }
+
+    .tabs-underline .tab-btn {
+        @apply py-3 px-8 rounded-none;
+    }
+
+    .tabs-pills .tab-btn {
+        @apply rounded-md;
+    }
+
+    .tab-btn:hover:not(.tab-btn-disabled) {
+        @apply text-main-green;
+    }
+
+    .tab-btn-active {
+        @apply text-main-green;
+    }
+
+    .tabs-pills .tab-btn-active {
+        @apply bg-white shadow-sm;
+    }
+
+    .tab-btn-disabled {
+        @apply opacity-50 cursor-not-allowed;
+    }
+
+    /* Animated underline indicator */
+    .tab-indicator {
+        @apply absolute bottom-0 left-0 h-0.5 bg-main-green rounded-t;
+        transition:
+            transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+            width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Tab content area */
+    .tabs-content {
+        @apply mt-6;
+    }
+
+    /* Legacy tab styles (kept for backwards compatibility) */
+    .tab-text-base {
+        @apply text-xs lg:text-xl font-bold uppercase px-5 py-3 shadow-lg rounded block leading-normal;
+    }
+
+    .tab-active {
+        @apply text-white bg-teal-600;
+    }
+
+    .tab-inactive {
+        @apply text-teal-600 bg-white;
+    }
+
+    .tab-ul {
+        @apply flex mb-0 list-none flex-wrap pt-3 pb-4 flex-row;
+    }
+
+    .tab-li {
+        @apply -mb-px mr-2 last:mr-0 flex-auto text-center;
+    }
+
+    /* ============================================
+     * PAGE LAYOUT
+     * ============================================ */
+
+    /* Main page container */
+    .page-container {
+        @apply flex justify-center min-h-screen bg-white;
+    }
+
+    /* Page header */
+    .page-header {
+        @apply px-2 pt-4 md:px-4 lg:px-8 w-full flex flex-col;
+    }
+
+    /* Flex center utility */
+    .flex-center {
+        @apply flex justify-between items-center;
+    }
+
+    /* Left-right spacing */
+    .left-right-spacing {
+        @apply flex justify-between;
+    }
+
+    /* ============================================
+     * DASHBOARD
+     * ============================================ */
+
+    /* Dashboard container */
+    .dashboard-container {
+        @apply m-4 pb-2 border-4 rounded-lg border-black bg-white;
+    }
+
+    /* Dashboard header */
+    .dashboard-header {
+        @apply text-3xl font-bold text-white bg-main-green px-6 py-4;
+    }
+
+    /* Dashboard button */
+    .dashboard-button {
+        @apply mx-4 mt-2 rounded-lg bg-darker-green hover:bg-light-green text-white font-bold py-2 px-4 transition ease-in-out duration-300;
+    }
+
+    /* Dashboard button locked state */
+    .dashboard-button-locked {
+        @apply mx-4 mt-2 rounded-lg bg-gray-300 text-gray-800 font-bold py-2 px-4 cursor-not-allowed opacity-50 relative;
+    }
+
+    /* Dashboard edit button (overlay) */
+    .dashboard-edit-button {
+        @apply hover:cursor-pointer absolute bg-dark-green text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition ease-in-out duration-300;
+    }
+
+    /* Dashboard delete button (overlay) */
+    .dashboard-delete-button {
+        @apply hover:cursor-pointer absolute bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition ease-in-out duration-300;
+    }
+
+    /* ============================================
+     * COVER LETTER
+     * ============================================ */
+
+    /* Cover letter main container */
+    .cover-letter-container {
+        @apply flex justify-center bg-white rounded-lg w-full my-4 bg-white;
+    }
+
+    /* Left section (form) */
+    .left-section {
+        @apply w-full md:w-1/2 mx-4;
+    }
+
+    /* Right section (preview) */
+    .right-section {
+        @apply hidden md:flex sm:w-1/2 mx-4;
+    }
+
+    /* ============================================
+     * MODALS & OVERLAYS
+     * ============================================ */
+
+    /* Layover/modal background */
+    .layover-container {
+        @apply fixed top-0 left-0 w-full h-full flex justify-center items-center bg-black bg-opacity-50 z-10 p-4;
+    }
+
+    /* Pricing popup */
+    .pricing-popup {
+        @apply fixed top-0 left-0 w-full h-full flex justify-center items-center bg-black bg-opacity-50 z-10 p-4;
+    }
+
+    /* Popup content */
+    .popup-content {
+        max-height: 80vh;
+        overflow-y: auto;
+    }
+
+    /* Close button alignment */
+    .close {
+        margin-left: auto;
+    }
+
+    /* ============================================
+     * UTILITIES
+     * ============================================ */
+
+    /* Hide scrollbar */
+    .hide-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    .hide-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+
+    /* Hidden element */
+    .hidden {
+        display: none;
+    }
+
+    /* Section divider line */
+    .section-line {
+        border-width: 1px;
+        border-color: #000000;
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+
+    /* Phone screen stack layout */
+    .phone-screen-stack {
+        @apply flex flex-row items-center align-middle;
+    }
+
+    /* Red button variant */
+    .red-button {
+        @apply text-white text-center font-medium rounded-lg text-sm hover:bg-red-800;
+    }
+
+    /* ============================================
+     * RESUME EDITOR
+     * ============================================ */
+
+
+    .resume-container-wrapper {
+        @apply w-full flex justify-center overflow-hidden;
+        --page-w: 8.5in;
+        --page-h: 11in;
+        --page-pad: 0.5in;
+    }
+
+    .resume-container {
+        width: var(--page-w);
+        min-height: var(--page-h);
+        background: white;
+        color: black;
+        box-sizing: border-box;
+        padding: 0;
+
+        /* printing + preview stability */
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    @media print {
+        /* Hide your app chrome - but NOT resume headers */
+        body > header,
+        nav,
+        .sidebar,
+        .toolbar,
+        .resume-preview,
+        .nav-bar,
+        footer {
+            display: none !important;
+        }
+
+        /* Show a print-only container */
+        .print-root {
+            display: block !important;
+        }
+
+        /* Remove shadows / backgrounds used in preview */
+        .resume-container {
+            transform: none !important;
+            box-shadow: none !important;
+            margin: 0 !important;
+        }
+
+        @page {
+            size: letter; /* or A4 */
+            margin: 0;    /* because you control padding inside .resume-page */
+        }
+    }
+
+
+    .resume-preview {
+        display: grid;
+        place-items: start center;
+        overflow: auto;
+        padding: 1rem;
+        background: #f3f4f6; /* gray */
+    }
+
+    /* Editor layout */
+    .resume-editor-core {
+        @apply flex flex-col gap-6;
+    }
+
+    .resume-editor-core.editor-with-preview {
+        @apply flex-row;
+    }
+
+    .editor-panel {
+        @apply flex-1;
+        min-width: 0;
+    }
+
+    .editor-with-preview .editor-panel {
+        @apply w-1/2;
+    }
+
+    /* Form content area - the white area under green headers */
+    .form-content {
+        @apply p-6 bg-white;
+    }
+
+    /* Form field spacing */
+    .form-field {
+        @apply mb-5;
+    }
+
+    .form-field:last-child {
+        @apply mb-0;
+    }
+
+    /* Two column form row */
+    .form-row {
+        @apply grid grid-cols-2 gap-4;
+    }
+
+    /* Utility spacing classes */
+    .space-y-3 > * + * {
+        margin-top: 0.75rem;
+    }
+
+    .space-y-5 > * + * {
+        margin-top: 1.25rem;
+    }
+
+    /* Form list (work experience, education items) */
+    .form-list {
+        @apply bg-white;
+    }
+
+    /* Header with action button */
+    .form-header-with-button {
+        @apply flex justify-between items-center;
+    }
+
+    /* Add button in header */
+    .btn-add-header {
+        @apply bg-transparent text-white border-2 border-white py-1.5 px-4 rounded-lg font-semibold text-sm cursor-pointer transition-all duration-200;
+    }
+
+    .btn-add-header:hover {
+        @apply bg-white text-main-green;
+    }
+
+    /* Checkbox list */
+    .checkbox-list {
+        @apply flex flex-col gap-3;
+    }
+
+    .checkbox-item {
+        @apply flex items-center gap-2 cursor-pointer text-base;
+    }
+
+    .checkbox-input {
+        @apply w-5 h-5 cursor-pointer;
+        accent-color: #115e59;
+    }
+
+    /* Preview panel */
+    .preview-panel {
+        @apply w-1/2 sticky top-4 self-start;
+    }
+
+    .preview-panel.preview-full {
+        @apply w-full static;
+    }
+
+    .preview-container {
+        @apply bg-gray-100 rounded-lg p-4 overflow-hidden;
+    }
+
+    .preview-title {
+        @apply text-lg font-medium mb-4 text-gray-700;
+    }
+
+    .preview-content {
+        @apply bg-white shadow-lg rounded overflow-hidden;
+    }
+
+    /* ============================================
+     * WORKSHOP LAYOUT
+     * ============================================ */
+
+    /* Workshop page container */
+    .workshop-page {
+        @apply min-h-screen bg-gray-50;
+    }
+
+    /* Workshop content area */
+    .workshop-content {
+        @apply p-4;
+    }
+
+    /* Workshop flex layout */
+    .workshop-layout {
+        @apply flex gap-6;
+        max-width: 100%;
+    }
+
+    /* Editor section in workshop */
+    .editor-section {
+        @apply flex-1;
+        min-width: 0;
+    }
+
+    /* Comments section - snaps to right */
+    .comments-section {
+        @apply flex-shrink-0 sticky top-6 self-start;
+        width: 300px;
+        max-height: calc(100vh - 6rem);
+        overflow: hidden;
+    }
+
+    /* Comments sidebar anchored variant - snaps to right edge */
+    .comments-sidebar {
+        @apply bg-white border-l-2 border-t-2 border-b-2 border-gray-200 fixed right-0 w-80 flex flex-col;
+        height: calc(100vh - 4rem);
+        border-top-left-radius: 0.5rem;
+        border-bottom-left-radius: 0.5rem;
+    }
+
+    .comments-sidebar > div:last-child {
+        flex: 1;
+        overflow-y: auto;
+    }
+
+    /* Responsive workshop layout */
+    @media (max-width: 1024px) {
+        .workshop-layout {
+            @apply flex-col;
+        }
+
+        .comments-section {
+            @apply w-full static;
+            max-height: none;
+        }
+
+        .comments-sidebar {
+            @apply border-2 rounded-lg;
+            height: auto;
+            max-height: 500px;
+        }
+
+        .resume-editor-core.editor-with-preview {
+            @apply flex-col;
+        }
+
+        .editor-with-preview .editor-panel,
+        .preview-panel {
+            @apply w-full;
+        }
+
+        .preview-panel {
+            @apply static;
+        }
+    }
+
+    /* Mobile workshop styles */
+    @media (max-width: 768px) {
+        .workshop-page {
+            @apply overflow-x-hidden;
+        }
+
+        .workshop-content {
+            @apply p-2;
+        }
+
+        .workshop-flex {
+            @apply flex-col gap-2;
+        }
+
+        .workshop-editor {
+            @apply w-full;
+        }
+
+        /* Hide comments section on mobile - shown as overlay instead */
+        .comments-section {
+            @apply hidden;
+        }
+
+        /* Mobile comments overlay - slides in from right */
+        .comments-sidebar {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            max-height: 100vh;
+            z-index: 50;
+            border-radius: 0;
+            border: none;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .comments-sidebar-mobile.is-open {
+            animation: slideInFromRight 250ms ease-out forwards;
+        }
+
+        .comments-sidebar-mobile.is-closing {
+            animation: slideOutToRight 250ms ease-out forwards;
+        }
+
+
+
+        /* Backdrop for mobile comments */
+        .comments-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 45;
+        }
+
+        /* Workshop header mobile adjustments */
+        .workshop-header {
+            @apply sticky top-0 z-30 bg-white;
+        }
+    }
+
+    /* Extra small mobile */
+    @media (max-width: 480px) {
+        .workshop-content {
+            @apply p-1;
+        }
+    }
+}

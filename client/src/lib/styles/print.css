@@ -1,0 +1,147 @@
+/**
+ * Print Styles
+ *
+ * Styles applied when printing resumes and other documents.
+ */
+
+@media print {
+    /* Hide non-printable elements */
+    .no-print,
+    .chat-bot-button,
+    nav,
+    footer,
+    .nav-bar,
+    .chatbot {
+        display: none !important;
+    }
+
+    /* Reset body for printing */
+    body {
+        margin: 0;
+        padding: 0;
+        background: white !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+    }
+
+    /* Page setup */
+    @page {
+        size: letter; /* US Letter: 8.5in x 11in */
+        margin: 0;
+    }
+
+    /* Resume container print styles */
+    .resume-container {
+        width: 8.5in;
+        min-height: auto;
+        padding: 0;
+        margin: 0;
+        background: white !important;
+        box-shadow: none !important;
+        border: none !important;
+        transform: none !important; /* Remove scaling for print */
+    }
+
+    /* Hide page break indicators when printing */
+    .page-break-indicator {
+        display: none !important;
+    }
+
+    /* Remove any wrapper transforms */
+    .resume-scale-wrapper {
+        transform: none !important;
+    }
+
+    .resume-container-wrapper {
+        overflow: visible !important;
+    }
+
+    /* Ensure colors print correctly */
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+    }
+
+    /* Prevent page breaks inside elements */
+    .print-no-break {
+        page-break-inside: avoid;
+        break-inside: avoid;
+    }
+
+    /* Force page break before element */
+    .print-break-before {
+        page-break-before: always;
+        break-before: page;
+    }
+
+    /* Force page break after element */
+    .print-break-after {
+        page-break-after: always;
+        break-after: page;
+    }
+
+    /* Hide scrollbars when printing */
+    ::-webkit-scrollbar {
+        display: none;
+    }
+
+    /* Links should show URL in print */
+    a[href]:after {
+        content: none;
+    }
+}
+
+/* Print-specific interview styles */
+@media print {
+    .printable-interview {
+        font-size: 11pt;
+        line-height: 1.4;
+    }
+
+    .printable-interview h1 {
+        font-size: 20pt;
+        margin-bottom: 0.5in;
+    }
+
+    .printable-interview h2 {
+        font-size: 16pt;
+        margin-top: 0.25in;
+        margin-bottom: 0.1in;
+    }
+
+    .printable-interview h3 {
+        font-size: 13pt;
+        margin-top: 0.15in;
+        margin-bottom: 0.05in;
+    }
+
+    .printable-interview p {
+        margin-bottom: 0.1in;
+    }
+
+    @page {
+        margin: 0.75in;
+    }
+
+    /* Preserve colors for interview sections */
+    .printable-interview .text-blue-600 {
+        color: #2563eb !important;
+    }
+
+    .printable-interview .text-green-600 {
+        color: #16a34a !important;
+    }
+
+    .printable-interview .text-teal-600 {
+        color: #0d9488 !important;
+    }
+}
+
+/* Screen-only styles (hidden when printing) */
+@media screen {
+    .print-only {
+        display: none !important;
+    }
+}

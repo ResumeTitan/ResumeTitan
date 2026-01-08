@@ -1,38 +1,54 @@
-# Adjust NODE_VERSION as desired
-ARG NODE_VERSION=21.6.2
-FROM node:${NODE_VERSION}-slim as base
+# Build stage
+FROM node:24-alpine AS builder
 
-LABEL fly_launch_runtime="Node.js"
-
-# Node.js app lives here
 WORKDIR /app
 
-# Throw-away build stage to reduce size of final image
-FROM base as build
+# Build arguments for Vite environment variables (these are baked in at build time)
+ARG VITE_CLERK_PUBLISHABLE_KEY
+ARG VITE_API_URL
 
-# Install packages needed to build node modules
-RUN apt-get update -qq && \
-    apt-get install -y python-is-python3 pkg-config build-essential 
+# Set as environment variables so Vite can access them during build
+ENV VITE_CLERK_PUBLISHABLE_KEY=$VITE_CLERK_PUBLISHABLE_KEY
+ENV VITE_API_URL=$VITE_API_URL
 
-# Install node modules
-COPY --link package.json ./
-RUN npm install
+# Copy package files
+COPY package*.json ./
 
-# Copy application code
-COPY --link . .
+# Install dependencies
+RUN npm ci
 
-# Set production environment
-ENV NODE_ENV=production
+# Copy source code
+COPY . .
 
-# Build application
-RUN npx env-cmd -f .env.${NODE_ENV} npm run build
+# Build the application
+RUN npm run build
 
-# Final stage for app image
-FROM base
+# Production stage
+FROM node:20-alpine AS production
 
-# Copy built application
-COPY --from=build /app /app
+WORKDIR /app
 
-# Start the server by default, this can be overwritten at runtime
+# Create non-root user for security
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S sveltekit -u 1001
+
+# Copy built application from builder
+COPY --from=builder --chown=sveltekit:nodejs /app/build ./build
+COPY --from=builder --chown=sveltekit:nodejs /app/package*.json ./
+
+# Install only production dependencies
+RUN npm ci --omit=dev && npm cache clean --force
+
+# Switch to non-root user
+USER sveltekit
+
+# Expose port
 EXPOSE 3000
-CMD [ "npm", "run", "start:prod" ]
+
+# Set environment variables
+ENV NODE_ENV=production
+ENV PORT=3000
+ENV HOST=0.0.0.0
+
+# Start the application
+CMD ["node", "build"]

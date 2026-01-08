@@ -1,3 +1,52 @@
+/**
+ * Chat Routes
+ *
+ * AI chatbot endpoint for ResumeTitan assistant.
+ * Uses Gemini with documentation context to answer user questions.
+ *
+ * @openapi
+ * /chat:
+ *   post:
+ *     summary: Chat with ResumeTitan assistant
+ *     description: |
+ *       AI-powered chatbot that answers questions about ResumeTitan features.
+ *       Uses Gemini with documentation context. Rate limited and cached.
+ *     tags: [Chat]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - message
+ *             properties:
+ *               message:
+ *                 type: string
+ *                 description: User's question or message
+ *     responses:
+ *       200:
+ *         description: AI response
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 response:
+ *                   type: string
+ *                   description: Markdown-formatted response
+ *       400:
+ *         description: Message is required
+ *       401:
+ *         description: Not authenticated
+ *       429:
+ *         description: Rate limit exceeded
+ *       500:
+ *         description: AI processing failed
+ */
+
 import express from 'express';
 import { geminiClient } from '../ext/clients';
 import { cacheMiddleware } from '../middleware/cache';
@@ -16,64 +65,66 @@ let docsCache: { [filename: string]: string } = {};
 let docsSummary = '';
 
 function loadDocs() {
-  const files = fs.readdirSync(DOCS_DIR).filter(f => f.endsWith('.md'));
-  docsCache = {};
-  let summaryLines: string[] = [];
-  for (const file of files) {
-    const content = fs.readFileSync(path.join(DOCS_DIR, file), 'utf8');
-    docsCache[file] = content;
-    // Use first heading as topic summary
-    const firstHeading = content.match(/^#\s+(.+)$/m);
-    summaryLines.push(`- ${firstHeading ? firstHeading[1] : file.replace('.md','')}`);
-  }
-  docsSummary = summaryLines.join('\n');
+    const files = fs.readdirSync(DOCS_DIR).filter(f => f.endsWith('.md'));
+    docsCache = {};
+    let summaryLines: string[] = [];
+    for (const file of files) {
+        const content = fs.readFileSync(path.join(DOCS_DIR, file), 'utf8');
+        docsCache[file] = content;
+        // Use first heading as topic summary
+        const firstHeading = content.match(/^#\s+(.+)$/m);
+        summaryLines.push(`- ${firstHeading ? firstHeading[1] : file.replace('.md', '')}`);
+    }
+    docsSummary = summaryLines.join('\n');
 }
 
 // Load docs on server start
 loadDocs();
 
 // Discord webhook URL
-const DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/1380697490973659236/hTdMb8iO5Ge4fov_rYKhjBcs_YsHGBAbqvegR1faRqf-MfWOZhDg-v586kaRaq5Etsi0';
+const DISCORD_WEBHOOK_URL =
+    'https://discord.com/api/webhooks/1380697490973659236/hTdMb8iO5Ge4fov_rYKhjBcs_YsHGBAbqvegR1faRqf-MfWOZhDg-v586kaRaq5Etsi0';
 
 // Function to send message to Discord
 async function sendToDiscord(content: string, isUser: boolean) {
-  try {
-    await axios.post(DISCORD_WEBHOOK_URL, {
-      content: `**${isUser ? 'User' : 'Bot'}**: ${content}`,
-      username: isUser ? 'User Message' : 'ResumeTitan Bot'
-    });
-  } catch (error) {
-    console.error('Error sending to Discord:', error);
-  }
+    try {
+        await axios.post(DISCORD_WEBHOOK_URL, {
+            content: `**${isUser ? 'User' : 'Bot'}**: ${content}`,
+            username: isUser ? 'User Message' : 'ResumeTitan Bot',
+        });
+    } catch (error) {
+        console.error('Error sending to Discord:', error);
+    }
 }
 
 // Chat endpoint
-router.post('/', 
-  verifyToken,
-  chatRateLimiter,
-  timeout(12),
-  cacheMiddleware(3600), // Cache responses for 1 hour
-  async (req, res) => {
-    try {
-      const { message } = req.body;
-      
-      if (!message) {
-        return res.status(400).json({ error: 'Message is required' });
-      }
+router.post(
+    '/',
+    verifyToken,
+    chatRateLimiter,
+    timeout(12),
+    cacheMiddleware(3600), // Cache responses for 1 hour
+    async (req, res) => {
+        try {
+            const { message } = req.body;
 
-      // Send user message to Discord
-      await sendToDiscord(message, true);
+            if (!message) {
+                return res.status(400).json({ error: 'Message is required' });
+            }
 
-      // Try to find relevant docs for the user message
-      let relevantDocs = '';
-      for (const [filename, content] of Object.entries(docsCache)) {
-        const topic = filename.replace('.md','').toLowerCase();
-        if (message.toLowerCase().includes(topic)) {
-          relevantDocs += `\n\n[${topic} guide]\n` + content.substring(0, 2000); // Limit to 2000 chars per doc
-        }
-      }
+            // Send user message to Discord
+            await sendToDiscord(message, true);
 
-      const systemPrompt = `You are the ResumeTitan Assistant, a helpful guide for the ResumeTitan application. Your role is to:
+            // Try to find relevant docs for the user message
+            let relevantDocs = '';
+            for (const [filename, content] of Object.entries(docsCache)) {
+                const topic = filename.replace('.md', '').toLowerCase();
+                if (message.toLowerCase().includes(topic)) {
+                    relevantDocs += `\n\n[${topic} guide]\n` + content.substring(0, 2000); // Limit to 2000 chars per doc
+                }
+            }
+
+            const systemPrompt = `You are the ResumeTitan Assistant, a helpful guide for the ResumeTitan application. Your role is to:
 1. Help users understand and use ResumeTitan's features
 2. Guide users through creating and managing their resumes
 3. Explain how to use the resume builder, interview preparation, and cover letter features
@@ -151,19 +202,19 @@ For detailed tips and strategies, see our [Interview Prep Guide](/docs/interview
 
 User question: ${message}`;
 
-      const result = await geminiClient.generateContent(systemPrompt);
-      const response = await result.response;
-      const text = response.text();
+            const result = await geminiClient.generateContent(systemPrompt);
+            const response = await result.response;
+            const text = response.text();
 
-      // Send bot response to Discord
-      await sendToDiscord(text, false);
+            // Send bot response to Discord
+            await sendToDiscord(text, false);
 
-      res.json({ response: text });
-    } catch (error) {
-      console.error('Chat error:', error);
-      res.status(500).json({ error: 'Failed to process chat message' });
+            res.json({ response: text });
+        } catch (error) {
+            console.error('Chat error:', error);
+            res.status(500).json({ error: 'Failed to process chat message' });
+        }
     }
-  }
 );
 
 export default router;

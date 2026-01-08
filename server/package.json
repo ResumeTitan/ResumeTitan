@@ -1,6 +1,6 @@
 {
     "name": "server",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "private": true,
     "main": "dist/index.js",
     "scripts": {
@@ -8,8 +8,8 @@
         "test": "echo \"Error: no test specified\" && exit 1",
         "start": "npx tsx src/index.ts",
         "start:prod": "node dist/index.js",
-        "deploy:dev": "flyctl deploy -c fly-dev.toml",
-        "deploy:prod": "flyctl deploy -c fly.toml",
+        "deploy:dev": "flyctl deploy -c fly-dev.toml --remote-only",
+        "deploy:prod": "flyctl deploy -c fly.toml --remote-only",
         "clean": "rm -rf node_modules && rm package-lock.json",
         "clean:install": "rm -rf node_modules && rm package-lock.json && npm install",
         "setup:python": "cd scraper && python3 -m pip install -r requirements.txt",
@@ -25,7 +25,7 @@
         }
     },
     "engines": {
-        "node": "^21.6.2"
+        "node": "24.12.0"
     },
     "dependencies": {
         "@clerk/backend": "^1.13.9",
@@ -43,6 +43,7 @@
         "@types/cors": "^2.8.17",
         "@types/morgan": "^1.9.9",
         "@types/multer": "^1.4.11",
+        "@types/socket.io": "^3.0.1",
         "axios": "^1.9.0",
         "bcrypt": "^5.1.0",
         "cheerio": "^1.0.0",
@@ -69,7 +70,9 @@
         "passport-google-oauth20": "2.0.0",
         "patch-package": "^6.4.7",
         "puppeteer": "^22.15.0",
+        "socket.io": "^4.8.3",
         "styled-components": "^6.1.12",
+        "uuid": "^13.0.0",
         "zod": "^3.22.4"
     },
     "devDependencies": {
@@ -82,6 +85,7 @@
         "@types/morgan": "^1.9.9",
         "@types/multer": "^1.4.11",
         "@types/node": "^20.11.16",
+        "@types/uuid": "^11.0.0",
         "prisma": "4.5.0",
         "standard": "^17.0.0",
         "tsx": "^4.7.0",

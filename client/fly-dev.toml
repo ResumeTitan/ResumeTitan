@@ -7,7 +7,10 @@ app = 'resumegpt-client-dev'
 primary_region = 'iad'
 
 [build]
-  dockerfile = "Dockerfile.dev"
+  dockerfile = "Dockerfile"
+  [build.args]
+    VITE_CLERK_PUBLISHABLE_KEY = "pk_test_ZW5hYmxlZC1zb2xlLTg2LmNsZXJrLmFjY291bnRzLmRldiQ"
+    VITE_API_URL = "https://resumegpt-server-dev.fly.dev"
 
 [http_service]
   internal_port = 3000

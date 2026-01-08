@@ -67,7 +67,7 @@
 //       }
 //     })
 //     res.status(200).json({
-//       sessionId: session.id, 
+//       sessionId: session.id,
 //       sessionUrl: session.url
 //     });
 //   } catch (e) {
@@ -76,7 +76,6 @@
 //   }
 // };
 
-
 // /**
 //  * @function webhook
 //  * @description Stripe webhook for handling post payment actions
@@ -84,7 +83,6 @@
 // export const webhook = async (req: Request, res: Response) => {
 //   const payload = req.body;
 //   const payloadString = JSON.stringify(payload, null, 2);
-
 
 //   const header = stripeClient.webhooks.generateTestHeaderString({
 //     payload: payloadString,
@@ -147,4 +145,3 @@
 
 //   res.json({ received: true });
 // }
-

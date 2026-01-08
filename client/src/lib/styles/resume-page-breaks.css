@@ -1,0 +1,92 @@
+/**
+ * Resume Page Break Styles
+ *
+ * Intelligent page break rules to ensure resume sections break at appropriate points.
+ * These rules help avoid orphaned headers and keep related content together.
+ */
+
+/* Prevent page breaks inside these elements */
+.resume-container h1,
+.resume-container h2,
+.resume-container h3 {
+    page-break-after: avoid;
+    break-after: avoid;
+}
+
+/* Prevent breaking inside work/education/project entries */
+.resume-container section > div {
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+
+/* Encourage page breaks before major sections (but not the first one) */
+.resume-container section:not(:first-of-type) {
+    page-break-before: auto;
+    break-before: auto;
+}
+
+/* Prevent orphaned lines */
+.resume-container p {
+    orphans: 3;
+    widows: 3;
+}
+
+/* Keep bulleted lists together when possible */
+.resume-container ul,
+.resume-container ol {
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+
+/* Prevent breaking between a header and its immediate next element */
+.resume-container h2 + *,
+.resume-container h3 + * {
+    page-break-before: avoid;
+    break-before: avoid;
+}
+
+/* Print-specific rules */
+@media print {
+    /* Force new page before major sections if they would be orphaned */
+    .resume-container section {
+        page-break-inside: avoid;
+        break-inside: avoid;
+    }
+
+    /* Ensure headers stay with at least 2 lines of their content */
+    .resume-container h1,
+    .resume-container h2,
+    .resume-container h3 {
+        page-break-after: avoid;
+        break-after: avoid;
+        orphans: 2;
+    }
+
+    /* Keep work/education items together */
+    .resume-container .mb-4,
+    .resume-container .mb-6 {
+        page-break-inside: avoid;
+        break-inside: avoid;
+    }
+}
+
+/* Optional: Add specific classes for manual control */
+.page-break-before {
+    page-break-before: always;
+    break-before: page;
+}
+
+.page-break-after {
+    page-break-after: always;
+    break-after: page;
+}
+
+.no-page-break {
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+
+.page-break-auto {
+    page-break-inside: auto;
+    break-inside: auto;
+}
