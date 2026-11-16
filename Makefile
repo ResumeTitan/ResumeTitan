@@ -1,54 +1,50 @@
-# ResumeTitan
+BINARY_NAME := server
+MAIN_PACKAGE := ./cmd/server
+BUILD_DIR := ./bin
 
-BUILD_DIR          ?= build
-RELEASE_BUILD_DIR  ?= build-release
-BUILD_TYPE         ?= Debug
-WARNINGS_AS_ERRORS ?= OFF
-CMAKE              ?= cmake
-JOBS               ?=
-PREFIX_FLAG        ?=
+# Build metadata
+VERSION ?= $(shell git describe --tags --always --dirty 2>/dev/null || echo "dev")
+LDFLAGS := -s -w -X main.version=$(VERSION)
 
-.DEFAULT_GOAL := build
+# Default target
+DEFAULT_GOAL := help
 
-.PHONY: configure build run test release clean rebuild format db-up db-down help
+.PHONY: help build run test lint generate clean
 
-configure: ## Configure the build tree
-	$(CMAKE) -S . -B $(BUILD_DIR) -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DRT_WARNINGS_AS_ERRORS=$(WARNINGS_AS_ERRORS) $(PREFIX_FLAG)
+## help: Show available Makefile targets
+help:
+	@echo "Usage: make [target]"
+	@echo ""
+	@grep -E '^## ' $(MAKEFILE_LIST) | sed 's/## /  /'
 
-build: configure ## Compile
-	$(CMAKE) --build $(BUILD_DIR) --parallel $(JOBS)
+## build: Compile the binary for current architecture
+build:
+	@mkdir -p $(BUILD_DIR)
+	go build -ldflags="$(LDFLAGS)" -o $(BUILD_DIR)/$(BINARY_NAME) $(MAIN_PACKAGE)
 
-run: build ## Build then run from the repo root
-	@set -a; source .env; set +a; \
-	./$(BUILD_DIR)/rt
+## run: Build and execute the application
+run: build
+	$(BUILD_DIR)/$(BINARY_NAME)
 
-test: build ## Run the test suite
-	ctest --test-dir $(BUILD_DIR) --output-on-failure
+## test: Run all unit tests with race detection
+test:
+	go test -v -race ./...
 
-release: ## Release build with warnings treated as errors
-	$(MAKE) build BUILD_DIR=$(RELEASE_BUILD_DIR) BUILD_TYPE=Release WARNINGS_AS_ERRORS=ON
+## test-cover: Run tests and generate an HTML coverage report
+test-cover:
+	go test -race -coverprofile=coverage.out ./...
+	go tool cover -html=coverage.out -o coverage.html
 
-clean: ## Remove build directories
-	@test -n "$(BUILD_DIR)" && test -n "$(RELEASE_BUILD_DIR)" || { echo "build dir is empty; refusing to clean"; exit 1; }
-	rm -rf $(BUILD_DIR) $(RELEASE_BUILD_DIR)
+## lint: Format code, run go vet, and check for vulnerabilities
+lint:
+	go fmt ./...
+	go vet ./...
+	golangci-lint run
 
-rebuild: clean ## Clean, then rebuild
-	$(MAKE) build
+## generate: Run code generation directives
+generate:
+	go generate ./...
 
-format: ## Format C++ sources in place
-	find src -type f \( -name '*.cpp' -o -name '*.h' -o -name '*.hpp' \) -print0 | xargs -0 clang-format -i
-
-db-up: ## Start the local MySQL container
-	docker compose up -d mysql
-
-db-down: ## Stop the local MySQL container
-	docker compose down
-
-frontend:	## Serve only the HTML/CSS, for prototyping pages
-	python3 -m http.server 8080 --directory public
-
-help: ## Show this help
-	@echo "Usage: make <target> [BUILD_TYPE=Debug|Release] [WARNINGS_AS_ERRORS=ON|OFF] [BUILD_DIR=build]"
-	@echo
-	@grep -E '^[a-zA-Z0-9_-]+:.*## ' $(MAKEFILE_LIST) \
-		| awk 'BEGIN {FS = ":.*## "}; {printf "  \033[36m%-12s\033[0m %s\n", $$1, $$2}'
+## clean: Remove build artifacts and coverage reports
+clean:
+	rm -rf $(BUILD_DIR) coverage.out coverage.html

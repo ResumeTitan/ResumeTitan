@@ -1,7 +1,5 @@
 {
-  // IntelliSense config now lives in .vscode/c_cpp_properties.json and reads
-  // build/compile_commands.json directly. Do NOT set configurationProvider
-  // here, or cpptools will ignore c_cpp_properties.json.
-  "cmake.buildDirectory": "${workspaceFolder}/build",
-  "cmake.configureOnOpen": true
+  "editor.tabSize": 2,
+  "editor.detectIndentation": true,
+  "go.lintTool": "golangci-lint"
 }
